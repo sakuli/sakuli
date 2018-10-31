@@ -1,0 +1,7 @@
+{
+  "name": "sakuli",
+  "private": true,
+  "devDependencies": { 
+    "lerna": "^3.4.3"
+  }
+}
