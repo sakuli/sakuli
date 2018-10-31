@@ -9,6 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@sakuli/core": "1.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^23.3.8",
     "@types/node": "^10.12.1",
