@@ -2,9 +2,12 @@
   "name": "@sakuli/core",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.ts",
+  "typings": "dist",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +23,7 @@
   "dependencies": {
     "class-validator": "^0.9.1",
     "properties-reader": "0.0.16",
-    "reflect-metadata": "^0.1.12"
+    "reflect-metadata": "^0.1.12",
+    "@sakuli/commons": "1.0.0"
   }
 }

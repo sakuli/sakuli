@@ -1,5 +1,5 @@
 import { Testsuite } from "./model/testsuite.class";
-import { Project } from "./model/project.class";
+import { Project } from "./model/project.interface";
 
 export interface ProjectLoader {
     /**

@@ -1,0 +1,37 @@
+{
+  "name": "sakuli-legacy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sakuli/core": "1.0.0",
+    "@sakuli/commons": "1.0.0",
+    "class-validator": "^0.9.1",
+    "common-tags": "^1.8.0",
+    "mock-fs": "^4.7.0",
+    "properties-reader": "0.0.16",
+    "reflect-metadata": "^0.1.12",
+    "selenium-webdriver": "^4.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@types/common-tags": "^1.4.0",
+    "@types/fs-extra": "^5.0.4",
+    "@types/jest": "^23.3.9",
+    "@types/mock-fs": "^3.6.30",
+    "@types/node": "^10.12.2",
+    "@types/properties-reader": "0.0.1",
+    "@types/selenium-webdriver": "^3.0.13",
+    "fs-extra": "^7.0.0",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.6"
+  }
+}

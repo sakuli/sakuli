@@ -1,13 +1,19 @@
 import PropertiesReader from 'properties-reader'
-import { Type } from '../../util/type.interface';
+import { Type } from '@sakuli/commons';
 import { getJavaPropertyDefinitons } from './java-properties.decorator';
 
-export function marshallPropertiesToObject<T>(type: Type<T>, properties: PropertiesReader.Reader): T {
+
+/**
+ * 
+ * @param type A class type, which should have decorated fields with JavaProperties @see JavaProperties
+ * @param reader  
+ */
+export function marshallPropertiesToObject<T>(type: Type<T>, reader: PropertiesReader.Reader): T {
     const javaPropertyDefinitons = getJavaPropertyDefinitons(type);
     const data = javaPropertyDefinitons.reduce((agg, def) => {
         return ({
             ...agg,
-            [def.property]: properties.read(def.path)
+            [def.property]: reader.get(def.path)
         })
     }, {})
     return Object.assign(new type(), data);

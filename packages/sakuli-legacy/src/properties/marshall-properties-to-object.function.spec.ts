@@ -12,21 +12,26 @@ describe('MarshallPropertiesToobject', () => {
         testProperty: string = ''
     }
 
-    let readerReadMock: jest.Mock;
+    let getterMock: jest.Mock;
     let readerMock: jest.Mocked<typeof PropertiesReader>;
 
     beforeEach(() => {
-        readerReadMock = jest.fn();
+        getterMock = jest.fn();
         readerMock = jest.fn().mockImplementation(() => ({
-            read: readerReadMock
+            get: getterMock
         }))
     })
 
-    it('it should create a object from TestClass definition', () => {
-        readerReadMock.mockReturnValue('new value');
-        const testobject = marshallPropertiesToObject(TestClass, readerMock(''));
-        expect(readerReadMock).toHaveBeenCalledTimes(1);
-        expect(readerReadMock).toHaveBeenCalledWith('test.property');
+    it('should preserve type of marshalled object', () => {
+        const testobject: TestClass = marshallPropertiesToObject(TestClass, readerMock(''));
+        expect(testobject).toBeInstanceOf(TestClass);
+    })
+
+    it('should create a object from TestClass definition', () => {
+        getterMock.mockReturnValue('new value');
+        const testobject: TestClass = marshallPropertiesToObject(TestClass, readerMock(''));
+        expect(getterMock).toHaveBeenCalledTimes(1);
+        expect(getterMock).toHaveBeenCalledWith('test.property');
         expect(testobject.testProperty).toEqual('new value');
     });
 });

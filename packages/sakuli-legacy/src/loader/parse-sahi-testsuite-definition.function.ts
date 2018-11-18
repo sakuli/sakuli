@@ -1,14 +1,14 @@
-export interface SahiTestsuite {
-    file: string;
+export interface SahiTestCase {
+    path: string;
     startUrl: string;
 } 
 
-export function parseSahiTestsuiteDefiniton(sahiTestsuiteDefinition: string): SahiTestsuite[] {
+export function parseSahiTestsuiteDefiniton(sahiTestsuiteDefinition: string): SahiTestCase[] {
     return sahiTestsuiteDefinition
         .split('\n')
         .map(l => l.trim())
         .filter(l => l.length)
         .filter(l => !l.startsWith('//'))
         .map(l => l.split(' '))
-        .map(([file, startUrl]) => ({file, startUrl}))
+        .map(([path, startUrl]) => ({path, startUrl}))
 }

@@ -1,4 +1,4 @@
-import { Project } from "../loader/model/project.class";
+import { Project } from "../loader/model/project.interface";
 import { ContextProvider } from "./context-provider.interface";
 import { TestScriptExecutor } from "./test-script-executor.interface";
 
@@ -11,7 +11,7 @@ export class SakuliRunner {
 
     execute(project: Project) {
         this.contextProvider.forEach(cp => cp.tearUp(project));
-        //this.testFileExecutor.execute()
+        // this.testFileExecutor.execute('file-to-test.js', this.createContext())
         this.contextProvider.forEach(cp => cp.tearDown());
     }
 

@@ -1,5 +1,5 @@
 # Basic steps to create a new Package
-(mkdir $1; cd $_; npm init -y)
+(mkdir packages/$1; cd $_; npm init -y)
 lerna add jest --dev
 lerna add ts-jest --dev
 lerna add typescript --dev

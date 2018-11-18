@@ -1,8 +1,8 @@
-import { Project } from "../loader/model/project.class";
+import { Project } from "../loader/model/project.interface";
 
-export interface ContextProvider {
+export interface ContextProvider<T = any> {
 
-    tearUp(project: Project);
-    tearDown();
-    getContext():any
+    tearUp(project: Project): void;
+    tearDown(): void;
+    getContext():T
 }

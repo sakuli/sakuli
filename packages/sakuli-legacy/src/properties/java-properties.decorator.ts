@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Type } from '../../util/type.interface';
+import { Type } from '@sakuli/commons';
 
 const JavaPropertyMetadata = Symbol('JavaPropertyMetadata');
 

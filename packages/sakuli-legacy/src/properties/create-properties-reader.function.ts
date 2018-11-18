@@ -1,4 +1,4 @@
-import { Type } from '../../util/type.interface';
+import { Type } from '@sakuli/commons';
 import { getJavaPropertyDefinitons } from './java-properties.decorator';
 import PropertiesReader from 'properties-reader'
 
