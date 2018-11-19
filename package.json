@@ -2,9 +2,8 @@
   "name": "sakuli",
   "private": true,
   "scripts": {
-    "build": " lerna bootstrap && lerna run build",
-    "postinstall": "lerna bootstrap --progress --no-ci --hoist",
-    "test": "lerna bootstrap; lerna run test:ci",
+    "build": " lerna run build",
+    "test": "lerna run test:ci",
     "bootstrap": "lerna bootstrap",
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
