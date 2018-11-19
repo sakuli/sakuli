@@ -1,10 +1,12 @@
 import { TestScriptExecutor } from "./test-script-executor.interface";
 import { createContext, Script, Context, RunningScriptOptions } from "vm";
+import { TestFile } from "../loader/model/test-file.interface";
 
 export class JsScriptExecutor implements TestScriptExecutor {
 
     constructor(readonly options: RunningScriptOptions = {}) {}
 
+    
     execute<T = {}>(source: string, context: T): T {
         const script = new Script(source)
         const sandbox = createContext(context);

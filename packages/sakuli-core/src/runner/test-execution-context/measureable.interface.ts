@@ -1,4 +1,4 @@
-import { Maybe } from "@sakuli/commons/dist";
+import { Maybe } from "@sakuli/commons";
 
 export interface Measurable {
     startDate: Maybe<Date>;

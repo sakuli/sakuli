@@ -7,7 +7,9 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "tsc"
+    "build": "tsc",
+    "typedoc": "typedoc --out ../../docs/api/sakuli-commons --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
+    "test:ci": "jest --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,7 @@
     "@types/jest": "^23.3.9",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.4",
+    "typedoc": "^0.13.0",
     "typescript": "^3.1.6"
   }
 }

@@ -6,7 +6,10 @@
   "typings": "dist",
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "typedoc": "typedoc --out ../../docs/api/sakuli-legacy --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +35,7 @@
     "fs-extra": "^7.0.0",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.4",
+    "typedoc": "^0.13.0",
     "typescript": "^3.1.6"
   }
 }

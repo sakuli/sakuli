@@ -1,3 +1,5 @@
+#!/bin/node
+
 /**
  * 
  * For development only
@@ -27,20 +29,27 @@ const packagesDir = join(dir, 'packages');
         console.log(`Will search for packages in ${packagesDir}`)
         const packages = await readdir(packagesDir);
         packages
-            .map(package => join(packagesDir, package, 'package.json'))
-            .forEach(async sharedPackageJson => {
+            .map(package => [package, join(packagesDir, package, 'package.json')])
+            .forEach(async ([packageName, sharedPackageJson]) => {
+                const _sharedScripts = {...sharedScripts};
                 const pkgJson = await readJson(sharedPackageJson);
                 const { currentScript } = pkgJson;
+                Object.keys(_sharedScripts).forEach(scriptKey => {
+                    _sharedScripts[scriptKey] = `${_sharedScripts[scriptKey]}`
+                    .replace(/\{package\}/g, packageName)
+                })
                 const newPackageJson = {
                     ...pkgJson,
                     scripts: {
                         ...pkgJson.scripts,
-                        ...sharedScripts
+                        ..._sharedScripts
                     }
                 }
                 console.log('Would write to ' + sharedPackageJson);
-                console.log(JSON.stringify(newPackageJson, null, 2))
-                await writeJson(sharedPackageJson, newPackageJson);
+                console.log(JSON.stringify(_sharedScripts, null, 2))
+                await writeJson(sharedPackageJson, newPackageJson, {
+                    spaces: 2
+                });
             })
     }
 })();

@@ -3,19 +3,38 @@
     // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
     // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [{
-        "name": "Debug Sakuli-Legacy Tests",
-        "type": "node",
-        "request": "launch",
-        "runtimeArgs": [
-          "--inspect-brk",
-          "${workspaceRoot}/packages/sakuli-legacy/node_modules/.bin/jest",
-          "--runInBand",
-        ],
-        "cwd": "${workspaceFolder}/packages/sakuli-legacy",
-        "console": "integratedTerminal",
-        "internalConsoleOptions": "neverOpen",
-        "port": 9229,
-        "sourceMaps": true
-    }]
+    "configurations": [
+
+        {
+            "name": "Debug Sakuli-Legacy Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/packages/sakuli-legacy/node_modules/.bin/jest",
+                "--runInBand",
+            ],
+            "cwd": "${workspaceFolder}/packages/sakuli-legacy",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229,
+            "sourceMaps": true
+        },
+        {
+            "name": "Debug Sakuli-Core Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/packages/sakuli-core/node_modules/.bin/jest",
+                "--runInBand",
+            ],
+            "cwd": "${workspaceFolder}/packages/sakuli-core",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229,
+            "sourceMaps": true
+        }
+
+    ]
 }
