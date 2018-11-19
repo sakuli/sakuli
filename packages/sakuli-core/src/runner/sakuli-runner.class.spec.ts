@@ -18,7 +18,7 @@ describe('SakuliRunner', () => {
     })
 
     const createScriptexecutorMock = (): jest.Mocked<TestScriptExecutor> => ({
-        execute: jest.fn()
+        execute: jest.fn((_, ctx) => ({...ctx}))
     })
 
     describe('basic execution flow', () => {
@@ -61,21 +61,18 @@ describe('SakuliRunner', () => {
 
         it('should tearUp all providers for each test', () => {
             sakuliRunner.execute(projectWithThreeTestFiles)
+            expect(ctxProvider1.tearUp).toHaveBeenCalledTimes(1)
+            expect(ctxProvider1.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles)
 
-            expect(ctxProvider1.tearUp).toHaveBeenNthCalledWith(1, projectWithThreeTestFiles)
-            expect(ctxProvider1.tearUp).toHaveBeenNthCalledWith(2, projectWithThreeTestFiles)
-            expect(ctxProvider1.tearUp).toHaveBeenNthCalledWith(3, projectWithThreeTestFiles)
-
-            expect(ctxProvider2.tearUp).toHaveBeenNthCalledWith(1, projectWithThreeTestFiles)
-            expect(ctxProvider2.tearUp).toHaveBeenNthCalledWith(2, projectWithThreeTestFiles)
-            expect(ctxProvider2.tearUp).toHaveBeenNthCalledWith(3, projectWithThreeTestFiles)
+            expect(ctxProvider2.tearUp).toHaveBeenCalledTimes(1)
+            expect(ctxProvider2.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles)
         });
 
         it('should tearDown all providers for each test', () => {
             sakuliRunner.execute(projectWithThreeTestFiles);
 
-            expect(ctxProvider1.tearDown).toHaveBeenCalledTimes(3);
-            expect(ctxProvider2.tearDown).toHaveBeenCalledTimes(3);
+            expect(ctxProvider1.tearDown).toHaveBeenCalledTimes(1);
+            expect(ctxProvider2.tearDown).toHaveBeenCalledTimes(1);
         })
 
         it('should execute with a merged context object from all contextproviders', () => {
@@ -87,9 +84,20 @@ describe('SakuliRunner', () => {
                 ctx2: 'ctx2',
                 common: 'overridden'
             })
-            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(1, '// test 1', matchContext());
-            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(2, '// test 2', matchContext());
-            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(3, '// test 3', matchContext());
+            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(1, '// test 1', expect.anything());
+            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(2, '// test 2', expect.anything());
+            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(3, '// test 3', expect.anything());
+        })
+
+        it('should get all proceed contexts from execute', () => {
+            ctxProvider1.getContext.mockReturnValue({ctx1: 'ctx1', common: 'ignore'})
+            ctxProvider2.getContext.mockReturnValue({ctx2: 'ctx2', common: 'overridden'})
+            const result = sakuliRunner.execute(projectWithThreeTestFiles)            
+            expect(result).toEqual(expect.objectContaining({
+                common: 'overridden',
+                ctx1: 'ctx1',
+                ctx2: 'ctx2'
+            }));
         })
 
         afterEach(() => {

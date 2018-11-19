@@ -28,10 +28,22 @@ describe("JsScriptExecutor", () => {
             x: 0
         }
         executor.execute(`
-            x = 1 +1
+            x = 1 + 1
         `, context);
 
         expect(context.x).toBe(2);
+    })
+
+    it('should allow multiple context executions', () => {
+        const executor = new JsScriptExecutor({});
+        const context = {
+            x: 1
+        }
+        const _ctxX2 = executor.execute(`x += 1`, context);
+        expect(_ctxX2.x).toBe(2);
+        const _ctxX3 = executor.execute(`x += 1`, _ctxX2);
+        expect(_ctxX2.x).toBe(3);
+
     })
 
 })

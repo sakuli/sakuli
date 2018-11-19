@@ -11,14 +11,15 @@ export class SakuliRunner {
         readonly testFileExecutor: TestScriptExecutor = new JsScriptExecutor
     ) { }
 
-    execute(project: Project) {
-        
-        project.testFiles.forEach(testFile => {
+    execute(project: Project): any {    
+        this.contextProvider.forEach(cp => cp.tearUp(project));
+        const context = this.createContext();
+        const results = project.testFiles.reduce((ctx, testFile) => {
             const testFileContent = readFileSync(testFile.path);
-            this.contextProvider.forEach(cp => cp.tearUp(project));
-            this.testFileExecutor.execute(testFileContent.toString(), this.createContext())
-            this.contextProvider.forEach(cp => cp.tearDown());
-        })
+            return this.testFileExecutor.execute(testFileContent.toString(), ctx)
+        }, context)
+        this.contextProvider.forEach(cp => cp.tearDown());
+        return results;
     }
 
     private createContext() {

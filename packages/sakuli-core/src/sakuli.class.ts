@@ -5,7 +5,10 @@ import { SakuliPresetProvider } from "./sakuli-preset-provider.interface";
 import { SakuliPresetRegistry } from "./sakuli-preset-registry.class";
 import { Maybe, ifPresent, throwIfAbsent } from "@sakuli/commons";
 import { Project } from "./loader";
-import { SakuliExecutionContextProvider } from "./runner/test-execution-context/sakuli-execution-context-provider.class";
+import { SakuliExecutionContextProvider, isSakuliExecutionContext } from "./runner/test-execution-context/sakuli-execution-context-provider.class";
+import { TestExecutionContext } from "./runner/test-execution-context/test-execution-context.class";
+import { inspect } from "util";
+import { Forwarder } from "./forwarder/forwarder.interface";
 
 export class Sakuli {
 
@@ -23,6 +26,18 @@ export class Sakuli {
         return this.presetRegistry.projectLoaders;
     }
 
+    private get forwarder() {
+        return [
+            ...this.presetRegistry.forwarders,
+            <Forwarder>{
+                forward(ctx: TestExecutionContext, p: Project) {
+                    inspect(ctx);
+                    return Promise.resolve();
+                }
+            }
+        ]
+    }
+
     private get contextProviders() {
         return [
             new SakuliExecutionContextProvider(),
@@ -31,7 +46,7 @@ export class Sakuli {
     }
 
     async run(_opts: string | SakuliRunOptions) {
-        const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
+        const opts = typeof _opts === 'string' ? { path: _opts } : _opts;
         const projects = await Promise.all(
             this.loader.map(loader => loader.load(opts.path))
         );
@@ -39,12 +54,24 @@ export class Sakuli {
             projects.find(p => p != null),
             Error(`Non of the following loaders could create project from ${opts.path}`)
         )
-        
+
         const runner = new SakuliRunner(
             this.contextProviders
         )
+
+        const rawResults = runner.execute(project);
+        const resultsThatAreTestExecutionContexts = rawResults
+            .filter(isSakuliExecutionContext)
         
-        runner.execute(project);
+        // TODO: check if rawResults have same length than resultsThatAreTestExecutionContexts
+        // TOOD: Merging?
+        // Prepare results
+
+        resultsThatAreTestExecutionContexts.forEach(r => {
+            this.forwarder.forEach(f => {
+                f.forward(r.sakuliContext, project);
+            })
+        })
     }
 
 
