@@ -9,7 +9,7 @@
     "build": "tsc",
     "typedoc": "typedoc --out ../../docs/api/sakuli-legacy --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand"
+    "test:ci": "jest --runInBand --no-cache"
   },
   "keywords": [],
   "author": "",

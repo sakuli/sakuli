@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": " lerna bootstrap && lerna run build",
-    "postinstall": "node scripts/run-in-all-packages --cmd=\"lerna bootstrap && npm i\"",
+    "postinstall": "lerna bootstrap --progress --no-ci --hoist",
     "test": "lerna bootstrap; lerna run test:ci",
     "bootstrap": "lerna bootstrap",
     "share-scripts": "node scripts/distribute-npm-scripts"
@@ -16,6 +16,6 @@
   "sharedScripts": {
     "typedoc": "typedoc --out ../../docs/api/{package} --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand"
+    "test:ci": "jest --runInBand --no-cache"
   }
 }
