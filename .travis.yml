@@ -5,3 +5,5 @@ node_js:
   - 8
 before_install:
   - npm i -g lerna
+install:
+  - lerna bootstrap --progress --no-ci --hoist
