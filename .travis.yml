@@ -4,4 +4,4 @@ node_js:
 before_install:
   - npm i -g lerna gh-pages
 install:
-  - lerna bootstrap --progress --no-ci --hoist
+  - npm i
