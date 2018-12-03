@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`toJson should transform testaction 1`] = `
+Object {
+  "criticalTime": 0,
+  "endDate": Any<Date>,
+  "error": undefined,
+  "startDate": Any<Date>,
+  "state": 0,
+  "warningTime": 0,
+}
+`;
+
+exports[`toJson should transform testcase 1`] = `
+Object {
+  "criticalTime": 0,
+  "endDate": Any<Date>,
+  "error": undefined,
+  "startDate": Any<Date>,
+  "state": 0,
+  "testSteps": Array [],
+  "warningTime": 0,
+}
+`;
+
+exports[`toJson should transform teststep 1`] = `
+Object {
+  "criticalTime": 0,
+  "endDate": Any<Date>,
+  "error": undefined,
+  "startDate": Any<Date>,
+  "state": 0,
+  "testActions": Array [],
+  "warningTime": 0,
+}
+`;
+
+exports[`toJson should transform testsuite 1`] = `
+Object {
+  "criticalTime": 0,
+  "endDate": Any<Date>,
+  "error": undefined,
+  "startDate": Any<Date>,
+  "state": 0,
+  "testCases": Array [],
+  "warningTime": 0,
+}
+`;
