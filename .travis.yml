@@ -15,6 +15,7 @@ before_install:
 jobs:
   include:
   - stage: compile
+
     script: npm run build
   - stage: test
     script: npm run build && npm test
