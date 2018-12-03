@@ -18,7 +18,7 @@ describe('SakuliRunner', () => {
     })
 
     const createScriptexecutorMock = (): jest.Mocked<TestScriptExecutor> => ({
-        execute: jest.fn((_, ctx) => ({...ctx}))
+        execute: jest.fn((_, ctx) => ({ ...ctx }))
     })
 
     describe('basic execution flow', () => {
@@ -42,20 +42,15 @@ describe('SakuliRunner', () => {
                 [ctxProvider1, ctxProvider2],
                 scriptExecutor
             );
-            /*
-            const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
-            mockReadFileSync.mockImplementation(() => {
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                return "// test 3"
-            })
-            */
-            
+
             mockFs({
-                root: {
-                    'test1.js': '// test 1',
-                    'test2.js': '// test 2',
-                    'test3.js': '// test 3',
-                } 
+                somedir: {
+                    root: {
+                        'test1.js': '// test 1',
+                        'test2.js': '// test 2',
+                        'test3.js': '// test 3',
+                    }
+                }
             })
         })
 
@@ -76,8 +71,8 @@ describe('SakuliRunner', () => {
         })
 
         it('should execute with a merged context object from all contextproviders', () => {
-            ctxProvider1.getContext.mockReturnValue({ctx1: 'ctx1', common: 'ignore'})
-            ctxProvider2.getContext.mockReturnValue({ctx2: 'ctx2', common: 'overridden'})
+            ctxProvider1.getContext.mockReturnValue({ ctx1: 'ctx1', common: 'ignore' })
+            ctxProvider2.getContext.mockReturnValue({ ctx2: 'ctx2', common: 'overridden' })
             sakuliRunner.execute(projectWithThreeTestFiles)
             const matchContext = () => expect.objectContaining({
                 ctx1: 'ctx1',
@@ -90,9 +85,9 @@ describe('SakuliRunner', () => {
         })
 
         it('should get all proceed contexts from execute', () => {
-            ctxProvider1.getContext.mockReturnValue({ctx1: 'ctx1', common: 'ignore'})
-            ctxProvider2.getContext.mockReturnValue({ctx2: 'ctx2', common: 'overridden'})
-            const result = sakuliRunner.execute(projectWithThreeTestFiles)            
+            ctxProvider1.getContext.mockReturnValue({ ctx1: 'ctx1', common: 'ignore' })
+            ctxProvider2.getContext.mockReturnValue({ ctx2: 'ctx2', common: 'overridden' })
+            const result = sakuliRunner.execute(projectWithThreeTestFiles)
             expect(result).toEqual(expect.objectContaining({
                 common: 'overridden',
                 ctx1: 'ctx1',

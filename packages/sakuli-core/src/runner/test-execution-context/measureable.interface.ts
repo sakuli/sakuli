@@ -24,5 +24,5 @@ export function isFinished(m: StartedMeasurable): m is FinishedMeasurable {
 }
 
 export function getDuration(m: FinishedMeasurable) {
-    return m.endDate.getTime() - m.startDate.getTime();
+    return (m.endDate.getTime() - m.startDate.getTime()) / 1000;
 }

@@ -3,6 +3,8 @@ import { Maybe, ifPresent, throwIfAbsent } from "@sakuli/commons";
 import { Measurable, isStarted, isFinished, StartedMeasurable, FinishedMeasurable, getDuration } from "./measureable.interface";
 import { TestCaseContext } from "./test-case-context.class";
 import { TestStepContext } from "./test-step-context.class";
+import { TestActionContext } from "./test-action-context.class";
+import { toJson } from "./test-context-entity-to-json.function";
 
 /**
  * An execution-context is the main bridge between sakuli and any api that runs on sakuli
@@ -166,6 +168,57 @@ export class TestExecutionContext implements Measurable {
         })
     }
 
+    startTestAction(testaction: Partial<TestActionContext>) {
+        const testStep = throwIfAbsent(
+            this.getCurrentTestStep(),
+            Error(`Cannot start testaction because no teststep has been started`)
+        );
+        this.updateCurrentTestStep({
+            testActions: [
+                ...testStep.testActions,
+                Object.assign(new TestActionContext, testaction)
+            ]
+        });
+        this.updateCurrentTestAction({startDate: new Date()})
+    }
 
+    updateCurrentTestAction(testaction: Partial<TestActionContext>): any {
+        const testStep = throwIfAbsent(
+            this.getCurrentTestStep(),
+            Error(`Cannot get teststep because no testcase has been started`)
+        );
+        const action = throwIfAbsent(
+            this.getCurrentTestAction(),
+            Error(`Cannot get testaction because no teststep has been started`)
+        );
+        testStep.testActions[testStep.testActions.length - 1] = Object.assign(
+            new TestActionContext,
+            action,
+            testaction
+        )
+        this.updateCurrentTestStep({
+            testActions: testStep.testActions
+        })
+    }
+    getCurrentTestAction(): Maybe<TestActionContext> {
+        const teststep = throwIfAbsent(
+            this.getCurrentTestStep(),
+            Error(`Cannot get testaction because no teststep has been started`)
+        );
+        return [...teststep.testActions].pop();
+    }
+
+    endTestAction() {
+        this.updateCurrentTestAction({endDate: new Date});
+    }
+
+    toJson() {
+        return ({
+            duration: this.duration,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            testSuites: this.testSuites.map(ts => toJson(ts))
+        });
+    }
 
 }

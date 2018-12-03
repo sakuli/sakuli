@@ -22,23 +22,23 @@ export class Sakuli {
         })
     }
 
-    private get loader() {
+    get loader() {
         return this.presetRegistry.projectLoaders;
     }
 
-    private get forwarder() {
+    get forwarder() {
         return [
             ...this.presetRegistry.forwarders,
             <Forwarder>{
                 forward(ctx: TestExecutionContext, p: Project) {
-                    inspect(ctx);
+                    console.log(inspect(ctx));
                     return Promise.resolve();
                 }
             }
         ]
     }
 
-    private get contextProviders() {
+    get contextProviders() {
         return [
             new SakuliExecutionContextProvider(),
             ...this.presetRegistry.contextProviders
@@ -50,7 +50,7 @@ export class Sakuli {
         const projects = await Promise.all(
             this.loader.map(loader => loader.load(opts.path))
         );
-        const project: Maybe<Project> = throwIfAbsent(
+        const project: Project = throwIfAbsent(
             projects.find(p => p != null),
             Error(`Non of the following loaders could create project from ${opts.path}`)
         )
@@ -59,19 +59,13 @@ export class Sakuli {
             this.contextProviders
         )
 
-        const rawResults = runner.execute(project);
-        const resultsThatAreTestExecutionContexts = rawResults
-            .filter(isSakuliExecutionContext)
-        
-        // TODO: check if rawResults have same length than resultsThatAreTestExecutionContexts
-        // TOOD: Merging?
-        // Prepare results
-
-        resultsThatAreTestExecutionContexts.forEach(r => {
+        const ctxAfterExecution = runner.execute(project);
+        if(isSakuliExecutionContext(ctxAfterExecution)) {
             this.forwarder.forEach(f => {
-                f.forward(r.sakuliContext, project);
+                f.forward(ctxAfterExecution.sakuliContext, project);
             })
-        })
+        }
+
     }
 
 

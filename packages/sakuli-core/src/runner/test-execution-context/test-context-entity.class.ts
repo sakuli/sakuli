@@ -1,11 +1,24 @@
-import { Maybe } from "@sakuli/commons";
+import { Maybe, ifPresent } from "@sakuli/commons";
 import { Measurable, isStarted, isFinished, StartedMeasurable, FinishedMeasurable, getDuration } from "./measureable.interface";
-import { IsDate, IsNumber, validate } from "class-validator";
+import { IsDate, IsNumber, validate, IsString, ValidateIf, MinDate, validateSync } from "class-validator";
+import { TestContextEntityState, TestContextEntityStates } from "./test-context-entity-state.class";
+import { isAfter, isBefore, isEqual } from "date-fns";
+import { SakuliContextEntityRaw } from "./test-context-entity-raw.interface";
 
-export type TestCaseEntityKind = "step" | "suite" | "case" | "action"
+export type TestContextKindSuite = "suite";
+export type TestContextKindCase = "case";
+export type TestContextKindStep = "step";
+export type TestContextKindSAction = "action";
+export type TestContextEntityKind =
+    TestContextKindSuite |
+    TestContextKindCase |
+    TestContextKindStep |
+    TestContextKindSAction;
 
 export abstract class TestContextEntity implements Measurable {
-    abstract kind: TestCaseEntityKind;
+    abstract kind: TestContextEntityKind;
+
+    @IsString()
     id: Maybe<string>;
 
     @IsDate()
@@ -15,10 +28,12 @@ export abstract class TestContextEntity implements Measurable {
     endDate: Maybe<Date>;
 
     @IsNumber()
-    criticalTime: Maybe<number>;
+    criticalTime: number = 0;
 
     @IsNumber()
-    warningTime: Maybe<number>;
+    warningTime: number = 0;
+
+    error: Maybe<Error>;
 
     isStarted(): this is StartedMeasurable {
         return isStarted(this);
@@ -29,16 +44,33 @@ export abstract class TestContextEntity implements Measurable {
     }
 
     get duration() {
-        if(this.isFinished()) {
+        if (this.isFinished()) {
             return getDuration(this);
         } else {
             throw Error(`Please finish the ${this.kind} '${this.id}' before accessing duration`)
         }
     }
 
-    async isValid(): Promise<boolean> {
-        const err = await validate(this);
-        return err.length === 0;
+    isValid(): this is FinishedMeasurable {
+        const err = validateSync(this);
+        return err.length === 0 
+            && (isEqual(<Date>this.startDate, <Date>this.endDate)
+            || isBefore(<Date>this.startDate, <Date>this.endDate));
+    }
+
+    get state(): TestContextEntityState {
+        return ifPresent(this.error,
+            _ => TestContextEntityStates.ERROR,
+            () => {
+                if (this.criticalTime > 0 && this.duration > this.criticalTime) {
+                    return TestContextEntityStates.CRITICAL
+                }
+                if (this.warningTime > 0 && this.duration > this.warningTime) {
+                    return TestContextEntityStates.WARNING
+                }
+                return TestContextEntityStates.OK
+            }
+        )
     }
 
 }

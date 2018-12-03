@@ -15,10 +15,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sakuli/core": "1.0.0",
     "@sakuli/commons": "1.0.0",
+    "@sakuli/core": "1.0.0",
     "class-validator": "^0.9.1",
     "common-tags": "^1.8.0",
+    "escodegen": "^1.11.0",
+    "esprima": "^4.0.1",
     "mock-fs": "^4.7.0",
     "properties-reader": "0.0.16",
     "reflect-metadata": "^0.1.12",
@@ -26,6 +28,8 @@
   },
   "devDependencies": {
     "@types/common-tags": "^1.4.0",
+    "@types/escodegen": "0.0.6",
+    "@types/esprima": "^4.0.2",
     "@types/fs-extra": "^5.0.4",
     "@types/jest": "^23.3.9",
     "@types/mock-fs": "^3.6.30",

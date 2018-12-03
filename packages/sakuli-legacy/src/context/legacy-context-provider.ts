@@ -1,7 +1,11 @@
 import { ContextProvider } from "@sakuli/core/dist";
 import { LegacyProject } from "../loader/legacy-project.class";
 import webdriver, { Capabilities, Builder } from 'selenium-webdriver';
-import { throwIfAbsent, Maybe } from "@sakuli/commons";
+import {throwIfAbsent, Maybe, ifPresent} from "@sakuli/commons";
+import {TestCase} from "./common/test-case.class";
+import {Application} from "./common/application.class";
+import {Key} from "./common/key.class";
+import {Environment} from "./common/environment.class";
 
 export class LegacyContextProvider implements ContextProvider {
 
@@ -19,15 +23,23 @@ export class LegacyContextProvider implements ContextProvider {
     ) { }
 
     tearUp(project: LegacyProject): void {
-        const browser: keyof webdriver.Capabilities = <any>project.properties.testsuiteBrowser
+        const browser: keyof webdriver.Capabilities = <any>project.properties.testsuiteBrowser;
         const caps = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
-        this.driver = this.builder.withCapabilities(caps).build();
+        this.driver = this.builder.withCapabilities(caps)
+            .build();
     }
 
     tearDown(): void {
+        ifPresent(this.driver, driver => driver.quit());
     }
 
     getContext() {
+        return ({
+            TestCase,
+            Application,
+            Key,
+            Environment
+        })
     }
 
 

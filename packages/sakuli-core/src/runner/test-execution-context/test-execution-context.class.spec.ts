@@ -1,10 +1,11 @@
 import { TestExecutionContext } from "./test-execution-context.class";
 import { TestSuiteContext } from "./test-suite-context.class";
 import { TestCaseContext } from "./test-case-context.class";
+import { TextDecoder, inspect } from "util";
 
 describe('TestExectionContext', () => {
 
-    let tec: TestExecutionContext;
+    let tec: TestExecutionContext;   
     beforeEach(() => tec = new TestExecutionContext());
 
     describe('positive', () => {
@@ -67,6 +68,9 @@ describe('TestExectionContext', () => {
             tec.startTestCase({ id: 'S002C001' })
             tec.startTestStep();
             tec.updateCurrentTestStep({ id: 'late added' });
+            tec.startTestAction({});  
+            tec.updateCurrentTestAction({id: 'Action'})          
+            tec.endTestAction();            
             tec.endTestStep();
             tec.endTestCase()
             tec.startTestCase({ id: 'S002C002' })
@@ -79,9 +83,9 @@ describe('TestExectionContext', () => {
             tec.endTestCase()
             tec.endTestSuite()
             tec.endExecution()
-
             expect(tec.isExecutionStarted()).toBeTruthy();
             expect(tec.isExecutionFinished()).toBeTruthy();
+            expect(tec.duration).toEqual(expect.any(Number));
             expect(tec.testSuites).toEqual(arrayContaining([
                 validContextEntity({id: 'S001'}), // S001
                 validContextEntity({ // S002
@@ -91,7 +95,13 @@ describe('TestExectionContext', () => {
                             id: 'S002C001',
                             testSteps: arrayContaining([
                                 validContextEntity({
-                                    id: 'late added'
+                                    id: 'late added',
+                                    testActions: arrayContaining([
+                                        validContextEntity({
+                                            kind: 'action',
+                                            id: 'Action'
+                                        })
+                                    ])
                                 })
                             ])
                         }), 
@@ -104,7 +114,7 @@ describe('TestExectionContext', () => {
                     ])
                 }),
                 validContextEntity()
-            ]))
+            ]))            
         })
 
 
