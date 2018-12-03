@@ -1,7 +1,20 @@
 language: node_js
 node_js:
   - 10
+
+cache: npm
+
+stages:
+  - compile
+  - test
+  - deploy-docs
+
 before_install:
   - npm i -g lerna gh-pages
-install:
-  - npm i
+
+jobs:
+  include:
+  - stage: compile
+    script: npm run build
+  - stage:
+    script: npm test
