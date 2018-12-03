@@ -1,20 +1,7 @@
 language: node_js
 node_js:
   - 10
-  - 9
-  - 8
 before_install:
   - npm i -g lerna gh-pages
 install:
   - lerna bootstrap --progress --no-ci --hoist
-jobs:
-  include:
-    - stage: test
-      script: npm run build
-      script: npm run test
-    - stage: build
-      script: npm run build
-    - stage: docs
-      script: lerna run typedoc
-      script: gh-pages -d docs
-
