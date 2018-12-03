@@ -10,8 +10,8 @@ type FsLayout = { [name: string]: string | FsLayout | InMemoryFile };
 
 let layout: FsLayout = {};
 
-export function mockFsLayout(laoyut: FsLayout) {
-    layout = layout;
+export function mockFsLayout(_layout: FsLayout) {
+    layout = _layout;
 }
 
 
