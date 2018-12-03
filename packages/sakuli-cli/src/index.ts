@@ -1,1 +1,2 @@
-export interface Dummy {}
+#!/usr/bin/env node
+
