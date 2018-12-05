@@ -1,0 +1,27 @@
+{
+  "name": "integration-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Integration tests for Sakuli",
+  "author": "Tim Keiner <keiner.tim@gmail.com>",
+  "homepage": "https://github.com/sakuli/sakuli#readme",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakuli/sakuli.git"
+  },
+  "scripts": {
+    "test": "sakuli run legacy-suite"
+  },
+  "dependencies": {
+    "@sakuli/cli": "^1.0.0",
+    "@sakuli/legacy": "^1.0.0",
+    "chromedriver": "^2.44.1"
+  },
+  "bugs": {
+    "url": "https://github.com/sakuli/sakuli/issues"
+  },
+  "sakuli": {
+    "presetProvider": ["@sakuli/legacy"]
+  }
+}

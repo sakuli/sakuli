@@ -1,5 +1,5 @@
 import { ProjectLoader } from "./loader/loader.interface";
-import { SakuliRunOptions } from "./sakuli-run-options.interfac";
+import { SakuliRunOptions } from "./sakuli-run-options.interface";
 import { SakuliRunner } from "./runner";
 import { SakuliPresetProvider } from "./sakuli-preset-provider.interface";
 import { SakuliPresetRegistry } from "./sakuli-preset-registry.class";
@@ -9,6 +9,7 @@ import { SakuliExecutionContextProvider, isSakuliExecutionContext } from "./runn
 import { TestExecutionContext } from "./runner/test-execution-context/test-execution-context.class";
 import { inspect } from "util";
 import { Forwarder } from "./forwarder/forwarder.interface";
+import {CommandModule} from "yargs";
 
 export class Sakuli {
 
@@ -45,6 +46,10 @@ export class Sakuli {
         ];
     }
 
+    getCommandModules(): CommandModule[] {
+        return this.presetRegistry.commandModules.map(cmp => cmp(this));
+    }
+
     async run(_opts: string | SakuliRunOptions) {
         const opts = typeof _opts === 'string' ? { path: _opts } : _opts;
         const projects = await Promise.all(
@@ -54,13 +59,14 @@ export class Sakuli {
             projects.find(p => p != null),
             Error(`Non of the following loaders could create project from ${opts.path}`)
         )
-
+        console.log(this.contextProviders);
         const runner = new SakuliRunner(
             this.contextProviders
         )
 
         const ctxAfterExecution = runner.execute(project);
         if(isSakuliExecutionContext(ctxAfterExecution)) {
+
             this.forwarder.forEach(f => {
                 f.forward(ctxAfterExecution.sakuliContext, project);
             })

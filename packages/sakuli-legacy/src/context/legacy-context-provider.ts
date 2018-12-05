@@ -1,6 +1,6 @@
 import { ContextProvider } from "@sakuli/core/dist";
 import { LegacyProject } from "../loader/legacy-project.class";
-import webdriver, { Capabilities, Builder } from 'selenium-webdriver';
+import webdriver, { Capabilities} from 'selenium-webdriver';
 import {throwIfAbsent, Maybe, ifPresent} from "@sakuli/commons";
 import {TestCase} from "./common/test-case.class";
 import {Application} from "./common/application.class";
@@ -15,7 +15,10 @@ export class LegacyContextProvider implements ContextProvider {
         'edge': () => Capabilities.edge(),
         'safari': () => Capabilities.safari(),
         'ie': () => Capabilities.ie(),
-    } 
+        'phantomjs': () => Capabilities.phantomjs(),
+        'htmlunit': () => Capabilities.htmlunit(),
+        'htmlunitwithjs': () => Capabilities.htmlunitwithjs(),
+    };
     driver: Maybe<webdriver.ThenableWebDriver> = null;
 
     constructor(
@@ -26,6 +29,7 @@ export class LegacyContextProvider implements ContextProvider {
         const browser: keyof webdriver.Capabilities = <any>project.properties.testsuiteBrowser;
         const caps = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         this.driver = this.builder.withCapabilities(caps)
+            .forBrowser(browser)
             .build();
     }
 

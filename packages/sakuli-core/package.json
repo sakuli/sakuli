@@ -2,7 +2,7 @@
   "name": "@sakuli/core",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "typings": "dist",
   "scripts": {
     "test": "jest",
@@ -19,6 +19,7 @@
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^10.12.1",
     "@types/properties-reader": "0.0.1",
+    "@types/yargs": "^12.0.1",
     "jest": "^23.6.0",
     "mock-fs": "^4.7.0",
     "ts-jest": "^23.10.4",

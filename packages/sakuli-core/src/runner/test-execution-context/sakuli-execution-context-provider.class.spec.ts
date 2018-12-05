@@ -23,12 +23,20 @@ describe('SakuliexecutionContextprovider', () => {
             ctxProvider.getContext();
             ctxProvider.tearDown();
         }).not.toThrow()
-    })
+    });
+
+    it('should create a context after tearup', () => {
+        const ctxProvider = new SakuliExecutionContextProvider();
+        ctxProvider.tearUp({} as any);
+        expect(ctxProvider.getContext()).toEqual(expect.objectContaining({
+            sakuliContext: expect.anything()
+        }))
+    });
 
     it('should start execution in TestExecutionContext', () => {
         const ctx = new TestExecutionContext();
-        const startExecutionMock = spyOn(ctx, "startExecution")
-        const endExecutionMock = spyOn(ctx, "endExecution")
+        const startExecutionMock = spyOn(ctx, "startExecution");
+        const endExecutionMock = spyOn(ctx, "endExecution");
         const mockCreator = jest.fn(() => ctx);
         const ctxProvider = new SakuliExecutionContextProvider(mockCreator);
         const testProject = {} as any; 

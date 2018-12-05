@@ -70,10 +70,10 @@ describe('migrateV1Code', () => {
             } catch(e) {
                 _div('huhu')
             }
-        `)
+        `);
         expect(v2Code).toContain('await _link');
         expect(v2Code).toContain('await _div');
-    })
+    });
 
     it('should migrate within loops', () => {
         const v2Code = migrateV1Code(stripIndent`
