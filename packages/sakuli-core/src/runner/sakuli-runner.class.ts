@@ -13,7 +13,7 @@ export class SakuliRunner {
     ) { }
 
     /**
-     * Tears up all context providers, merges theire results of getContext and pass this result to the testFile Executor
+     * Tears up all context providers, merges their results of getContext and pass this result to the testFile Executor
      * Tears down all service providers after execution of each testFile
      * 
      * @param project The Project Structure found by a Project loader
@@ -25,7 +25,7 @@ export class SakuliRunner {
         const results = project.testFiles.reduce((ctx, testFile) => {
             const testFileContent = readFileSync(join(project.rootDir, testFile.path));
             return this.testFileExecutor.execute(testFileContent.toString(), ctx)
-        }, context)
+        }, context);
         this.contextProvider.forEach(cp => cp.tearDown());
         return results;
     }
