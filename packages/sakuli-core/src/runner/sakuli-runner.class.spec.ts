@@ -15,17 +15,17 @@ describe('SakuliRunner', () => {
         tearUp: jest.fn(),
         tearDown: jest.fn(),
         getContext: jest.fn()
-    })
+    });
 
     const createScriptexecutorMock = (): jest.Mocked<TestScriptExecutor> => ({
         execute: jest.fn((_, ctx) => ({ ...ctx }))
-    })
+    });
 
     describe('basic execution flow', () => {
         let sakuliRunner: SakuliRunner;
         let ctxProvider1: jest.Mocked<ContextProvider>;
         let ctxProvider2: jest.Mocked<ContextProvider>;
-        let scriptExecutor: jest.Mocked<TestScriptExecutor>
+        let scriptExecutor: jest.Mocked<TestScriptExecutor>;
         const projectWithThreeTestFiles = {
             rootDir: 'somedir',
             testFiles: [
@@ -33,7 +33,7 @@ describe('SakuliRunner', () => {
                 { path: 'root/test2.js' },
                 { path: 'root/test3.js' }
             ]
-        }
+        };
         beforeEach(() => {
             ctxProvider1 = createContextProviderMock();
             ctxProvider2 = createContextProviderMock();
@@ -52,14 +52,14 @@ describe('SakuliRunner', () => {
                     }
                 }
             })
-        })
+        });
 
         it('should tearUp all providers for each test', () => {
-            sakuliRunner.execute(projectWithThreeTestFiles)
-            expect(ctxProvider1.tearUp).toHaveBeenCalledTimes(1)
-            expect(ctxProvider1.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles)
+            sakuliRunner.execute(projectWithThreeTestFiles);
+            expect(ctxProvider1.tearUp).toHaveBeenCalledTimes(1);
+            expect(ctxProvider1.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles);
 
-            expect(ctxProvider2.tearUp).toHaveBeenCalledTimes(1)
+            expect(ctxProvider2.tearUp).toHaveBeenCalledTimes(1);
             expect(ctxProvider2.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles)
         });
 
@@ -68,32 +68,32 @@ describe('SakuliRunner', () => {
 
             expect(ctxProvider1.tearDown).toHaveBeenCalledTimes(1);
             expect(ctxProvider2.tearDown).toHaveBeenCalledTimes(1);
-        })
+        });
 
         it('should execute with a merged context object from all contextproviders', () => {
-            ctxProvider1.getContext.mockReturnValue({ ctx1: 'ctx1', common: 'ignore' })
-            ctxProvider2.getContext.mockReturnValue({ ctx2: 'ctx2', common: 'overridden' })
-            sakuliRunner.execute(projectWithThreeTestFiles)
+            ctxProvider1.getContext.mockReturnValue({ ctx1: 'ctx1', common: 'ignore' });
+            ctxProvider2.getContext.mockReturnValue({ ctx2: 'ctx2', common: 'overridden' });
+            sakuliRunner.execute(projectWithThreeTestFiles);
             const matchContext = () => expect.objectContaining({
                 ctx1: 'ctx1',
                 ctx2: 'ctx2',
                 common: 'overridden'
-            })
+            });
             expect(scriptExecutor.execute).toHaveBeenNthCalledWith(1, '// test 1', expect.anything());
             expect(scriptExecutor.execute).toHaveBeenNthCalledWith(2, '// test 2', expect.anything());
             expect(scriptExecutor.execute).toHaveBeenNthCalledWith(3, '// test 3', expect.anything());
-        })
+        });
 
         it('should get all proceed contexts from execute', () => {
-            ctxProvider1.getContext.mockReturnValue({ ctx1: 'ctx1', common: 'ignore' })
-            ctxProvider2.getContext.mockReturnValue({ ctx2: 'ctx2', common: 'overridden' })
-            const result = sakuliRunner.execute(projectWithThreeTestFiles)
+            ctxProvider1.getContext.mockReturnValue({ ctx1: 'ctx1', common: 'ignore' });
+            ctxProvider2.getContext.mockReturnValue({ ctx2: 'ctx2', common: 'overridden' });
+            const result = sakuliRunner.execute(projectWithThreeTestFiles);
             expect(result).toEqual(expect.objectContaining({
                 common: 'overridden',
                 ctx1: 'ctx1',
                 ctx2: 'ctx2'
             }));
-        })
+        });
 
         afterEach(() => {
             mockFs.restore()
