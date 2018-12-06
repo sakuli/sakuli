@@ -10,7 +10,7 @@ export function migrateV1Code(code: string): string {
         range: true,
         loc: true
     });
-    console.log(inspect(ast, true, null, true));
+    //console.log(inspect(ast, true, null, true));
     // yes this is really sideeffectish :/
     const changeLog: string[] = [];
     function writeAsyncChangeLog(node: any) {

@@ -20,6 +20,7 @@
     "@types/node": "^10.12.1",
     "@types/properties-reader": "0.0.1",
     "@types/yargs": "^12.0.1",
+    "@types/common-tags": "^1.4.0",
     "jest": "^23.6.0",
     "mock-fs": "^4.7.0",
     "ts-jest": "^23.10.4",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "@sakuli/commons": "1.0.0",
+    "common-tags": "^1.8.0",
     "class-validator": "^0.9.1",
     "date-fns": "^1.29.0",
     "properties-reader": "0.0.16",

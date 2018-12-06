@@ -21,6 +21,6 @@ jobs:
   - stage: compile
     script: npm run build
   - stage: test
-    script: npm run build && npm test && cat coverage/lcov.info | npx coveralls
+    script: npm run build && npm test -- --coverage --coverageReporters=text-lcov | npx coveralls
   - stage: analyse
     script: sonar-scanner
