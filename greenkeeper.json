@@ -1,0 +1,13 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "package.json",
+        "packages/sakuli-cli/package.json",
+        "packages/sakuli-commons/package.json",
+        "packages/sakuli-core/package.json",
+        "packages/sakuli-legacy/package.json"
+      ]
+    }
+  }
+}

@@ -2,7 +2,7 @@ __Sakuli2 is still under development and therefore not published or considered f
 
 # Sakuli2
 
-[![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=master)](https://travis-ci.com/sakuli/sakuli)
+[![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=master)](https://travis-ci.com/sakuli/sakuli) [![Greenkeeper badge](https://badges.greenkeeper.io/sakuli/sakuli.svg)](https://greenkeeper.io/)
 
 ## Why Sakuli 2?
 
