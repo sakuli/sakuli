@@ -13,7 +13,7 @@ In the past we encountered a lot of issues with the architecture of Sakuli. But 
 development of Sahi and its deep integration into Sakuli was one of the main reasons to rethink our technology stack.
 
 So we decide to create a brandnew platform which allows users to test and monitor their systems and developers to extend 
-the platform to there own needs.
+the platform to their own needs.
 
 ## What is the new Stack of Sakuli2?
 
