@@ -1,20 +1,21 @@
-import { TestExecutionContext } from "@sakuli/core";
+import {Sakuli, TestExecutionContext} from "@sakuli/core";
 
-declare const sakuliContext: TestExecutionContext;
 
 export class TestCase {
+    private readonly execution: TestExecutionContext;
     constructor(
         readonly caseId?: string,
         readonly warningTime: number = 0,
         readonly criticalTime: number = 0,
-        readonly imagePaths: string[] = []
+        private _imagePaths: string[] = []
     ) {
-        sakuliContext.startTestCase({id: caseId});
-        sakuliContext.startTestStep({});
+        this.execution = Sakuli().testExecutionContext;
+        this.execution.startTestCase({id: caseId});
+        this.execution.startTestStep({});
     }
 
     addImagePaths(...paths: string[]) {
-        this.imagePaths.concat(paths);
+        this._imagePaths = this._imagePaths.concat(paths);
     }
 
     endOfStep(
@@ -23,26 +24,28 @@ export class TestCase {
         critical: number = 0,
         forward: boolean = false
     ) {
-        sakuliContext.updateCurrentTestStep({
+        this.execution.updateCurrentTestStep({
             id: stepName,
             warningTime: warning,
             criticalTime: critical
         });
-        sakuliContext.endTestStep();
-        sakuliContext.startTestStep();
+        this.execution.endTestStep();
+        this.execution.startTestStep();
     }
 
     handleException<E extends Error>(e: E) {
-
+        console.warn('Error occurred: ', e);
+        this.execution.updateCurrentTestStep({error: e});
     }
 
     getLastUrl(): string {
-        throw Error('Not Implemented')
+        throw Error('Not Implemented');
+
     }
 
     saveResult() {
-        sakuliContext.endTestStep();
-        sakuliContext.endTestCase();
+        this.execution.endTestStep();
+        this.execution.endTestCase();
     }
 
     getID() {

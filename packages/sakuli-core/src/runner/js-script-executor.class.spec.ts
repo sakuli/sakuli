@@ -1,7 +1,8 @@
 import {JsScriptExecutor} from "./js-script-executor.class";
 import {stripIndent} from "common-tags";
 
-declare function getGreeting():void;
+declare function getGreeting(): void;
+
 describe("JsScriptExecutor", () => {
 
     it('should execute simple js code', () => {
@@ -47,27 +48,23 @@ describe("JsScriptExecutor", () => {
         expect(_ctxX2.x).toBe(3);
     })
 
-
-    xit('should make different contexts available in test', () => {
-        const executor = new JsScriptExecutor({});
-        const context1 = {
-
-        };
-        const context2 = {
-            getGreeting() {
-                return 'Hello'
-            },
-            sayHello(this: any) {
-                return getGreeting() + ' ' +  'Sakuli'
-            },
-            hello: ''
+    xit('should ', () => {
+        const executor = new JsScriptExecutor();
+        const inCtx = jest.fn();
+        const context = {
+            console: console,
+            run() {
+                setTimeout(() => {
+                    inCtx();
+                }, 500);
+            }
         };
 
         const ctx = executor.execute(stripIndent`
-            //hello = sayHello();
-            console.log(Array)
-        `, Object.assign({...context1, ...context2}));
-        expect(ctx.greetWithName).toEqual('Hello Sakuli')
+            console.log(process)
+            run()
+        `, context);
+        expect(inCtx).toHaveBeenCalledTimes(1);
     });
 
 });

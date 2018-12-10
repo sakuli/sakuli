@@ -4,6 +4,7 @@ import { TestScriptExecutor } from "./test-script-executor.interface";
 import { readFileSync } from "fs";
 import { JsScriptExecutor } from "./js-script-executor.class";
 import { join } from "path";
+import {Sakuli} from "../sakuli.class";
 
 export class SakuliRunner {
 
@@ -19,13 +20,19 @@ export class SakuliRunner {
      * @param project The Project Structure found by a Project loader
      * @returns a merged object from all provided contexts after their execution
      */
-    execute(project: Project): any {
+    async execute(project: Project): Promise<any> {
+        Sakuli().testExecutionContext.startExecution();
         this.contextProvider.forEach(cp => cp.tearUp(project));
         const context = this.createContext();
         const results = project.testFiles.reduce((ctx, testFile) => {
             const testFileContent = readFileSync(join(project.rootDir, testFile.path));
-            return this.testFileExecutor.execute(testFileContent.toString(), ctx)
+            Sakuli().testExecutionContext.startTestSuite({id: testFile.path});
+            const resultCtx = this.testFileExecutor.execute(testFileContent.toString(), ctx);
+            Sakuli().testExecutionContext.endTestSuite();
+            return resultCtx;
         }, context);
+        Sakuli().testExecutionContext.endExecution();
+        await Sakuli().testExecutionContext.allEntitiesFinished;
         this.contextProvider.forEach(cp => cp.tearDown());
         return results;
     }

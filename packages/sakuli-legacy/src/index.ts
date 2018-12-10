@@ -1,6 +1,6 @@
 import {SakuliPresetProvider} from "@sakuli/core/dist/sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "@sakuli/core/dist/sakuli-preset-registry.class";
-import {LegacyContextProvider} from "./context/legacy-context-provider";
+import {LegacyContextProvider} from "./context/legacy-context-provider.class";
 import {Builder} from "selenium-webdriver";
 import {LegacyLoader} from "./loader/legacy-loader.class";
 import {migrationCommandProvider} from "./migration/migration-command-provider.function";
