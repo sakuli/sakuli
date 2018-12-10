@@ -1,24 +1,33 @@
-import { ProjectLoader } from "./loader/loader.interface";
-import { SakuliRunOptions } from "./sakuli-run-options.interface";
-import { SakuliRunner } from "./runner";
-import { SakuliPresetProvider } from "./sakuli-preset-provider.interface";
-import { SakuliPresetRegistry } from "./sakuli-preset-registry.class";
-import { Maybe, ifPresent, throwIfAbsent } from "@sakuli/commons";
-import { Project } from "./loader";
-import { SakuliExecutionContextProvider, isSakuliExecutionContext } from "./runner/test-execution-context/sakuli-execution-context-provider.class";
-import { TestExecutionContext } from "./runner/test-execution-context/test-execution-context.class";
-import { inspect } from "util";
-import { Forwarder } from "./forwarder/forwarder.interface";
+import {SakuliRunOptions} from "./sakuli-run-options.interface";
+import {SakuliRunner} from "./runner";
+import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
+import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
+import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {Project} from "./loader";
+import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
+import {inspect} from "util";
+import {Forwarder} from "./forwarder";
 import {CommandModule} from "yargs";
 
-export class Sakuli {
+let sakuliInstance: Maybe<SakuliClass>;
+
+export function Sakuli(presetProvider: SakuliPresetProvider[] = []): SakuliInstance {
+    sakuliInstance = ifPresent(sakuliInstance,
+        i => i,
+        () => new SakuliClass(presetProvider)
+    );
+    return sakuliInstance;
+}
+
+export class SakuliClass {
 
     private presetRegistry = new SakuliPresetRegistry();
+    readonly testExecutionContext = new TestExecutionContext();
 
     constructor(
         readonly presetProvider: SakuliPresetProvider[] = []
     ) {
-        presetProvider.forEach(provider => {
+        this.presetProvider.forEach(provider => {
             provider(this.presetRegistry)
         })
     }
@@ -51,29 +60,23 @@ export class Sakuli {
     }
 
     async run(_opts: string | SakuliRunOptions) {
-        const opts = typeof _opts === 'string' ? { path: _opts } : _opts;
+        const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         const projects = await Promise.all(
             this.loader.map(loader => loader.load(opts.path))
         );
         const project: Project = throwIfAbsent(
             projects.find(p => p != null),
             Error(`Non of the following loaders could create project from ${opts.path}`)
-        )
-        console.log(this.contextProviders);
+        );
+
         const runner = new SakuliRunner(
             this.contextProviders
-        )
+        );
+        await runner.execute(project);
 
-        const ctxAfterExecution = runner.execute(project);
-        if(isSakuliExecutionContext(ctxAfterExecution)) {
-
-            this.forwarder.forEach(f => {
-                f.forward(ctxAfterExecution.sakuliContext, project);
-            })
-        }
-
+        await Promise.all(this.forwarder.map(f => f.forward(this.testExecutionContext, project)));
     }
 
-
-
 }
+
+export type SakuliInstance = SakuliClass;

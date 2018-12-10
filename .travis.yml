@@ -13,7 +13,8 @@ stages:
 - compile
 - test
 - analyse
-- deploy-docs
+- name: deploy-docs
+  if: branch = master
 before_install:
 - npm i -g lerna gh-pages
 jobs:
@@ -24,3 +25,5 @@ jobs:
     script: npm run build && npm test -- --coverage --coverageReporters=text-lcov | npx coveralls
   - stage: analyse
     script: sonar-scanner
+  - stage: deploy-docs
+    script: lerna run typedoc && gh-pages -d docs

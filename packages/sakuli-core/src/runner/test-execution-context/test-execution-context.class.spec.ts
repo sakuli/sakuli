@@ -1,30 +1,45 @@
-import { TestExecutionContext } from "./test-execution-context.class";
-import { TestSuiteContext } from "./test-suite-context.class";
-import { TestCaseContext } from "./test-case-context.class";
-import { TextDecoder, inspect } from "util";
+import {TestExecutionContext} from "./test-execution-context.class";
+import {TestSuiteContext} from "./test-suite-context.class";
 
 describe('TestExectionContext', () => {
 
-    let tec: TestExecutionContext;   
+    let tec: TestExecutionContext;
     beforeEach(() => tec = new TestExecutionContext());
 
     describe('positive', () => {
 
         beforeEach(() => tec.startExecution());
 
-        const { objectContaining, any, arrayContaining } = expect;
+        const {objectContaining, any, arrayContaining} = expect;
         const validContextEntity = (moreMatcher: object = {}) => objectContaining({
             id: any(String),
             startDate: any(Date),
             endDate: any(Date),
             ...moreMatcher
-        })
+        });
+
+        it('should resolve async when all entities are done', async done => {
+            tec.startTestSuite();
+            tec.startTestCase();
+            tec.startTestStep();
+            tec.endTestStep();
+            tec.endTestCase();
+            tec.endTestSuite();
+            tec.endExecution();
+            try {
+                await tec.allEntitiesFinished;
+                done();
+            } catch (e) {
+                done.fail();
+            }
+
+        });
 
         it('should add multiple testsuitecontexts', () => {
-            tec.startTestSuite({ id: 'First-Suite' });
+            tec.startTestSuite({id: 'First-Suite'});
             tec.endTestSuite();
-            tec.startTestSuite({ id: 'Second-Suite' });
-            tec.updatCurrentTestSuite({
+            tec.startTestSuite({id: 'Second-Suite'});
+            tec.updateCurrentTestSuite({
                 warningTime: 40,
                 criticalTime: 50
             })
@@ -44,14 +59,14 @@ describe('TestExectionContext', () => {
         })
 
         it('should add testcases within testcases', () => {
-            tec.startTestSuite({ id: 'First-Suite' });
-            tec.startTestCase({ id: 'First-Case' })
+            tec.startTestSuite({id: 'First-Suite'});
+            tec.startTestCase({id: 'First-Case'})
             tec.endTestCase();
             tec.endTestSuite();
-            tec.startTestSuite({ id: 'Second-Suite' });
-            tec.startTestCase({ id: 'Second-Case' })
+            tec.startTestSuite({id: 'Second-Suite'});
+            tec.startTestCase({id: 'Second-Case'})
             tec.endTestCase();
-            tec.startTestCase({ id: 'Third-Case' })
+            tec.startTestCase({id: 'Third-Case'})
             tec.endTestCase();
             tec.endTestSuite();
 
@@ -62,24 +77,24 @@ describe('TestExectionContext', () => {
 
         it('complex', () => {
 
-            tec.startTestSuite({ id: 'S001' })
+            tec.startTestSuite({id: 'S001'})
             tec.endTestSuite()
-            tec.startTestSuite({ id: 'S002' })
-            tec.startTestCase({ id: 'S002C001' })
+            tec.startTestSuite({id: 'S002'})
+            tec.startTestCase({id: 'S002C001'})
             tec.startTestStep();
-            tec.updateCurrentTestStep({ id: 'late added' });
-            tec.startTestAction({});  
-            tec.updateCurrentTestAction({id: 'Action'})          
-            tec.endTestAction();            
+            tec.updateCurrentTestStep({id: 'late added'});
+            tec.startTestAction({});
+            tec.updateCurrentTestAction({id: 'Action'})
+            tec.endTestAction();
             tec.endTestStep();
             tec.endTestCase()
-            tec.startTestCase({ id: 'S002C002' })
+            tec.startTestCase({id: 'S002C002'})
             tec.endTestCase()
-            tec.startTestCase({ id: 'S002C003' })
+            tec.startTestCase({id: 'S002C003'})
             tec.endTestCase()
             tec.endTestSuite()
-            tec.startTestSuite({ id: 'S003' })
-            tec.startTestCase({ id: 'S003C001' })
+            tec.startTestSuite({id: 'S003'})
+            tec.startTestCase({id: 'S003C001'})
             tec.endTestCase()
             tec.endTestSuite()
             tec.endExecution()
@@ -104,7 +119,7 @@ describe('TestExectionContext', () => {
                                     ])
                                 })
                             ])
-                        }), 
+                        }),
                         validContextEntity({
                             id: 'S002C002'
                         }),
@@ -114,7 +129,7 @@ describe('TestExectionContext', () => {
                     ])
                 }),
                 validContextEntity()
-            ]))            
+            ]))
         })
 
 

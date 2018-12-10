@@ -1,6 +1,5 @@
 import { TestScriptExecutor } from "./test-script-executor.interface";
 import { createContext, Script, Context, RunningScriptOptions } from "vm";
-import { TestFile } from "../loader/model/test-file.interface";
 
 export class JsScriptExecutor implements TestScriptExecutor {
 

@@ -4,8 +4,3 @@
 
 ## Usage
 
-```
-const integrationTests = require('integration-tests');
-
-// TODO: DEMONSTRATE API
-```

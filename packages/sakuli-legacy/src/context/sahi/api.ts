@@ -1,5 +1,7 @@
-import {ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {types} from "util";
+import {stripIndents} from "common-tags";
+import {Maybe} from "@sakuli/commons";
 
 
 type SahiElement = WebElement;
@@ -10,7 +12,7 @@ interface AccessorIdentifierAttributesWithSahiIndex {
 }
 
 function isAccessorIdentifierAttributesWithSahiIndex(o: any): o is AccessorIdentifierAttributesWithSahiIndex {
-    return typeof o === 'object' && 'sahiIndex' in  o;
+    return typeof o === 'object' && 'sahiIndex' in o;
 }
 
 interface AccessorIdentifierAttributesWithClassName {
@@ -19,19 +21,55 @@ interface AccessorIdentifierAttributesWithClassName {
 
 export type AccessorIdentifierAttributes = Partial<AccessorIdentifierAttributesWithClassName & AccessorIdentifierAttributesWithSahiIndex>
 
-type SahiRelation = any;
-type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
-type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElement;
+export type SahiRelation = any;
+export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
+export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => Promise<Maybe<SahiElement>>;
 
 
 export class SahiApi {
     constructor(
         readonly webDriver: ThenableWebDriver
-    ) {
+    ) {}
+
+    _navigateTo = async (url: string, forceReload: boolean = false): Promise<void> => {
+        await this.webDriver.get(url);
+        if (forceReload) {
+            await this.webDriver.navigate().refresh()
+        }
+    };
+
+    _wait = async (millis: number): Promise<void> => {
+        return await this.webDriver.wait(() => new Promise<void>((res, rej) => {
+            setTimeout(res, millis);
+        }));
+    };
+
+    _highlight = async (element: SahiElement, timeoutMs: number = 2000): Promise<void> => {
+        this.webDriver.executeScript(stripIndents`
+            const element = arguments[0];
+            const doneCallback = arguments[arguments.length -1];
+                        
+            const rects = element.getClientRects();            
+            const rect = rects[0];
+            const he = document.createElement('div');
+        
+            he.style.border = '1px solid red';
+            he.style.position = 'absolute';
+            he.style.top = \`\${rect.top}px\`;
+            he.style.left = \`\${rect.left}px\`;
+            he.style.width = \`\${rect.right - rect.left}px\`;
+            he.style.height = \'\${rect.bottom - rect.top}px\`;                
+            document.body.appendChild(he);
+        
+            return windSetTimeout(() => {
+                document.removeChild(he);
+                doneCallback();
+            }, ${timeoutMs})
+        `)
     }
 
 
-    private getElementBySahiIndex(elements:WebElement[], identifier: AccessorIdentifierAttributesWithSahiIndex) {
+    private getElementBySahiIndex(elements: WebElement[], identifier: AccessorIdentifierAttributesWithSahiIndex) {
         return elements[identifier.sahiIndex];
     }
 
@@ -44,18 +82,18 @@ export class SahiApi {
         }
         if (typeof identifier === 'string') {
             const eAndText: [WebElement, string][] = await Promise.all(elements
-                .map(e => e.getText().then((text):[WebElement, string] => [e, text]))
+                .map(e => e.getText().then((text): [WebElement, string] => [e, text]))
             );
             const e = eAndText.find(([e, text]) => text.includes(identifier));
             return e ? Promise.resolve(e[0]) : Promise.resolve(undefined);
         }
-        if(types.isRegExp(identifier)) {
+        if (types.isRegExp(identifier)) {
             const eAndText: [WebElement, string][] = await Promise.all(elements
-                .map(e => e.getText().then((text):[WebElement, string] => [e, text]))
+                .map(e => e.getText().then((text): [WebElement, string] => [e, text]))
             );
             const e = eAndText.find(([e, text]) => {
                 const match = text.match(identifier);
-                    return match ? match.length > 0 : false
+                return match ? match.length > 0 : false
             });
             return e ? Promise.resolve(e[0]) : Promise.resolve(undefined);
         }
@@ -148,8 +186,11 @@ export class SahiApi {
     _tableHeader: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         throw Error('Not yet implemented')
     };
-    _link: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _link: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('a')),
+            identifier
+        );
     };
     _image: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         throw Error('Not yet implemented')
@@ -412,7 +453,7 @@ export class SahiApi {
         throw Error('Not yet implemented')
     };
 
-    async _click(e: SahiElement, combo?: string): Promise<SahiElement> {
+    _click = async (e: SahiElement, combo?: string): Promise<SahiElement> => {
         await e.click();
         return e;
     };

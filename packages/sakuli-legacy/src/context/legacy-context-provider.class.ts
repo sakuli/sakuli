@@ -1,11 +1,12 @@
 import { ContextProvider } from "@sakuli/core/dist";
 import { LegacyProject } from "../loader/legacy-project.class";
-import webdriver, { Capabilities} from 'selenium-webdriver';
+import webdriver, {Capabilities, logging, ThenableWebDriver} from 'selenium-webdriver';
 import {throwIfAbsent, Maybe, ifPresent} from "@sakuli/commons";
 import {TestCase} from "./common/test-case.class";
 import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
 import {Environment} from "./common/environment.class";
+import {SahiApi} from "./sahi/api";
 
 export class LegacyContextProvider implements ContextProvider {
 
@@ -26,23 +27,36 @@ export class LegacyContextProvider implements ContextProvider {
     ) { }
 
     tearUp(project: LegacyProject): void {
-        const browser: keyof webdriver.Capabilities = <any>project.properties.testsuiteBrowser;
-        const caps = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
-        this.driver = this.builder.withCapabilities(caps)
+        const browser: keyof webdriver.Capabilities = <keyof webdriver.Capabilities>project.properties.testsuiteBrowser;
+        const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
+        const caps = capsProducer();
+        this.driver = this.builder
             .forBrowser(browser)
+            .withCapabilities(caps)
             .build();
     }
 
     tearDown(): void {
-        ifPresent(this.driver, driver => driver.quit());
+        ifPresent(this.driver, async driver => {
+            try {
+                await driver.quit()
+            } catch (e) {
+                console.warn(`Webdriver doesn't quit reliably`, e);
+            }
+        });
     }
 
     getContext() {
+        const sahi = new SahiApi(throwIfAbsent(this.driver,
+            Error('Driver could not be initialized before creating sahi-api-context'))
+        );
         return ({
             TestCase,
             Application,
             Key,
-            Environment
+            Environment,
+            console: console,
+            ...sahi
         })
     }
 

@@ -16,7 +16,9 @@
   "dependencies": {
     "@sakuli/cli": "^1.0.0",
     "@sakuli/legacy": "^1.0.0",
-    "chromedriver": "^2.44.1"
+    "chromedriver": "^2.44.1",
+    "geckodriver": "^1.14.1",
+    "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "bugs": {
     "url": "https://github.com/sakuli/sakuli/issues"

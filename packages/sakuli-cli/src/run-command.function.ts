@@ -1,7 +1,7 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, Sakuli, SakuliRunOptions} from "@sakuli/core";
+import {CommandModuleProvider, SakuliInstance, SakuliRunOptions} from "@sakuli/core";
 
-export const runCommand: CommandModuleProvider = (sakuli: Sakuli): CommandModule => {
+export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
     return ({
         command: 'run [path]',
         describe: 'Runs a Sakuli Suite',
@@ -15,4 +15,4 @@ export const runCommand: CommandModuleProvider = (sakuli: Sakuli): CommandModule
             await sakuli.run(runOptions);
         }
     })
-}
+};
