@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
+import * as figlet from "figlet";
+
 declare function require(id: string): any;
+
 require('yargonaut')
     .helpStyle('green')
     .errorsStyle('red.bold');
@@ -12,10 +15,21 @@ import {runCommand} from './run-command.function';
 
 import {loadPresets} from "./load-presets.function";
 import {cwd} from "process";
+import {cli} from "./cli-utils/command-line.class";
 
 (async () => {
     const options = await loadBootstrapOptions(cwd());
     const sakuli = await bootstrap(options, loadPresets);
+
+    cli()
+        .savePosition()
+        .write(chalk`{yellow ${figlet.textSync(`Sakuli`, {
+            horizontalLayout: "full"
+        })}}`)
+        .newLine()
+        .write(chalk`{gray ========================================}`)
+        .newLine()
+        .newLine();
 
     const yargsParser = yargs
         .scriptName('sakuli')
@@ -34,9 +48,7 @@ import {cwd} from "process";
             describe: `Program which will be executed after a suite run (can be added multiple times)`,
             type: "array"
         })
-        .demandCommand(1, 1, 'Sakuli expects exactly one command')
-//        .version()
-//        .help();
+        .demandCommand(1, 1, 'Sakuli expects exactly one command');
 
     sakuli.getCommandModules().forEach(cmp => {
         yargsParser.command(cmp)
