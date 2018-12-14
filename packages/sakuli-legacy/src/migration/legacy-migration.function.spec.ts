@@ -8,7 +8,7 @@ describe('migrateV1Code', () => {
             alert('Hello World');
         `);
         expect(v2Code.trim().startsWith('(async () => {')).toBe(true);
-        expect(v2Code.trim().endsWith('})();')).toBe(true);
+        expect(v2Code.trim().endsWith('})().then(done);')).toBe(true);
     });
 
     it('should migrate simple sahi functions', () => {

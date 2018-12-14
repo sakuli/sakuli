@@ -72,7 +72,8 @@ export class CommandLine {
 
 
     clearScreen() {
-        this.stream.write(`\u001b[2J`);
+        this.stream.write('\x1b[2J');
+        this.stream.write('\x1b[0f');
         return this;
     }
 

@@ -20,7 +20,6 @@ import {cli} from "./cli-utils/command-line.class";
 (async () => {
     const options = await loadBootstrapOptions(cwd());
     const sakuli = await bootstrap(options, loadPresets);
-
     cli()
         .savePosition()
         .write(chalk`{yellow ${figlet.textSync(`Sakuli`, {

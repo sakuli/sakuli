@@ -41,7 +41,7 @@ export class SakuliClass {
             ...this.presetRegistry.forwarders,
             <Forwarder>{
                 forward(ctx: TestExecutionContext, p: Project) {
-                    console.log(inspect(ctx));
+                    console.log(inspect(ctx.toJson(), true, null, true));
                     return Promise.resolve();
                 }
             }

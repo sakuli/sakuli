@@ -1,12 +1,12 @@
-jest.mock('fs');
+//jest.mock('fs');
 
 import {Sakuli, SakuliClass} from "./sakuli.class";
 import {SakuliExecutionContextProvider} from "./runner/test-execution-context";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
 import {Project} from "./loader";
 import {stripIndent} from "common-tags";
-import {MockFsLayout} from "@sakuli/commons";
-import {readFileSync} from "fs";
+import mockFs from 'mock-fs';
+
 
 describe('Sakuli', () => {
 
@@ -47,17 +47,16 @@ describe('Sakuli', () => {
         });
 
         it('should execute correctly', async done => {
-            const fsLayout = new MockFsLayout({
+            mockFs({
                 'project-dir': {
                     'test1.js': stripIndent`
                     Sakuli().testExecutionContext.startTestSuite({id: 'My Suite'});                    
                     Sakuli().testExecutionContext.endTestSuite();
+                    done();
                 `
                 }
             });
-            (<jest.Mock<typeof readFileSync>>readFileSync).mockImplementation((path: string) => {
-                return fsLayout.getFile(path);
-            });
+
             const sakuli = new SakuliClass([
                 (<any>jest.fn)((reg: SakuliPresetRegistry) => {
                     reg.registerProjectLoader({
@@ -73,7 +72,9 @@ describe('Sakuli', () => {
 
             await sakuli.run('project-dir');
             done();
-        })
+        });
 
+
+        afterEach(() => mockFs.restore())
     });
 });

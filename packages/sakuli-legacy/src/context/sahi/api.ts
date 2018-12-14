@@ -3,7 +3,6 @@ import {types} from "util";
 import {stripIndents} from "common-tags";
 import {Maybe} from "@sakuli/commons";
 
-
 type SahiElement = WebElement;
 type pr_i_AB = [number, number];
 
@@ -29,7 +28,8 @@ export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: Sa
 export class SahiApi {
     constructor(
         readonly webDriver: ThenableWebDriver
-    ) {}
+    ) {
+    }
 
     _navigateTo = async (url: string, forceReload: boolean = false): Promise<void> => {
         await this.webDriver.get(url);
@@ -39,34 +39,26 @@ export class SahiApi {
     };
 
     _wait = async (millis: number): Promise<void> => {
-        return await this.webDriver.wait(() => new Promise<void>((res, rej) => {
-            setTimeout(res, millis);
-        }));
+        return new Promise<void>((res, rej) => {
+            setTimeout(() => res(), millis);
+        });
     };
 
     _highlight = async (element: SahiElement, timeoutMs: number = 2000): Promise<void> => {
-        this.webDriver.executeScript(stripIndents`
-            const element = arguments[0];
-            const doneCallback = arguments[arguments.length -1];
-                        
-            const rects = element.getClientRects();            
-            const rect = rects[0];
-            const he = document.createElement('div');
-        
-            he.style.border = '1px solid red';
-            he.style.position = 'absolute';
-            he.style.top = \`\${rect.top}px\`;
-            he.style.left = \`\${rect.left}px\`;
-            he.style.width = \`\${rect.right - rect.left}px\`;
-            he.style.height = \'\${rect.bottom - rect.top}px\`;                
-            document.body.appendChild(he);
-        
-            return windSetTimeout(() => {
-                document.removeChild(he);
-                doneCallback();
-            }, ${timeoutMs})
-        `)
-    }
+        const oldBorder = await this.webDriver.executeScript(stripIndents`
+            const oldBorder = arguments[0].style.border;
+            arguments[0].style.border = '2px solid red'
+            return oldBorder;
+        `, element);
+        await new Promise<void>((res, rej) => {
+            setTimeout(res, timeoutMs);
+        });
+        await this.webDriver.executeScript(stripIndents`
+            const oldBorder = arguments[1];
+            arguments[0].style.border = oldBorder
+        `, element, oldBorder)
+
+    };
 
 
     private getElementBySahiIndex(elements: WebElement[], identifier: AccessorIdentifierAttributesWithSahiIndex) {
@@ -102,6 +94,7 @@ export class SahiApi {
     _password: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         throw Error('Not yet implemented')
     };
+
     _textbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         throw Error('Not yet implemented')
     };
@@ -189,7 +182,8 @@ export class SahiApi {
     _link: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
             await this.webDriver.findElements(By.css('a')),
-            identifier
+            identifier,
+            relations
         );
     };
     _image: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
