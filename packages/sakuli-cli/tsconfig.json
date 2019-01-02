@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "es2016",
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "jsxFactory": "h",
+    "jsx": "react"
   }
 }

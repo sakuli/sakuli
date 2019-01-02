@@ -3,7 +3,7 @@ import {ContextProvider} from "./context-provider.interface";
 import {TestScriptExecutor} from "./test-script-executor.interface";
 import {readFileSync} from "fs";
 import {JsScriptExecutor} from "./js-script-executor.class";
-import {join} from "path";
+import {join, resolve} from "path";
 import {Sakuli} from "../sakuli.class";
 import {ifPresent} from "@sakuli/commons";
 
@@ -33,7 +33,7 @@ export class SakuliRunner {
             Sakuli().testExecutionContext.startTestSuite({id: suiteId});
             try {
                 const executor = new JsScriptExecutor({
-                    filename: join(project.rootDir, testFile.path),
+                    filename: resolve(join(project.rootDir, testFile.path)),
                     waitUntilDone: true
                 });
                 const resultCtx = await executor.execute(testFileContent.toString(), context);

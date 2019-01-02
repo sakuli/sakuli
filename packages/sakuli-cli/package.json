@@ -20,10 +20,14 @@
     "@sakuli/legacy": "1.0.0",
     "chalk": "^2.4.1",
     "figlet": "^1.2.1",
+    "get-cursor-position": "^1.0.5",
+    "ink": "^0.5.1",
     "winston": "^3.1.0",
     "winston-transport": "^4.2.0",
     "yargonaut": "^1.1.4",
-    "yargs": "^12.0.5"
+    "yargs": "^12.0.5",
+    "youch": "^2.0.10",
+    "youch-terminal": "^1.0.0"
   },
   "devDependencies": {
     "@types/figlet": "^1.2.0",

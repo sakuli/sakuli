@@ -34,7 +34,6 @@ export class TestCase {
     }
 
     handleException<E extends Error>(e: E) {
-        console.warn('Error occurred: ', e);
         this.execution.updateCurrentTestCase({error: e});
     }
 

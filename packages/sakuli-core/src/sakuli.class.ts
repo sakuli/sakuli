@@ -8,6 +8,9 @@ import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/tes
 import {inspect} from "util";
 import {Forwarder} from "./forwarder";
 import {CommandModule} from "yargs";
+import * as winston from "winston";
+import {join} from "path";
+import {cwd} from "process";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -23,6 +26,12 @@ export class SakuliClass {
 
     private presetRegistry = new SakuliPresetRegistry();
     readonly testExecutionContext = new TestExecutionContext();
+    readonly logger = winston.createLogger({
+        format: winston.format.json(),
+        transports: [
+            new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
+        ]
+    });
 
     constructor(
         readonly presetProvider: SakuliPresetProvider[] = []

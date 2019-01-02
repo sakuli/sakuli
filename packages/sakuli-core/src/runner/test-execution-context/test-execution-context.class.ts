@@ -53,6 +53,27 @@ export class TestExecutionContext implements Measurable {
         this.emitChange();
     }
 
+    get entites() {
+        return [
+            ...this.testSuites,
+            ...this.testCases,
+            ...this.testSteps,
+            ...this.testActions
+        ]
+    }
+
+    get testCases() {
+        return this.testSuites.reduce((tc, ts)=> [...ts.testCases], [] as TestCaseContext[])
+    }
+
+    get testSteps() {
+        return this.testCases.reduce((ts, tc) => [...tc.testSteps], [] as TestStepContext[]);
+    }
+
+    get testActions() {
+        return this.testSteps.reduce((ta, ts) => [...ts.testActions], [] as TestActionContext[]);
+    }
+
     get duration() {
         if (this.isExecutionFinished()) {
             return getDuration(this);

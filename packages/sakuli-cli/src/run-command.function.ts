@@ -1,12 +1,15 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, Sakuli, SakuliInstance, SakuliRunOptions, TestExecutionContext} from "@sakuli/core";
-import {cli} from "./cli-utils/command-line.class";
-import {stripIndents} from "common-tags";
-import {renderArray} from "./render/render-array.function";
-import {renderTestEntity} from "./render/render-test-entity.function";
-import {EOL} from "os";
+import {CommandModuleProvider, Sakuli, SakuliInstance, SakuliRunOptions} from "@sakuli/core";
+import renderExecution from "./components";
+import {ifPresent, isPresent} from "@sakuli/commons";
+import Youch from "youch";
+import forTerminal from "youch-terminal";
+import chalk from "chalk";
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
+    function findError() {
+        return Sakuli().testExecutionContext.entites.find(e => isPresent(e.error));
+    }
     return ({
         command: 'run [path]',
         describe: 'Runs a Sakuli Suite',
@@ -15,24 +18,20 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 describe: 'path to Sakuli suite'
             }).demandOption('path');
         },
+
         async handler(runOptions: SakuliRunOptions) {
-            let tick = 0;
-
-            function updateView(tec: TestExecutionContext) {
-                cli().clearToBeginn().setPosition(0, 0)
-                    .write(stripIndents`
-                        Sakuli execution started at ${tec.startDate}
-                    ` + EOL + renderArray(tec.testSuites, ts => renderTestEntity(ts, tick))
-                    );
-            }
-
-            Sakuli().testExecutionContext.onChange(updateView);
-            const interval = setInterval(() => {
-                updateView(Sakuli().testExecutionContext);
-                tick++
-            }, 250);
+            const unmount = renderExecution();
             await sakuli.run(runOptions);
-            clearInterval(interval);
+            unmount();
+            ifPresent(findError(), errorEntity => {
+                ifPresent(errorEntity.error, async e => {
+                    const youch = (new Youch(e, {}));
+                    const errorJson = await youch.toJSON().then(forTerminal);
+                    console.log(chalk`Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}`)
+                    console.log(errorJson);
+                })
+            })
+
         }
     })
 };

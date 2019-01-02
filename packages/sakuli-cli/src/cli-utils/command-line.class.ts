@@ -105,6 +105,7 @@ export class CommandLine {
     }
 
     setPosition(n: number, m: number) {
+        console.log(n,m)
         this.stream.write(`\u001b[${n};${m}H`);
         return this;
     }
