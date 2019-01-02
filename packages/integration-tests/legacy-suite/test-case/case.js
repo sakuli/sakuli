@@ -1,19 +1,20 @@
 (async () => {
     const tc = new TestCase();
     try {
-
-        tc.endOfStep('Step 1');
-        tc.endOfStep('Step 2');
-        console.log('driver', await webDriver.getSession());
+        tc.endOfStep('Init');
+        await _wait(3000);
+        //throw Error('something went wrong :(');
         await _navigateTo('https://consol.github.io/sakuli/');
-        //await _wait(5000);
+        tc.endOfStep('Load Page and wait');
         const htmlLink = await _link('HTML');
         await _highlight(htmlLink);
         await _click(htmlLink);
+        tc.endOfStep('Open Documentation');
     }
     catch (e) {
+        await _wait(3000);
         tc.handleException(e)
     } finally {
         tc.saveResult();
     }
-})();
+})().then(done);

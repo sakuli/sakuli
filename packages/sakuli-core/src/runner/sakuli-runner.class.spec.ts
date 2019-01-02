@@ -11,7 +11,7 @@ describe('SakuliRunner', () => {
         getContext: jest.fn()
     });
 
-    const createScriptexecutorMock = (): jest.Mocked<TestScriptExecutor> => ({
+    const createScriptExecutorMock = (): jest.Mocked<TestScriptExecutor> => ({
         execute: jest.fn((_, ctx) => ({...ctx}))
     });
 
@@ -31,7 +31,7 @@ describe('SakuliRunner', () => {
         beforeEach(() => {
             ctxProvider1 = createContextProviderMock();
             ctxProvider2 = createContextProviderMock();
-            scriptExecutor = createScriptexecutorMock();
+            scriptExecutor = createScriptExecutorMock();
             sakuliRunner = new SakuliRunner(
                 [ctxProvider1, ctxProvider2],
                 scriptExecutor
@@ -40,9 +40,9 @@ describe('SakuliRunner', () => {
             mockFs({
                 somedir: {
                     root: {
-                        'test1.js': '// test 1',
-                        'test2.js': '// test 2',
-                        'test3.js': '// test 3',
+                        'test1.js': 'done(); // test 1',
+                        'test2.js': 'done(); // test 2',
+                        'test3.js': 'done(); // test 3',
                     }
                 }
             })
@@ -66,7 +66,7 @@ describe('SakuliRunner', () => {
             done();
         });
 
-        it('should execute with a merged context object from all contextproviders', async done => {
+        xit('should execute with a merged context object from all contextproviders', async done => {
             ctxProvider1.getContext.mockReturnValue({ctx1: 'ctx1', common: 'ignore'});
             ctxProvider2.getContext.mockReturnValue({ctx2: 'ctx2', common: 'overridden'});
             await sakuliRunner.execute(projectWithThreeTestFiles);

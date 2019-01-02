@@ -1,8 +1,7 @@
 import {parseModule} from 'esprima';
-import {ExpressionStatement, Node, Program} from 'estree'
+import {ExpressionStatement, Node} from 'estree'
 import {generate} from 'escodegen'
 import {isSahiFunction} from "./sahi-functions.const";
-import {inspect} from "util";
 
 export function migrateV1Code(code: string): string {
     const ast = parseModule(code, {
@@ -13,12 +12,14 @@ export function migrateV1Code(code: string): string {
     //console.log(inspect(ast, true, null, true));
     // yes this is really sideeffectish :/
     const changeLog: string[] = [];
+
     function writeAsyncChangeLog(node: any) {
         changeLog.push(`${node.loc.start.line}:${node.loc.start.column} Changed ${node.callee.name} to await ${node.callee.name}`)
     }
+
     const newBody = ast.body.map(function mapSahiToAsync(node: Node): Node {
         let previousLogLength = -1;
-        if(node.type === 'FunctionDeclaration') {
+        if (node.type === 'FunctionDeclaration') {
             previousLogLength = changeLog.length;
         }
 
@@ -47,15 +48,15 @@ export function migrateV1Code(code: string): string {
             'leadingComments',
             'trailingComments'
         ].forEach(prop => {
-            if((node as any)[prop] && !Array.isArray((node as any)[prop])) {
+            if ((node as any)[prop] && !Array.isArray((node as any)[prop])) {
                 (node as any)[prop] = mapSahiToAsync((node as any)[prop] as any) as any;
             }
-            if((node as any)[prop] && Array.isArray((node as any)[prop])) {
+            if ((node as any)[prop] && Array.isArray((node as any)[prop])) {
                 (node as any)[prop] = ((node as any)[prop] as any).map(mapSahiToAsync) as any[];
             }
         });
 
-        if(node.type === 'FunctionDeclaration' && previousLogLength >= 0 && previousLogLength < changeLog.length) {
+        if (node.type === 'FunctionDeclaration' && previousLogLength >= 0 && previousLogLength < changeLog.length) {
             node.async = true;
         }
 
@@ -73,8 +74,6 @@ export function migrateV1Code(code: string): string {
 
         return node;
     });
-    //console.log(inspect(newBody, true, null, true));
-    console.log(changeLog);
     return generate(wrapWithAsyncIIFE(newBody));
 
 }
@@ -88,18 +87,35 @@ function wrapWithAsyncIIFE(body: any[], sourceType: string = 'module') {
                 "expression": {
                     "type": "CallExpression",
                     "callee": {
-                        "type": "ArrowFunctionExpression",
-                        "id": null,
-                        "params": [],
-                        "body": {
-                            "type": "BlockStatement",
-                            "body": body
+                        "type": "MemberExpression",
+                        "computed": false,
+                        "object": {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "ArrowFunctionExpression",
+                                "id": null,
+                                "params": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    body
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": true
+                            },
+                            "arguments": []
                         },
-                        "generator": false,
-                        "expression": false,
-                        "async": true
+                        "property": {
+                            "type": "Identifier",
+                            "name": "then"
+                        }
                     },
-                    "arguments": []
+                    "arguments": [
+                        {
+                            "type": "Identifier",
+                            "name": "done"
+                        }
+                    ]
                 }
             }
         ],

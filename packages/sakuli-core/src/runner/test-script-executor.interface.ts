@@ -1,3 +1,3 @@
 export interface TestScriptExecutor {
-    execute<T = {}>(source: string, context: T): T;
+    execute<T = {}>(source: string, context: T): Promise<T>;
 }

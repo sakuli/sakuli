@@ -34,13 +34,11 @@ export class TestCase {
     }
 
     handleException<E extends Error>(e: E) {
-        console.warn('Error occurred: ', e);
-        this.execution.updateCurrentTestStep({error: e});
+        this.execution.updateCurrentTestCase({error: e});
     }
 
     getLastUrl(): string {
         throw Error('Not Implemented');
-
     }
 
     saveResult() {
