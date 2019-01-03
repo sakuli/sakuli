@@ -13,7 +13,6 @@ export interface TestExecutionComponentProps {
 export interface TestExecutionComponentState {
     testSuites: TestSuiteContext[]
     tick: number;
-    renderedError: string
 }
 
 export class TestExecutionComponent extends Component<TestExecutionComponentProps, TestExecutionComponentState> {
@@ -25,7 +24,6 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
         this.state = {
             testSuites: [],
             tick: 0,
-            renderedError: ''
         }
     }
 
@@ -56,7 +54,6 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
                         <TestEntity entity={suite} tick={this.state.tick}/>
                     ))}
                 </div>
-                <div>{this.state.renderedError}</div>
             </Fragment>
         )
 

@@ -22,7 +22,7 @@ function DefaultLine({
         <div>
             {createIdent(ident)}
             <Prefix/>
-            <StateIndicator entity={entity}/>{' '}
+            <StateIndicator entity={entity}/>
             <Color blueBright>{entity.kind}</Color>{' '}
             <Color white>{entity.id || 'UNNAMED'}</Color>{' '}
             <Suffix/>
@@ -50,7 +50,7 @@ export const TestEntity = ({entity, tick, ident = 0}: TestEntityProps) => {
         return ifPresent(entity.error, e => (
                 <Fragment>
                     <DefaultLine ident={ident} tick={tick} entity={entity} suffix={() => (
-                        <div>{e.message}</div>
+                        <span>{e.message}</span>
                     )}/>
                     {others}
                 </Fragment>

@@ -1,24 +1,21 @@
-import {TestScriptExecutor} from "./test-script-executor.interface";
+import {TestScriptExecutorOptions, TestScriptExecutor} from "./test-script-executor.interface";
 import {Context, createContext, RunningScriptOptions, Script} from "vm";
-import {inspect} from "util";
 
-export interface JsScriptExecutorOptions {
-    waitUntilDone?: boolean
-}
 
 export class JsScriptExecutor implements TestScriptExecutor {
 
-    constructor(readonly options: RunningScriptOptions & JsScriptExecutorOptions = {}) {
+    constructor(readonly options: TestScriptExecutorOptions = {}) {
     }
 
-    async execute<T = {}>(source: string, context: T): Promise<T> {
+    async execute<T = {}>(source: string, context: T, _options: TestScriptExecutorOptions = {}): Promise<T> {
+        const options = {...this.options, ..._options};
         const script = new Script(source, {
-            filename: this.options.filename,
+            filename: options.filename,
             displayErrors: true
         });
         return new Promise<T>((res, rej) => {
-            if (this.options.timeout) {
-                setTimeout(rej, this.options.timeout);
+            if (options.timeout) {
+                setTimeout(rej, options.timeout);
             }
             let sandbox: T;
             sandbox = <T>createContext(Object.assign({},
@@ -27,10 +24,10 @@ export class JsScriptExecutor implements TestScriptExecutor {
                 {done: () => res(sandbox)}
             ));
             script.runInNewContext(sandbox, {
-                ...this.options,
+                ...options as RunningScriptOptions,
                 displayErrors: true
             });
-            if(!this.options.waitUntilDone) {
+            if(!options.waitUntilDone) {
                 res(sandbox);
             }
         })

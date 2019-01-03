@@ -9,6 +9,8 @@ import {CommandModule} from "yargs";
 import * as winston from "winston";
 import {join} from "path";
 import {cwd} from "process";
+import {Forwarder} from "./forwarder";
+import {inspect} from "util";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
