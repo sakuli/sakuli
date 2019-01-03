@@ -1,16 +1,19 @@
-import { ContextProvider } from "@sakuli/core/dist";
-import { LegacyProject } from "../loader/legacy-project.class";
-import webdriver, {Capabilities, logging, ThenableWebDriver} from 'selenium-webdriver';
-import {throwIfAbsent, Maybe, ifPresent} from "@sakuli/commons";
-import {TestCase} from "./common/test-case.class";
+import {LegacyProject} from "../loader/legacy-project.class";
+import webdriver, {Capabilities} from 'selenium-webdriver';
+import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {createTestCaseClass} from "./common/test-case.class";
 import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
 import {Environment} from "./common/environment.class";
 import {SahiApi} from "./sahi/api";
+import {Project, Sakuli, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
+import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
+import {parse, sep} from "path";
 
-export class LegacyContextProvider implements ContextProvider {
+export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
-    capabilityMap: {[key:string]: () => Capabilities} = {
+
+    capabilityMap: { [key: string]: () => Capabilities } = {
         'chrome': () => Capabilities.chrome(),
         'firefox': () => Capabilities.firefox(),
         'edge': () => Capabilities.edge(),
@@ -24,9 +27,10 @@ export class LegacyContextProvider implements ContextProvider {
 
     constructor(
         readonly builder: webdriver.Builder
-    ) { }
+    ) {
+    }
 
-    tearUp(project: LegacyProject): void {
+    onProject(project: LegacyProject): void {
         const browser: keyof webdriver.Capabilities = <keyof webdriver.Capabilities>project.properties.testsuiteBrowser;
         const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         const caps = capsProducer();
@@ -36,7 +40,13 @@ export class LegacyContextProvider implements ContextProvider {
             .build();
     }
 
-    tearDown(): void {
+    beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
+        const id = project.rootDir.split(sep).pop();
+        testExecutionContext.startTestSuite({id})
+    }
+
+    afterExecution(project: Project, testExecutionContext: TestExecutionContext): void {
+        testExecutionContext.endTestSuite();
         ifPresent(this.driver, async driver => {
             try {
                 await driver.quit()
@@ -46,12 +56,27 @@ export class LegacyContextProvider implements ContextProvider {
         });
     }
 
-    getContext() {
+
+    beforeRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext): void {
+    }
+
+    afterRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext): void {
+        const {name} = parse(file.path);
+        ifPresent(ctx.getCurrentTestCase(),
+            ctc => {
+                if(!ctc.id) {
+                    ctx.updateCurrentTestCase({id: name})
+                }
+            }
+        );
+    }
+
+    requestContext(ctx: TestExecutionContext) {
         const sahi = new SahiApi(throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'))
         );
         return ({
-            TestCase,
+            TestCase: createTestCaseClass(ctx),
             Application,
             Key,
             Environment,

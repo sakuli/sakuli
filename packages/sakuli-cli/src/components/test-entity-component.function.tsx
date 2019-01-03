@@ -1,4 +1,4 @@
-import {TestCaseContext, TestContextEntity, TestSuiteContext} from "@sakuli/core";
+import {getReadableStateName, TestCaseContext, TestContextEntity, TestSuiteContext} from "@sakuli/core";
 import {Bold, Color, Fragment, h} from "ink";
 import {StateIndicator} from "./state-indicator-component.function";
 import {Spinner} from "./spinner-component.class";
@@ -22,9 +22,9 @@ function DefaultLine({
         <div>
             {createIdent(ident)}
             <Prefix/>
-            <StateIndicator entity={entity}/> {' '}
+            <StateIndicator entity={entity}/>{' '}
             <Color blueBright>{entity.kind}</Color>{' '}
-            <Color blue>{entity.id || 'UNNAMED'}</Color>{' '}
+            <Color white>{entity.id || 'UNNAMED'}</Color>{' '}
             <Suffix/>
         </div>)
 }
@@ -52,23 +52,28 @@ export const TestEntity = ({entity, tick, ident = 0}: TestEntityProps) => {
                     <DefaultLine ident={ident} tick={tick} entity={entity} suffix={() => (
                         <div>{e.message}</div>
                     )}/>
-                    {' '}
                     {others}
                 </Fragment>
-            ), () => (
-                <Fragment>
-                    <DefaultLine ident={ident} tick={tick} entity={entity}/>
+            ), () => {
+                const rightIdent = `${getReadableStateName(entity.state)} ${entity.kind} ${entity.id || 'UNNAMED'} `.length + ident;
+                return <Fragment>
+                    <DefaultLine ident={ident} tick={tick} entity={entity} suffix={() => (
+                        <Fragment>
+                            <Color gray>{createIdent(50-  rightIdent, '.')}</Color>
+                            <span> {entity.duration.toFixed(2)}s</span>
+                        </Fragment>
+                    )}/>
                     {others}
                 </Fragment>
-            )
-        )
+            })
     } else {
         return (
             <Fragment>
                 <DefaultLine ident={ident} tick={tick} entity={entity} prefix={() => (
                     <Fragment>
-                        <Spinner tick={tick}/>{' '}
-                        <Bold><Color yellow>Running </Color></Bold>
+                        <Bold><Color yellow>
+                            <Spinner tick={tick}/>{' '}
+                        </Color></Bold>
                     </Fragment>
                 )}/>
                 {others}

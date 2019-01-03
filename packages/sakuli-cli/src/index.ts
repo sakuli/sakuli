@@ -49,7 +49,7 @@ import {cli} from "./cli-utils/command-line.class";
         })
         .demandCommand(1, 1, 'Sakuli expects exactly one command');
 
-    sakuli.getCommandModules().forEach(cmp => {
+    sakuli.commandModules.forEach(cmp => {
         yargsParser.command(cmp)
     });
 

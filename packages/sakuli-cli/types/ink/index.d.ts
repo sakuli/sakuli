@@ -1,6 +1,6 @@
 declare namespace JSX {
     interface Element { }
-    interface IntrinsicElements { div: any; }
+    interface IntrinsicElements { div: any; span: any}
 }
 
 declare module 'ink' {

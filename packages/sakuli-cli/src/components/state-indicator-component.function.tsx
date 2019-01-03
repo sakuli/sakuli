@@ -8,6 +8,9 @@ export interface StateIndicatorProps {
 
 export function StateIndicator({entity}: StateIndicatorProps) {
     const stateText = <Bold>{getReadableStateName(entity.state)}</Bold>;
+    if(!entity.isFinished()) {
+        return '';
+    }
     if(entity.error) {
         return <Color red>{stateText}</Color>
     }

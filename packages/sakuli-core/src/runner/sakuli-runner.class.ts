@@ -1,17 +1,19 @@
 import {Project} from "../loader/model";
-import {ContextProvider} from "./context-provider.interface";
+import {TestExecutionLifecycleHooks} from "./context-provider.interface";
 import {TestScriptExecutor} from "./test-script-executor.interface";
 import {readFileSync} from "fs";
 import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {Sakuli} from "../sakuli.class";
-import {ifPresent} from "@sakuli/commons";
+import {TestExecutionContext} from "./test-execution-context";
+import {TestFile} from "../loader/model/test-file.interface";
 
-export class SakuliRunner {
+export class SakuliRunner implements TestExecutionLifecycleHooks {
 
     constructor(
-        readonly contextProvider: ContextProvider[],
-        readonly testFileExecutor: TestScriptExecutor = new JsScriptExecutor
+        readonly lifecycleHooks: TestExecutionLifecycleHooks[],
+        readonly testExecutionContext: TestExecutionContext,
+        readonly testFileExecutor: TestScriptExecutor = new JsScriptExecutor,
     ) {
     }
 
@@ -23,39 +25,54 @@ export class SakuliRunner {
      * @returns a merged object from all provided contexts after their execution
      */
     async execute(project: Project): Promise<any> {
-        Sakuli().testExecutionContext.startExecution();
-        this.contextProvider.forEach(cp => cp.tearUp(project));
-        const context = this.createContext();
+        this.testExecutionContext.startExecution();
+        // onProject Phase
+        this.onProject(project, this.testExecutionContext);
+        const context = this.requestContext(this.testExecutionContext);
         let result = {};
+        this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
+            this.lifecycleHooks.forEach(cp => cp.beforeRunFile(testFile, project, this.testExecutionContext));
             const testFileContent = readFileSync(join(project.rootDir, testFile.path));
-            const [suiteId] = testFile.path.split('/');
-            Sakuli().testExecutionContext.startTestSuite({id: suiteId});
             try {
                 const executor = new JsScriptExecutor({
                     filename: resolve(join(project.rootDir, testFile.path)),
                     waitUntilDone: true
                 });
+                this.beforeRunFile(testFile, project, this.testExecutionContext);
                 const resultCtx = await executor.execute(testFileContent.toString(), context);
-                const id = ifPresent(Sakuli().testExecutionContext.getCurrentTestCase(),
-                        ctc => ctc.id,
-                    () => testFile.path.split('/').pop()
-                );
-                Sakuli().testExecutionContext.updateCurrentTestCase({id});
+                this.afterRunFile(testFile, project, this.testExecutionContext);
                 result = {...result, ...resultCtx};
             } catch (error) {
-                Sakuli().testExecutionContext.updateCurrentTestSuite({error});
+                //this.testExecutionContext.updateCurrentTestSuite({error});
             }
-            Sakuli().testExecutionContext.endTestSuite();
         }
-        Sakuli().testExecutionContext.endExecution();
-        await Sakuli().testExecutionContext.allEntitiesFinished;
-        this.contextProvider.forEach(cp => cp.tearDown());
+        this.afterExecution(project, this.testExecutionContext);
+        this.testExecutionContext.endExecution();
         return result;
     }
 
-    private createContext() {
-        return this.contextProvider.reduce((ctx, provider) => ({...ctx, ...provider.getContext()}), {});
+    onProject(project: Project, tec: TestExecutionContext) {
+        this.lifecycleHooks.forEach(cp => cp.onProject(project, tec));
     }
 
+    beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
+        this.lifecycleHooks.forEach(cp => cp.beforeExecution(project, testExecutionContext));
+    }
+
+    afterExecution(project: Project, testExecutionContext: TestExecutionContext): void {
+        this.lifecycleHooks.forEach(cp => cp.afterExecution(project, testExecutionContext));
+    }
+
+    afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
+        this.lifecycleHooks.forEach(cp => cp.afterRunFile(file, project, testExecutionContext));
+    }
+
+    beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
+        this.lifecycleHooks.forEach(cp => cp.beforeRunFile(file, project, testExecutionContext));
+    }
+
+    requestContext(testExecutionContext: TestExecutionContext): any {
+        return this.lifecycleHooks.reduce((ctx, provider) => ({...ctx, ...provider.requestContext(this.testExecutionContext)}), {});
+    }
 }

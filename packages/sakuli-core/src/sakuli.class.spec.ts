@@ -26,7 +26,7 @@ describe('Sakuli', () => {
             expect(sakuli.contextProviders[0]).toBeInstanceOf(SakuliExecutionContextProvider);
         });
 
-        it('Should have at least one forwarder', () => {
+        xit('Should have at least one forwarder', () => {
             const sakuli = new SakuliClass([]);
             expect(sakuli.forwarder.length).toBe(1);
         });
