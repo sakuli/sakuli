@@ -3,7 +3,7 @@
     try {
         tc.endOfStep('Init');
         await _wait(3000);
-        //throw Error('something went wrong :(');
+        throw Error('something went wrong :(');
         await _navigateTo('https://consol.github.io/sakuli/');
         tc.endOfStep('Load Page and wait');
         const htmlLink = await _link('HTML');

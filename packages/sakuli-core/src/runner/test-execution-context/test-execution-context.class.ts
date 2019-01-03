@@ -14,6 +14,7 @@ import {TestActionContext} from "./test-action-context.class";
 import {toJson} from "./test-context-entity-to-json.function";
 import {DeferredStack} from "@sakuli/commons/dist/deferred-stack.class";
 import {TestExecutionContextRaw} from "./test-execution-context-raw.interface";
+import {TestContextEntityState} from "./test-context-entity-state.class";
 
 export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
 
@@ -283,6 +284,10 @@ export class TestExecutionContext implements Measurable {
 
     onChange(listener: TestExecutionChangeListener) {
         this.changeListeners.push(listener);
+    }
+
+    get resultState(): TestContextEntityState {
+        return Math.max(...this.testSuites.map(ts => ts.state)) as TestContextEntityState;
     }
 
     toJson(): TestExecutionContextRaw {

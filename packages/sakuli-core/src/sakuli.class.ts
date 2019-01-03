@@ -75,16 +75,14 @@ export class SakuliClass {
         return this.presetRegistry.commandModules.map(cmp => cmp(this));
     }
 
-    async run(_opts: string | SakuliRunOptions) {
+    async run(_opts: string | SakuliRunOptions): Promise<TestExecutionContext> {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         const projects = await Promise.all(
             this.loader.map(loader => loader.load(opts.path))
         );
-        this.logger.log('hello', 'Test Message');
-        this.logger.info('hello 2');
         const project: Project = throwIfAbsent(
             projects.find(p => p != null),
-            Error(`Non of the following loaders could create project from ${opts.path}`)
+            Error(`Non of the configured loaders could create project from ${opts.path}`)
         );
 
         const runner = new SakuliRunner(
@@ -94,6 +92,7 @@ export class SakuliClass {
         await runner.execute(project);
 
         await Promise.all(this.forwarder.map(f => f.forward(this.testExecutionContext, project)));
+        return this.testExecutionContext;
     }
 
 }
