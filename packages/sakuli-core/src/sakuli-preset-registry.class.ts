@@ -1,11 +1,11 @@
-import {ContextProvider} from "./runner";
+import {TestExecutionLifecycleHooks} from "./runner";
 import {ProjectLoader} from "./loader";
 import {Forwarder} from "./forwarder";
 import {CommandModuleProvider} from "./command-module-provider.interface";
 
 export class SakuliPresetRegistry {
 
-    private _contextProviders: ContextProvider[] = [];
+    private _contextProviders: TestExecutionLifecycleHooks[] = [];
     private _projectLoader: ProjectLoader[] = [];
     private _forwarder: Forwarder[] = [];
     private _commandModules: CommandModuleProvider[] = [];
@@ -26,7 +26,7 @@ export class SakuliPresetRegistry {
         return this._commandModules;
     }
 
-    registerContextProvider(contextProvider: ContextProvider) {
+    registerContextProvider(contextProvider: TestExecutionLifecycleHooks) {
         this._contextProviders.push(contextProvider)
     }
 

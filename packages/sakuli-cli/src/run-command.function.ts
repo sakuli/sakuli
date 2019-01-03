@@ -22,7 +22,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         async handler(runOptions: SakuliRunOptions) {
             const unmount = renderExecution();
             await sakuli.run(runOptions);
-            unmount();
+            setTimeout(unmount, 500);
             ifPresent(findError(), errorEntity => {
                 ifPresent(errorEntity.error, async e => {
                     const youch = (new Youch(e, {}));
