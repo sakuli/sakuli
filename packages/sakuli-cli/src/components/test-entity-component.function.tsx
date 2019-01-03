@@ -60,7 +60,7 @@ export const TestEntity = ({entity, tick, ident = 0}: TestEntityProps) => {
                     <DefaultLine ident={ident} tick={tick} entity={entity} suffix={() => (
                         <Fragment>
                             <Color gray>{createIdent(50-  rightIdent, '.')}</Color>
-                            <span> ⏰ {entity.duration.toFixed(2)}s</span>
+                            <span> {entity.duration.toFixed(2)}s</span>
                         </Fragment>
                     )}/>
                     {others}
