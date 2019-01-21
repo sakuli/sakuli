@@ -18,7 +18,7 @@
             comment: 'Just want to praise for your products'
         };
         await _navigateTo('https://showroom2.cm6demo.consol.de/track/', true);
-        await _wait(5000);
+        //await _wait(5000);
         await _highlight(await _textbox("username"));
         //await loginToTrack();
         /*

@@ -1,4 +1,4 @@
-import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {By, Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {Maybe} from "@sakuli/commons";
 import {TestExecutionContext} from "@sakuli/core";
@@ -16,13 +16,14 @@ export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: Sa
 
 
 export class SahiApi {
-    _navigateTo = async (url: string, forceReload: boolean = false): Promise<void> => {
+    _navigateTo = async (url: string, forceReload: boolean = false): Promise<any> => {
         await this.webDriver.get(url);
         if (forceReload) {
             await this.webDriver.navigate().refresh()
         }
     };
     _wait = async (millis: number): Promise<void> => {
+
         return new Promise<void>((res, rej) => {
             setTimeout(() => res(), millis);
         });
@@ -48,523 +49,523 @@ export class SahiApi {
     }
     _password: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="password"]')),
+            By.css('input[type="password"]'),
             identifier, ...relations
         );
     };
     _textbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="text"]')),
+            By.css('input[type="text"]'),
             identifier, ...relations
         );
     };
     _hidden: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="hidden"]')),
+            By.css('input[type="hidden"]'),
             identifier, ...relations
         );
     };
     _datebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="date"]')),
+            By.css('input[type="date"]'),
             identifier, ...relations
         );
     };
     _datetimebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="datetime"]')),
+            By.css('input[type="datetime"]'),
             identifier, ...relations
         );
     };
     _datetimelocalbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="datetime-local"]')),
+            By.css('input[type="datetime-local"]'),
             identifier, ...relations
         );
     };
     _emailbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="email"]')),
+            By.css('input[type="email"]'),
             identifier, ...relations
         );
     };
     _monthbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="month"]')),
+            By.css('input[type="month"]'),
             identifier, ...relations
         );
     };
     _numberbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="number"]')),
+            By.css('input[type="number"]'),
             identifier, ...relations
         );
     };
     _rangebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="range"]')),
+            By.css('input[type="range"]'),
             identifier, ...relations
         );
     };
     _searchbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="search"]')),
+            By.css('input[type="search"]'),
             identifier, ...relations
         );
     };
     _telephonebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="tel"]')),
+            By.css('input[type="tel"]'),
             identifier, ...relations
         );
     };
     _timebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="time"]')),
+            By.css('input[type="time"]'),
             identifier, ...relations
         );
     };
     _urlbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="url"]')),
+            By.css('input[type="url"]'),
             identifier, ...relations
         );
     };
     _weekbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="week"]')),
+            By.css('input[type="week"]'),
             identifier, ...relations
         );
     };
     _textarea: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('textarea')),
+            By.css('textarea'),
             identifier, ...relations
         );
     };
     _button: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('button')),
+            By.css('button'),
             identifier, ...relations
         )
     };
     _checkbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="checkbox"]')),
+            By.css('input[type="checkbox"]'),
             identifier, ...relations
         );
     };
     _radio: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="radio"]')),
+            By.css('input[type="radio"]'),
             identifier, ...relations
         );
     };
     _submit: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="submit"]')),
+            By.css('input[type="submit"]'),
             identifier, ...relations
         );
     };
     _reset: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="reset"]')),
+            By.css('input[type="reset"]'),
             identifier, ...relations
         );
     };
     _imageSubmitButton: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="image"]')),
+            By.css('input[type="image"]'),
             identifier, ...relations
         );
     };
     _select: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('select')),
+            By.css('select'),
             identifier, ...relations
         );
     };
     _option: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('option')),
+            By.css('option'),
             identifier, ...relations
         );
     };
     _file: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="file"]')),
+            By.css('input[type="file"]'),
             identifier, ...relations
         );
     };
     _table: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('table')),
+            By.css('table'),
             identifier, ...relations
         );
     };
     _row: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('tr')),
+            By.css('tr'),
             identifier, ...relations
         );
     };
     _cell: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('td')),
+            By.css('td'),
             identifier, ...relations
         );
     };
     _tableHeader: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('th')),
+            By.css('th'),
             identifier, ...relations
         );
     };
     _link: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('a')),
+            By.css('a'),
             identifier, ...relations
         );
     };
     _image: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('img')),
+            By.css('img'),
             identifier, ...relations
         );
     };
     _label: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('label')),
+            By.css('label'),
             identifier, ...relations
         );
     };
     _listItem: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('li')),
+            By.css('li'),
             identifier, ...relations
         );
     };
     _list: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('ul')),
+            By.css('ul'),
             identifier, ...relations
         );
     };
     _div: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('div')),
+            By.css('div'),
             identifier, ...relations
         )
     };
     _span: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('span')),
+            By.css('span'),
             identifier, ...relations
         );
     };
     _fieldset: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('fieldset')),
+            By.css('fieldset'),
             identifier, ...relations
         );
     };
     _heading1: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('h1')),
+            By.css('h1'),
             identifier, ...relations
         );
     };
     _heading2: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('h2')),
+            By.css('h2'),
             identifier, ...relations
         );
     };
     _heading3: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('h3')),
+            By.css('h3'),
             identifier, ...relations
         );
     };
     _heading4: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('h4')),
+            By.css('h4'),
             identifier, ...relations
         );
     };
     _heading5: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('h5')),
+            By.css('h5'),
             identifier, ...relations
         );
     };
     _heading6: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('h6')),
+            By.css('h6'),
             identifier, ...relations
         );
     };
     _area: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('area')),
+            By.css('area'),
             identifier, ...relations
         );
     };
     _map: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('map')),
+            By.css('map'),
             identifier, ...relations
         );
     };
     _paragraph: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('p')),
+            By.css('p'),
             identifier, ...relations
         );
     };
     _italic: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('i')),
+            By.css('i'),
             identifier, ...relations
         );
     };
     _emphasis: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('em')),
+            By.css('em'),
             identifier, ...relations
         );
     };
     _bold: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('b')),
+            By.css('b'),
             identifier, ...relations
         );
     };
     _strong: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('strong')),
+            By.css('strong'),
             identifier, ...relations
         );
     };
     _preformatted: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('pre')),
+            By.css('pre'),
             identifier, ...relations
         );
     };
     _code: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('code')),
+            By.css('code'),
             identifier, ...relations
         );
     };
     _blockquote: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('blockqoute')),
+            By.css('blockqoute'),
             identifier, ...relations
         );
     };
     _canvas: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('canvas')),
+            By.css('canvas'),
             identifier, ...relations
         );
     };
     _abbr: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('abbr')),
+            By.css('abbr'),
             identifier, ...relations
         );
     };
     _hr: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('hr')),
+            By.css('hr'),
             identifier, ...relations
         );
     };
     _iframe: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('iframe')),
+            By.css('iframe'),
             identifier, ...relations
         );
     };
     _frame: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('frame')),
+            By.css('frame'),
             identifier, ...relations
         );
     };
     _object: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('object')),
+            By.css('object'),
             identifier, ...relations
         );
     };
     _embed: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('embed')),
+            By.css('embed'),
             identifier, ...relations
         );
     };
     _dList: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('dl')),
+            By.css('dl'),
             identifier, ...relations
         );
     };
     _dTerm: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('dt')),
+            By.css('dt'),
             identifier, ...relations
         );
     };
     _dDesc: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('dd')),
+            By.css('dd'),
             identifier, ...relations
         );
     };
     _font: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('font')),
+            By.css('font'),
             identifier, ...relations
         );
     };
     _svg_rect: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('rect')),
+            By.css('rect'),
             identifier, ...relations
         );
     };
     _svg_tspan: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('tspan')),
+            By.css('tspan'),
             identifier, ...relations
         );
     };
     _svg_circle: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('circle')),
+            By.css('circle'),
             identifier, ...relations
         );
     };
     _svg_ellipse: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('ellipse')),
+            By.css('ellipse'),
             identifier, ...relations
         );
     };
     _svg_line: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('line')),
+            By.css('line'),
             identifier, ...relations
         );
     };
     _svg_polygon: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('polygon')),
+            By.css('polygon'),
             identifier, ...relations
         );
     };
     _svg_polyline: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('polyline')),
+            By.css('polyline'),
             identifier, ...relations
         );
     };
     _svg_path: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('path')),
+            By.css('path'),
             identifier, ...relations
         );
     };
     _svg_text: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('text')),
+            By.css('text'),
             identifier, ...relations
         );
     };
     _article: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('article')),
+            By.css('article'),
             identifier, ...relations
         );
     };
     _aside: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('aside')),
+            By.css('aside'),
             identifier, ...relations
         );
     };
     _details: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('details')),
+            By.css('details'),
             identifier, ...relations
         );
     };
     _figcaption: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('figcaption')),
+            By.css('figcaption'),
             identifier, ...relations
         );
     };
     _figure: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('figure')),
+            By.css('figure'),
             identifier, ...relations
         );
     };
     _footer: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('footer')),
+            By.css('footer'),
             identifier, ...relations
         );
     };
     _header: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('header')),
+            By.css('header'),
             identifier, ...relations
         );throw Error('Not yet implemented _header')
     };
     _main: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('main')),
+            By.css('main'),
             identifier, ...relations
         );
     };
     _mark: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('mark')),
+            By.css('mark'),
             identifier, ...relations
         );
     };
     _nav: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('nav')),
+            By.css('nav'),
             identifier, ...relations
         );
     };
     _section: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('section')),
+            By.css('section'),
             identifier, ...relations
         );
     };
     _summary: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('summary')),
+            By.css('summary'),
             identifier, ...relations
         );
     };
     _time: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('input[type="time"]')),
+            By.css('input[type="time"]'),
             identifier, ...relations
         );
     };
     _video: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            await this.webDriver.findElements(By.css('video')),
+            By.css('video'),
             identifier, ...relations
         );
     };
@@ -732,7 +733,11 @@ export class SahiApi {
         return result;
     }
 
-    private async getElement(webElements: WebElement[], identifier: AccessorIdentifier, ...relations: SahiRelation[]) {
-        return this.accessorUtil.getElement(webElements, identifier, ...relations);
+    private async getElement(locator: Locator, identifier: AccessorIdentifier, ...relations: SahiRelation[]) {
+        await this.webDriver.wait(until.elementsLocated(locator));
+        return this.accessorUtil.getElement(
+            await this.webDriver.findElements(locator),
+            identifier, ...relations
+        );
     }
 }
