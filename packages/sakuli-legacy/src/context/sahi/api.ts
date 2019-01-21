@@ -1,50 +1,34 @@
 import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {types} from "util";
 import {stripIndents} from "common-tags";
 import {Maybe} from "@sakuli/commons";
+import {TestExecutionContext} from "@sakuli/core";
+import {throwIfAbsent} from "@sakuli/commons";
+import {AccessorIdentifierAttributes} from "./accessor/accessor-model.interface";
+import {AccessorUtil} from "./accessor/accessor-util.class";
+import {SahiRelation} from "./relations/sahi-relation.interface";
+import {RelationsResolver} from "./relations/relations-resolver.class";
 
 type SahiElement = WebElement;
 type pr_i_AB = [number, number];
 
-interface AccessorIdentifierAttributesWithSahiIndex {
-    sahiIndex: number
-}
-
-function isAccessorIdentifierAttributesWithSahiIndex(o: any): o is AccessorIdentifierAttributesWithSahiIndex {
-    return typeof o === 'object' && 'sahiIndex' in o;
-}
-
-interface AccessorIdentifierAttributesWithClassName {
-    className: string
-}
-
-export type AccessorIdentifierAttributes = Partial<AccessorIdentifierAttributesWithClassName & AccessorIdentifierAttributesWithSahiIndex>
-
-export type SahiRelation = any;
 export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
 export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => Promise<Maybe<SahiElement>>;
 
 
 export class SahiApi {
-    constructor(
-        readonly webDriver: ThenableWebDriver
-    ) {
-    }
-
     _navigateTo = async (url: string, forceReload: boolean = false): Promise<void> => {
         await this.webDriver.get(url);
         if (forceReload) {
             await this.webDriver.navigate().refresh()
         }
     };
-
     _wait = async (millis: number): Promise<void> => {
         return new Promise<void>((res, rej) => {
             setTimeout(() => res(), millis);
         });
     };
-
-    _highlight = async (element: SahiElement, timeoutMs: number = 2000): Promise<void> => {
+    _highlight = async (element: Maybe<SahiElement>, timeoutMs: number = 2000): Promise<void> => {
+        throwIfAbsent(element, Error('No element to highlight found'));
         const oldBorder = await this.webDriver.executeScript(stripIndents`
             const oldBorder = arguments[0].style.border;
             arguments[0].style.border = '2px solid red'
@@ -59,402 +43,650 @@ export class SahiApi {
         `, element, oldBorder)
 
     };
-
-
-    private getElementBySahiIndex(elements: WebElement[], identifier: AccessorIdentifierAttributesWithSahiIndex) {
-        return elements[identifier.sahiIndex];
+    _dynamicInclude = async (path: string) => {
+        return Promise.resolve();
     }
-
-    private async getElement(elements: WebElement[], identifier: AccessorIdentifier, ...relations: SahiRelation[]): Promise<WebElement | undefined> {
-        if (typeof identifier === 'number') {
-            return Promise.resolve(this.getElementBySahiIndex(elements, {sahiIndex: identifier}));
-        }
-        if (isAccessorIdentifierAttributesWithSahiIndex(identifier)) {
-            return Promise.resolve(this.getElementBySahiIndex(elements, identifier));
-        }
-        if (typeof identifier === 'string') {
-            const eAndText: [WebElement, string][] = await Promise.all(elements
-                .map(e => e.getText().then((text): [WebElement, string] => [e, text]))
-            );
-            const e = eAndText.find(([e, text]) => text.includes(identifier));
-            return e ? Promise.resolve(e[0]) : Promise.resolve(undefined);
-        }
-        if (types.isRegExp(identifier)) {
-            const eAndText: [WebElement, string][] = await Promise.all(elements
-                .map(e => e.getText().then((text): [WebElement, string] => [e, text]))
-            );
-            const e = eAndText.find(([e, text]) => {
-                const match = text.match(identifier);
-                return match ? match.length > 0 : false
-            });
-            return e ? Promise.resolve(e[0]) : Promise.resolve(undefined);
-        }
-    }
-
-    _password: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _password: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="password"]')),
+            identifier, ...relations
+        );
     };
-
-    _textbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _textbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="text"]')),
+            identifier, ...relations
+        );
     };
-    _hidden: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _hidden: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="hidden"]')),
+            identifier, ...relations
+        );
     };
-    _datebox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _datebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="date"]')),
+            identifier, ...relations
+        );
     };
-    _datetimebox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _datetimebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="datetime"]')),
+            identifier, ...relations
+        );
     };
-    _datetimelocalbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _datetimelocalbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="datetime-local"]')),
+            identifier, ...relations
+        );
     };
-    _emailbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _emailbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="email"]')),
+            identifier, ...relations
+        );
     };
-    _monthbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _monthbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="month"]')),
+            identifier, ...relations
+        );
     };
-    _numberbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _numberbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="number"]')),
+            identifier, ...relations
+        );
     };
-    _rangebox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _rangebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="range"]')),
+            identifier, ...relations
+        );
     };
-    _searchbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _searchbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="search"]')),
+            identifier, ...relations
+        );
     };
-    _telephonebox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _telephonebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="tel"]')),
+            identifier, ...relations
+        );
     };
-    _timebox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _timebox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="time"]')),
+            identifier, ...relations
+        );
     };
-    _urlbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _urlbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="url"]')),
+            identifier, ...relations
+        );
     };
-    _weekbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _weekbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="week"]')),
+            identifier, ...relations
+        );
     };
-    _textarea: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _textarea: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('textarea')),
+            identifier, ...relations
+        );
     };
-    _button: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _button: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('button')),
+            identifier, ...relations
+        )
     };
-    _checkbox: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _checkbox: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="checkbox"]')),
+            identifier, ...relations
+        );
     };
-    _radio: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _radio: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="radio"]')),
+            identifier, ...relations
+        );
     };
-    _submit: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _submit: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="submit"]')),
+            identifier, ...relations
+        );
     };
-    _reset: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _reset: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="reset"]')),
+            identifier, ...relations
+        );
     };
-    _imageSubmitButton: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _imageSubmitButton: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="image"]')),
+            identifier, ...relations
+        );
     };
-    _select: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _select: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('select')),
+            identifier, ...relations
+        );
     };
-    _option: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _option: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('option')),
+            identifier, ...relations
+        );
     };
-    _file: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _file: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="file"]')),
+            identifier, ...relations
+        );
     };
-    _table: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _table: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('table')),
+            identifier, ...relations
+        );
     };
-    _row: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _row: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('tr')),
+            identifier, ...relations
+        );
     };
-    _cell: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _cell: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('td')),
+            identifier, ...relations
+        );
     };
-    _tableHeader: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _tableHeader: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('th')),
+            identifier, ...relations
+        );
     };
     _link: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
             await this.webDriver.findElements(By.css('a')),
-            identifier,
-            relations
+            identifier, ...relations
         );
     };
-    _image: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _image: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('img')),
+            identifier, ...relations
+        );
     };
-    _label: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _label: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('label')),
+            identifier, ...relations
+        );
     };
-    _listItem: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _listItem: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('li')),
+            identifier, ...relations
+        );
     };
-    _list: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _list: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('ul')),
+            identifier, ...relations
+        );
     };
-    _div: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _div: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('div')),
+            identifier, ...relations
+        )
     };
-    _span: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _span: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('span')),
+            identifier, ...relations
+        );
     };
-    _fieldset: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _fieldset: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('fieldset')),
+            identifier, ...relations
+        );
     };
-    _heading1: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _heading1: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('h1')),
+            identifier, ...relations
+        );
     };
-    _heading2: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _heading2: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('h2')),
+            identifier, ...relations
+        );
     };
-    _heading3: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _heading3: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('h3')),
+            identifier, ...relations
+        );
     };
-    _heading4: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _heading4: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('h4')),
+            identifier, ...relations
+        );
     };
-    _heading5: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _heading5: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('h5')),
+            identifier, ...relations
+        );
     };
-    _heading6: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _heading6: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('h6')),
+            identifier, ...relations
+        );
     };
-    _area: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _area: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('area')),
+            identifier, ...relations
+        );
     };
-    _map: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _map: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('map')),
+            identifier, ...relations
+        );
     };
-    _paragraph: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _paragraph: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('p')),
+            identifier, ...relations
+        );
     };
-    _italic: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _italic: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('i')),
+            identifier, ...relations
+        );
     };
-    _emphasis: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _emphasis: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('em')),
+            identifier, ...relations
+        );
     };
-    _bold: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _bold: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('b')),
+            identifier, ...relations
+        );
     };
-    _strong: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _strong: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('strong')),
+            identifier, ...relations
+        );
     };
-    _preformatted: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _preformatted: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('pre')),
+            identifier, ...relations
+        );
     };
-    _code: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _code: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('code')),
+            identifier, ...relations
+        );
     };
-    _blockquote: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _blockquote: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('blockqoute')),
+            identifier, ...relations
+        );
     };
-    _canvas: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _canvas: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('canvas')),
+            identifier, ...relations
+        );
     };
-    _abbr: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _abbr: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('abbr')),
+            identifier, ...relations
+        );
     };
-    _hr: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _hr: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('hr')),
+            identifier, ...relations
+        );
     };
-    _iframe: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _iframe: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('iframe')),
+            identifier, ...relations
+        );
     };
-    _frame: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _frame: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('frame')),
+            identifier, ...relations
+        );
     };
-    _object: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _object: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('object')),
+            identifier, ...relations
+        );
     };
-    _embed: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _embed: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('embed')),
+            identifier, ...relations
+        );
     };
-    _dList: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _dList: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('dl')),
+            identifier, ...relations
+        );
     };
-    _dTerm: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _dTerm: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('dt')),
+            identifier, ...relations
+        );
     };
-    _dDesc: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _dDesc: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('dd')),
+            identifier, ...relations
+        );
     };
-    _font: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _font: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('font')),
+            identifier, ...relations
+        );
     };
-    _svg_rect: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_rect: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('rect')),
+            identifier, ...relations
+        );
     };
-    _svg_tspan: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_tspan: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('tspan')),
+            identifier, ...relations
+        );
     };
-    _svg_circle: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_circle: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('circle')),
+            identifier, ...relations
+        );
     };
-    _svg_ellipse: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_ellipse: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('ellipse')),
+            identifier, ...relations
+        );
     };
-    _svg_line: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_line: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('line')),
+            identifier, ...relations
+        );
     };
-    _svg_polygon: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_polygon: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('polygon')),
+            identifier, ...relations
+        );
     };
-    _svg_polyline: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_polyline: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('polyline')),
+            identifier, ...relations
+        );
     };
-    _svg_path: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_path: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('path')),
+            identifier, ...relations
+        );
     };
-    _svg_text: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _svg_text: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('text')),
+            identifier, ...relations
+        );
     };
-    _article: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _article: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('article')),
+            identifier, ...relations
+        );
     };
-    _aside: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _aside: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('aside')),
+            identifier, ...relations
+        );
     };
-    _details: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _details: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('details')),
+            identifier, ...relations
+        );
     };
-    _figcaption: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _figcaption: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('figcaption')),
+            identifier, ...relations
+        );
     };
-    _figure: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _figure: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('figure')),
+            identifier, ...relations
+        );
     };
-    _footer: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _footer: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('footer')),
+            identifier, ...relations
+        );
     };
-    _header: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _header: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('header')),
+            identifier, ...relations
+        );throw Error('Not yet implemented _header')
     };
-    _main: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _main: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('main')),
+            identifier, ...relations
+        );
     };
-    _mark: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _mark: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('mark')),
+            identifier, ...relations
+        );
     };
-    _nav: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _nav: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('nav')),
+            identifier, ...relations
+        );
     };
-    _section: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _section: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('section')),
+            identifier, ...relations
+        );
     };
-    _summary: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _summary: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('summary')),
+            identifier, ...relations
+        );
     };
-    _time: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _time: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('input[type="time"]')),
+            identifier, ...relations
+        );
     };
-    _video: AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-        throw Error('Not yet implemented')
+    _video: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+        return this.getElement(
+            await this.webDriver.findElements(By.css('video')),
+            identifier, ...relations
+        );
     };
+    _click = async (maybeElement: Maybe<SahiElement>, combo?: string): Promise<SahiElement> => {
+        const e = throwIfAbsent(maybeElement, Error('No element specified to click'));
+        await e.click();
+        return e;
+    };
+    _setValue = async (e: Maybe<SahiElement>, value: string) => {
+        throwIfAbsent(e, Error('cannot set value on a null reference'));
+        return await this.webDriver.executeScript(`
+            const ele = arguments[0];
+            const value = arguments[1];
+            ele.setAttribute('value', value);
+        `, e, value)
+    };
+    private accessorUtil: AccessorUtil = new AccessorUtil(
+        this.webDriver,
+        this.testExecutionContext,
+        new RelationsResolver(
+            this.webDriver,
+            this.testExecutionContext
+        )
+    );
+
+    constructor(
+        readonly webDriver: ThenableWebDriver,
+        readonly testExecutionContext: TestExecutionContext
+    ) {
+    }
 
     _activeElement(): SahiElement {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _activeElement')
     };
 
     _byId(id: string): SahiElement {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _byId')
     };
 
     _byText(text: string, tagName: string): SahiElement {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _byText')
     };
 
     _byClassName(className: string, tagName: string, ...relations: SahiRelation[]): SahiElement {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _byClassName')
     };
 
     _byXPath(xpath: string): SahiElement {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _byXPath')
     };
 
     _accessor(accessor: string): SahiElement {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _accessor')
     };
 
     _bySeleniumSelector(locator: string): null {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _bySeleniumSelector')
     };
 
     _near(e: SahiElement): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _near')
     };
 
     _in(e: SahiElement): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _in')
     };
 
     _startLookInside(e: SahiElement): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _startLookInside')
     };
 
     _stopLookInside(): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _stopLookInside')
     };
 
     _rightOf(e: SahiElement, offset?: pr_i_AB | number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _rightOf')
     };
 
     _leftOf(e: SahiElement, offset?: pr_i_AB | number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _leftOf')
     };
 
     _leftOrRightOf(e: SahiElement, offset?: pr_i_AB | number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _leftOrRightOf')
     };
 
     _under(e: SahiElement, offset?: pr_i_AB | number, limit?: number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _under')
     };
 
     _above(e: SahiElement, offset?: pr_i_AB | number, limit?: number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _above')
     };
 
     _aboveOrUnder(e: SahiElement, offset?: pr_i_AB | number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _aboveOrUnder')
     };
 
     _parentNode(e: SahiElement, tagName: string, occurrence: number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _parentNode')
     };
 
-
     _parentCell(e: SahiElement, occurrence?: number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _parentCell')
     };
 
     _parentRow(e: SahiElement, occurrence?: number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _parentRow')
     };
 
     _parentTable(e: SahiElement, occurrence?: number): SahiRelation {
-        throw Error('Not yet implemented')
+        throw Error('Not yet implemented _parentTable')
     };
 
     _xy(e: SahiElement, x: number, y: number): SahiElement {
         throw Error('Not yet implemented')
     };
 
-    _click = async (e: SahiElement, combo?: string): Promise<SahiElement> => {
-        await e.click();
-        return e;
-    };
-
     async _doubleClick(e: SahiElement, combo?: string): Promise<SahiElement> {
-        this.webDriver.executeScript('')
-        throw Error('Not yet implemented')
+        await this.webDriver.executeScript('');
+        return e;
     };
 
     _rightClick(e: SahiElement, combo?: string): SahiElement {
@@ -493,4 +725,14 @@ export class SahiApi {
         throw Error('Not yet implemented')
     };
 
+    private async runAsAction<T>(name: string, action: Promise<T>): Promise<T> {
+        this.testExecutionContext.startTestAction({id: name});
+        const result = await action;
+        this.testExecutionContext.endTestAction();
+        return result;
+    }
+
+    private async getElement(webElements: WebElement[], identifier: AccessorIdentifier, ...relations: SahiRelation[]) {
+        return this.accessorUtil.getElement(webElements, identifier, ...relations);
+    }
 }

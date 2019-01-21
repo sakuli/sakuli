@@ -92,21 +92,18 @@ describe('migrateV1Code', () => {
         expect(v2Code).toContain(`await _link('do-while')`);
     });
 
-    xit('should preserve comments', () => {
+    it('should add await to calls of changed async functions', () => {
         const v2Code = migrateV1Code(stripIndent`
-            // Test comment
-            _link('huhu')
-            alert('')
+        
+            _highlightClick(_link('test'));
             
-            /**
-             * Multiline
-             */
-            function doSomething() {}
+            function _highlightClick($el) {
+                _highlight($el);
+                _click($el)
+            }        
         `)
 
-        expect(v2Code).toContain('// Test comment');
-        expect(v2Code).toContain('/**');
-        expect(v2Code).toContain('* Multiline');
-        expect(v2Code).toContain('*/')
+        expect(v2Code).toContain(`async function _highlightClick`);
+        expect(v2Code).toContain(`await _highlightClick(await _link('test'))`);
     });
 });

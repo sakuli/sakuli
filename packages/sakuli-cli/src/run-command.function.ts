@@ -27,7 +27,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: SakuliRunOptions) {
-            const unmount = renderExecution();
+            const unmount = renderExecution(sakuli.testExecutionContext);
             const testExecutionContext = await sakuli.run(runOptions);
             try {
                 await ifPresent(findError(testExecutionContext), async errorEntity => {

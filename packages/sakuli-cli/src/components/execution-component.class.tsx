@@ -1,10 +1,9 @@
 import {Component, Fragment, h} from 'ink'
-import {TestContextEntity, TestExecutionContext, TestSuiteContext} from "@sakuli/core";
+import {TestExecutionContext, TestSuiteContext} from "@sakuli/core";
 import {TestEntity} from "./test-entity-component.function";
-import Youch from "youch";
-import {ifPresent, isPresent, Maybe} from "@sakuli/commons";
-import forTerminal from "youch-terminal";
 import Timeout = NodeJS.Timeout;
+import {inspect} from "util";
+import {throwIfAbsent} from "@sakuli/commons";
 
 export interface TestExecutionComponentProps {
     testExecution: TestExecutionContext
@@ -13,6 +12,7 @@ export interface TestExecutionComponentProps {
 export interface TestExecutionComponentState {
     testSuites: TestSuiteContext[]
     tick: number;
+    log: string[]
 }
 
 export class TestExecutionComponent extends Component<TestExecutionComponentProps, TestExecutionComponentState> {
@@ -24,6 +24,7 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
         this.state = {
             testSuites: [],
             tick: 0,
+            log: []
         }
     }
 
@@ -36,8 +37,9 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
         this.timer = setInterval(() => {
             this.setState(({tick}) => ({
                 tick: tick + 1
-            }))
-        }, 180)
+            }));
+        }, 180);
+
     }
 
     componentWillUnmount() {

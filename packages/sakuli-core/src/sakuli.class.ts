@@ -1,3 +1,4 @@
+import './winston-workaround';
 import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
@@ -9,8 +10,6 @@ import {CommandModule} from "yargs";
 import * as winston from "winston";
 import {join} from "path";
 import {cwd} from "process";
-import {Forwarder} from "./forwarder";
-import {inspect} from "util";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -29,18 +28,12 @@ const myFormat = winston.format.printf(info => {
 export class SakuliClass {
 
     private presetRegistry = new SakuliPresetRegistry();
-    readonly testExecutionContext = new TestExecutionContext();
     readonly logger = winston.createLogger({
-        format: winston.format.combine(
-            winston.format.label({ label: 'right meow!' }),
-            winston.format.timestamp(),
-            myFormat
-        ),
         transports: [
-            new winston.transports.Console(),
             new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
         ]
     });
+    readonly testExecutionContext = new TestExecutionContext(this.logger);
 
     constructor(
         readonly presetProvider: SakuliPresetProvider[] = []

@@ -15,8 +15,11 @@ import {toJson} from "./test-context-entity-to-json.function";
 import {DeferredStack} from "@sakuli/commons/dist/deferred-stack.class";
 import {TestExecutionContextRaw} from "./test-execution-context-raw.interface";
 import {TestContextEntityState} from "./test-context-entity-state.class";
+import * as winston from "winston";
 
 export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
+
+const LOG_LEVEL = 'execution';
 
 /**
  * An execution-context is the main bridge between sakuli and any api that runs on sakuli
@@ -25,14 +28,18 @@ export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
 export class TestExecutionContext implements Measurable {
 
     private changeListeners: TestExecutionChangeListener[] = [];
-    private deferredStack = new DeferredStack();
     startDate: Date | null = null;
     endDate: Date | null = null;
     readonly testSuites: TestSuiteContext[] = [];
 
+    constructor(
+        readonly logger: winston.Logger
+    ) {
+    }
+
     startExecution() {
         this.startDate = new Date();
-        this.deferredStack.put();
+        this.logger.log(LOG_LEVEL, "Started Execution");
         this.emitChange();
     }
 
@@ -50,7 +57,7 @@ export class TestExecutionContext implements Measurable {
         } else {
             throw new Error('You cannot end an execution before it has been started. Please call TestExecutionContext::startExecution before call endExecution')
         }
-        this.deferredStack.pop();
+        this.logger.log(LOG_LEVEL, "Finished Execution");
         this.emitChange();
     }
 
@@ -88,7 +95,6 @@ export class TestExecutionContext implements Measurable {
             this.testSuites.push(new TestSuiteContext);
             this.updateCurrentTestSuite({startDate: new Date()});
             this.updateCurrentTestSuite(testSuite);
-            this.deferredStack.put();
             this.emitChange();
         } else {
             throw Error('You have to start execution before starting a testsuite');
@@ -114,7 +120,6 @@ export class TestExecutionContext implements Measurable {
 
     endTestSuite() {
         this.updateCurrentTestSuite({endDate: new Date()});
-        this.deferredStack.pop();
         this.emitChange();
     }
 
@@ -130,7 +135,6 @@ export class TestExecutionContext implements Measurable {
             ]
         });
         this.updateCurrentTestCase({startDate: new Date()});
-        this.deferredStack.put();
         this.emitChange();
     }
 
@@ -166,7 +170,6 @@ export class TestExecutionContext implements Measurable {
         this.updateCurrentTestCase({
             endDate: new Date()
         });
-        this.deferredStack.pop();
         this.emitChange();
     }
 
@@ -182,7 +185,6 @@ export class TestExecutionContext implements Measurable {
             ]
         });
         this.updateCurrentTestStep({startDate: new Date()});
-        this.deferredStack.put();
         this.emitChange();
     }
 
@@ -218,7 +220,6 @@ export class TestExecutionContext implements Measurable {
         this.updateCurrentTestStep({
             endDate: new Date()
         });
-        this.deferredStack.pop();
         this.emitChange();
     }
 
@@ -234,7 +235,6 @@ export class TestExecutionContext implements Measurable {
             ]
         });
         this.updateCurrentTestAction({startDate: new Date()});
-        this.deferredStack.put();
         this.emitChange();
     }
 
@@ -268,12 +268,7 @@ export class TestExecutionContext implements Measurable {
 
     endTestAction() {
         this.updateCurrentTestAction({endDate: new Date});
-        this.deferredStack.pop();
         this.emitChange();
-    }
-
-    get allEntitiesFinished(): Promise<void> {
-        return this.deferredStack.resolved();
     }
 
     private emitChange() {

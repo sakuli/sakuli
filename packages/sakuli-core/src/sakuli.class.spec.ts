@@ -46,7 +46,7 @@ describe('Sakuli', () => {
             }
         });
 
-        it('should execute correctly', async done => {
+        xit('should execute correctly', async done => {
             mockFs({
                 'project-dir': {
                     'test1.js': stripIndent`

@@ -73,7 +73,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     requestContext(ctx: TestExecutionContext) {
         const sahi = new SahiApi(throwIfAbsent(this.driver,
-            Error('Driver could not be initialized before creating sahi-api-context'))
+            Error('Driver could not be initialized before creating sahi-api-context')),
+            ctx
         );
         return ({
             TestCase: createTestCaseClass(ctx),
@@ -81,6 +82,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Key,
             Environment,
             console: console,
+            $includeFolder: '',
             ...sahi
         })
     }

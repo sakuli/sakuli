@@ -1,10 +1,15 @@
 import {TestExecutionContext} from "./test-execution-context.class";
 import {TestSuiteContext} from "./test-suite-context.class";
+import {mockPartial} from "sneer";
+import * as winston from "winston";
 
 describe('TestExectionContext', () => {
 
     let tec: TestExecutionContext;
-    beforeEach(() => tec = new TestExecutionContext());
+    const loggerMock = mockPartial<winston.Logger>({
+        log: jest.fn()
+    });
+    beforeEach(() => tec = new TestExecutionContext(loggerMock));
 
     describe('positive', () => {
 
@@ -18,23 +23,6 @@ describe('TestExectionContext', () => {
             ...moreMatcher
         });
 
-        it('should resolve async when all entities are done', async done => {
-            tec.startTestSuite();
-            tec.startTestCase();
-            tec.startTestStep();
-            tec.endTestStep();
-            tec.endTestCase();
-            tec.endTestSuite();
-            tec.endExecution();
-            try {
-                await tec.allEntitiesFinished;
-                done();
-            } catch (e) {
-                done.fail();
-            }
-
-        });
-
         it('should add multiple testsuitecontexts', () => {
             tec.startTestSuite({id: 'First-Suite'});
             tec.endTestSuite();
@@ -42,7 +30,7 @@ describe('TestExectionContext', () => {
             tec.updateCurrentTestSuite({
                 warningTime: 40,
                 criticalTime: 50
-            })
+            });
             tec.endTestSuite();
             expect(tec.testSuites.length).toBe(2);
             expect(tec.testSuites).toEqual(arrayContaining([
@@ -56,48 +44,48 @@ describe('TestExectionContext', () => {
                     criticalTime: any(Number)
                 })
             ]))
-        })
+        });
 
         it('should add testcases within testcases', () => {
             tec.startTestSuite({id: 'First-Suite'});
-            tec.startTestCase({id: 'First-Case'})
+            tec.startTestCase({id: 'First-Case'});
             tec.endTestCase();
             tec.endTestSuite();
             tec.startTestSuite({id: 'Second-Suite'});
-            tec.startTestCase({id: 'Second-Case'})
+            tec.startTestCase({id: 'Second-Case'});
             tec.endTestCase();
-            tec.startTestCase({id: 'Third-Case'})
+            tec.startTestCase({id: 'Third-Case'});
             tec.endTestCase();
             tec.endTestSuite();
 
             expect(tec.testSuites.length).toBe(2);
-            expect(tec.testSuites[0].testCases.length).toBe(1)
+            expect(tec.testSuites[0].testCases.length).toBe(1);
             expect(tec.testSuites[1].testCases.length).toBe(2)
-        })
+        });
 
         it('complex', () => {
 
-            tec.startTestSuite({id: 'S001'})
-            tec.endTestSuite()
-            tec.startTestSuite({id: 'S002'})
-            tec.startTestCase({id: 'S002C001'})
+            tec.startTestSuite({id: 'S001'});
+            tec.endTestSuite();
+            tec.startTestSuite({id: 'S002'});
+            tec.startTestCase({id: 'S002C001'});
             tec.startTestStep();
             tec.updateCurrentTestStep({id: 'late added'});
             tec.startTestAction({});
-            tec.updateCurrentTestAction({id: 'Action'})
+            tec.updateCurrentTestAction({id: 'Action'});
             tec.endTestAction();
             tec.endTestStep();
-            tec.endTestCase()
-            tec.startTestCase({id: 'S002C002'})
-            tec.endTestCase()
-            tec.startTestCase({id: 'S002C003'})
-            tec.endTestCase()
-            tec.endTestSuite()
-            tec.startTestSuite({id: 'S003'})
-            tec.startTestCase({id: 'S003C001'})
-            tec.endTestCase()
-            tec.endTestSuite()
-            tec.endExecution()
+            tec.endTestCase();
+            tec.startTestCase({id: 'S002C002'});
+            tec.endTestCase();
+            tec.startTestCase({id: 'S002C003'});
+            tec.endTestCase();
+            tec.endTestSuite();
+            tec.startTestSuite({id: 'S003'});
+            tec.startTestCase({id: 'S003C001'});
+            tec.endTestCase();
+            tec.endTestSuite();
+            tec.endExecution();
             expect(tec.isExecutionStarted()).toBeTruthy();
             expect(tec.isExecutionFinished()).toBeTruthy();
             expect(tec.duration).toEqual(expect.any(Number));
@@ -133,7 +121,7 @@ describe('TestExectionContext', () => {
         })
 
 
-    })
+    });
 
     describe('negative', () => {
         it('should throw for duration request if execution is not finished', () => {
@@ -160,7 +148,7 @@ describe('TestExectionContext', () => {
             expect(() => {
                 tec.startTestStep()
             }).toThrow();
-        })
+        });
 
         it('should throw if execution is ended before its started', () => {
             expect(() => tec.endExecution()).toThrow()
