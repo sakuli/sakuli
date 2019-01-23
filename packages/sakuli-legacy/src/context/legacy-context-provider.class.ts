@@ -9,6 +9,10 @@ import {SahiApi} from "./sahi/api";
 import {Project, Sakuli, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {parse, sep} from "path";
+import {relationsApi} from "./sahi/relations/relations-api.function";
+import {actionApi} from "./sahi/action";
+import {accessorApi, AccessorUtil} from "./sahi/accessor";
+import {RelationsResolver} from "./sahi/relations";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -72,10 +76,18 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     requestContext(ctx: TestExecutionContext) {
-        const sahi = new SahiApi(throwIfAbsent(this.driver,
-            Error('Driver could not be initialized before creating sahi-api-context')),
+        const driver =throwIfAbsent(this.driver,
+            Error('Driver could not be initialized before creating sahi-api-context'));
+        const sahi = new SahiApi(driver,ctx);
+        const sahiRelations = relationsApi(driver, ctx);
+        const sahiAccessors = accessorApi();
+        const sahiActions = actionApi(
+            driver,
+            new AccessorUtil(driver, ctx, new RelationsResolver(
+                driver, ctx
+            )),
             ctx
-        );
+        )
         return ({
             TestCase: createTestCaseClass(ctx),
             Application,
@@ -83,7 +95,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Environment,
             console: console,
             $includeFolder: '',
-            ...sahi
+            ...sahi,
+            ...sahiRelations,
+            ...sahiActions,
+            ...sahiAccessors
         })
     }
 

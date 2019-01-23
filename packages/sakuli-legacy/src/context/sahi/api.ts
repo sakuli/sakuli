@@ -1,18 +1,16 @@
-import {By, Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
-import {stripIndents} from "common-tags";
+import {Locator, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {Maybe} from "@sakuli/commons";
 import {TestExecutionContext} from "@sakuli/core";
-import {throwIfAbsent} from "@sakuli/commons";
-import {AccessorIdentifierAttributes} from "./accessor/accessor-model.interface";
-import {AccessorUtil} from "./accessor/accessor-util.class";
+import {AccessorIdentifierAttributes, AccessorUtil} from "./accessor";
 import {SahiRelation} from "./relations/sahi-relation.interface";
-import {RelationsResolver} from "./relations/relations-resolver.class";
+import {RelationsResolver} from "./relations";
+import {SahiElement, SahiElementQuery} from "./sahi-element.interface";
 
-type SahiElement = WebElement;
+//type SahiElement = WebElement;
 type pr_i_AB = [number, number];
 
 export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
-export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => Promise<Maybe<SahiElement>>;
+export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElementQuery;
 
 
 export class SahiApi {
@@ -22,31 +20,17 @@ export class SahiApi {
             await this.webDriver.navigate().refresh()
         }
     };
-    _wait = async (millis: number): Promise<void> => {
 
-        return new Promise<void>((res, rej) => {
-            setTimeout(() => res(), millis);
-        });
-    };
-    _highlight = async (element: Maybe<SahiElement>, timeoutMs: number = 2000): Promise<void> => {
-        throwIfAbsent(element, Error('No element to highlight found'));
-        const oldBorder = await this.webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[0].style.border;
-            arguments[0].style.border = '2px solid red'
-            return oldBorder;
-        `, element);
-        await new Promise<void>((res, rej) => {
-            setTimeout(res, timeoutMs);
-        });
-        await this.webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[1];
-            arguments[0].style.border = oldBorder
-        `, element, oldBorder)
 
-    };
     _dynamicInclude = async (path: string) => {
         return Promise.resolve();
+    };
+
+    _include = async (path: string) => {
+        return Promise.resolve();
     }
+
+    /*
     _password: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
             By.css('input[type="password"]'),
@@ -163,7 +147,7 @@ export class SahiApi {
     };
     _submit: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
-            By.css('input[type="submit"]'),
+            By.css('input[type="submit"], button[type="submit"]'),
             identifier, ...relations
         );
     };
@@ -525,7 +509,8 @@ export class SahiApi {
         return this.getElement(
             By.css('header'),
             identifier, ...relations
-        );throw Error('Not yet implemented _header')
+        );
+        throw Error('Not yet implemented _header')
     };
     _main: AccessorFunction = async (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
         return this.getElement(
@@ -569,19 +554,28 @@ export class SahiApi {
             identifier, ...relations
         );
     };
-    _click = async (maybeElement: Maybe<SahiElement>, combo?: string): Promise<SahiElement> => {
-        const e = throwIfAbsent(maybeElement, Error('No element specified to click'));
-        await e.click();
-        return e;
+
+    */
+    /*
+    _click = async (sahiElement: SahiElement, combo?: string): Promise<SahiElement> => {
+        throwIfElementIsAbsent(sahiElement);
+        return ifPresent(sahiElement.element, async e => {
+                await e.click();
+                return sahiElement;
+            },
+            async () => Promise.resolve(sahiElement));
     };
-    _setValue = async (e: Maybe<SahiElement>, value: string) => {
-        throwIfAbsent(e, Error('cannot set value on a null reference'));
-        return await this.webDriver.executeScript(`
-            const ele = arguments[0];
-            const value = arguments[1];
-            ele.setAttribute('value', value);
-        `, e, value)
+    _setValue = async ({query}: SahiElement, value: string): Promise<void> => {
+        const {element} = await this.getElement(query.locator, query.identifier, ...query.relations);
+        throwIfElementIsAbsent({element, query});
+        return ifPresent(element,
+            async e => {
+                await e.sendKeys(...value.split(''));
+            },
+            () => Promise.resolve()
+        );
     };
+    */
     private accessorUtil: AccessorUtil = new AccessorUtil(
         this.webDriver,
         this.testExecutionContext,
@@ -597,25 +591,7 @@ export class SahiApi {
     ) {
     }
 
-    _activeElement(): SahiElement {
-        throw Error('Not yet implemented _activeElement')
-    };
-
-    _byId(id: string): SahiElement {
-        throw Error('Not yet implemented _byId')
-    };
-
-    _byText(text: string, tagName: string): SahiElement {
-        throw Error('Not yet implemented _byText')
-    };
-
-    _byClassName(className: string, tagName: string, ...relations: SahiRelation[]): SahiElement {
-        throw Error('Not yet implemented _byClassName')
-    };
-
-    _byXPath(xpath: string): SahiElement {
-        throw Error('Not yet implemented _byXPath')
-    };
+    /*
 
     _accessor(accessor: string): SahiElement {
         throw Error('Not yet implemented _accessor')
@@ -623,14 +599,6 @@ export class SahiApi {
 
     _bySeleniumSelector(locator: string): null {
         throw Error('Not yet implemented _bySeleniumSelector')
-    };
-
-    _near(e: SahiElement): SahiRelation {
-        throw Error('Not yet implemented _near')
-    };
-
-    _in(e: SahiElement): SahiRelation {
-        throw Error('Not yet implemented _in')
     };
 
     _startLookInside(e: SahiElement): SahiRelation {
@@ -714,9 +682,8 @@ export class SahiApi {
         throw Error('Not yet implemented')
     };
 
-    _setSelected(e: SahiElement, ...relations: SahiRelation[]): null {
-        throw Error('Not yet implemented')
-    };
+    */
+
 
     _dragDrop(eSource: SahiElement, eTarget: SahiElement): null {
         throw Error('Not yet implemented')
@@ -733,11 +700,10 @@ export class SahiApi {
         return result;
     }
 
-    private async getElement(locator: Locator, identifier: AccessorIdentifier, ...relations: SahiRelation[]) {
-        await this.webDriver.wait(until.elementsLocated(locator));
-        return this.accessorUtil.getElement(
-            await this.webDriver.findElements(locator),
-            identifier, ...relations
-        );
+    private async getElement(locator: Locator, identifier: AccessorIdentifier, ...relations: SahiRelation[]): Promise<Maybe<WebElement>> {
+        return await this.accessorUtil.fetchElement({
+            locator, identifier, relations
+        });
+
     }
 }

@@ -25,6 +25,10 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
      */
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
+        process.on('unhandledRejection', error => {
+            // Will print "unhandledRejection err is not defined"
+            //console.log('unhandledRejection', error.message);
+        });
         // onProject Phase
         this.onProject(project, this.testExecutionContext);
         const context = this.requestContext(this.testExecutionContext);

@@ -1,5 +1,8 @@
 (async () => {
     await _dynamicInclude($includeFolder);
+
+
+
     var testCase = new TestCase(1200, 1300);
     //var env = new Environment();
     var tbOpened = false;
@@ -17,14 +20,16 @@
             ],
             comment: 'Just want to praise for your products'
         };
-        await _navigateTo('https://showroom2.cm6demo.consol.de/track/', true);
-        //await _wait(5000);
-        await _highlight(await _textbox("username"));
-        //await loginToTrack();
         /*
-        await _highlightClick(await _button('Create'));
+        await _navigateTo('https://showroom2.cm6demo.consol.de/track/', true);
+        await _wait(5000);
+        await _highlight(await _textbox("username"));
+        */
+        await loginToTrack();
+        await _highlightClick(await _button('Erstellen'));
         await _createTrackTicket(ticketData);
         testCase.endOfStep('Create CM Track Ticket');
+        /*
         await loginToCmClient();
         await searchTicket(ticketData.subject);
         await _validateCmTicket(ticketData);
@@ -34,6 +39,7 @@
         testCase.endOfStep('Validate Ticket in CM-Client');
         */
     } catch (e) {
+        await _wait(10000);
         testCase.handleException(e);
     } finally {
         testCase.saveResult();
@@ -47,7 +53,9 @@
         await _navigateTo('https://showroom2.cm6demo.consol.de/track/', true);
         await _setValue(await _textbox('username'), 'sakulikunde');
         await _setValue(await _password('password'), '4testingonly');
-        await _click(await _submit('Sign in'));
+        const btn = await _submit('Anmelden');
+        _highlight(btn);
+        await _click(btn);
     }
     async function loginToCmClient() {
         await _navigateTo('https://showroom2.cm6demo.consol.de/cm-client/', true);
@@ -63,16 +71,16 @@
     }
     async function _createTrackTicket($ticketData) {
         await _setValue(await _textbox('subject'), $ticketData.subject);
-        await _setSelected(await _select(0, await _near(await _label('/Type/'))), $ticketData.type);
-        await _setSelected(await _select(0, await _near(await _label('/Category/'))), $ticketData.category);
-        await _highlightClick(await _link('Please select', await _near(await _label('Product'))));
+        await _setSelected(await _select(0, await _near(await _label('/Anfragetyp/'))), $ticketData.type);
+        await _setSelected(await _select(0, await _near(await _label('/Kategorie/'))), $ticketData.category);
+        await _highlightClick(await _link(/Bitte wählen/, await _near(await _label(/Product/))));
         for (var i = 0; i < $ticketData.product.length; i++) {
             await _highlightClick(await _link($ticketData.product[i]));
         }
         await _rteWrite(await _rte(0), $ticketData.comment);
         await _setValue(await _textarea('comment'), $ticketData.comment);
         await _focus(await _rte(0));
-        await _highlightClick(await _submit('Create Ticket'));
+        //await _highlightClick(await _submit('Create Ticket'));
         await _highlight(await _div(new RegExp('.* \\| ' + $ticketData.subject)));
     }
     async function _validateCmTicket($ticketData) {

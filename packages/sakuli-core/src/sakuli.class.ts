@@ -8,8 +8,7 @@ import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
 import * as winston from "winston";
-import {join} from "path";
-import {cwd} from "process";
+import {SimpleLogger} from "@sakuli/commons";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -21,18 +20,15 @@ export function Sakuli(presetProvider: SakuliPresetProvider[] = []): SakuliInsta
     return sakuliInstance;
 }
 
-const myFormat = winston.format.printf(info => {
-    return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
-});
-
 export class SakuliClass {
 
     private presetRegistry = new SakuliPresetRegistry();
-    readonly logger = winston.createLogger({
-        transports: [
-            new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
-        ]
-    });
+    // readonly logger = winston.createLogger({
+    //     transports: [
+    //         new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
+    //     ]
+    // });
+    readonly logger = new SimpleLogger();
     readonly testExecutionContext = new TestExecutionContext(this.logger);
 
     constructor(

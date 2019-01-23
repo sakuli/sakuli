@@ -63,6 +63,7 @@ export function relationsApi(
         };
     };
 
+
     const _rightOf: RelationProducerWithOffset = (element, offset = 0) => {
         return async elements => {
             return ifPresent(await getParent(element),

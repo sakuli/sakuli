@@ -30,6 +30,10 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
             const unmount = renderExecution(sakuli.testExecutionContext);
             const testExecutionContext = await sakuli.run(runOptions);
             try {
+                await ifPresent(testExecutionContext.error, async error => {
+                    console.log(chalk`Error during Execution: \n`);
+                    await renderError(error);
+                });
                 await ifPresent(findError(testExecutionContext), async errorEntity => {
                     await ifPresent(errorEntity.error, async e => {
                         console.log(chalk`Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}`);

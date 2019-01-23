@@ -1,5 +1,5 @@
 import {TestSuiteContext} from "./test-suite-context.class";
-import {Maybe, throwIfAbsent} from "@sakuli/commons";
+import {Maybe, SimpleLogger, throwIfAbsent} from "@sakuli/commons";
 import {
     FinishedMeasurable,
     getDuration,
@@ -12,14 +12,10 @@ import {TestCaseContext} from "./test-case-context.class";
 import {TestStepContext} from "./test-step-context.class";
 import {TestActionContext} from "./test-action-context.class";
 import {toJson} from "./test-context-entity-to-json.function";
-import {DeferredStack} from "@sakuli/commons/dist/deferred-stack.class";
 import {TestExecutionContextRaw} from "./test-execution-context-raw.interface";
 import {TestContextEntityState} from "./test-context-entity-state.class";
-import * as winston from "winston";
 
 export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
-
-const LOG_LEVEL = 'execution';
 
 /**
  * An execution-context is the main bridge between sakuli and any api that runs on sakuli
@@ -31,15 +27,16 @@ export class TestExecutionContext implements Measurable {
     startDate: Date | null = null;
     endDate: Date | null = null;
     readonly testSuites: TestSuiteContext[] = [];
+    error: Maybe<Error>;
 
     constructor(
-        readonly logger: winston.Logger
+        readonly logger: SimpleLogger
     ) {
     }
 
     startExecution() {
         this.startDate = new Date();
-        this.logger.log(LOG_LEVEL, "Started Execution");
+        this.logger.info( "Started Execution");
         this.emitChange();
     }
 
@@ -57,7 +54,7 @@ export class TestExecutionContext implements Measurable {
         } else {
             throw new Error('You cannot end an execution before it has been started. Please call TestExecutionContext::startExecution before call endExecution')
         }
-        this.logger.log(LOG_LEVEL, "Finished Execution");
+        this.logger.info( "Finished Execution");
         this.emitChange();
     }
 
@@ -290,7 +287,8 @@ export class TestExecutionContext implements Measurable {
             duration: this.duration,
             startDate: this.startDate,
             endDate: this.endDate,
-            testSuites: this.testSuites.map(ts => toJson(ts))
+            testSuites: this.testSuites.map(ts => toJson(ts)),
+            error: this.error
         });
     }
 

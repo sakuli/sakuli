@@ -27,7 +27,8 @@
     "yargonaut": "^1.1.4",
     "yargs": "^12.0.5",
     "youch": "^2.0.10",
-    "youch-terminal": "^1.0.0"
+    "youch-terminal": "^1.0.0",
+    "date-fns": "^1.30.1"
   },
   "devDependencies": {
     "@types/figlet": "^1.2.0",

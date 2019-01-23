@@ -17,7 +17,6 @@
   "dependencies": {
     "@sakuli/commons": "1.0.0",
     "@sakuli/core": "1.0.0",
-    "@types/yargs": "^12.0.1",
     "class-validator": "^0.9.1",
     "common-tags": "^1.8.0",
     "escodegen": "^1.11.0",
@@ -25,11 +24,10 @@
     "mock-fs": "^4.7.0",
     "properties-reader": "0.0.16",
     "reflect-metadata": "^0.1.12",
-    "selenium-webdriver": "^4.0.0-alpha.1",
-    "winston": "^3.1.0",
-    "winston-transport": "^4.2.0"
+    "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "devDependencies": {
+    "@types/yargs": "^12.0.1",
     "@types/common-tags": "^1.4.0",
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^4.0.2",

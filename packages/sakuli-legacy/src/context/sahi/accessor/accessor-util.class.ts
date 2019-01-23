@@ -1,13 +1,14 @@
-import {ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
-import {AccessorIdentifier} from "../api";
 import {
     AccessorIdentifierAttributesWithSahiIndex,
     isAccessorIdentifierAttributesWithSahiIndex
 } from "./accessor-model.interface";
-import {RelationsResolver} from "../relations/relations-resolver.class";
-import {SahiRelation} from "../relations/sahi-relation.interface";
+import {RelationsResolver} from "../relations";
+import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
+import {ifPresent, Maybe} from "@sakuli/commons";
+import {AccessorIdentifier} from "../api";
 
 export class AccessorUtil {
     constructor(
@@ -15,6 +16,10 @@ export class AccessorUtil {
         readonly testExecutionContext: TestExecutionContext,
         readonly relationResolver: RelationsResolver
     ) {
+    }
+
+    get logger() {
+        return this.testExecutionContext.logger;
     }
 
     getElementBySahiIndex(elements: WebElement[], identifier: AccessorIdentifierAttributesWithSahiIndex) {
@@ -59,13 +64,16 @@ export class AccessorUtil {
                 const match = text.match(regEx);
                 return match ? match.length > 0 : false
             });
-            return !!matches.find(m => m);
+            return !!matches.find(m => !!m);
         });
         return e ? Promise.resolve(e[0]) : Promise.resolve(undefined);
     }
 
-    async getElement(elements: WebElement[], identifier: AccessorIdentifier, ...relations: SahiRelation[]): Promise<WebElement | undefined> {
-        elements = await this.relationResolver.applyRelations(elements, relations);
+    async findElements(locator: Locator): Promise<WebElement[]> {
+        return this.webDriver.wait(until.elementsLocated(locator), 3000);
+    }
+
+    private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<Maybe<WebElement>> {
         if (typeof identifier === 'number') {
             return Promise.resolve(this.getElementBySahiIndex(elements, {sahiIndex: identifier}));
         }
@@ -79,6 +87,25 @@ export class AccessorUtil {
             return this.getByRegEx(elements, new RegExp(identifier));
         }
         return Promise.resolve(undefined);
+    }
+
+    async fetchElement(query: SahiElementQuery, retry: number = 10): Promise<WebElement> {
+        try {
+            const {locator, relations, identifier} = query;
+            const elements = await this.findElements(locator);
+            const elementsAfterRelations = await this.relationResolver.applyRelations(
+                elements,
+                relations
+            );
+            const element = await this.resolveByIdentifier(elementsAfterRelations, identifier);
+            return ifPresent(element, e => e, () => {
+                throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
+            })
+        } catch (e) {
+            this.logger.info(`Error (r: ${retry}) ${e.message}`);
+            if (retry === 1) throw e;
+            return this.fetchElement(query, retry - 1);
+        }
     }
 
 }

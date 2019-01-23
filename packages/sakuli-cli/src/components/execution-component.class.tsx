@@ -1,9 +1,9 @@
 import {Component, Fragment, h} from 'ink'
 import {TestExecutionContext, TestSuiteContext} from "@sakuli/core";
 import {TestEntity} from "./test-entity-component.function";
+import {ifPresent, LogEvent, Maybe} from "@sakuli/commons";
+import {LogEvent as LogEventComponent} from './log-event.component'
 import Timeout = NodeJS.Timeout;
-import {inspect} from "util";
-import {throwIfAbsent} from "@sakuli/commons";
 
 export interface TestExecutionComponentProps {
     testExecution: TestExecutionContext
@@ -12,12 +12,13 @@ export interface TestExecutionComponentProps {
 export interface TestExecutionComponentState {
     testSuites: TestSuiteContext[]
     tick: number;
-    log: string[]
+    log: LogEvent[]
 }
 
 export class TestExecutionComponent extends Component<TestExecutionComponentProps, TestExecutionComponentState> {
 
-    timer: Timeout | null = null;
+    timer: Maybe<Timeout>;
+    private unsubscribeLog: Maybe<() => void>;
 
     constructor(props: TestExecutionComponentProps) {
         super(props);
@@ -34,6 +35,9 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
                 testSuites: tec.testSuites
             });
         });
+        this.unsubscribeLog = this.props.testExecution.logger.onEvent(e => {
+            this.setState(s => ({log: [...s.log, e]}))
+        });
         this.timer = setInterval(() => {
             this.setState(({tick}) => ({
                 tick: tick + 1
@@ -43,9 +47,8 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
     }
 
     componentWillUnmount() {
-        if (this.timer) {
-            clearInterval(this.timer)
-        }
+        ifPresent(this.timer, timer => clearInterval(timer));
+        ifPresent(this.unsubscribeLog, unsubscribeLog => unsubscribeLog());
     }
 
     render() {
@@ -56,6 +59,7 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
                         <TestEntity entity={suite} tick={this.state.tick}/>
                     ))}
                 </div>
+                <div>{this.state.log.map(e => <LogEventComponent {...e} />)}</div>
             </Fragment>
         )
 
