@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist",
   "scripts": {
-    "test": "jest --runInBand",
+    "test": "jest",
     "build": "tsc",
     "typedoc": "typedoc --out ../../docs/api/sakuli-legacy --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",

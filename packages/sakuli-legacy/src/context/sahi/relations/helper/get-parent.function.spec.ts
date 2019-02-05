@@ -19,27 +19,25 @@ describe('getParent', () => {
         done();
     });
 
-    describe('getParent', () => {
-        it('should resolve to a parent', async done => {
-            const {driver, url} = await env.getEnv();
-            await driver.get(`${url}/relations/relations-resolver.html`);
-            const li = await driver.findElement(By.css('li'));
-            const ul = await driver.findElement(By.css('ul'));
-            await ifPresent(await getParent(li), async parent => {
-                await expect(isEqual(ul, parent)).resolves.toBeTruthy();
-            }, () => done.fail());
+    it('should resolve to a parent', async done => {
+        const {driver, url} = await env.getEnv();
+        await driver.get(`${url}/relations/relations-resolver.html`);
+        const li = await driver.findElement(By.css('li'));
+        const ul = await driver.findElement(By.css('ul'));
+        await ifPresent(await getParent(li), async parent => {
+            await expect(isEqual(ul, parent)).resolves.toBeTruthy();
+        }, () => done.fail());
 
-            done();
-        });
+        done();
+    });
 
-        it('should return null if element has no parent', async done => {
-            const {driver, url} = await env.getEnv();
-            await driver.get(url);
-            await expect(
-                getParent(driver.findElement(By.css('html')))
-            ).resolves.toBeNull();
-            done();
-        });
+    it('should return null if element has no parent', async done => {
+        const {driver, url} = await env.getEnv();
+        await driver.get(url);
+        await expect(
+            getParent(driver.findElement(By.css('html')))
+        ).resolves.toBeNull();
+        done();
     });
 
 });

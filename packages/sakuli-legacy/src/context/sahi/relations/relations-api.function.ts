@@ -26,6 +26,7 @@ export async function positionalInfo(origin: WebElement): Promise<PositionalInfo
     return ({location: {x, y}, size: {width, height}, origin});
 }
 
+export type RelationApi = ReturnType<typeof relationsApi>;
 
 export function relationsApi(
     driver: WebDriver,

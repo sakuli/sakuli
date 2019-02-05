@@ -2,6 +2,8 @@ import {SahiRelation} from "../relations/sahi-relation.interface";
 import {By} from "selenium-webdriver";
 import {AccessorFunction, AccessorIdentifier} from "../api";
 
+export type AccessorApi = ReturnType<typeof accessorApi>;
+
 export function accessorApi() {
 
     function createAccessorFunction(css: string): AccessorFunction {

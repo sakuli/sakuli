@@ -1,16 +1,16 @@
-import {AccessorUtil} from "../accessor/accessor-util.class";
+import {AccessorUtil} from "../accessor";
 import {SahiElementQuery} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
 import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
+
+export type ActionApi = ReturnType<typeof actionApi>;
 
 export function actionApi(
     webDriver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ) {
-
-    const EmptyPromise = () => Promise.resolve();
 
     function runAsAction<T extends (...args: any[]) => Promise<any>>(
         name: string,
@@ -96,11 +96,29 @@ export function actionApi(
         });
     }
 
+    async function _navigateTo(url: string, forceReload: boolean = false): Promise<any> {
+        await webDriver.get(url);
+        if (forceReload) {
+            await webDriver.navigate().refresh()
+        }
+    }
+
+    async function _dragDrop(eSource: SahiElementQuery, eTarget: SahiElementQuery): Promise<void> {
+        throw Error('Not yet implemented')
+    }
+
+    async function _dragDropXY(e: SahiElementQuery, $x: number, $y: number, $isRelative: boolean = false): Promise<void> {
+        throw Error('Not yet implemented')
+    }
+
     return ({
         _click: runAsAction('click', _click),
         _setValue: runAsAction('setValue', _setValue),
         _setSelected: runAsAction('setSelected', _setSelected),
         _wait: runAsAction('wait', _wait),
-        _highlight: runAsAction('highlight', _highlight)
+        _highlight: runAsAction('highlight', _highlight),
+        _navigateTo: runAsAction('navigateTo', _navigateTo),
+        _dragDrop: runAsAction('dragDrop', _dragDrop),
+        _dragDropXY: runAsAction('dragDrop', _dragDropXY)
     })
 }
