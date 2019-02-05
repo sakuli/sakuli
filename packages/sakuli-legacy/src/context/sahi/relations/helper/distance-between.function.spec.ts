@@ -7,7 +7,7 @@ import {RelationsResolver} from "../relations-resolver.class";
 import {SahiElementQuery} from "../../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
 import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
-import {distanceBetween} from "./distance-to-between.function";
+import {distanceBetween} from "./distance-between.function";
 import DoneCallback = jest.DoneCallback;
 
 jest.setTimeout(50000);

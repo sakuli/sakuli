@@ -1,37 +1,38 @@
 import {By, ThenableWebDriver} from "selenium-webdriver";
-import {StaticServer} from "../__mocks__/serve-static-helper.function";
 import {mockPartial} from "sneer";
-import {initTestEnv} from "../__mocks__";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "./relations-resolver.class";
+import {createTestEnv, TestEnvironment} from "../__mocks__";
 
 describe('AccessorUtil', () => {
-    let driver: ThenableWebDriver;
-    let staticServer: StaticServer;
-    let url: string;
-    let api: RelationsResolver;
     const testExecutionContext = mockPartial<TestExecutionContext>({});
 
-    beforeAll(initTestEnv((info) => {
-        url = info.url;
-        driver = info.webDriver;
-        staticServer = info.server;
-        api = new RelationsResolver(driver, testExecutionContext);
-    }));
-
-    afterAll(async done => {
-        await driver.quit();
-        await staticServer.stop();
+    let env: TestEnvironment;
+    beforeEach(async done => {
+        env = createTestEnv();
+        await env.start();
+        done();
     });
+
+    afterEach(async done => {
+        await env.stop();
+        done();
+    })
+
+    function createApi(driver: ThenableWebDriver) {
+        return new RelationsResolver(driver, testExecutionContext);
+    }
 
 
     it('should call on relations', async done => {
+        const {driver, url} = await env.getEnv();
         await driver.get(`${url}/relations/relations-resolver.html`);
+        const api = createApi(driver);
         const items = await driver.findElements(By.css('li'));
         const otherItems = items.filter((_, i) => i % 2 === 0);
         const relationsMock = jest.fn(() => otherItems);
         const relationsMock2 = jest.fn();
-        const elements = await api.applyRelations(items, [
+        await api.applyRelations(items, [
             relationsMock,
             relationsMock2
         ]);

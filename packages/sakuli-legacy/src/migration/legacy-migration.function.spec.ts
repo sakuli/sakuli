@@ -16,7 +16,6 @@ describe('migrateV1Code', () => {
             _highlight('Test');
             _link('huhu')
         `);
-        console.log(v2Code);
         expect(v2Code).toContain("await _highlight");
         expect(v2Code).toContain("await _link");
     });
@@ -25,7 +24,6 @@ describe('migrateV1Code', () => {
         const v2Code = migrateV1Code(stripIndent`
             _highlight(_link('huhu'));
         `);
-        console.log(v2Code);
         expect(v2Code).toContain("await _highlight");
         expect(v2Code).toContain("await _link");
     });
@@ -38,7 +36,6 @@ describe('migrateV1Code', () => {
                 _link('else')
             }
         `);
-        console.log(v2Code);
         expect(v2Code).toContain("await _highlight");
         expect(v2Code).toContain("await _link('huhu')");
         expect(v2Code).toContain("await _div");

@@ -1,19 +1,13 @@
 import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
-import {StaticServer} from "../__mocks__/serve-static-helper.function";
 import {mockPartial} from "sneer";
-import {initTestEnv} from "../__mocks__";
 import {TestExecutionContext} from "@sakuli/core";
 import {relationsApi} from "./relations-api.function";
-import {ifPresent} from "@sakuli/commons";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQuery} from "../sahi-element.interface";
-import {getParent} from "./helper/get-parent.function";
-import {isEqual} from "./helper/is-equal.function";
-import {isChildOf} from "./helper/is-child-of.function";
 import {getSiblings} from "./helper/get-siblings.function";
 import {mockHtml} from "../__mocks__/html/mock-html.function";
-import {createTestEnv, TestEnvironment} from "../__mocks__/create-test-env.function";
+import {createTestEnv, TestEnvironment} from "../__mocks__";
 
 describe('relations-api', () => {
     const testExecutionContext = mockPartial<TestExecutionContext>({});
@@ -44,7 +38,6 @@ describe('relations-api', () => {
         await env.stop();
         done();
     });
-
 
 
     describe('_in', () => {

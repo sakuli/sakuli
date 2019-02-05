@@ -1,7 +1,7 @@
 import {mockHtml} from "../../__mocks__/html/mock-html.function";
 import {By} from "selenium-webdriver";
 import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
-import {distanceBetween} from "./distance-to-between.function";
+import {distanceBetween} from "./distance-between.function";
 import {isEqual} from "./is-equal.function";
 
 jest.setTimeout(50000);
