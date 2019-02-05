@@ -1,1 +1,1 @@
-export * from './action-api';
+export * from './action.api';

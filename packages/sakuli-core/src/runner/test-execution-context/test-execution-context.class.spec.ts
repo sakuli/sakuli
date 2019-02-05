@@ -1,12 +1,12 @@
 import {TestExecutionContext} from "./test-execution-context.class";
 import {TestSuiteContext} from "./test-suite-context.class";
 import {mockPartial} from "sneer";
-import * as winston from "winston";
+import {SimpleLogger} from "@sakuli/commons";
 
-describe('TestExectionContext', () => {
+describe('TestExecutionContext', () => {
 
     let tec: TestExecutionContext;
-    const loggerMock = mockPartial<winston.Logger>({
+    const loggerMock = mockPartial<SimpleLogger>({
         log: jest.fn()
     });
     beforeEach(() => tec = new TestExecutionContext(loggerMock));

@@ -12,7 +12,7 @@ type pr_i_AB = [number, number];
 export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
 export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElementQuery;
 
-export type SahiApi = ActionApi & AccessorApi & RelationApi;
+export type SahiApi = ActionApi & AccessorApi & RelationApi & {_dynamicInclude: () => Promise<void>};
 
 export function sahiApi(
     driver: ThenableWebDriver,
@@ -26,6 +26,7 @@ export function sahiApi(
     return ({
         ...action,
         ...accessor,
-        ...relations
+        ...relations,
+        _dynamicInclude: (): Promise<void> => Promise.resolve()
     })
 }

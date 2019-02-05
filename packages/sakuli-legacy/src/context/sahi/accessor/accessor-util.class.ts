@@ -70,7 +70,14 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        return this.webDriver.wait(until.elementsLocated(locator), 3000);
+        const elements = await this.webDriver.wait(until.elementsLocated(locator), 300);
+        const displayedElements: WebElement[] = [];
+        for (let element of elements) {
+            if(await element.isDisplayed()) {
+                displayedElements.push(element);
+            }
+        }
+        return displayedElements;
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<Maybe<WebElement>> {
@@ -89,7 +96,7 @@ export class AccessorUtil {
         return Promise.resolve(undefined);
     }
 
-    async fetchElement(query: SahiElementQuery, retry: number = 50): Promise<WebElement> {
+    async fetchElement(query: SahiElementQuery, retry: number = 10): Promise<WebElement> {
         try {
             const {locator, relations, identifier} = query;
             const elements = await this.findElements(locator);
@@ -102,7 +109,6 @@ export class AccessorUtil {
                 throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
             })
         } catch (e) {
-            //this.logger.info(`Error (r: ${retry}) ${e.message}`);
             if (retry === 0) throw e;
             return this.fetchElement(query, retry - 1);
         }

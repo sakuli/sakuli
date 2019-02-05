@@ -13,7 +13,7 @@
             type: 'Lob',
             category: 'Sonstiges',
             product: [
-                'Coffee machines',
+                'Kaffeemaschinen',
                 'Home Line',
                 'Home 500'
             ],
@@ -38,7 +38,7 @@
         testCase.endOfStep('Validate Ticket in CM-Client');
         */
     } catch (e) {
-        await _wait(10000);
+        //await _wait(10000);
         testCase.handleException(e);
     } finally {
         testCase.saveResult();
@@ -78,7 +78,6 @@
         await _highlight(_select(0, _near(_label(/Anfragetyp/))));
         await _setSelected(_select(0, _near(_label(/Anfragetyp/))), $ticketData.type);
         await _setSelected(_select(0, _near(_label(/Kategorie/))), $ticketData.category);
-        await _wait(99999);
         await _highlightClick(await _link(/Bitte wählen/, _near(_label(/Produkt/))));
         for (var i = 0; i < $ticketData.product.length; i++) {
             await _highlightClick(await _link($ticketData.product[i]));

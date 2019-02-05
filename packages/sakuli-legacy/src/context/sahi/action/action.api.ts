@@ -46,33 +46,31 @@ export function actionApi(
                 await setElementSelect(option, false)
             }
             if (isNumberArray(valuesOrIndices)) {
-                if (valuesOrIndices.indexOf(i)) {
+                if (valuesOrIndices.includes(i)) {
                     await setElementSelect(option, true);
-                    //option.click();
                 }
             } else {
                 const value = await option.getAttribute('value');
                 const text = await option.getText();
-                ctx.logger.info('Huhu');
-                ctx.logger.info(`match ${valuesOrIndices.join(', ')} with ${value} or ${text}`);
-                if (!!valuesOrIndices.indexOf(value) || !!valuesOrIndices.indexOf(text)) {
-                    ctx.logger.info(`Select ${text} [${typeof text}]`, option);
+                if (valuesOrIndices.includes(value) || valuesOrIndices.includes(text)) {
                     await setElementSelect(option, true);
-                    //await option.click()
                 }
             }
         }
     }
 
     async function setElementSelect(e: WebElement, selected: boolean = true) {
-        return webDriver.executeAsyncScript(stripIndents`
+        await webDriver.executeAsyncScript(stripIndents`
             const e = arguments[0];
             const selected = arguments[1];
             const done = arguments[arguments.length - 1];
-            e.setAttribute("selected", selected);
-            console.log(e);
-            done();
-        `, e, selected)
+            if(selected) {
+                e.setAttribute('selected', true)
+            } else {
+                e.removeAttribute('selected');
+            }
+            done(e.textContent);
+        `, e, selected);
     }
 
     async function _highlight(query: SahiElementQuery, timeoutMs: number = 2000): Promise<void> {
