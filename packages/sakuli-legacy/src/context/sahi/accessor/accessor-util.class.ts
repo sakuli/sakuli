@@ -27,7 +27,7 @@ export class AccessorUtil {
     }
 
     /**
-     * Reads values from potetial identifier attributes of an element
+     * Reads values from potential identifier attributes of an element
      * this is used perform fuzzy string matching on element such as
      * <code>_div('some fuzzy buzzy')</code>
      *
@@ -89,7 +89,7 @@ export class AccessorUtil {
         return Promise.resolve(undefined);
     }
 
-    async fetchElement(query: SahiElementQuery, retry: number = 10): Promise<WebElement> {
+    async fetchElement(query: SahiElementQuery, retry: number = 50): Promise<WebElement> {
         try {
             const {locator, relations, identifier} = query;
             const elements = await this.findElements(locator);
@@ -102,8 +102,8 @@ export class AccessorUtil {
                 throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
             })
         } catch (e) {
-            this.logger.info(`Error (r: ${retry}) ${e.message}`);
-            if (retry === 1) throw e;
+            //this.logger.info(`Error (r: ${retry}) ${e.message}`);
+            if (retry === 0) throw e;
             return this.fetchElement(query, retry - 1);
         }
     }

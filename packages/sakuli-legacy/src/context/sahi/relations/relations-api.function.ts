@@ -1,35 +1,16 @@
 import {By, ILocation, ISize, WebDriver, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationProducer, RelationProducerWithOffset} from "./sahi-relation.interface";
-import {elementIntersection, isEqual} from "../selenium-utils.function";
-import {filterAsync, fromArray, ifPresent, mapAsync, switchFilter, toArray} from "@sakuli/commons";
+import {filterAsync, ifPresent, mapAsync} from "@sakuli/commons";
 import {edges} from "./edges.function";
 import {isLeftOf, isRightOf} from "./vector2.type";
+import {AccessorUtil} from "../accessor";
+import {SahiElementQuery} from "../sahi-element.interface";
+import {isChildOf} from "./helper/is-child-of.function";
+import {distanceBetween} from "./helper/distance-to-between.function";
+import {getSiblingIndex} from "./helper/get-sibling-index.function";
+import {getParent} from "./helper/get-parent.function";
 
-export async function getParent(element: WebElement) {
-    try {
-        return await element.findElement(By.xpath('..'));
-    } catch (e) {
-        return null;
-    }
-}
-
-export async function isChildOf(child: WebElement, potentialParent: WebElement): Promise<boolean> {
-    return ifPresent(await getParent(child), async parent => {
-            if (await isEqual(potentialParent, parent)) {
-                return true;
-            } else {
-                return isChildOf(parent, potentialParent);
-            }
-        },
-        () => Promise.resolve(false)
-    )
-}
-
-
-export async function getSiblings(element: WebElement): Promise<WebElement[]> {
-    return element.findElements(By.xpath('../*'));
-}
 
 interface PositionalInfo {
     location: ILocation,
@@ -37,7 +18,7 @@ interface PositionalInfo {
     origin: WebElement
 }
 
-async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
+export async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
     // Somehow types are not updated: But getRect is the correct
     // way to get the dimension and position of an element
     // https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#getRect
@@ -45,59 +26,73 @@ async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
     return ({location: {x, y}, size: {width, height}, origin});
 }
 
+
 export function relationsApi(
     driver: WebDriver,
-    testExecutionContext: TestExecutionContext
+    accessorUtil: AccessorUtil,
+    testExecutionContext: TestExecutionContext,
 ) {
 
-    const _in: RelationProducer = (parent: WebElement) => {
-        const filterChildOf = filterAsync<WebElement>((e: WebElement) => isChildOf(e, parent));
+    const _in: RelationProducer = (query: SahiElementQuery) => {
         return async (elements: WebElement[]) => {
+            const element = await accessorUtil.fetchElement(query);
+            const filterChildOf = filterAsync<WebElement>((e: WebElement) => isChildOf(e, element));
             return filterChildOf(elements);
         }
     };
 
-    const _near: RelationProducer = (parent: WebElement) => {
-        return async e => {
-            return Promise.resolve(e);
+    const _near: RelationProducer = (query: SahiElementQuery) => {
+        return async possibleElements => {
+            const anchor = await accessorUtil.fetchElement(query);
+            const [
+                ...elementDistances
+            ] = await Promise
+            // For all elements including the anchor it calculates:
+            // - the distance to the root (.toRoot)
+            // - the index within its own parent (.asSibling)
+                .all(possibleElements.map(async element => ({
+                    toRoot: await distanceBetween(anchor, element),
+                    asSibling: await getSiblingIndex(element),
+                    element
+                })));
+            return elementDistances
+                .sort((a, b) => {
+                    return a.toRoot === b.toRoot
+                        ? a.asSibling - b.asSibling
+                        : a.toRoot - b.toRoot
+                })
+                .map(({element}) => element)
         };
     };
 
-
-    const _rightOf: RelationProducerWithOffset = (element, offset = 0) => {
-        return async elements => {
+    function createVerticalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement:PositionalInfo) => boolean) {
+        return async (elements: WebElement[]) => {
+            const element = await accessorUtil.fetchElement(query);
             return ifPresent(await getParent(element),
                 async p => {
-                    const anchorSiblings: WebElement[] = await toArray(
-                        switchFilter<WebElement>(async (e: WebElement) => await isChildOf(e, p))(fromArray(elements))
-                    );
+                    const anchorSiblings: WebElement[] = [];
+                    for (const e of elements) {
+                        if (await isChildOf(e, p)) {
+                            anchorSiblings.push(e);
+                        }
+                    }
                     const anchor = await positionalInfo(element);
                     const positionals = await mapAsync(positionalInfo)(anchorSiblings);
                     return positionals
-                        .filter((e: PositionalInfo) => isRightOf(edges(anchor).center, edges(e).center))
+                        .filter(pi => predicate(anchor, pi))
                         .slice(offset)
                         .map((p: PositionalInfo) => p.origin);
 
                 }, async () => Promise.resolve([]))
         }
+    }
+
+    const _rightOf: RelationProducerWithOffset = (query: SahiElementQuery, offset = 0) => {
+        return createVerticalRelation(query, offset, (a, b) => isRightOf(edges(a).center, edges(b).center));
     };
 
-    const _leftOf: RelationProducerWithOffset = (element, offset = 0) => {
-        return async elements => {
-            return ifPresent(await getParent(element),
-                async p => {
-                    const anchorSiblings: WebElement[] = await toArray(
-                        switchFilter<WebElement>(async (e: WebElement) => await isChildOf(e, p))(fromArray(elements))
-                    );
-                    const anchor = await positionalInfo(element);
-                    const positionals = await mapAsync(positionalInfo)(anchorSiblings);
-                    return positionals
-                        .filter((e: PositionalInfo) => isLeftOf(edges(anchor).center, edges(e).center))
-                        .slice(offset)
-                        .map((p: PositionalInfo) => p.origin);
-
-                }, async () => Promise.resolve([]))
-        }
+    const _leftOf: RelationProducerWithOffset = (query: SahiElementQuery, offset = 0) => {
+        return createVerticalRelation(query, offset, (a, b) => isLeftOf(edges(a).center, edges(b).center));
     };
 
 

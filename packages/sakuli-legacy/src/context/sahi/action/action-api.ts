@@ -48,11 +48,17 @@ export function actionApi(
             if (isNumberArray(valuesOrIndices)) {
                 if (valuesOrIndices.indexOf(i)) {
                     await setElementSelect(option, true);
+                    //option.click();
                 }
             } else {
                 const value = await option.getAttribute('value');
-                if (valuesOrIndices.indexOf(value)) {
+                const text = await option.getText();
+                ctx.logger.info('Huhu');
+                ctx.logger.info(`match ${valuesOrIndices.join(', ')} with ${value} or ${text}`);
+                if (!!valuesOrIndices.indexOf(value) || !!valuesOrIndices.indexOf(text)) {
+                    ctx.logger.info(`Select ${text} [${typeof text}]`, option);
                     await setElementSelect(option, true);
+                    //await option.click()
                 }
             }
         }
@@ -63,7 +69,8 @@ export function actionApi(
             const e = arguments[0];
             const selected = arguments[1];
             const done = arguments[arguments.length - 1];
-            e.selected = selected
+            e.setAttribute("selected", selected);
+            console.log(e);
             done();
         `, e, selected)
     }

@@ -1,4 +1,4 @@
-import {filter, toPromise, fromPromises, intersect, map, Operator} from "./async-array.class";
+import {filter, toPromise, fromPromises, intersect, map, Operator, fromArray} from "./async-array.class";
 import {compose} from "./compose.function";
 
 describe('asyncIterator', () => {
@@ -34,6 +34,17 @@ describe('asyncIterator', () => {
     describe('fromPromises', () => {
         it('should convert array of promises to async iterator', async done => {
             const iterator: any = fromPromises(numbers);
+            await expect(iterator.next()).resolves.toEqual(iteratorValue(1));
+            await expect(iterator.next()).resolves.toEqual(iteratorValue(2));
+            await expect(iterator.next()).resolves.toEqual(iteratorValue(3));
+            await expect(iterator.next()).resolves.toEqual(iteratorDone);
+            done();
+        });
+    });
+
+    xdescribe('fromArray', () => {
+        it('should should convert array to async iterator', async done => {
+            const iterator: any = fromArray([1,2,3]);
             await expect(iterator.next()).resolves.toEqual(iteratorValue(1));
             await expect(iterator.next()).resolves.toEqual(iteratorValue(2));
             await expect(iterator.next()).resolves.toEqual(iteratorValue(3));

@@ -67,5 +67,5 @@ export async function* fromPromises<T>(src: Promise<T>[]): AsyncIterableIterator
 }
 
 export async function* fromArray<T>(src: T[]): AsyncIterableIterator<T> {
-    return fromPromises(src.map(toPromise));
+    return fromPromises(src.map(e => Promise.resolve(e)));
 }

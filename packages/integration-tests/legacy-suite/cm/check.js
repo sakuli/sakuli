@@ -2,7 +2,6 @@
     await _dynamicInclude($includeFolder);
 
 
-
     var testCase = new TestCase(1200, 1300);
     //var env = new Environment();
     var tbOpened = false;
@@ -11,8 +10,8 @@
         var timestamp = (new Date().getTime() / 1000).toFixed(0);
         var ticketData = {
             subject: 'Perfect Coffee ' + timestamp,
-            type: 'Praise',
-            category: 'Else',
+            type: 'Lob',
+            category: 'Sonstiges',
             product: [
                 'Coffee machines',
                 'Home Line',
@@ -45,10 +44,12 @@
         testCase.saveResult();
         done();
     }
+
     async function _highlightClick($element) {
         await _highlight($element);
         await _click($element);
     }
+
     async function loginToTrack() {
         await _navigateTo('https://showroom2.cm6demo.consol.de/track/', true);
         await _setValue(await _textbox('username'), 'sakulikunde');
@@ -57,23 +58,28 @@
         _highlight(btn);
         await _click(btn);
     }
+
     async function loginToCmClient() {
         await _navigateTo('https://showroom2.cm6demo.consol.de/cm-client/', true);
         await _setValue(await _textbox('username'), 'Sakuli-Service');
         await _setValue(await _password('password'), '4testingonly');
         await _click(await _submit('Sign in'));
     }
+
     async function searchTicket(pattern) {
         var $urlPattern = pattern.replace(/ /g, '+');
         await _navigateTo('https://showroom2.cm6demo.consol.de/cm-client/search?c_pattern=' + $urlPattern);
         await _highlight(await _link(0, await _under(await _tableHeader(/Name/))));
         await _click(await _link(0, await _under(await _tableHeader(/Name/))));
     }
+
     async function _createTrackTicket($ticketData) {
-        await _setValue(await _textbox('subject'), $ticketData.subject);
-        await _setSelected(await _select(0, await _near(await _label('/Anfragetyp/'))), $ticketData.type);
-        await _setSelected(await _select(0, await _near(await _label('/Kategorie/'))), $ticketData.category);
-        await _highlightClick(await _link(/Bitte wählen/, await _near(await _label(/Product/))));
+        await _setValue(_textbox('subject'), $ticketData.subject);
+        await _highlight(_select(0, _near(_label(/Anfragetyp/))));
+        await _setSelected(_select(0, _near(_label(/Anfragetyp/))), $ticketData.type);
+        await _setSelected(_select(0, _near(_label(/Kategorie/))), $ticketData.category);
+        await _wait(99999);
+        await _highlightClick(await _link(/Bitte wählen/, _near(_label(/Produkt/))));
         for (var i = 0; i < $ticketData.product.length; i++) {
             await _highlightClick(await _link($ticketData.product[i]));
         }
@@ -83,6 +89,7 @@
         //await _highlightClick(await _submit('Create Ticket'));
         await _highlight(await _div(new RegExp('.* \\| ' + $ticketData.subject)));
     }
+
     async function _validateCmTicket($ticketData) {
         await _highlight(await _heading3($ticketData.subject));
         await _highlight(await _cell($ticketData.type, await _rightOf(await _cell(/Type/))));

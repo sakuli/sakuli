@@ -1,5 +1,9 @@
 export type Vector2 = [number, number];
 
+export function vectorAdd([x1, y1]: Vector2, [x2, y2]: Vector2): Vector2 {
+    return [x1 + x2, y1 + y2];
+}
+
 /**
  * Return true if v2 is left of v1
  * @param v1 Vector2

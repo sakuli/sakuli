@@ -1,74 +1,58 @@
-import {By, ThenableWebDriver} from "selenium-webdriver";
+import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
 import {StaticServer} from "../__mocks__/serve-static-helper.function";
 import {mockPartial} from "sneer";
 import {initTestEnv} from "../__mocks__";
 import {TestExecutionContext} from "@sakuli/core";
-import {getParent, getSiblings, isChildOf, relationsApi} from "./relations-api.function";
-import {isEqual} from "../selenium-utils.function";
+import {relationsApi} from "./relations-api.function";
 import {ifPresent} from "@sakuli/commons";
+import {AccessorUtil} from "../accessor";
+import {RelationsResolver} from "./relations-resolver.class";
+import {SahiElementQuery} from "../sahi-element.interface";
+import {getParent} from "./helper/get-parent.function";
+import {isEqual} from "./helper/is-equal.function";
+import {isChildOf} from "./helper/is-child-of.function";
+import {getSiblings} from "./helper/get-siblings.function";
+import {mockHtml} from "../__mocks__/html/mock-html.function";
+import {createTestEnv, TestEnvironment} from "../__mocks__/create-test-env.function";
 
-describe('AccessorUtil', () => {
-    let driver: ThenableWebDriver;
-    let staticServer: StaticServer;
-    let url: string;
-    let api: ReturnType<typeof relationsApi>;
+describe('relations-api', () => {
     const testExecutionContext = mockPartial<TestExecutionContext>({});
 
-    beforeAll(initTestEnv((info) => {
-        url = info.url;
-        driver = info.webDriver;
-        staticServer = info.server;
-        api = relationsApi(driver, testExecutionContext);
-    }));
 
-    afterAll(async done => {
-        await driver.quit();
-        await staticServer.stop();
+    let env: TestEnvironment;
+
+    function createApi(driver: ThenableWebDriver) {
+        const accessorUtil = new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext));
+        return relationsApi(driver, accessorUtil, testExecutionContext);
+    }
+
+    function createQuery(locator: Locator): SahiElementQuery {
+        return ({
+            locator,
+            identifier: 0,
+            relations: []
+        })
+    }
+
+    beforeEach(async done => {
+        env = createTestEnv();
+        await env.start();
         done();
     });
 
-    describe('getParent', () => {
-        it('should resolve to a parent', async done => {
-            await driver.get(`${url}/relations/relations-resolver.html`);
-            const li = await driver.findElement(By.css('li'));
-            const ul = await driver.findElement(By.css('ul'));
-            await ifPresent(await getParent(li), async parent => {
-                await expect(isEqual(ul, parent)).resolves.toBeTruthy();
-            }, () => done.fail());
-
-            done();
-        });
-
-        it('should return null if element has no parent', async done => {
-            await expect(
-                getParent(driver.findElement(By.css('html')))
-            ).resolves.toBeNull();
-            done();
-        });
+    afterEach(async done => {
+        await env.stop();
+        done();
     });
 
-    describe('isChildOf', () => {
-        it('should check that #del1 is child of table._in', async done => {
-            await driver.get(`${url}/relations/relations-api.html`);
-            const table = await driver.findElement(By.css('table._in'));
-            const del1 = await driver.findElement(By.css('#del1'));
-            await expect(isChildOf(del1, table)).resolves.toBeTruthy();
-            done();
-        });
 
-        it('should check that #del2 is not a child of #del1', async done => {
-            await driver.get(`${url}/relations/relations-api.html`);
-            const del1 = await driver.findElement(By.css('#del1'));
-            const del2 = await driver.findElement(By.css('#del2'));
-            await expect(isChildOf(del2, del1)).resolves.toBeFalsy();
-            done();
-        });
-    });
 
     describe('_in', () => {
         it('should resolve ', async done => {
+            const {url, driver} = await env.getEnv();
+            const api = createApi(driver);
             await driver.get(`${url}/relations/relations-api.html`);
-            const del2 = await driver.findElement(By.css('._in #del2'));
+            const del2 = createQuery(By.css('._in #del2'));
             const links = await driver.findElements(By.css('._in a'));
             const relation = api._in(del2);
             const relatedLinks = await relation(links);
@@ -79,32 +63,39 @@ describe('AccessorUtil', () => {
     });
 
     describe('_near', () => {
-        it('should ', async done => {
-            await driver.get(`${url}/relations/relations-api.html`);
-            const user2 = await driver.findElement(By.css('#user-two'));
+        it('should work', async done => {
+            const {driver} = await env.getEnv();
+            const api = createApi(driver);
+            const html = mockHtml(`                                
+                    <table class="_in">
+                      <tr>
+                        <td>Name</td>
+                        <td>Action</td>
+                        <td>ID</td>
+                      </tr>
+                      <tr>
+                        <td id="user-one">User One</td>
+                        <td id="del1"><a href="/deleteUser?id=1" onclick="return false">delete user one</a></td>
+                        <td>ID 1</td>
+                      </tr>
+                      <tr>
+                        <td id="user-two">User Two</td>
+                        <td id="del2"><a href="/deleteUser?id=2" onclick="return false">delete user two</a></td>
+                        <td>ID 2</td>
+                      </tr>
+                    </table>
+                `);
+            await driver.get(html);
+            const nearUserTwo = api._near(createQuery(By.css('#user-two')));
             const links = await driver.findElements(By.css('a'));
-            const relation = await api._near(user2);
-            const relatedLinks = await relation(links);
-            expect(links.length).toBe(2);
-            expect(relatedLinks.length).toBe(2);
+            const linksNearUserTwo = await nearUserTwo(links);
+            await expect(linksNearUserTwo[0].getText()).resolves.toEqual(expect.stringContaining('user two'));
             done();
         });
 
-    });
-
-    describe('getSiblings', () => {
-        it('should get siblings of #anchor', async done => {
-            await driver.get(`${url}/relations/relations-api.html`);
-            const siblings = await getSiblings(driver.findElement(By.css('#anchor')));
-            expect(siblings.length).toBe(6);
-            await expect(siblings[0].getText()).resolves.toEqual("Rhona Davidson");
-            await expect(siblings[5].getText()).resolves.toEqual("$327,900");
-            done();
-        });
     });
 
     describe('position', () => {
-
         it.each([
             [3, '_leftOf', 0, ["Rhona Davidson", "Integration Specialist", "Tokyo"]],
             [2, '_leftOf', 1, ["Integration Specialist", "Tokyo"]],
@@ -113,9 +104,11 @@ describe('AccessorUtil', () => {
         ])(
             'should relate %i elements which are %s the #anchor with an offset of %i and contains %j',
             async (expected: number, method: "_leftOf" | "_rightOf", offset: number, text: string[], done: jest.DoneCallback) => {
+                const {url, driver} = await env.getEnv();
+                const api = createApi(driver);
                 await driver.get(`${url}/relations/relations-api.html`);
-                const anchor = await driver.findElement(By.css('#anchor'));
-                const siblings = await getSiblings(anchor);
+                const anchor = await createQuery(By.css('#anchor'));
+                const siblings = await getSiblings(driver.findElement(By.css('#anchor')));
                 const leftOf = await api[method](anchor, offset)(siblings);
                 const content = await Promise.all(leftOf.map(e => e.getText()));
                 expect(content).toEqual(text);
@@ -123,10 +116,6 @@ describe('AccessorUtil', () => {
                 done()
             }
         );
-
-
-
-    })
-
+    });
 
 });

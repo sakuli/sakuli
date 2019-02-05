@@ -5,6 +5,6 @@ import 'geckodriver';
 
 export function webDriverHelper() {
     return new Builder().forBrowser('chrome')
-       // .setChromeOptions(new chrome.Options().addArguments('--headless'))
+        //.setChromeOptions(new chrome.Options().addArguments('--headless'))
         .build();
 }

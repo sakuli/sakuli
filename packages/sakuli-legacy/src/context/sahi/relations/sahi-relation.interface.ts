@@ -1,4 +1,5 @@
 import {WebElement} from "selenium-webdriver";
+import {SahiElementQuery} from "../sahi-element.interface";
 
 /**
  * A Sahi relation is basically a mapping operation between two WebElement-Arrays
@@ -13,5 +14,5 @@ import {WebElement} from "selenium-webdriver";
  */
 export type SahiRelation = (elements: WebElement[]) => Promise<WebElement[]>;
 
-export type RelationProducer = (anchorElement: WebElement) => SahiRelation;
-export type RelationProducerWithOffset = (anchorElement: WebElement, offset?: number) => SahiRelation;
+export type RelationProducer = (anchorElement: SahiElementQuery) => SahiRelation;
+export type RelationProducerWithOffset = (anchorElement: SahiElementQuery, offset?: number) => SahiRelation;

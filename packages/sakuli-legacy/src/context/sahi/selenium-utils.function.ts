@@ -1,10 +1,6 @@
 import {promise, WebElement} from "selenium-webdriver";
 import {compose, fromPromises, intersect, map, toArray} from "@sakuli/commons";
 
-export async function isEqual(a: WebElement, b: WebElement) {
-    return await a.getId() === await b.getId();
-}
-
 
 export async function elementIntersection(a: WebElement[], b: WebElement[]): Promise<WebElement[]> {
     const toIdElementTuple = async (e: WebElement): Promise<[string, WebElement]> => [await e.getId(), e];
