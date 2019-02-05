@@ -32,7 +32,7 @@
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^4.0.2",
     "@types/fs-extra": "^5.0.4",
-    "@types/jest": "^23.3.9",
+    "@types/jest": "^24.0.0",
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^10.12.2",
     "@types/properties-reader": "0.0.1",
