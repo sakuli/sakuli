@@ -98,14 +98,7 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        const elements = await this.webDriver.wait(until.elementsLocated(locator), 500);
-        const displayedElements: WebElement[] = [];
-        for (let element of elements) {
-            if(await element.isDisplayed() || true) {
-                displayedElements.push(element);
-            }
-        }
-        return displayedElements;
+        return await this.webDriver.wait(until.elementsLocated(locator), 500);
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<Maybe<WebElement>> {

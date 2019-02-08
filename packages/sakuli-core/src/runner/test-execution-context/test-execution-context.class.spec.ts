@@ -7,7 +7,8 @@ describe('TestExecutionContext', () => {
 
     let tec: TestExecutionContext;
     const loggerMock = mockPartial<SimpleLogger>({
-        log: jest.fn()
+        log: jest.fn(),
+        info: jest.fn()
     });
     beforeEach(() => tec = new TestExecutionContext(loggerMock));
 

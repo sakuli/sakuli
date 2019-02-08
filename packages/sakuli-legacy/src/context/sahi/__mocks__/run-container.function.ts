@@ -49,7 +49,7 @@ export async function runContainer(
     try {
         const container = await docker.createContainer({
             Image: image,
-            Tty: false,
+            Tty: true,
             ExposedPorts,
             'HostConfig': {
                 Binds,

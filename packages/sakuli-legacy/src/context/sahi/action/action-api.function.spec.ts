@@ -2,9 +2,8 @@ import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 import {By, ThenableWebDriver} from "selenium-webdriver";
 import {ActionApi, actionApi} from "./action.api";
 import {AccessorUtil} from "../accessor";
-import {mockPartial} from "sneer";
-import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "../relations";
+import {createTestExecutionContextMock} from "../__mocks__/test-execution-context-mock.function";
 import DoneCallback = jest.DoneCallback;
 
 describe('ActionApi', () => {
@@ -20,10 +19,7 @@ describe('ActionApi', () => {
         done();
     });
 
-    const testExecutionContextMock = mockPartial<TestExecutionContext>({
-        startTestAction: jest.fn(),
-        endTestAction: jest.fn()
-    });
+    const testExecutionContextMock = createTestExecutionContextMock();
 
     function createApi(driver: ThenableWebDriver): ActionApi {
         return actionApi(driver,

@@ -26,7 +26,14 @@ describe('AccessorUtil', () => {
 
     it('should fetch fuzzy matching identifiers from element', async done => {
         const {driver, url} = await env.getEnv();
-        await driver.get(`${url}/accessor/get-string-identifiers-for-element.html`);
+        await driver.get(mockHtml(`
+         <div
+            id="element-to-test"
+            aria-describedby="aria"
+            class="so many names"
+            name="my-name-is-earl"
+          >Some Text content</div>
+        `));
         const api = createApi(driver);
         const element = await driver.findElement(By.id('element-to-test'));
         const identifiers = await api.getStringIdentifiersForElement(element);
@@ -49,7 +56,11 @@ describe('AccessorUtil', () => {
         const divs = await api.findElements(By.css('div'));
         //expect(divs.length).toBe(2);
         await expect(Promise.all(divs.map(e => e.getAttribute('id')))).resolves.toEqual([
-            'normal', 'out-of-viewport'
+            'visibility-hidden',
+            'display-none',
+            'normal',
+            'out-of-viewport',
+            'no-content-not-displayed'
         ]);
         done();
     });

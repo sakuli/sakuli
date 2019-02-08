@@ -3,9 +3,15 @@ import {createConnection} from "net";
 export async function isPortFree(port: number, host: string = '127.0.0.1') {
     return new Promise((res) => {
         const conn =  createConnection({port, host});
-        conn.on('connect', ()=> res(false));
-        conn.on('error', () => res(true));
-        setTimeout(() => res(false), 3000);
+        const timeoutId = setTimeout(() => res(true), 3000);
+        conn.on('connect', ()=> {
+            clearTimeout(timeoutId);
+            res(false)
+        });
+        conn.on('error', () => {
+            clearTimeout(timeoutId);
+            res(true)
+        });
     })
 }
 

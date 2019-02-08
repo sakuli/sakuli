@@ -52,7 +52,9 @@ export function createTestEnv(): TestEnvironment {
     }
 
     async function stop() {
-        if (driver) await driver.close();
+        if (driver) {
+            await driver.close();
+        }
         await Promise.all([
             staticServer.stop(),
             wdc.stop()
