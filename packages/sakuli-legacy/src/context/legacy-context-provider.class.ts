@@ -9,6 +9,7 @@ import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {parse, sep} from "path";
+import {createLoggerClass} from "./common/logger.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -28,6 +29,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     constructor(
         readonly builder: Builder
     ) {
+
     }
 
     onProject(project: LegacyProject): void {
@@ -80,6 +82,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Application,
             Key,
             Environment,
+            Logger: createLoggerClass(ctx),
             console: console,
             $includeFolder: '',
             ...sahi,

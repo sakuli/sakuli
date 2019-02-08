@@ -16,6 +16,13 @@ export interface SahiElement {
     query: SahiElementQuery
 }
 
+export function isSahiElementQuery(o: any): o is SahiElementQuery {
+    return typeof o === "object"
+        && 'query' in o
+        && 'locator' in o
+        && 'relations' in o;
+}
+
 export function sahiElementQuery(locator: Locator, identifier: AccessorIdentifier, relations: SahiRelation[]): SahiElementQuery {
     return {locator, identifier, relations}
 }
@@ -32,11 +39,11 @@ export function throwIfElementIsAbsent({element, query}: SahiElement): WebElemen
             Cannot resolve an element from
             ${sahiQueryToString(query)}
         `)
-    })
+        })
 }
 
 export function identifierToString(identifier: AccessorIdentifier) {
-    if(
+    if (
         types.isRegExp(identifier) ||
         typeof identifier === 'string' ||
         typeof identifier === 'number') {

@@ -44,4 +44,13 @@ export class SimpleLogger {
         })
     }
 
+    error(message: string, ...data:any[]) {
+        this.log({
+            level: 'ERROR',
+            time: new Date(),
+            message,
+            data
+        })
+    }
+
 }

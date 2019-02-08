@@ -1,5 +1,5 @@
 import {AccessorUtil} from "../accessor";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {isSahiElementQuery, SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
 import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
@@ -20,20 +20,63 @@ export function actionApi(
             ctx.startTestAction({
                 id: name,
             });
-            const res = await fn(...args);
-            ctx.endTestAction();
+            ctx.logger.info(`Start action ${name}`);
+            let res: any;
+            try {
+                res = await fn(...args);
+            } catch(e) {
+                throw Error(`Error in action: ${name} \n${e.message}`)
+            } finally {
+                ctx.endTestAction();
+            }
             return res;
         }) as T;
     }
 
     async function _click(query: SahiElementQuery, combo?: string): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
-        return e.click();
+        await e.click();
     }
 
     async function _setValue(query: SahiElementQuery, value: string): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
-        return element.sendKeys(...value.split(''));
+        try {
+            for(let char of value.split('')) {
+              await _wait(10);
+              await element.sendKeys(char);
+            }
+            //await element.sendKeys(...value.split(''));
+        } catch (e) {
+            await webDriver.executeAsyncScript(stripIndents`
+                const e = arguments[0];
+                const value = arguments[1];
+                const done = arguments[arguments.length -1];
+                e.value = value;
+                done(); 
+            `, e, value);
+        }
+    }
+
+    async function _eval(source: string, ..._args: any[]) {
+        const args = await Promise.all(_args.map(arg => {
+            if(isSahiElementQuery(arg)) {
+                return accessorUtil.fetchElement(arg);
+            } else {
+                return Promise.resolve(arg)
+            }
+        }));
+        return await webDriver.executeAsyncScript(`
+            const __done__ = arguments[arguments.length - 1];
+            ${source}
+            __done__();
+        `, ...args);
+    }
+
+    async function _focus(query: SahiElementQuery) {
+        const e = await accessorUtil.fetchElement(query);
+        await webDriver.executeScript(stripIndents`
+            arguments[0].focus();
+        `, e);
     }
 
     async function _setSelected(query: SahiElementQuery, optionToSelect: string | number | string[] | number[], isMultiple: boolean = false): Promise<void> {
@@ -47,13 +90,15 @@ export function actionApi(
             }
             if (isNumberArray(valuesOrIndices)) {
                 if (valuesOrIndices.includes(i)) {
-                    await setElementSelect(option, true);
+                    //await setElementSelect(option, true);
+                    await option.click()
                 }
             } else {
                 const value = await option.getAttribute('value');
                 const text = await option.getText();
                 if (valuesOrIndices.includes(value) || valuesOrIndices.includes(text)) {
-                    await setElementSelect(option, true);
+                    //await setElementSelect(option, true);
+                    await option.click();
                 }
             }
         }
@@ -109,6 +154,21 @@ export function actionApi(
         throw Error('Not yet implemented')
     }
 
+    async function _rteWrite(query: SahiElementQuery, content: string): Promise<void> {
+        const e = await accessorUtil.fetchElement(query);
+        const tagName = await e.getTagName();
+        if(tagName.toLocaleLowerCase() !== 'iframe') {
+            throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
+        }
+        const defaultWindowHandle = await webDriver.getWindowHandle();
+        await webDriver.switchTo().frame(e);
+        await webDriver.executeScript(`            
+            document.body.innerHTML = arguments[0];
+        `, content);
+        await webDriver.switchTo().window(defaultWindowHandle);
+
+    }
+
     return ({
         _click: runAsAction('click', _click),
         _setValue: runAsAction('setValue', _setValue),
@@ -117,6 +177,9 @@ export function actionApi(
         _highlight: runAsAction('highlight', _highlight),
         _navigateTo: runAsAction('navigateTo', _navigateTo),
         _dragDrop: runAsAction('dragDrop', _dragDrop),
-        _dragDropXY: runAsAction('dragDrop', _dragDropXY)
+        _dragDropXY: runAsAction('dragDrop', _dragDropXY),
+        _rteWrite: runAsAction('rteWrite', _rteWrite),
+        _focus: runAsAction('focus', _focus),
+        _eval: runAsAction('eval', _eval)
     })
 }

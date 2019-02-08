@@ -78,21 +78,47 @@
         await _highlight(_select(0, _near(_label(/Anfragetyp/))));
         await _setSelected(_select(0, _near(_label(/Anfragetyp/))), $ticketData.type);
         await _setSelected(_select(0, _near(_label(/Kategorie/))), $ticketData.category);
-        await _highlightClick(await _link(/Bitte wählen/, _near(_label(/Produkt/))));
+
+        Logger.logInfo('before main link');
+        /*
+        await _highlightClick(_link(/Bitte wählen/, _near(_label(/Produkt/))));
+        Logger.logInfo('after main link');
         for (var i = 0; i < $ticketData.product.length; i++) {
-            await _highlightClick(await _link($ticketData.product[i]));
+            Logger.logInfo('waiting for link with ' + $ticketData.product[i]);
+            await _highlightClick(_link($ticketData.product[i]));
         }
-        await _rteWrite(await _rte(0), $ticketData.comment);
-        await _setValue(await _textarea('comment'), $ticketData.comment);
-        await _focus(await _rte(0));
-        //await _highlightClick(await _submit('Create Ticket'));
-        await _highlight(await _div(new RegExp('.* \\| ' + $ticketData.subject)));
+        //await _rteWrite(await _rte(0), $ticketData.comment);
+        */
+        //await _setValue(_textarea(0), $ticketData.comment);
+        //await _focus(_rte(0));
+        /*
+           _click(_div("/fr-element/",_in(_div($targetFieldRegExp))));
+            _eval("jQuery(_div('/fr-element/',_in(_div('"+$targetFieldRegExp+"')))).html('"+$pTextToWrite+"');");
+            _eval("jQuery(_textarea('/froala_editor/',_in(_div('"+$targetFieldRegExp+"')))).html('"+$pTextToWrite+"');");
+            _eval("jQuery(_textarea('/froala_editor/',_in(_div('"+$targetFieldRegExp+"')))).froalaEditor('cursor.enter',true);");
+            _eval("jQuery(_textarea('/froala_editor/',_in(_div('"+$targetFieldRegExp+"')))).froalaEditor('events.trigger', 'blur');");
+        }
+         */
+        _click(_div('fr-element fr-view'));
+        _eval(`
+            const textarea = arguments[0];
+            const div = arguments[1];
+            jQuery(div).html('Hello Froala');
+            jQuery(textarea).froalaEditor('cursor.enter', true);
+            jQuery(textarea).froalaEditor('events.trigger', 'blur');
+        `,
+            _textarea('froala_editor'),
+            _div('fr-element'),
+        );
+        _highlight(_div('fr-element'));
+        // await _highlightClick(await _submit('Ticket erstellen'));
+        await _highlight(_div(new RegExp('.* \\| ' + $ticketData.subject)));
     }
 
     async function _validateCmTicket($ticketData) {
-        await _highlight(await _heading3($ticketData.subject));
-        await _highlight(await _cell($ticketData.type, await _rightOf(await _cell(/Type/))));
-        await _highlight(await _cell($ticketData.category, await _rightOf(await _cell(/Category/))));
-        await _highlight(await _cell($ticketData.product.join(' | '), await _rightOf(await _cell(/Product/))));
+        await _highlight(_heading3($ticketData.subject));
+        await _highlight(_cell($ticketData.type, _rightOf(_cell(/Type/))));
+        await _highlight(_cell($ticketData.category, _rightOf(_cell(/Category/))));
+        await _highlight(_cell($ticketData.product.join(' | '), _rightOf(_cell(/Product/))));
     }
 })(done);

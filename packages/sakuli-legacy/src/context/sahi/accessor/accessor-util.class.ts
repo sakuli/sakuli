@@ -2,7 +2,8 @@ import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver"
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
-    AccessorIdentifierAttributesWithSahiIndex,
+    AccessorIdentifierAttributesWithClassName,
+    AccessorIdentifierAttributesWithSahiIndex, isAccessorIdentifierAttributesWithClassName,
     isAccessorIdentifierAttributesWithSahiIndex
 } from "./accessor-model.interface";
 import {RelationsResolver} from "../relations";
@@ -26,9 +27,36 @@ export class AccessorUtil {
         return elements[identifier.sahiIndex];
     }
 
+    private arrayValuesAreEqual(arr1: string[], arr2: string[]) {
+        if(arr1.length === arr2.length) {
+            arr1.sort();
+            arr2.sort();
+            for (let i = 0; i < arr1.length; i++) {
+                if(arr1[i] !== arr2[i]) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
+        const matches: WebElement[] = [];
+        for(let element of elements) {
+            const elementClasses = ((await element.getAttribute("class")) || "").split(" ");
+            const identifierClasses = className.split(" ");
+            if(this.arrayValuesAreEqual(elementClasses, identifierClasses)) {
+                matches.push(element)
+            }
+        }
+        return matches;
+    }
+
     /**
      * Reads values from potential identifier attributes of an element
-     * this is used perform fuzzy string matching on element such as
+     * this is used to perform fuzzy string matching on element such as
      * <code>_div('some fuzzy buzzy')</code>
      *
      * The list is ordered by the relevance of the identifier (first match counts)
@@ -70,10 +98,10 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        const elements = await this.webDriver.wait(until.elementsLocated(locator), 300);
+        const elements = await this.webDriver.wait(until.elementsLocated(locator), 500);
         const displayedElements: WebElement[] = [];
         for (let element of elements) {
-            if(await element.isDisplayed()) {
+            if(await element.isDisplayed() || true) {
                 displayedElements.push(element);
             }
         }
@@ -81,6 +109,9 @@ export class AccessorUtil {
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<Maybe<WebElement>> {
+        if(isAccessorIdentifierAttributesWithClassName(identifier)) {
+            elements = await this.getElementBySahiClassName(elements, identifier);
+        }
         if (typeof identifier === 'number') {
             return Promise.resolve(this.getElementBySahiIndex(elements, {sahiIndex: identifier}));
         }
@@ -97,6 +128,7 @@ export class AccessorUtil {
     }
 
     async fetchElement(query: SahiElementQuery, retry: number = 10): Promise<WebElement> {
+        this.logger.info(`${query.identifier} [${query.locator}] - ${retry}`);
         try {
             const {locator, relations, identifier} = query;
             const elements = await this.findElements(locator);

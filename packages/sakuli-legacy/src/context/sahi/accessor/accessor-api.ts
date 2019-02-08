@@ -1,6 +1,7 @@
 import {SahiRelation} from "../relations/sahi-relation.interface";
 import {By} from "selenium-webdriver";
 import {AccessorFunction, AccessorIdentifier} from "../api";
+import {SahiElementQuery} from "../sahi-element.interface";
 
 export type AccessorApi = ReturnType<typeof accessorApi>;
 
@@ -14,8 +15,35 @@ export function accessorApi() {
         })
     }
 
-
     return {
+        _byId: (id: string):SahiElementQuery => {
+            return ({
+                locator: By.css(`#${id}`),
+                identifier: 0,
+                relations: []
+            })
+        },
+        _byText: (text: string, tagName: string): SahiElementQuery => {
+          return ({
+              locator: By.css(tagName),
+              identifier: text,
+              relations: [],
+          })
+        },
+        _byClassName: (clsName: string, tagName: string): SahiElementQuery => {
+            return ({
+                locator: By.css(`${tagName}.${clsName}`),
+                identifier: 0,
+                relations: []
+            })
+        },
+        _byXPath: (xPath: string): SahiElementQuery => {
+            return ({
+                locator: By.xpath(xPath),
+                identifier: 0,
+                relations: []
+            })
+        },
         _password: createAccessorFunction('input[type="password"]'),
         _textbox: createAccessorFunction('input[type="text"]'),
         _hidden: createAccessorFunction('input[type="hidden"]'),
@@ -73,6 +101,7 @@ export function accessorApi() {
         _abbr: createAccessorFunction('abbr'),
         _hr: createAccessorFunction('hr'),
         _iframe: createAccessorFunction('iframe'),
+        _rte: createAccessorFunction('iframe'),
         _frame: createAccessorFunction('frame'),
         _object: createAccessorFunction('object'),
         _embed: createAccessorFunction('embed'),
