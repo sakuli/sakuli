@@ -17,7 +17,8 @@ stages:
   if: branch = master
 
 before_install:
-- docker pull
+- docker pull selenium/standalone-chrome-debug
+- docker pull httpd
 - npm i -g lerna gh-pages
 jobs:
   include:
