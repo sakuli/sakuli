@@ -34,7 +34,7 @@
     "@types/fs-extra": "^5.0.4",
     "@types/jest": "^23.3.9",
     "@types/mock-fs": "^3.6.30",
-    "@types/node": "^10.12.2",
+    "@types/node": "^11.9.0",
     "@types/properties-reader": "0.0.1",
     "@types/selenium-webdriver": "^3.0.13",
     "fs-extra": "^7.0.0",
