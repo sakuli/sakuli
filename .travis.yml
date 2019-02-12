@@ -23,7 +23,7 @@ before_install:
 jobs:
   include:
   - stage: test
-    script: npm run build && npm test -- --coverage --coverageReporters=text-lcov | npx coveralls
+    script: lerna run build && npm test -- --coverage --runInBand --ci --bail --coverageReporters=text-lcov | npx coveralls
   - stage: analyse
     script: sonar-scanner
   - stage: deploy-docs

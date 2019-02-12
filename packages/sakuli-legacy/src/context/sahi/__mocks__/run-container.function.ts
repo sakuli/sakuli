@@ -23,6 +23,8 @@ export interface RunContainer {
     container: Docker.Container
 }
 
+let assignedPorts: number[] = [];
+
 export async function runContainer(
     image: string,
     {
@@ -32,9 +34,11 @@ export async function runContainer(
     command: string[] = [],
     waitStrategy: () => Promise<void> = Promise.resolve.bind(Promise)
 ): Promise<RunContainer> {
+
     const ExposedPorts = ports.reduce((ep, p) => ({...ep, [`${p}/tcp`]: {}}), {});
     const portMapping = await Promise.all(ports.map(async p => {
-        const hostPort = await findPort(p);
+        const hostPort = await findPort(p, 65535, '127.0.0.1', assignedPorts);
+        assignedPorts.push(hostPort);
         return [p, hostPort];
     }));
     const PortBindings = portMapping.reduce((pb, [containerPort, HostPort]) => {
@@ -65,6 +69,10 @@ export async function runContainer(
             async stop() {
                 await container.stop();
                 await container.remove();
+                ports.forEach(port => {
+                    const toRemove = getMappedPort(port);
+                    assignedPorts = assignedPorts.filter(p => p !== toRemove);
+                })
             },
             async getIP() {
                 return (await container.inspect({})).NetworkSettings.IPAddress

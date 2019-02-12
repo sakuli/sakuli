@@ -16,9 +16,9 @@ export async function isPortFree(port: number, host: string = '127.0.0.1') {
 }
 
 
-export async function findPort(min: number, max: number = 65535, host: string = '127.0.0.1') {
+export async function findPort(min: number, max: number = 65535, host: string = '127.0.0.1', ignorePorts: number[] = []) {
     for(let port = min; port <= max; port++) {
-        if(await isPortFree(port, host)) {
+        if(await isPortFree(port, host) && !ignorePorts.includes(port)) {
             return port;
         }
     }

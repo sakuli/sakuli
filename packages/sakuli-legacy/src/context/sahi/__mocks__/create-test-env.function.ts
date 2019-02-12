@@ -2,6 +2,7 @@ import {Builder, ThenableWebDriver} from "selenium-webdriver";
 import {join} from "path";
 import {RunContainer, runContainer} from "./run-container.function";
 import {waitForConnection} from "./wait-for-connection.function";
+import {throwIfAbsent} from "@sakuli/commons";
 
 export interface TestEnvironment {
     start(): Promise<void>;
@@ -27,8 +28,8 @@ export function createTestEnv(): TestEnvironment {
                 ]
             })
         ]);
-        wdc = rc1;
-        staticServer = rc2;
+        wdc = throwIfAbsent(rc1, Error('Could not init webdriver container'));
+        staticServer = throwIfAbsent(rc2, Error('Could not init webserver container'));
         await wdc.start();
         await staticServer.start();
         await waitForConnection({port: await wdc.getMappedPort(4444)})();

@@ -1,11 +1,11 @@
-import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
+import {createTestEnv, mockHtml, TestEnvironment, createTestExecutionContextMock} from "../__mocks__";
 import {By, ThenableWebDriver} from "selenium-webdriver";
 import {ActionApi, actionApi} from "./action.api";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
-import {createTestExecutionContextMock} from "../__mocks__/test-execution-context-mock.function";
 import DoneCallback = jest.DoneCallback;
 
+jest.setTimeout(15_000);
 describe('ActionApi', () => {
     let env: TestEnvironment;
     beforeEach(async done => {

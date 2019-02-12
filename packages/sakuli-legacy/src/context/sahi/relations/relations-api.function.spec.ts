@@ -6,7 +6,7 @@ import {SahiElementQuery} from "../sahi-element.interface";
 import {getSiblings} from "./helper/get-siblings.function";
 import {createTestEnv, mockHtml, TestEnvironment, createTestExecutionContextMock} from "../__mocks__";
 
-jest.setTimeout(10_000);
+jest.setTimeout(25_000);
 describe('relations-api', () => {
     const testExecutionContext = createTestExecutionContextMock();
 
