@@ -7,9 +7,12 @@ export interface StateIndicatorProps {
 
 
 export function StateIndicator({entity}: StateIndicatorProps) {
-    const stateText = <Bold>{getReadableStateName(entity.state)}</Bold>;
-    if(entity.error) {
-        return <Color red>{stateText}</Color>
+    const stateText = <Bold>{entity.state}{getReadableStateName(entity.state)}</Bold>;
+    if(!entity.isFinished()) {
+        return '';
+    }
+    if(entity.error || entity.state === TestContextEntityStates.ERROR) {
+        return <Color bgRed> × </Color>
     }
     if(entity.state === TestContextEntityStates.WARNING) {
         return <Color redBright>{stateText}</Color>
@@ -18,7 +21,7 @@ export function StateIndicator({entity}: StateIndicatorProps) {
         return <Color red>{stateText}</Color>
     }
     if(entity.state === TestContextEntityStates.OK) {
-        return <Color green>{stateText}</Color>
+        return <Color bgGreen black> ✓ </Color>
     }
     return '';
 }

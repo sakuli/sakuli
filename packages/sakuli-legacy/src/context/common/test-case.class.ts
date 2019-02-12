@@ -1,64 +1,63 @@
 import {Sakuli, TestExecutionContext} from "@sakuli/core";
 
+export function createTestCaseClass(ctx: TestExecutionContext) {
+    return class TestCase {
+        constructor(
+            readonly caseId?: string,
+            readonly warningTime: number = 0,
+            readonly criticalTime: number = 0,
+            public _imagePaths: string[] = []
+        ) {
+            ctx.startTestCase({id: caseId});
+            ctx.startTestStep({});
+        }
 
-export class TestCase {
-    private readonly execution: TestExecutionContext;
-    constructor(
-        readonly caseId?: string,
-        readonly warningTime: number = 0,
-        readonly criticalTime: number = 0,
-        private _imagePaths: string[] = []
-    ) {
-        this.execution = Sakuli().testExecutionContext;
-        this.execution.startTestCase({id: caseId});
-        this.execution.startTestStep({});
-    }
+        addImagePaths(...paths: string[]) {
+            this._imagePaths = this._imagePaths.concat(paths);
+        }
 
-    addImagePaths(...paths: string[]) {
-        this._imagePaths = this._imagePaths.concat(paths);
-    }
+        endOfStep(
+            stepName: string,
+            warning: number = 0,
+            critical: number = 0,
+            forward: boolean = false
+        ) {
+            ctx.updateCurrentTestStep({
+                id: stepName,
+                warningTime: warning,
+                criticalTime: critical
+            });
+            ctx.endTestStep();
+            ctx.startTestStep();
+        }
 
-    endOfStep(
-        stepName: string,
-        warning: number = 0,
-        critical: number = 0,
-        forward: boolean = false
-    ) {
-        this.execution.updateCurrentTestStep({
-            id: stepName,
-            warningTime: warning,
-            criticalTime: critical
-        });
-        this.execution.endTestStep();
-        this.execution.startTestStep();
-    }
+        handleException<E extends Error>(e: E) {
+            ctx.updateCurrentTestCase({error: e});
+        }
 
-    handleException<E extends Error>(e: E) {
-        this.execution.updateCurrentTestCase({error: e});
-    }
+        getLastUrl(): string {
+            throw Error('Not Implemented');
+        }
 
-    getLastUrl(): string {
-        throw Error('Not Implemented');
-    }
+        saveResult() {
+            ctx.endTestStep();
+            ctx.endTestCase();
+        }
 
-    saveResult() {
-        this.execution.endTestStep();
-        this.execution.endTestCase();
-    }
+        getID() {
+            return this.caseId;
+        }
 
-    getID() {
-        return this.caseId;
-    }
+        getTestCaseFolderPath() {
+            throw Error('Not Implemented')
+        }
 
-    getTestCaseFolderPath() {
-        throw Error('Not Implemented')
-    }
+        getTestSuiteFolderPath() {
+            throw Error('Not Implemented')
+        }
 
-    getTestSuiteFolderPath() {
-        throw Error('Not Implemented')
-    }
-
-    throwExecption(message: string, screenshot: boolean) {
-        throw Error('Not Implemented')
+        throwExecption(message: string, screenshot: boolean) {
+            throw Error('Not Implemented')
+        }
     }
 }

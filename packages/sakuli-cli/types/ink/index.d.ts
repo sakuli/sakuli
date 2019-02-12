@@ -1,6 +1,6 @@
 declare namespace JSX {
     interface Element { }
-    interface IntrinsicElements { div: any; }
+    interface IntrinsicElements { div: any; span: any}
 }
 
 declare module 'ink' {
@@ -66,7 +66,23 @@ declare module 'ink' {
         bgKeyWord?: string;
         rgb?: [number, number, number]
         hex?: string;
-        bgHex?: string
+        bgHex?: string;
+        bgBlack?: boolean;
+        bgRed?: boolean;
+        bgGreen?: boolean;
+        bgYellow?: boolean;
+        bgBlue?: boolean;
+        bgMagenta?: boolean;
+        bgCyan?: boolean;
+        bgWhite?: boolean;
+        bgBlackBright?: boolean;
+        bgRedBright?: boolean;
+        bgGreenBright?: boolean;
+        bgYellowBright?: boolean;
+        bgBlueBright?: boolean;
+        bgMagentaBright?: boolean;
+        bgCyanBright?: boolean;
+        bgWhiteBright?: boolean;
     }
     export class Color extends StringComponent<ColorProps> {}
     export class Bold extends StringComponent {}

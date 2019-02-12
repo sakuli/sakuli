@@ -5,5 +5,6 @@ export interface TestExecutionContextRaw {
     duration: number;
     startDate: Maybe<Date>,
     endDate: Maybe<Date>,
-    testSuites: SakuliContextTestSuiteRaw[]
+    testSuites: SakuliContextTestSuiteRaw[],
+    error: Maybe<Error>
 }

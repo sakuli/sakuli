@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "postinstall": "lerna bootstrap --progress --no-ci --hoist",
-    "build": " lerna run build",
+    "build": "lerna run build",
     "test": "jest",
     "bootstrap": "lerna bootstrap",
     "share-scripts": "node scripts/distribute-npm-scripts"

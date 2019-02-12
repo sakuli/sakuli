@@ -1,18 +1,17 @@
-import { Project } from "../loader/model";
+import {Project} from "../loader/model";
+import {TestFile} from "../loader/model/test-file.interface";
+import {TestExecutionContext} from "./test-execution-context";
 
-export interface ContextProvider<T = any> {
+export interface TestExecutionLifecycleHooks<T = any> {
 
-    tearUp(project: Project): void;
-    tearDown(): void;
-    getContext():T
+    onProject(project: Project, testExecutionContext: TestExecutionContext): void;
 
+    beforeExecution(project: Project, testExecutionContext: TestExecutionContext): void;
+    afterExecution(project: Project, testExecutionContext: TestExecutionContext): void;
 
-    /**
-     *
-     * onProject(p: Project)
-     * beforeExecution(p: Project)
-     * beforeRunFile(file: TestFile)
-     * afterRunFile(file: TestFile)
-     *
-     */
+    requestContext(testExecutionContext: TestExecutionContext): T
+
+    beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void;
+
+    afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void;
 }

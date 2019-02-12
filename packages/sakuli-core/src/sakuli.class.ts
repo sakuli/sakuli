@@ -1,3 +1,4 @@
+import './winston-workaround';
 import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
@@ -5,12 +6,9 @@ import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
-import {inspect} from "util";
-import {Forwarder} from "./forwarder";
 import {CommandModule} from "yargs";
 import * as winston from "winston";
-import {join} from "path";
-import {cwd} from "process";
+import {SimpleLogger} from "@sakuli/commons";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -25,13 +23,13 @@ export function Sakuli(presetProvider: SakuliPresetProvider[] = []): SakuliInsta
 export class SakuliClass {
 
     private presetRegistry = new SakuliPresetRegistry();
-    readonly testExecutionContext = new TestExecutionContext();
-    readonly logger = winston.createLogger({
-        format: winston.format.json(),
-        transports: [
-            new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
-        ]
-    });
+    // readonly logger = winston.createLogger({
+    //     transports: [
+    //         new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
+    //     ]
+    // });
+    readonly logger = new SimpleLogger();
+    readonly testExecutionContext = new TestExecutionContext(this.logger);
 
     constructor(
         readonly presetProvider: SakuliPresetProvider[] = []
@@ -48,12 +46,12 @@ export class SakuliClass {
     get forwarder() {
         return [
             ...this.presetRegistry.forwarders,
-            <Forwarder>{
-                forward(ctx: TestExecutionContext, p: Project) {
-                    console.log(inspect(ctx.toJson(), true, null, true));
-                    return Promise.resolve();
-                }
-            }
+            // <Forwarder>{
+            //     forward(ctx: TestExecutionContext, p: Project) {
+            //         console.log(inspect(ctx.toJson(), true, null, true));
+            //         return Promise.resolve();
+            //     }
+            // }
         ]
     }
 
@@ -64,26 +62,28 @@ export class SakuliClass {
         ];
     }
 
-    getCommandModules(): CommandModule[] {
+    get commandModules(): CommandModule[] {
         return this.presetRegistry.commandModules.map(cmp => cmp(this));
     }
 
-    async run(_opts: string | SakuliRunOptions) {
+    async run(_opts: string | SakuliRunOptions): Promise<TestExecutionContext> {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         const projects = await Promise.all(
             this.loader.map(loader => loader.load(opts.path))
         );
         const project: Project = throwIfAbsent(
             projects.find(p => p != null),
-            Error(`Non of the following loaders could create project from ${opts.path}`)
+            Error(`Non of the configured loaders could create project from ${opts.path}`)
         );
 
         const runner = new SakuliRunner(
-            this.contextProviders
+            this.contextProviders,
+            this.testExecutionContext
         );
         await runner.execute(project);
 
         await Promise.all(this.forwarder.map(f => f.forward(this.testExecutionContext, project)));
+        return this.testExecutionContext;
     }
 
 }

@@ -1,15 +1,22 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, Sakuli, SakuliInstance, SakuliRunOptions} from "@sakuli/core";
+import {CommandModuleProvider, SakuliInstance, SakuliRunOptions, TestExecutionContext} from "@sakuli/core";
 import renderExecution from "./components";
 import {ifPresent, isPresent} from "@sakuli/commons";
 import Youch from "youch";
 import forTerminal from "youch-terminal";
 import chalk from "chalk";
 
+async function renderError(e: Error) {
+    const youch = (new Youch(e, {}));
+    const errorJson = await youch.toJSON().then(forTerminal);
+    console.log(errorJson);
+}
+
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
-    function findError() {
-        return Sakuli().testExecutionContext.entites.find(e => isPresent(e.error));
+    function findError(testExecutionContext: TestExecutionContext) {
+        return testExecutionContext.entites.find(e => isPresent(e.error));
     }
+
     return ({
         command: 'run [path]',
         describe: 'Runs a Sakuli Suite',
@@ -20,18 +27,26 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: SakuliRunOptions) {
-            const unmount = renderExecution();
-            await sakuli.run(runOptions);
-            unmount();
-            ifPresent(findError(), errorEntity => {
-                ifPresent(errorEntity.error, async e => {
-                    const youch = (new Youch(e, {}));
-                    const errorJson = await youch.toJSON().then(forTerminal);
-                    console.log(chalk`Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}`)
-                    console.log(errorJson);
-                })
-            })
-
+            const unmount = renderExecution(sakuli.testExecutionContext);
+            const testExecutionContext = await sakuli.run(runOptions);
+            try {
+                await ifPresent(testExecutionContext.error, async error => {
+                    console.log(chalk`Error during Execution: \n`);
+                    await renderError(error);
+                });
+                await ifPresent(findError(testExecutionContext), async errorEntity => {
+                    await ifPresent(errorEntity.error, async e => {
+                        console.log(chalk`Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}`);
+                        await renderError(e);
+                    });
+                });
+                setTimeout(() => {
+                    unmount();
+                    process.exit(testExecutionContext.resultState)
+                }, 500);
+            } catch(e) {
+                await renderError(e);
+            }
         }
     })
 };

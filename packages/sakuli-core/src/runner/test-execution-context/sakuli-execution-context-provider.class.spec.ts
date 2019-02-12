@@ -5,7 +5,7 @@ import {Sakuli} from "../../sakuli.class";
 describe('SakuliExecutionContextProvider', () => {
     it('should inject Sakuli factory function', () => {
         const secp = new SakuliExecutionContextProvider();
-        expect(secp.getContext()).toEqual(expect.objectContaining({
+        expect(secp.requestContext()).toEqual(expect.objectContaining({
             Sakuli
         }))
     });

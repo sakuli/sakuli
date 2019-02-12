@@ -1,9 +1,8 @@
 import {Component, Fragment, h} from 'ink'
-import {TestContextEntity, TestExecutionContext, TestSuiteContext} from "@sakuli/core";
+import {TestExecutionContext, TestSuiteContext} from "@sakuli/core";
 import {TestEntity} from "./test-entity-component.function";
-import Youch from "youch";
-import {ifPresent, isPresent, Maybe} from "@sakuli/commons";
-import forTerminal from "youch-terminal";
+import {ifPresent, LogEvent, Maybe} from "@sakuli/commons";
+import {LogEvent as LogEventComponent} from './log-event.component'
 import Timeout = NodeJS.Timeout;
 
 export interface TestExecutionComponentProps {
@@ -13,19 +12,20 @@ export interface TestExecutionComponentProps {
 export interface TestExecutionComponentState {
     testSuites: TestSuiteContext[]
     tick: number;
-    renderedError: string
+    log: LogEvent[]
 }
 
 export class TestExecutionComponent extends Component<TestExecutionComponentProps, TestExecutionComponentState> {
 
-    timer: Timeout | null = null;
+    timer: Maybe<Timeout>;
+    private unsubscribeLog: Maybe<() => void>;
 
     constructor(props: TestExecutionComponentProps) {
         super(props);
         this.state = {
             testSuites: [],
             tick: 0,
-            renderedError: ''
+            log: []
         }
     }
 
@@ -35,17 +35,20 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
                 testSuites: tec.testSuites
             });
         });
+        this.unsubscribeLog = this.props.testExecution.logger.onEvent(e => {
+            this.setState(s => ({log: [...s.log, e]}))
+        });
         this.timer = setInterval(() => {
             this.setState(({tick}) => ({
                 tick: tick + 1
-            }))
-        }, 180)
+            }));
+        }, 180);
+
     }
 
     componentWillUnmount() {
-        if (this.timer) {
-            clearInterval(this.timer)
-        }
+        ifPresent(this.timer, timer => clearInterval(timer));
+        ifPresent(this.unsubscribeLog, unsubscribeLog => unsubscribeLog());
     }
 
     render() {
@@ -56,7 +59,7 @@ export class TestExecutionComponent extends Component<TestExecutionComponentProp
                         <TestEntity entity={suite} tick={this.state.tick}/>
                     ))}
                 </div>
-                <div>{this.state.renderedError}</div>
+                <div>{this.state.log.map(e => <LogEventComponent {...e} />)}</div>
             </Fragment>
         )
 

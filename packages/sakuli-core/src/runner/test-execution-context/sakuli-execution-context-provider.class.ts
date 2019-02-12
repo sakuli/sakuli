@@ -1,6 +1,7 @@
-import {ContextProvider} from "../context-provider.interface";
-import {Project} from "../..";
+import {TestExecutionLifecycleHooks} from "../context-provider.interface";
+import {Project, TestExecutionContext} from "../..";
 import {Sakuli} from '../../sakuli.class';
+import {TestFile} from "../../loader/model/test-file.interface";
 
 export interface SakuliExecutionContext {
     Sakuli: typeof Sakuli
@@ -10,20 +11,29 @@ export function isSakuliExecutionContext(ctx: any): ctx is SakuliExecutionContex
     return "Sakuli" in ctx && ctx.Sakuli === Sakuli;
 }
 
-export class SakuliExecutionContextProvider implements ContextProvider<SakuliExecutionContext> {
+export class SakuliExecutionContextProvider implements TestExecutionLifecycleHooks<SakuliExecutionContext> {
 
     constructor() {}
 
-    tearUp(project: Project): void {
+    onProject(project: Project): void {
 
     }
 
-    tearDown(): void {
+    afterExecution(): void {
 
     }
 
-    getContext(): SakuliExecutionContext {
+    requestContext(): SakuliExecutionContext {
         return ({ Sakuli: Sakuli })
+    }
+
+    afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
+    }
+
+    beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
+    }
+
+    beforeExecution(project: Project, testExecutionContext: TestExecutionContext): void {
     }
 
 

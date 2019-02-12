@@ -48,7 +48,9 @@ export abstract class TestContextEntity implements Measurable {
         }
     }
 
-    get state(): TestContextEntityState {
+    abstract getChildren(): TestContextEntity[];
+
+    get ownState(): TestContextEntityState {
         return ifPresent(this.error,
             _ => TestContextEntityStates.ERROR,
             () => {
@@ -61,6 +63,13 @@ export abstract class TestContextEntity implements Measurable {
                 return TestContextEntityStates.OK
             }
         )
+    }
+
+    get state(): TestContextEntityState {
+        return Math.max(
+            this.ownState,
+            ...this.getChildren().map(tc => tc.state)
+        ) as TestContextEntityState
     }
 
     isStarted(): this is StartedMeasurable {
