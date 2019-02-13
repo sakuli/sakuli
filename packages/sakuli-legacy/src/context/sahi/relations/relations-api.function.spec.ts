@@ -4,7 +4,7 @@ import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQuery} from "../sahi-element.interface";
 import {getSiblings} from "./helper/get-siblings.function";
-import {createTestEnv, mockHtml, TestEnvironment, createTestExecutionContextMock} from "../__mocks__";
+import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(25_000);
 describe('relations-api', () => {
@@ -37,8 +37,43 @@ describe('relations-api', () => {
         done();
     });
 
+    describe('_startLookInside', () => {
+        it('should find a span element inside a div', async done => {
+            const {driver} = await env.getEnv();
+            const au = new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext));
+            const api = relationsApi(driver, au, testExecutionContext);
+            await driver.get(mockHtml(`
+                <span id="outside"></span>
+                <div>
+                  <span id="inside"></span>
+                </div>
+            `));
+            jest.spyOn(api, '_in');
+            api._startLookInside(createQuery(By.css('div')));
+            const fetched = await au.fetchElement(createQuery(By.css('span')));
+            await expect(fetched.getAttribute('id')).resolves.toBe('inside');
+            done();
+        });
+    });
+
 
     describe('_in', () => {
+        it('should find span in div', async done => {
+            const {driver} = await env.getEnv();
+            const api = createApi(driver);
+            await driver.get(mockHtml(`
+                <span id="outside"></span>
+                <div>
+                  <span id="inside"></span>
+                </div>
+            `));
+            const inRel = api._in(createQuery(By.css('div')));
+            const related = await inRel(await driver.findElements(By.css('span')));
+            expect(related.length).toBe(1);
+            await expect(related[0].getAttribute('id')).resolves.toBe('inside');
+            done();
+        });
+
         it('should resolve ', async done => {
             const {url, driver} = await env.getEnv();
             const api = createApi(driver);

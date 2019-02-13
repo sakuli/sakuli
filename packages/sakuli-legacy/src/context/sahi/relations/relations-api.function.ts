@@ -36,7 +36,7 @@ export function relationsApi(
 
     const _in: RelationProducer = (query: SahiElementQuery) => {
         return async (elements: WebElement[]) => {
-            const element = await accessorUtil.fetchElement(query);
+            const element = await accessorUtil.fetchElement(query, true);
             const filterChildOf = filterAsync<WebElement>((e: WebElement) => isChildOf(e, element));
             return filterChildOf(elements);
         }
@@ -44,7 +44,7 @@ export function relationsApi(
 
     const _near: RelationProducer = (query: SahiElementQuery) => {
         return async possibleElements => {
-            const anchor = await accessorUtil.fetchElement(query);
+            const anchor = await accessorUtil.fetchElement(query, true);
             const [
                 ...elementDistances
             ] = await Promise
@@ -66,9 +66,17 @@ export function relationsApi(
         };
     };
 
+    function _startLookInside(query: SahiElementQuery) {
+        accessorUtil.addDefaultRelation(_in(query));
+    }
+
+    function _stopLookInside() {
+        accessorUtil.removeLastRelation();
+    }
+
     function createVerticalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement:PositionalInfo) => boolean) {
         return async (elements: WebElement[]) => {
-            const element = await accessorUtil.fetchElement(query);
+            const element = await accessorUtil.fetchElement(query, true);
             return ifPresent(await getParent(element),
                 async p => {
                     const anchorSiblings: WebElement[] = [];
@@ -101,6 +109,8 @@ export function relationsApi(
         _in,
         _near,
         _rightOf,
-        _leftOf
+        _leftOf,
+        _startLookInside,
+        _stopLookInside
     })
 }

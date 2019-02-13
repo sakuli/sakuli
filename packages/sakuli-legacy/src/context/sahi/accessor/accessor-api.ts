@@ -16,6 +16,13 @@ export function accessorApi() {
     }
 
     return {
+        _activeElement: ():SahiElementQuery => {
+            return ({
+                locator: By.css(':focus'),
+                identifier: 0,
+                relations: []
+            })
+        },
         _byId: (id: string):SahiElementQuery => {
             return ({
                 locator: By.css(`#${id}`),
@@ -96,7 +103,7 @@ export function accessorApi() {
         _strong: createAccessorFunction('strong'),
         _preformatted: createAccessorFunction('pre'),
         _code: createAccessorFunction('code'),
-        _blockquote: createAccessorFunction('blockqoute'),
+        _blockquote: createAccessorFunction('blockquote'),
         _canvas: createAccessorFunction('canvas'),
         _abbr: createAccessorFunction('abbr'),
         _hr: createAccessorFunction('hr'),
@@ -107,7 +114,7 @@ export function accessorApi() {
         _embed: createAccessorFunction('embed'),
         _dList: createAccessorFunction('dl'),
         _dTerm: createAccessorFunction('dt'),
-        _dDesc: createAccessorFunction('td'),
+        _dDesc: createAccessorFunction('dd'),
         _font: createAccessorFunction('font'),
         _svg_rect: createAccessorFunction('rect'),
         _svg_tspan: createAccessorFunction('tspan'),
@@ -130,7 +137,7 @@ export function accessorApi() {
         _nav: createAccessorFunction('nav'),
         _section: createAccessorFunction('section'),
         _summary: createAccessorFunction('summary'),
-        _time: createAccessorFunction('input[type="time"]'),
+        _time: createAccessorFunction('time'),
         _video: createAccessorFunction('video'),
     }
 

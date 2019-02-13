@@ -3,15 +3,20 @@ import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
     AccessorIdentifierAttributesWithClassName,
-    AccessorIdentifierAttributesWithSahiIndex, isAccessorIdentifierAttributesWithClassName,
+    AccessorIdentifierAttributesWithSahiIndex,
+    isAccessorIdentifierAttributesWithClassName,
     isAccessorIdentifierAttributesWithSahiIndex
 } from "./accessor-model.interface";
 import {RelationsResolver} from "../relations";
 import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
 import {ifPresent, Maybe} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
+import {SahiRelation} from "../relations/sahi-relation.interface";
 
 export class AccessorUtil {
+
+    private defaultRelations: SahiRelation[] = [];
+
     constructor(
         readonly webDriver: ThenableWebDriver,
         readonly testExecutionContext: TestExecutionContext,
@@ -28,11 +33,11 @@ export class AccessorUtil {
     }
 
     private arrayValuesAreEqual(arr1: string[], arr2: string[]) {
-        if(arr1.length === arr2.length) {
+        if (arr1.length === arr2.length) {
             arr1.sort();
             arr2.sort();
             for (let i = 0; i < arr1.length; i++) {
-                if(arr1[i] !== arr2[i]) {
+                if (arr1[i] !== arr2[i]) {
                     return false;
                 }
             }
@@ -42,12 +47,20 @@ export class AccessorUtil {
         }
     }
 
+    addDefaultRelation(relation: SahiRelation) {
+        this.defaultRelations.push(relation);
+    }
+
+    removeLastRelation() {
+        this.defaultRelations.pop()
+    }
+
     async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
         const matches: WebElement[] = [];
-        for(let element of elements) {
+        for (let element of elements) {
             const elementClasses = ((await element.getAttribute("class")) || "").split(" ");
             const identifierClasses = className.split(" ");
-            if(this.arrayValuesAreEqual(elementClasses, identifierClasses)) {
+            if (this.arrayValuesAreEqual(elementClasses, identifierClasses)) {
                 matches.push(element)
             }
         }
@@ -102,7 +115,7 @@ export class AccessorUtil {
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<Maybe<WebElement>> {
-        if(isAccessorIdentifierAttributesWithClassName(identifier)) {
+        if (isAccessorIdentifierAttributesWithClassName(identifier)) {
             elements = await this.getElementBySahiClassName(elements, identifier);
         }
         if (typeof identifier === 'number') {
@@ -120,14 +133,16 @@ export class AccessorUtil {
         return Promise.resolve(undefined);
     }
 
-    async fetchElement(query: SahiElementQuery, retry: number = 10): Promise<WebElement> {
-        this.logger.info(`${query.identifier} [${query.locator}] - ${retry}`);
+    async fetchElement(query: SahiElementQuery, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
         try {
             const {locator, relations, identifier} = query;
             const elements = await this.findElements(locator);
             const elementsAfterRelations = await this.relationResolver.applyRelations(
                 elements,
-                relations
+                [
+                    ...(ignoreDefaults ? [] : this.defaultRelations),
+                    ...relations
+                ]
             );
             const element = await this.resolveByIdentifier(elementsAfterRelations, identifier);
             return ifPresent(element, e => e, () => {
@@ -135,7 +150,7 @@ export class AccessorUtil {
             })
         } catch (e) {
             if (retry === 0) throw e;
-            return this.fetchElement(query, retry - 1);
+            return this.fetchElement(query, ignoreDefaults,retry - 1);
         }
     }
 
