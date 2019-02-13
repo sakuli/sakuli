@@ -19,16 +19,16 @@ describe('accessor api', () => {
         return new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx))
     }
 
-    beforeEach(async done => {
-        env = createTestEnv();
-        env.start().then(done);
-    });
-
-    afterEach(async done => {
-        env.stop().then(done);
-    });
 
     describe('generic accessor api', () => {
+        beforeEach(async done => {
+            env = createTestEnv();
+            env.start().then(done);
+        });
+
+        afterEach(async done => {
+            env.stop().then(done);
+        });
         it('should select an active element', async done => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
@@ -106,6 +106,129 @@ describe('accessor api', () => {
 
 
     describe('generic element accessor functions', () => {
+
+        let driver: ThenableWebDriver;
+        let au: AccessorUtil;
+        beforeAll(async done => {
+            env = createTestEnv();
+            await env.start();
+            const e = await env.getEnv();
+            driver = e.driver;
+            au = createAccessorUtil(driver);
+            await driver.get(mockHtml(`
+                <form>
+                  <input type="password" id="_password" />
+                  <input type="text" id="_textbox" />
+                  <input type="hidden" id="_hidden" />
+                  <input type="date" id="_datebox" />
+                  <input type="datetime" id="_datetimebox" />
+                  <input type="datetime-local" id="_datetimelocalbox" />
+                  <input type="email" id="_emailbox" />
+                  <input type="month" id="_monthbox" />
+                  <input type="number" id="_numberbox" />
+                  <input type="range" id="_rangebox" />
+                  <input type="search" id="_searchbox" />
+                  <input type="tel" id="_telephonebox" />
+                  <input type="time" id="_timebox" />
+                  <input type="url" id="_urlbox" />
+                  <input type="week" id="_weekbox" />
+                  <textarea id="_textarea"></textarea>
+                  <button id="_button"></button>
+                  <input type="checkbox" id="_checkbox">
+                  <input type="checkbox" id="_checkbox">
+                  <input type="radio" id="_radio">
+                  <input type="submit" id="_submit">
+                  <input type="reset" id="_reset">
+                  <input type="image" id="_imageSubmitButton" alt="nothing here">
+                  <select id="_select">
+                    <option id="_option"></option>
+                  </select>
+                  <input type="file" id="_file">
+                </form>
+                <table id="_table">
+                  <tr id="_row">
+                    <th id="_tableHeader"></th>
+                  </tr>
+                  <tr>
+                    <td id="_cell"></td>                
+                  </tr>
+                </table>
+                <a href="#" id="_link">Link</a>
+                <img src="#" id="_image" />
+                <label for="_textbox" id="_label">
+                  Label
+                </label>
+                <ul id="_list">
+                  <li id="_listItem"></li>
+                  <li></li>
+                </ul>
+                <div id="_div">Content</div>
+                <span id="_span">content2</span>
+                <fieldset id="_fieldset"></fieldset>
+                <h1 id="_heading1"></h1>
+                <h2 id="_heading2"></h2>
+                <h3 id="_heading3"></h3>
+                <h4 id="_heading4"></h4>
+                <h5 id="_heading5"></h5>
+                <h6 id="_heading6"></h6>
+                <area shape="circle" coords="12" href="#" alt="nothing" id="_area">
+                <map name="map1" id="_map"></map>
+                <p id="_paragraph"></p>
+                <i id="_italic"></i>
+                <em id="_emphasis"></em>
+                <b id="_bold"></b>
+                <strong id="_strong"></strong>
+                <pre id="_preformatted"></pre>
+                <code id="_code"></code>
+                <blockquote id="_blockquote"></blockquote>
+                <canvas id="_canvas"></canvas>
+                <abbr title="Short for this" id="_abbr">Long for that</abbr>
+                <hr id="_hr" />
+                <iframe src="data:text/html;base64, " id="_iframe" frameborder="0"></iframe>
+                <iframe src="data:text/html;base64, " id="_rte" frameborder="0"></iframe>
+                <frameset>
+                  <frame id="_frame">
+                </frameset>
+                <object data="" type="" id="_object"></object>
+                <embed src="data:text/plain;base64, " type="" id="_embed">
+                <dl id="_dList">
+                  <dt id="_dTerm"></dt>
+                  <dd id="_dDesc"></dd>
+                </dl>
+                <font id="_font"></font>
+                <svg>
+                  <rect id="_svg_rect" height="10" width="10"></rect>
+                  <tspan id="_svg_tspan"></tspan>
+                  <circle id="_svg_circle" r="4"></circle>
+                  <ellipse id="_svg_ellipse" rx="1" ry="5"></ellipse>
+                  <line id="_svg_line"></line>
+                  <polygon id="_svg_polygon" points="1"></polygon>
+                  <polyline id="_svg_polyline" points="1"></polyline>
+                  <path id="_svg_path" d="1"></path>
+                  <text id="_svg_text"></text>
+                </svg>
+                <article id="_article"></article>
+                <aside id="_aside"></aside>
+                <details id="_details"></details>
+                <figcaption id="_figcaption"></figcaption>
+                <figure id="_figure"></figure>
+                <footer id="_footer"></footer>
+                <header id="_header"></header>
+                <main id="_main"></main>
+                <mark id="_mark"></mark>
+                <nav id="_nav"></nav>
+                <section id="_section"></section>
+                <summary id="_summary"></summary>
+                <time id="_time"></time>
+                <video src="" id="_video"></video>
+            `));
+            done();
+        });
+
+        afterAll(async done => {
+            env.stop().then(done);
+        });
+
         it.each(<Array<[AccessorFunctions, number | undefined]>>[
             ['_password', 0],
             ['_textbox', 0],
@@ -199,115 +322,6 @@ describe('accessor api', () => {
             sahiIndex: number,
             done: DoneCallback
         ) => {
-            const {driver} = await env.getEnv();
-            const au = createAccessorUtil(driver);
-            await driver.get(mockHtml(`
-            <form>
-              <input type="password" id="_password" />
-              <input type="text" id="_textbox" />
-              <input type="hidden" id="_hidden" />
-              <input type="date" id="_datebox" />
-              <input type="datetime" id="_datetimebox" />
-              <input type="datetime-local" id="_datetimelocalbox" />
-              <input type="email" id="_emailbox" />
-              <input type="month" id="_monthbox" />
-              <input type="number" id="_numberbox" />
-              <input type="range" id="_rangebox" />
-              <input type="search" id="_searchbox" />
-              <input type="tel" id="_telephonebox" />
-              <input type="time" id="_timebox" />
-              <input type="url" id="_urlbox" />
-              <input type="week" id="_weekbox" />
-              <textarea id="_textarea"></textarea>
-              <button id="_button"></button>
-              <input type="checkbox" id="_checkbox">
-              <input type="checkbox" id="_checkbox">
-              <input type="radio" id="_radio">
-              <input type="submit" id="_submit">
-              <input type="reset" id="_reset">
-              <input type="image" id="_imageSubmitButton" alt="nothing here">
-              <select id="_select">
-                <option id="_option"></option>
-              </select>
-              <input type="file" id="_file">
-            </form>
-            <table id="_table">
-              <tr id="_row">
-                <th id="_tableHeader"></th>
-              </tr>
-              <tr>
-                <td id="_cell"></td>                
-              </tr>
-            </table>
-            <a href="#" id="_link">Link</a>
-            <img src="#" id="_image" />
-            <label for="_textbox" id="_label">
-              Label
-            </label>
-            <ul id="_list">
-              <li id="_listItem"></li>
-              <li></li>
-            </ul>
-            <div id="_div">Content</div>
-            <span id="_span">content2</span>
-            <fieldset id="_fieldset"></fieldset>
-            <h1 id="_heading1"></h1>
-            <h2 id="_heading2"></h2>
-            <h3 id="_heading3"></h3>
-            <h4 id="_heading4"></h4>
-            <h5 id="_heading5"></h5>
-            <h6 id="_heading6"></h6>
-            <area shape="circle" coords="12" href="#" alt="nothing" id="_area">
-            <map name="map1" id="_map"></map>
-            <p id="_paragraph"></p>
-            <i id="_italic"></i>
-            <em id="_emphasis"></em>
-            <b id="_bold"></b>
-            <strong id="_strong"></strong>
-            <pre id="_preformatted"></pre>
-            <code id="_code"></code>
-            <blockquote id="_blockquote"></blockquote>
-            <canvas id="_canvas"></canvas>
-            <abbr title="Short for this" id="_abbr">Long for that</abbr>
-            <hr id="_hr" />
-            <iframe src="data:text/html;base64, " id="_iframe" frameborder="0"></iframe>
-            <iframe src="data:text/html;base64, " id="_rte" frameborder="0"></iframe>
-            <frameset>
-              <frame id="_frame">
-            </frameset>
-            <object data="" type="" id="_object"></object>
-            <embed src="data:text/plain;base64, " type="" id="_embed">
-            <dl id="_dList">
-              <dt id="_dTerm"></dt>
-              <dd id="_dDesc"></dd>
-            </dl>
-            <font id="_font"></font>
-            <svg>
-              <rect id="_svg_rect" height="10" width="10"></rect>
-              <tspan id="_svg_tspan"></tspan>
-              <circle id="_svg_circle" r="4"></circle>
-              <ellipse id="_svg_ellipse" rx="1" ry="5"></ellipse>
-              <line id="_svg_line"></line>
-              <polygon id="_svg_polygon" points="1"></polygon>
-              <polyline id="_svg_polyline" points="1"></polyline>
-              <path id="_svg_path" d="1"></path>
-              <text id="_svg_text"></text>
-            </svg>
-            <article id="_article"></article>
-            <aside id="_aside"></aside>
-            <details id="_details"></details>
-            <figcaption id="_figcaption"></figcaption>
-            <figure id="_figure"></figure>
-            <footer id="_footer"></footer>
-            <header id="_header"></header>
-            <main id="_main"></main>
-            <mark id="_mark"></mark>
-            <nav id="_nav"></nav>
-            <section id="_section"></section>
-            <summary id="_summary"></summary>
-            <time id="_time"></time>
-            <video src="" id="_video"></video>
-        `));
             const accessor: AccessorFunction = api[method];
             const ae = await au.fetchElement(accessor(sahiIndex));
             await expect(ae.getAttribute('id')).resolves.toBe(method);
