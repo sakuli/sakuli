@@ -1,10 +1,12 @@
 import {By, ThenableWebDriver} from "selenium-webdriver";
-import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
+import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {AccessorUtil} from "./accessor-util.class";
 import {mockPartial} from "sneer";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "../relations";
 
+
+jest.setTimeout(15_000);
 describe('AccessorUtil', () => {
 
     let env: TestEnvironment;
@@ -19,7 +21,7 @@ describe('AccessorUtil', () => {
         done();
     });
 
-    const testExecutionContext = mockPartial<TestExecutionContext>({});
+    const testExecutionContext = createTestExecutionContextMock();
     function createApi(driver: ThenableWebDriver) {
         return new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext))
     }
@@ -65,5 +67,39 @@ describe('AccessorUtil', () => {
         done();
     });
 
+    it('should invoke a default relation', async done => {
+        const {driver} = await env.getEnv();
+        await driver.get(mockHtml(`
+            <div>Test</div>
+        `));
+        const api = createApi(driver);
+        const relationMock = jest.fn(x => x);
+        api.addDefaultRelation(relationMock);
+        await api.fetchElement({
+            locator: By.css('div'),
+            identifier: 'Test',
+            relations: []
+        });
+        expect(relationMock).toHaveBeenCalledTimes(1);
+        done();
+    });
+
+    it('should remove a default relation', async done => {
+        const {driver} = await env.getEnv();
+        await driver.get(mockHtml(`
+            <div>Test</div>
+        `));
+        const api = createApi(driver);
+        const relationMock = jest.fn(x => x);
+        api.addDefaultRelation(relationMock);
+        api.removeLastRelation();
+        await api.fetchElement({
+            locator: By.css('div'),
+            identifier: 'Test',
+            relations: []
+        });
+        expect(relationMock).toHaveBeenCalledTimes(0);
+        done();
+    });
 
 });
