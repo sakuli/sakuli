@@ -1,4 +1,4 @@
-import {By, ILocation, ISize, WebDriver, WebElement} from "selenium-webdriver";
+import {ILocation, ISize, WebDriver, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationProducer, RelationProducerWithOffset} from "./sahi-relation.interface";
 import {filterAsync, ifPresent, mapAsync} from "@sakuli/commons";
@@ -36,7 +36,7 @@ export function relationsApi(
 
     const _in: RelationProducer = (query: SahiElementQuery) => {
         return async (elements: WebElement[]) => {
-            const element = await accessorUtil.fetchElement(query, true);
+            const element = await accessorUtil.fetchElement(query);
             const filterChildOf = filterAsync<WebElement>((e: WebElement) => isChildOf(e, element));
             return filterChildOf(elements);
         }
@@ -44,7 +44,7 @@ export function relationsApi(
 
     const _near: RelationProducer = (query: SahiElementQuery) => {
         return async possibleElements => {
-            const anchor = await accessorUtil.fetchElement(query, true);
+            const anchor = await accessorUtil.fetchElement(query, );
             const [
                 ...elementDistances
             ] = await Promise
@@ -66,17 +66,9 @@ export function relationsApi(
         };
     };
 
-    function _startLookInside(query: SahiElementQuery) {
-        accessorUtil.addDefaultRelation(_in(query));
-    }
-
-    function _stopLookInside() {
-        accessorUtil.removeLastRelation();
-    }
-
-    function createVerticalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement:PositionalInfo) => boolean) {
+    function createVerticalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement: PositionalInfo) => boolean) {
         return async (elements: WebElement[]) => {
-            const element = await accessorUtil.fetchElement(query, true);
+            const element = await accessorUtil.fetchElement(query);
             return ifPresent(await getParent(element),
                 async p => {
                     const anchorSiblings: WebElement[] = [];
@@ -104,13 +96,20 @@ export function relationsApi(
         return createVerticalRelation(query, offset, (a, b) => isLeftOf(edges(a).center, edges(b).center));
     };
 
+    const _leftOrRightOf: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
+        return createVerticalRelation(
+            query,
+            offset,
+            (a, b) => isRightOf(edges(a).center, edges(b).center) || isLeftOf(edges(a).center, edges(b).center)
+        )
+    };
+
 
     return ({
         _in,
         _near,
         _rightOf,
         _leftOf,
-        _startLookInside,
-        _stopLookInside
+        _leftOrRightOf,
     })
 }
