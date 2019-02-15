@@ -66,7 +66,7 @@ export function relationsApi(
         };
     };
 
-    function createVerticalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement: PositionalInfo) => boolean) {
+    function createHorizontalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement: PositionalInfo) => boolean) {
         return async (elements: WebElement[]) => {
             const element = await accessorUtil.fetchElement(query);
             return ifPresent(await getParent(element),
@@ -88,16 +88,53 @@ export function relationsApi(
         }
     }
 
+    function createVerticalRelation(query: SahiElementQuery, offset: number, predicate: (anchor: PositionalInfo, fittingElement: PositionalInfo) => boolean) {
+        return async (elements: WebElement[]) => {
+            const element = await accessorUtil.fetchElement(query);
+            const anchor = await positionalInfo(element);
+            const positionals = await mapAsync(positionalInfo)(elements);
+            return positionals
+                .filter(pi => predicate(anchor, pi))
+                .slice(offset)
+                .map(({origin}) => origin)
+        }
+    }
+
+
+    const _under: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
+        return createVerticalRelation(query, offset, (a,b) => {
+            const edgesA = edges(a);
+            const edgesB = edges(b);
+            return edgesB.isUnder(edgesA) && edgesB.intersectsVertical(edgesA);
+        })
+    };
+
+    const _above: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
+        return createVerticalRelation(query, offset, (a,b) => {
+            const edgesA = edges(a);
+            const edgesB = edges(b);
+            return edgesB.isAbove(edgesA) && edgesB.intersectsVertical(edgesA);
+        })
+    };
+
+    const _underOrAbove: RelationProducerWithOffset = (query: SahiElementQuery, offset:number = 0) => {
+        return createVerticalRelation(query, offset, (a,b) => {
+            const edgesA = edges(a);
+            const edgesB = edges(b);
+            return (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) && edgesB.intersectsVertical(edgesA);
+        })
+    }
+
     const _rightOf: RelationProducerWithOffset = (query: SahiElementQuery, offset = 0) => {
-        return createVerticalRelation(query, offset, (a, b) => isRightOf(edges(a).center, edges(b).center));
+        return createHorizontalRelation(query, offset, (a, b) => isRightOf(edges(a).center, edges(b).center));
     };
 
     const _leftOf: RelationProducerWithOffset = (query: SahiElementQuery, offset = 0) => {
-        return createVerticalRelation(query, offset, (a, b) => isLeftOf(edges(a).center, edges(b).center));
+        return createHorizontalRelation(query, offset, (a, b) => isLeftOf(edges(a).center, edges(b).center));
     };
 
     const _leftOrRightOf: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
-        return createVerticalRelation(
+        return createHorizontalRelation(
             query,
             offset,
             (a, b) => isRightOf(edges(a).center, edges(b).center) || isLeftOf(edges(a).center, edges(b).center)
@@ -111,5 +148,8 @@ export function relationsApi(
         _rightOf,
         _leftOf,
         _leftOrRightOf,
+        _under,
+        _above,
+        _underOrAbove
     })
 }

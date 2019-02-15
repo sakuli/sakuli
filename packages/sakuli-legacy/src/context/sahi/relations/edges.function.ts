@@ -1,5 +1,5 @@
 import {PositionalInfo} from "./positional-info.function";
-import {Vector2} from "./vector2.type";
+import {isInVector, Vector2} from "./vector2.type";
 
 export interface EdgeInfo {
 
@@ -85,20 +85,52 @@ export interface EdgeInfo {
     center: Vector2
 }
 
-export function edges(pos: PositionalInfo): EdgeInfo {
+export interface Edge extends EdgeInfo {
+    isUnder(b: EdgeInfo, anchor?: keyof EdgeInfo): boolean;
+
+    isAbove(b: EdgeInfo, anchor?: keyof EdgeInfo): boolean;
+
+    intersectsVertical(b: EdgeInfo): boolean;
+}
+
+export function edges(pos: PositionalInfo): Edge {
     const {width, height} = pos.size;
-    const {x,y} = pos.location;
+    const {x, y} = pos.location;
     const xc = (width / 2) + x;
     const yc = (height / 2) + y;
+    const top: Vector2 = [xc, y];
+    const bottom: Vector2 = [xc, y + height];
+    const bottomLeft: Vector2 = [x, y + height];
+    const bottomRight: Vector2 = [x + width, y + height];
+    const left: Vector2 = [x, yc];
+    const right: Vector2 = [x + width, yc];
+    const topLeft: Vector2 = [x, y];
+    const topRight: Vector2 = [x + width, y];
+    const center: Vector2 = [xc, yc];
+    const isUnder = (b: EdgeInfo, anchor: keyof EdgeInfo = 'center') => {
+        const [_, yb] = b[anchor];
+        return yc > yb;
+    };
+    const isAbove = (b: EdgeInfo, anchor: keyof EdgeInfo = 'center') => {
+        const [_, yb] = b[anchor];
+        return yc < yb;
+    };
+    const intersectsVertical = ({left: [lx], right: [rx]}: EdgeInfo) => {
+        const xRange: Vector2 = [x, x + width];
+        return isInVector(lx, xRange) || isInVector(rx, xRange);
+    };
     return ({
-        top: [xc, y],
-        bottom: [xc, y + height],
-        bottomLeft: [x, y + height],
-        bottomRight: [x + width, y + height],
-        left: [x, yc],
-        right: [x + width, yc],
-        topLeft: [x, y],
-        topRight: [x + width, y],
-        center: [xc, yc],
+        top,
+        bottom,
+        bottomLeft,
+        bottomRight,
+        left,
+        right,
+        topLeft,
+        topRight,
+        center,
+        isUnder,
+        isAbove,
+        intersectsVertical
     })
 }

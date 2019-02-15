@@ -21,3 +21,8 @@ export function isLeftOf([x1]: Vector2, [x2]: Vector2) {
 export function isRightOf([x1]: Vector2, [x2]: Vector2) {
     return x1 < x2;
 }
+
+export function isInVector(x: number, [left, right]:Vector2) {
+    return x >= left && x <= right;
+}
+
