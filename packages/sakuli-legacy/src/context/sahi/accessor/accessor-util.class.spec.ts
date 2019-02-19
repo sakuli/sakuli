@@ -27,7 +27,7 @@ describe('AccessorUtil', () => {
     }
 
     it('should fetch fuzzy matching identifiers from element', async done => {
-        const {driver, url} = await env.getEnv();
+        const {driver} = await env.getEnv();
         await driver.get(mockHtml(`
          <div
             id="element-to-test"
@@ -46,7 +46,7 @@ describe('AccessorUtil', () => {
     });
 
     it('should filter non displayed elements', async done => {
-        const {driver, url} = await env.getEnv();
+        const {driver} = await env.getEnv();
         await driver.get(mockHtml(`
           <div id="visibility-hidden" style="visibility: hidden">ABC</div>
           <div id="display-none" style="display: none;">ABC</div>

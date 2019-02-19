@@ -2,7 +2,7 @@
   "name": "sakuli",
   "private": true,
   "scripts": {
-    "postinstall": "lerna bootstrap --progress --no-ci --hoist",
+    "postinstall": "lerna bootstrap --progress --no-ci",
     "build": "lerna run build",
     "test": "jest",
     "bootstrap": "lerna bootstrap",

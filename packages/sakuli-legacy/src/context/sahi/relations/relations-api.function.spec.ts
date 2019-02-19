@@ -24,17 +24,19 @@ describe('relations-api', () => {
         })
     }
 
-    describe('dom', () => {
-        beforeEach(async done => {
-            env = createTestEnv();
-            await env.start();
-            done();
-        });
+    beforeAll(async done => {
+        env = createTestEnv();
+        await env.start();
+        done();
+    });
 
-        afterEach(async done => {
-            await env.stop();
-            done();
-        });
+    afterAll(async done => {
+        await env.stop();
+        done();
+    });
+
+
+    describe('dom', () => {
 
         describe('_in', () => {
             it('should find span in div', async done => {
@@ -54,7 +56,7 @@ describe('relations-api', () => {
             });
 
             it('should resolve ', async done => {
-                const {url, driver} = await env.getEnv();
+                const {driver} = await env.getEnv();
                 const api = createApi(driver);
                 await driver.get(mockHtml(`
                 <table style="width:300px" class="_in">
@@ -86,7 +88,7 @@ describe('relations-api', () => {
         });
 
         describe('_near', () => {
-            it('should work', async done => {
+            it('should work', async () => {
                 const {driver} = await env.getEnv();
                 const api = createApi(driver);
                 const html = mockHtml(`                                
@@ -112,8 +114,7 @@ describe('relations-api', () => {
                 const nearUserTwo = api._near(createQuery(By.css('#user-two')));
                 const links = await driver.findElements(By.css('a'));
                 const linksNearUserTwo = await nearUserTwo(links);
-                await expect(linksNearUserTwo[0].getText()).resolves.toEqual(expect.stringContaining('user two'));
-                done();
+                return await expect(linksNearUserTwo[0].getText()).resolves.toEqual(expect.stringContaining('user two'));
             });
 
         });
@@ -130,14 +131,12 @@ describe('relations-api', () => {
 
         let driver: ThenableWebDriver;
         let api: RelationApi;
-        beforeAll(async done => {
-            env = createTestEnv();
-            await env.start();
+        beforeAll(async () => {
+            // env = createTestEnv();
+            // await env.start();
             const _env = await env.getEnv();
             driver = _env.driver;
             api = createApi(driver);
-
-
             await driver.get(mockHtml(`
                     <table class="_left _right" style="width:100%">
                       <thead>
@@ -196,12 +195,6 @@ describe('relations-api', () => {
                       </tfoot>
                     </table>
                 `));
-            done();
-        });
-
-        afterAll(async done => {
-            await env.stop();
-            done();
         });
 
         it.each([
@@ -218,15 +211,14 @@ describe('relations-api', () => {
             [1, '_underOrAbove', 2, ["San Francisco"]],
         ])(
             'should relate %i elements which are %s the #anchor with an offset of %i and contains %j',
-            async (expected: number, method: Exclude<keyof RelationApi, "_near" | "_in">, offset: number, text: string[], done: jest.DoneCallback) => {
+            async (expected: number, method: Exclude<keyof RelationApi, "_near" | "_in">, offset: number, text: string[]) => {
 
                 const anchor = await createQuery(By.css('#anchor'));
                 const allElements = await driver.findElements(By.css('td'));
                 const leftOf = await api[method](anchor, offset)(allElements);
                 const content = await Promise.all(leftOf.map(e => e.getText()));
                 expect(content).toEqual(text);
-                expect(leftOf.length).toBe(expected);
-                done()
+                return expect(leftOf.length).toBe(expected);
             }
         );
     });

@@ -19,11 +19,11 @@ interface PositionalInfo {
 }
 
 export async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
-    // Somehow types are not updated: But getRect is the correct
-    // way to get the dimension and position of an element
-    // https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#getRect
-    const {width, height, x, y} = await (origin as any).getRect();
-    return ({location: {x, y}, size: {width, height}, origin});
+    const [location, size] = await Promise.all([
+        origin.getLocation(),
+        origin.getSize()
+    ]);
+    return ({location, size, origin});
 }
 
 export type RelationApi = ReturnType<typeof relationsApi>;

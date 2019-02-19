@@ -1,5 +1,4 @@
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
-import {mockHtml} from "../../__mocks__/html/mock-html.function";
+import {createTestEnv, TestEnvironment, mockHtml} from "../../__mocks__";
 import {By} from "selenium-webdriver";
 import {isSibling} from "./is-sibling.function";
 

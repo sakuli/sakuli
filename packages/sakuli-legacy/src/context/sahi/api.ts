@@ -4,7 +4,7 @@ import {AccessorApi, accessorApi, AccessorIdentifierAttributes, AccessorUtil} fr
 import {SahiRelation} from "./relations/sahi-relation.interface";
 import {RelationApi, relationsApi, RelationsResolver} from "./relations";
 import {SahiElementQuery} from "./sahi-element.interface";
-import {ActionApi, actionApi} from "./action";
+import {ActionApiFunction, actionApi} from "./action";
 
 //type SahiElement = WebElement;
 type pr_i_AB = [number, number];
@@ -12,7 +12,7 @@ type pr_i_AB = [number, number];
 export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
 export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElementQuery;
 
-export type SahiApi = ActionApi & AccessorApi & RelationApi & {_dynamicInclude: () => Promise<void>};
+export type SahiApi = ActionApiFunction & AccessorApi & RelationApi & {_dynamicInclude: () => Promise<void>};
 
 export function sahiApi(
     driver: ThenableWebDriver,

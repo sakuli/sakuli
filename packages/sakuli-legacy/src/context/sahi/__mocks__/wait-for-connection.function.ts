@@ -24,7 +24,7 @@ export function waitForConnection({
                             res();
                         },
                         e => {
-                            console.warn(`Could not connect to ${host}${port} retry in 500ms`)
+                            //console.warn(`Could not connect to ${host}${port} retry in 500ms`)
                         }
                     );
             }, 500);

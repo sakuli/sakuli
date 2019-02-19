@@ -1,10 +1,11 @@
 import {AccessorUtil} from "../accessor";
 import {isSahiElementQuery, SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {ThenableWebDriver} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
+import {mouseActionApi} from "./mouse-actions-api.function";
 
-export type ActionApi = ReturnType<typeof actionApi>;
+export type ActionApiFunction = ReturnType<typeof actionApi>;
 
 export function actionApi(
     webDriver: ThenableWebDriver,
@@ -24,7 +25,7 @@ export function actionApi(
             let res: any;
             try {
                 res = await fn(...args);
-            } catch(e) {
+            } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
                 ctx.endTestAction();
@@ -33,17 +34,13 @@ export function actionApi(
         }) as T;
     }
 
-    async function _click(query: SahiElementQuery, combo?: string): Promise<void> {
-        const e = await accessorUtil.fetchElement(query);
-        await e.click();
-    }
 
     async function _setValue(query: SahiElementQuery, value: string): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
         try {
-            for(let char of value.split('')) {
-              await _wait(10);
-              await element.sendKeys(char);
+            for (let char of value.split('')) {
+                await _wait(10);
+                await element.sendKeys(char);
             }
             //await element.sendKeys(...value.split(''));
         } catch (e) {
@@ -59,7 +56,7 @@ export function actionApi(
 
     async function _eval(source: string, ..._args: any[]) {
         const args = await Promise.all(_args.map(arg => {
-            if(isSahiElementQuery(arg)) {
+            if (isSahiElementQuery(arg)) {
                 return accessorUtil.fetchElement(arg);
             } else {
                 return Promise.resolve(arg)
@@ -79,44 +76,6 @@ export function actionApi(
         `, e);
     }
 
-    async function _setSelected(query: SahiElementQuery, optionToSelect: string | number | string[] | number[], isMultiple: boolean = false): Promise<void> {
-        const e = await accessorUtil.fetchElement(query);
-        const options = await e.findElements(By.css('option'));
-        const valuesOrIndices = typeof optionToSelect === 'string' || typeof optionToSelect === 'number' ? [optionToSelect] : optionToSelect;
-        const isNumberArray = (arr: (number | string)[]): arr is number[] => arr.every(n => typeof n === 'number');
-        for (const [i, option] of options.entries()) {
-            if (!isMultiple) {
-                await setElementSelect(option, false)
-            }
-            if (isNumberArray(valuesOrIndices)) {
-                if (valuesOrIndices.includes(i)) {
-                    //await setElementSelect(option, true);
-                    await option.click()
-                }
-            } else {
-                const value = await option.getAttribute('value');
-                const text = await option.getText();
-                if (valuesOrIndices.includes(value) || valuesOrIndices.includes(text)) {
-                    //await setElementSelect(option, true);
-                    await option.click();
-                }
-            }
-        }
-    }
-
-    async function setElementSelect(e: WebElement, selected: boolean = true) {
-        await webDriver.executeAsyncScript(stripIndents`
-            const e = arguments[0];
-            const selected = arguments[1];
-            const done = arguments[arguments.length - 1];
-            if(selected) {
-                e.setAttribute('selected', true)
-            } else {
-                e.removeAttribute('selected');
-            }
-            done(e.textContent);
-        `, e, selected);
-    }
 
     async function _highlight(query: SahiElementQuery, timeoutMs: number = 2000): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
@@ -146,18 +105,10 @@ export function actionApi(
         }
     }
 
-    async function _dragDrop(eSource: SahiElementQuery, eTarget: SahiElementQuery): Promise<void> {
-        throw Error('Not yet implemented')
-    }
-
-    async function _dragDropXY(e: SahiElementQuery, $x: number, $y: number, $isRelative: boolean = false): Promise<void> {
-        throw Error('Not yet implemented')
-    }
-
     async function _rteWrite(query: SahiElementQuery, content: string): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
-        if(tagName.toLocaleLowerCase() !== 'iframe') {
+        if (tagName.toLocaleLowerCase() !== 'iframe') {
             throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
         }
         const defaultWindowHandle = await webDriver.getWindowHandle();
@@ -166,18 +117,39 @@ export function actionApi(
             document.body.innerHTML = arguments[0];
         `, content);
         await webDriver.switchTo().window(defaultWindowHandle);
-
     }
 
+    const {
+        _xy,
+        _click,
+        _rightClick,
+        _mouseDown,
+        _mouseUp,
+        _mouseOver,
+        _check,
+        _uncheck,
+        _setSelected,
+        _dragDrop,
+        _dragDropXY,
+    } = mouseActionApi(webDriver, accessorUtil, ctx);
+
     return ({
+        _xy: runAsAction('xy', _xy),
+        _rightClick: runAsAction('rightClick', _rightClick),
+        _mouseDown: runAsAction('mouseDown', _mouseDown),
+        _mouseUp: runAsAction('mouseUp', _mouseUp),
+        _mouseOver: runAsAction('mouseOver', _mouseOver),
+        _check: runAsAction('check', _check),
+        _uncheck: runAsAction('uncheck', _uncheck),
         _click: runAsAction('click', _click),
-        _setValue: runAsAction('setValue', _setValue),
         _setSelected: runAsAction('setSelected', _setSelected),
+        _dragDrop: runAsAction('dragDrop', _dragDrop),
+        _dragDropXY: runAsAction('dragDrop', _dragDropXY),
+
+        _setValue: runAsAction('setValue', _setValue),
         _wait: runAsAction('wait', _wait),
         _highlight: runAsAction('highlight', _highlight),
         _navigateTo: runAsAction('navigateTo', _navigateTo),
-        _dragDrop: runAsAction('dragDrop', _dragDrop),
-        _dragDropXY: runAsAction('dragDrop', _dragDropXY),
         _rteWrite: runAsAction('rteWrite', _rteWrite),
         _focus: runAsAction('focus', _focus),
         _eval: runAsAction('eval', _eval)
