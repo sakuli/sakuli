@@ -3,41 +3,47 @@ import {By} from "selenium-webdriver";
 import {ifPresent} from "@sakuli/commons";
 import {getParent} from "./get-parent.function";
 import {isEqual} from "./is-equal.function";
+import {mockHtml} from "../../__mocks__";
 
-jest.setTimeout(10000);
+jest.setTimeout(15_000);
 describe('getParent', () => {
     let env: TestEnvironment;
 
-    beforeEach(async done => {
+    beforeAll(async done => {
         env = createTestEnv();
         await env.start();
         done();
     });
 
-    afterEach(async (done) => {
+    afterAll(async (done) => {
         await env.stop();
         done();
     });
 
-    it('should resolve to a parent', async done => {
-        const {driver, url} = await env.getEnv();
-        await driver.get(`${url}/relations/relations-resolver.html`);
+    it('should resolve to a parent', async () => {
+        const {driver} = await env.getEnv();
+        await driver.get(mockHtml(`
+            <ul>
+              <li>Test 1</li>
+              <li>Test 2</li>
+              <li>Test 3</li>
+              <li>Test 4</li>
+            </ul>
+        `));
         const li = await driver.findElement(By.css('li'));
         const ul = await driver.findElement(By.css('ul'));
-        await ifPresent(await getParent(li), async parent => {
-            await expect(isEqual(ul, parent)).resolves.toBeTruthy();
-        }, () => done.fail());
-
-        done();
+        return ifPresent(await getParent(li),
+            async parent => expect(isEqual(ul, parent)).resolves.toBeTruthy(),
+            () => {throw Error('No parent on <li>')}
+        );
     });
 
-    it('should return null if element has no parent', async done => {
-        const {driver, url} = await env.getEnv();
-        await driver.get(url);
-        await expect(
+    it('should return null if element has no parent', async () => {
+        const {driver} = await env.getEnv();
+        await driver.get(mockHtml(``));
+        return expect(
             getParent(driver.findElement(By.css('html')))
         ).resolves.toBeNull();
-        done();
     });
 
 });

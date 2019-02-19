@@ -12,10 +12,31 @@ export function mouseActionApi(
     ctx: TestExecutionContext
 ) {
 
-    function addClickActions(actions: ActionSequence, e: WebElement, combo: string) {
+    function runActionsWithComboKeys(
+        actions: ActionSequence,
+        e: WebElement,
+        combo: string = '',
+        whileKeysDown: (a: ActionSequence) => void = () => {
+        }) {
+        const keys = getSeleniumKeysFromComboString(combo);
+        keys.forEach(k => actions.keyDown(k));
+        whileKeysDown(actions);
+        keys.forEach(k => actions.keyUp(k));
+        return actions;
+    }
+
+    function pressComboKeys(actions: ActionSequence, e: WebElement, combo: string) {
         const keys = getSeleniumKeysFromComboString(combo);
         keys.forEach(k => {
             actions.keyDown(k);
+        });
+        return actions;
+    }
+
+    function releaseComboKeys(actions: ActionSequence, e: WebElement, combo: string) {
+        const keys = getSeleniumKeysFromComboString(combo);
+        keys.forEach(k => {
+            actions.keyUp(k);
         });
         return actions;
     }
@@ -43,60 +64,52 @@ export function mouseActionApi(
      This argument is applicable only for Browser mode
      * @private
      */
-    async function _click(query: SahiElementQuery, combo?: string): Promise<void> {
+    async function _click(query: SahiElementQuery, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
-        return addClickActions(
+        return runActionsWithComboKeys(
             webDriver.actions(),
             e,
-            combo || ""
-        ).click(e).perform();
+            combo,
+            a => a.click(e)
+        ).perform();
     }
 
-    async function _mouseDown(query: SahiElementQuery, isRight: boolean = false, combo?: string): Promise<void> {
+    async function _mouseDown(query: SahiElementQuery, isRight: boolean = false, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const mouseButton = isRight ? Button.RIGHT : Button.LEFT;
-        return addClickActions(
+        return runActionsWithComboKeys(
             webDriver.actions(),
-            e,
-            combo || ""
-        )
-            .mouseDown(e, mouseButton)
-            .perform();
+            e, combo,
+            a => a.mouseDown(e, mouseButton)
+        ).perform();
     }
 
-    async function _mouseUp(query: SahiElementQuery, isRight: boolean = false, combo?: string): Promise<void> {
+    async function _mouseUp(query: SahiElementQuery, isRight: boolean = false, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const mouseButton = isRight ? Button.RIGHT : Button.LEFT;
-        return addClickActions(
+        return runActionsWithComboKeys(
             webDriver.actions(),
-            e,
-            combo || ""
-        )
-            .mouseUp(e, mouseButton)
-            .perform();
+            e, combo,
+            a => a.mouseUp(e, mouseButton)
+        ).perform();
     }
 
-    async function _rightClick(query: SahiElementQuery, combo?: string): Promise<void> {
+    async function _rightClick(query: SahiElementQuery, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
-        return addClickActions(
+        return runActionsWithComboKeys(
             webDriver.actions(),
-            e,
-            combo || ""
-        )
-            .mouseDown(e, Button.RIGHT)
-            .mouseUp(e, Button.RIGHT)
-            .perform();
+            e, combo,
+            a => a.mouseDown(e, Button.RIGHT).mouseUp(e, Button.RIGHT)
+        ).perform();
     }
 
-    async function _mouseOver(query: SahiElementQuery, combo?: string) {
+    async function _mouseOver(query: SahiElementQuery, combo: string = '') {
         const e = await accessorUtil.fetchElement(query);
-        return addClickActions(
+        return runActionsWithComboKeys(
             webDriver.actions(),
-            e,
-            combo || ""
-        )
-            .mouseMove(e)
-            .perform();
+            e, combo,
+            a => a.mouseMove(e)
+        ).perform();
     }
 
     async function _check(query: SahiElementQuery) {
@@ -114,7 +127,7 @@ export function mouseActionApi(
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
         const type = await e.getAttribute("type");
-        if (tagName.toLocaleLowerCase() === 'input' && (type === "checkbox" || type === "radio")) {
+        if (tagName.toLocaleLowerCase() === 'input' && type === "checkbox") {
             if ((await e.getAttribute("checked"))) {
                 await e.click();
             }
@@ -122,16 +135,18 @@ export function mouseActionApi(
     }
 
     async function _dragDrop(eSource: SahiElementQuery, eTarget: SahiElementQuery): Promise<void> {
+
         const [src, target] = await Promise.all([
             accessorUtil.fetchElement(eSource),
             accessorUtil.fetchElement(eTarget)
         ]);
-        return webDriver.actions().dragAndDrop(src, target).perform();
+        return webDriver.actions()
+            .dragAndDrop(src, target).perform();
     }
 
     async function _dragDropXY(q: SahiElementQuery, x: number, y: number, $isRelative: boolean = false): Promise<void> {
         const e = await accessorUtil.fetchElement(q);
-        let location: ILocation = {x,y};
+        let location: ILocation = {x, y};
         if ($isRelative) {
             const pi = await positionalInfo(e);
             location = {x: x + pi.location.x, y: y + pi.location.y};

@@ -5,7 +5,7 @@ import {ThenableWebDriver} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
 
-export type ActionApi = ReturnType<typeof actionApi>;
+export type ActionApiFunction = ReturnType<typeof actionApi>;
 
 export function actionApi(
     webDriver: ThenableWebDriver,

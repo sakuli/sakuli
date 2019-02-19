@@ -2,21 +2,19 @@ import {By, ThenableWebDriver} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "./relations-resolver.class";
-import {createTestEnv, TestEnvironment} from "../__mocks__";
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
 describe('AccessorUtil', () => {
     const testExecutionContext = mockPartial<TestExecutionContext>({});
 
     let env: TestEnvironment;
-    beforeEach(async done => {
+    beforeAll(async () => {
         env = createTestEnv();
         await env.start();
-        done();
     });
 
-    afterEach(async done => {
+    afterAll(async () => {
         await env.stop();
-        done();
     })
 
     function createApi(driver: ThenableWebDriver) {
@@ -24,9 +22,16 @@ describe('AccessorUtil', () => {
     }
 
 
-    it('should call on relations', async done => {
-        const {driver, url} = await env.getEnv();
-        await driver.get(`${url}/relations/relations-resolver.html`);
+    it('should call on relations', async () => {
+        const {driver} = await env.getEnv();
+        await driver.get(mockHtml(`
+            <ul>
+              <li>Test 1</li>
+              <li>Test 2</li>
+              <li>Test 3</li>
+              <li>Test 4</li>
+            </ul>
+        `));
         const api = createApi(driver);
         const items = await driver.findElements(By.css('li'));
         const otherItems = items.filter((_, i) => i % 2 === 0);
@@ -38,7 +43,6 @@ describe('AccessorUtil', () => {
         ]);
         expect(relationsMock).toHaveBeenCalledWith(items);
         expect(relationsMock2).toHaveBeenCalledWith(otherItems);
-        done();
     });
 
 });

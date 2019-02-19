@@ -18,7 +18,7 @@ describe('getSiblings', () => {
     });
 
     it('should get siblings of #anchor', async done => {
-        const {url, driver} = await env.getEnv();
+        const {driver} = await env.getEnv();
         await driver.get(mockHtml(`
             <ul>
               <li>Rhona Davidson</li>

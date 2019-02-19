@@ -19,9 +19,8 @@ describe('isChildOf', () => {
     });
 
 
-
     it('should check that #del1 is child of table._in', async done => {
-        const {url, driver} = await env.getEnv();
+        const {driver} = await env.getEnv();
         await driver.get(mockHtml(`
           <table style="width:300px" class="_in">
               <tr>
@@ -48,7 +47,7 @@ describe('isChildOf', () => {
     });
 
     it('should check that #del2 is not a child of #del1', async done => {
-        const {url, driver} = await env.getEnv();
+        const {driver} = await env.getEnv();
         await driver.get(mockHtml(`
             <table style="width:300px" class="_in">
               <tr>
