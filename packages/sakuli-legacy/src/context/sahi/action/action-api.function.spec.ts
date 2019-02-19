@@ -8,15 +8,13 @@ import DoneCallback = jest.DoneCallback;
 jest.setTimeout(15_000);
 xdescribe('ActionApiFunction', () => {
     let env: TestEnvironment;
-    beforeEach(async done => {
+    beforeEach(async () => {
         env = createTestEnv();
         await env.start();
-        done();
     });
 
-    afterEach(async done => {
+    afterEach(async () => {
         await env.stop();
-        done();
     });
 
     const testExecutionContextMock = createTestExecutionContextMock();
