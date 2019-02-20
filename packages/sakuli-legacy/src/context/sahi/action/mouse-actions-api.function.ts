@@ -5,25 +5,13 @@ import {SahiElementQuery} from "../sahi-element.interface";
 import {stripIndents} from "common-tags";
 import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
 import {positionalInfo} from "../relations/positional-info.function";
+import {runActionsWithComboKeys} from "./run-actions-with-combo.keys.function";
 
 export function mouseActionApi(
     webDriver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ) {
-
-    function runActionsWithComboKeys(
-        actions: ActionSequence,
-        e: WebElement,
-        combo: string = '',
-        whileKeysDown: (a: ActionSequence) => void = () => {
-        }) {
-        const keys = getSeleniumKeysFromComboString(combo);
-        keys.forEach(k => actions.keyDown(k));
-        whileKeysDown(actions);
-        keys.forEach(k => actions.keyUp(k));
-        return actions;
-    }
 
     function pressComboKeys(actions: ActionSequence, e: WebElement, combo: string) {
         const keys = getSeleniumKeysFromComboString(combo);
