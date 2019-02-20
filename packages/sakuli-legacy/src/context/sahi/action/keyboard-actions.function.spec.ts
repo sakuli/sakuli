@@ -38,30 +38,38 @@ describe('KeyboardActions', () => {
         async (method: "_keyDown" | "_keyUp" | "_keyPress", event: string, value: string, combo: string) => {
             const api = createApi(driver);
             await driver.get(mockHtml(`
-            <form>
-              <input type="text" id="text-input" />
-              <input type="submit" value="submit" />              
-            </form>
-            <div id="out"></div>
-            <script>
-              const $$ = document.getElementById.bind(document);
-              const textInput = $$('text-input');
-              const out = $$('out');
-              textInput.addEventListener('${event}', e => {
-                 const combo = [];
-                 if(e.ctrlKey) combo.push('CTRL');
-                 if(e.metaKey) combo.push('META');
-                 if(e.shiftKey) combo.push('SHIFT');
-                 if(e.altKey) combo.push('ALT');
-                 out.innerHTML = e.key + combo.join('|')
-              });
-            </script>
-        `));
-            await api[method]({
-                locator: By.css('#text-input'),
-                identifier: 0,
-                relations: []
-            }, value, combo);
+                <form>
+                  <input type="text" id="text-input" />
+                  <input type="submit" value="submit" />              
+                </form>
+                <div id="out"></div>
+                <script>
+                  const $$ = document.getElementById.bind(document);
+                  const textInput = $$('text-input');
+                  const out = $$('out');
+                  textInput.addEventListener('${event}', e => {
+                     const combo = [];
+                     if(e.ctrlKey) combo.push('CTRL');
+                     if(e.metaKey) combo.push('META');
+                     if(e.shiftKey) combo.push('SHIFT');
+                     if(e.altKey) combo.push('ALT');
+                     out.innerHTML = e.key + combo.join('|')
+                  });
+                </script>
+            `));
+            if (method === '_keyUp' || method === '_keyPress') {
+                await api[method]({
+                    locator: By.css('#text-input'),
+                    identifier: 0,
+                    relations: []
+                }, value, combo);
+            } else {
+                await api[method]({
+                    locator: By.css('#text-input'),
+                    identifier: 0,
+                    relations: []
+                }, value);
+            }
             const out = await driver.findElement(By.css('#out'));
             return expect(out.getText()).resolves.toBe(value + combo)
         });
