@@ -5,6 +5,7 @@ import {ThenableWebDriver} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
+import {focusActionApi} from "./focus-actions.function";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -52,14 +53,6 @@ export function actionApi(
         `, ...args);
     }
 
-    async function _focus(query: SahiElementQuery) {
-        const e = await accessorUtil.fetchElement(query);
-        await webDriver.executeScript(stripIndents`
-            arguments[0].focus();
-        `, e);
-    }
-
-
     async function _highlight(query: SahiElementQuery, timeoutMs: number = 2000): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
         const oldBorder = await webDriver.executeScript(stripIndents`
@@ -103,6 +96,11 @@ export function actionApi(
     }
 
     const {
+        _blur,
+        _focus,
+    } = focusActionApi(webDriver, accessorUtil, ctx);
+
+    const {
         _xy,
         _click,
         _rightClick,
@@ -143,11 +141,14 @@ export function actionApi(
         _keyDown: runAsAction('keyDown', _keyDown),
         _type: runAsAction('type', _type),
 
+        _focus: runAsAction('focus', _focus),
+        _blur: runAsAction('blur', _blur),
+        _removeFocus: runAsAction('removeFocus', _blur),
+
         _wait: runAsAction('wait', _wait),
         _highlight: runAsAction('highlight', _highlight),
         _navigateTo: runAsAction('navigateTo', _navigateTo),
         _rteWrite: runAsAction('rteWrite', _rteWrite),
-        _focus: runAsAction('focus', _focus),
         _eval: runAsAction('eval', _eval)
     })
 }
