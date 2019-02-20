@@ -57,7 +57,7 @@ describe('KeyboardActions', () => {
                   });
                 </script>
             `));
-            if (method === '_keyUp' || method === '_keyPress') {
+            if (method === '_keyDown' || method === '_keyPress') {
                 await api[method]({
                     locator: By.css('#text-input'),
                     identifier: 0,
