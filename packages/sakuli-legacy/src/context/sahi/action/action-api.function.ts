@@ -4,6 +4,7 @@ import {TestExecutionContext} from "@sakuli/core";
 import {ThenableWebDriver} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
+import {keyboardActionApi} from "./keyboard-actions.function";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -35,24 +36,6 @@ export function actionApi(
     }
 
 
-    async function _setValue(query: SahiElementQuery, value: string): Promise<void> {
-        const element = await accessorUtil.fetchElement(query);
-        try {
-            for (let char of value.split('')) {
-                await _wait(10);
-                await element.sendKeys(char);
-            }
-            //await element.sendKeys(...value.split(''));
-        } catch (e) {
-            await webDriver.executeAsyncScript(stripIndents`
-                const e = arguments[0];
-                const value = arguments[1];
-                const done = arguments[arguments.length -1];
-                e.value = value;
-                done(); 
-            `, e, value);
-        }
-    }
 
     async function _eval(source: string, ..._args: any[]) {
         const args = await Promise.all(_args.map(arg => {
@@ -133,6 +116,14 @@ export function actionApi(
         _dragDropXY,
     } = mouseActionApi(webDriver, accessorUtil, ctx);
 
+    const {
+        _setValue,
+        _keyPress,
+        _keyUp,
+        _keyDown,
+        _type
+    } = keyboardActionApi(webDriver, accessorUtil, ctx);
+
     return ({
         _xy: runAsAction('xy', _xy),
         _rightClick: runAsAction('rightClick', _rightClick),
@@ -147,6 +138,11 @@ export function actionApi(
         _dragDropXY: runAsAction('dragDrop', _dragDropXY),
 
         _setValue: runAsAction('setValue', _setValue),
+        _keyPress: runAsAction('keyPress', _keyPress),
+        _keyUp: runAsAction('keyUp', _keyUp),
+        _keyDown: runAsAction('keyDown', _keyDown),
+        _type: runAsAction('type', _type),
+
         _wait: runAsAction('wait', _wait),
         _highlight: runAsAction('highlight', _highlight),
         _navigateTo: runAsAction('navigateTo', _navigateTo),
