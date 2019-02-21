@@ -1,9 +1,10 @@
-import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
+import {By, Locator, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {fetchApi} from "./fetch-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
 import {SahiElementQuery} from "../sahi-element.interface";
+import {async} from "q";
 
 jest.setTimeout(15_000);
 describe('fetch-api', () => {
@@ -243,6 +244,17 @@ describe('fetch-api', () => {
         const q = queryByLocator(By.css('div'));
 
         return expect(_getSelectionText()).resolves.toEqual('Lorem ipsum dolor sit amet');
+    });
+
+    test('_fetch to resolve to an Element', async () => {
+        const {_fetch} = api;
+        await driver.get(mockHtml(`
+            <div id="element"></div>
+        `));
+        const e1 = await _fetch(queryByLocator(By.css('div')));
+        const e2 = await driver.findElement(By.css('#element'));
+        return expect(WebElement.equals(e1, e2)).resolves.toBe(true);
+
     })
 
 });

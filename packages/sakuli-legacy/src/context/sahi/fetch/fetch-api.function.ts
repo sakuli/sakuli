@@ -135,7 +135,12 @@ export function fetchApi(
         `)
     }
 
+    async function _fetch(query: SahiElementQuery) {
+        return accessorUtil.fetchElement(query);
+    }
+
     return ({
+        _fetch,
         _getValue,
         _getText,
         _getOptions,
