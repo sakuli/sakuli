@@ -4,7 +4,6 @@ import {fetchApi} from "./fetch-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
 import {SahiElementQuery} from "../sahi-element.interface";
-import {async} from "q";
 
 jest.setTimeout(15_000);
 describe('fetch-api', () => {
@@ -181,7 +180,7 @@ describe('fetch-api', () => {
         ['<i>Formatted</i>', true],
         ['Text', true],
         ['<i>Formatted</i> Text', true],
-        ['/<i>.*</i> Text /', true],
+        ['<i>.*</i> Text ', true],
         ['Formatted Text', false],
         ['Non existent', false]
     ])('_containsHTML to test partial texts %s from HTML-Elements is %s', async (text: string, expected: boolean) => {
