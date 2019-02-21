@@ -1,14 +1,11 @@
-import {mockHtml} from "../../__mocks__/html/mock-html.function";
-import {By, Locator} from "selenium-webdriver";
-import {relationsApi} from "../relations-api.function";
+import {By} from "selenium-webdriver";
 import {mockPartial} from "sneer";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../relations-resolver.class";
-import {SahiElementQuery} from "../../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
 import {distanceBetween} from "./distance-between.function";
 import DoneCallback = jest.DoneCallback;
+import {relationsApi, RelationsResolver} from "../relations";
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
+import {AccessorUtil} from "../accessor";
 
 jest.setTimeout(50000);
 

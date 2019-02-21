@@ -1,7 +1,7 @@
 import {By} from "selenium-webdriver";
 import {isChildOf} from "./is-child-of.function";
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
-import {mockHtml} from "../../__mocks__";
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
+
 
 jest.setTimeout(25_000);
 describe('isChildOf', () => {

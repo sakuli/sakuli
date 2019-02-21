@@ -1,8 +1,7 @@
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
 import {By} from "selenium-webdriver";
-import {mockHtml} from "../../__mocks__/html/mock-html.function";
 import {getSiblingIndex} from "./get-sibling-index.function";
 import DoneCallback = jest.DoneCallback;
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(10000);
 describe('getSiblingIndex', () => {

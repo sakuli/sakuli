@@ -1,21 +1,16 @@
-import {mockHtml} from "../../__mocks__/html/mock-html.function";
-import {By, Locator} from "selenium-webdriver";
-import {relationsApi} from "../relations-api.function";
-import {mockPartial} from "sneer";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../relations-resolver.class";
-import {SahiElementQuery} from "../../sahi-element.interface";
+import {relationsApi, RelationsResolver} from "../relations";
 import {TestExecutionContext} from "@sakuli/core";
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
-import {distanceBetween} from "./distance-between.function";
-import DoneCallback = jest.DoneCallback;
+import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
+import {AccessorUtil} from "../accessor";
+import {By, Locator} from "selenium-webdriver";
+import {SahiElementQuery} from "../sahi-element.interface";
 import {getNearestCommonParent} from "./get-nearest-common-parent.function";
 
 jest.setTimeout(50000);
 
 describe('getNearestCommonParent', () => {
     let api: ReturnType<typeof relationsApi>;
-    const testExecutionContext = mockPartial<TestExecutionContext>({});
+    const testExecutionContext = createTestExecutionContextMock();
 
     let env: TestEnvironment;
     beforeAll(async done => {

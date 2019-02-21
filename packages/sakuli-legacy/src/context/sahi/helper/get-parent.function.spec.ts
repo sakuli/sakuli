@@ -1,9 +1,8 @@
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
 import {By} from "selenium-webdriver";
 import {ifPresent} from "@sakuli/commons";
 import {getParent} from "./get-parent.function";
 import {isEqual} from "./is-equal.function";
-import {mockHtml} from "../../__mocks__";
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(15_000);
 describe('getParent', () => {

@@ -1,10 +1,6 @@
-import {mockHtml} from "../../__mocks__/html/mock-html.function";
-import {relationsApi} from "../relations-api.function";
-import {mockPartial} from "sneer";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../relations-resolver.class";
-import {TestExecutionContext} from "@sakuli/core";
-import {createTestEnv, TestEnvironment} from "../../__mocks__/create-test-env.function";
+import {relationsApi, RelationsResolver} from "../relations";
+import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
+import {AccessorUtil} from "../accessor";
 import {By} from "selenium-webdriver";
 import {distanceToParent} from "./distance-to-parent.function";
 
@@ -12,7 +8,7 @@ jest.setTimeout(50000);
 
 describe('distanceToParent', () => {
     let api: ReturnType<typeof relationsApi>;
-    const testExecutionContext = mockPartial<TestExecutionContext>({});
+    const testExecutionContext = createTestExecutionContextMock();
 
     let env: TestEnvironment;
     beforeAll(async done => {

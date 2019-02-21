@@ -49,12 +49,14 @@ describe('focus-api', () => {
             <input type="text" id="text-input" autofocus />
         `));
         const inputLocator = By.css("#text-input");
+        By
         await _blur({
             locator: inputLocator,
             identifier: 0,
             relations: []
         });
         const inputElement = await driver.findElement(inputLocator);
+
         return expect(WebElement.equals(
             inputElement,
             driver.switchTo().activeElement()

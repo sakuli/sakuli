@@ -1,6 +1,6 @@
-import {createTestEnv, TestEnvironment, mockHtml} from "../../__mocks__";
 import {By} from "selenium-webdriver";
 import {isSibling} from "./is-sibling.function";
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
 describe('isSibling', () => {
 

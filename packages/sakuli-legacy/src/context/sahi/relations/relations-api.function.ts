@@ -6,10 +6,10 @@ import {edges} from "./edges.function";
 import {isLeftOf, isRightOf} from "./vector2.type";
 import {AccessorUtil} from "../accessor";
 import {SahiElementQuery} from "../sahi-element.interface";
-import {isChildOf} from "./helper/is-child-of.function";
-import {distanceBetween} from "./helper/distance-between.function";
-import {getSiblingIndex} from "./helper/get-sibling-index.function";
-import {getParent} from "./helper/get-parent.function";
+import {isChildOf} from "../helper/is-child-of.function";
+import {distanceBetween} from "../helper/distance-between.function";
+import {getSiblingIndex} from "../helper/get-sibling-index.function";
+import {getParent} from "../helper/get-parent.function";
 
 
 interface PositionalInfo {

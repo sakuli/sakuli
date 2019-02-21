@@ -1,6 +1,6 @@
 import {getSiblings} from "./get-siblings.function";
 import {By} from "selenium-webdriver";
-import {createTestEnv, mockHtml, TestEnvironment} from "../../__mocks__";
+import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(10000);
 describe('getSiblings', () => {
