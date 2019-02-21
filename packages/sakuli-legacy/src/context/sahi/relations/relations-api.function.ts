@@ -1,4 +1,4 @@
-import {ILocation, ISize, WebDriver, WebElement} from "selenium-webdriver";
+import {ILocation, ISize, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationProducer, RelationProducerWithOffset} from "./sahi-relation.interface";
 import {filterAsync, ifPresent, mapAsync} from "@sakuli/commons";
@@ -10,6 +10,7 @@ import {isChildOf} from "../helper/is-child-of.function";
 import {distanceBetween} from "../helper/distance-between.function";
 import {getSiblingIndex} from "../helper/get-sibling-index.function";
 import {getParent} from "../helper/get-parent.function";
+import {parentApi} from "./parent-api.function";
 
 
 interface PositionalInfo {
@@ -29,7 +30,7 @@ export async function positionalInfo(origin: WebElement): Promise<PositionalInfo
 export type RelationApi = ReturnType<typeof relationsApi>;
 
 export function relationsApi(
-    driver: WebDriver,
+    driver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     testExecutionContext: TestExecutionContext,
 ) {
@@ -44,7 +45,7 @@ export function relationsApi(
 
     const _near: RelationProducer = (query: SahiElementQuery) => {
         return async possibleElements => {
-            const anchor = await accessorUtil.fetchElement(query, );
+            const anchor = await accessorUtil.fetchElement(query,);
             const [
                 ...elementDistances
             ] = await Promise
@@ -102,7 +103,7 @@ export function relationsApi(
 
 
     const _under: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
-        return createVerticalRelation(query, offset, (a,b) => {
+        return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
             return edgesB.isUnder(edgesA) && edgesB.intersectsVertical(edgesA);
@@ -110,15 +111,15 @@ export function relationsApi(
     };
 
     const _above: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
-        return createVerticalRelation(query, offset, (a,b) => {
+        return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
             return edgesB.isAbove(edgesA) && edgesB.intersectsVertical(edgesA);
         })
     };
 
-    const _underOrAbove: RelationProducerWithOffset = (query: SahiElementQuery, offset:number = 0) => {
-        return createVerticalRelation(query, offset, (a,b) => {
+    const _underOrAbove: RelationProducerWithOffset = (query: SahiElementQuery, offset: number = 0) => {
+        return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
             return (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) && edgesB.intersectsVertical(edgesA);
@@ -141,8 +142,12 @@ export function relationsApi(
         )
     };
 
+    const {
+        _parentNode
+    } = parentApi(driver, accessorUtil, testExecutionContext);
 
     return ({
+        _parentNode,
         _in,
         _near,
         _rightOf,
