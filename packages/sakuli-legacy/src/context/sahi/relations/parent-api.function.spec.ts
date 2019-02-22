@@ -1,5 +1,4 @@
 import {By, Locator, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {RelationApi, relationsApi} from "./relations-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQuery} from "../sahi-element.interface";
@@ -32,7 +31,7 @@ describe('relations-api', () => {
         api = parentApi(driver, accessorUtil, testExecutionContext);
     });
 
-    afterAll(async ()=> {
+    afterAll(async () => {
         await env.stop();
     });
 
@@ -53,7 +52,7 @@ describe('relations-api', () => {
             relations: []
         };
         const q = await api._parentNode(linkQ, 'DIV', offset);
-        const expected = await  driver.findElement(By.css(parentId));
+        const expected = await driver.findElement(By.css(parentId));
         const found = await accessorUtil.fetchElement(q);
         return expect(WebElement.equals(expected, found)).resolves.toBe(true)
     })

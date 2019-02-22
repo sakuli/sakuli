@@ -5,6 +5,7 @@ import {SahiElementQuery} from "../sahi-element.interface";
 import {getParent} from "../helper/get-parent.function";
 import {isPresent, throwIfAbsent} from "@sakuli/commons";
 import {stripIndent} from "common-tags";
+import {async} from "q";
 
 export type ParentApi = ReturnType<typeof parentApi>;
 
@@ -35,8 +36,24 @@ export function parentApi(
         }
         throw Error(`Could not find any parent of type ${tagName}`)
     }
+    
+    async function _parentCell(query: SahiElementQuery, occurrence: number = 1) {
+        return _parentNode(query, 'td', occurrence);
+    }
+
+    async function _parentRow(query: SahiElementQuery, occurrence: number = 1) {
+        return _parentNode(query, 'tr', occurrence);
+    }
+
+    async function _parentTable(query: SahiElementQuery, occurrence: number = 1) {
+        return _parentNode(query, 'table', occurrence);
+    }
+
 
     return ({
-        _parentNode
+        _parentNode,
+        _parentCell,
+        _parentRow,
+        _parentTable
     })
 }
