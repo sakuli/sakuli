@@ -211,8 +211,7 @@ describe('relations-api', () => {
             [1, '_underOrAbove', 2, ["San Francisco"]],
         ])(
             'should relate %i elements which are %s the #anchor with an offset of %i and contains %j',
-            async (expected: number, method: Exclude<keyof RelationApi, "_near" | "_in">, offset: number, text: string[]) => {
-
+            async (expected: number, method: Exclude<keyof RelationApi, "_parentNode" | "_near" | "_in">, offset: number, text: string[]) => {
                 const anchor = await createQuery(By.css('#anchor'));
                 const allElements = await driver.findElements(By.css('td'));
                 const leftOf = await api[method](anchor, offset)(allElements);
