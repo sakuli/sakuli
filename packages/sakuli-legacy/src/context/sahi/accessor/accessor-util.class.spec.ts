@@ -36,7 +36,7 @@ describe('AccessorUtil', () => {
         const api = createApi(driver);
         const element = await driver.findElement(By.id('element-to-test'));
         const identifiers = await api.getStringIdentifiersForElement(element);
-        return  expect(identifiers).toEqual([
+        return expect(identifiers).toEqual([
             'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'Some Text content'
         ]);
     });
@@ -60,6 +60,22 @@ describe('AccessorUtil', () => {
             'out-of-viewport',
             'no-content-not-displayed'
         ]);
+    });
+
+    it('should identify an element by string index', async () => {
+        const {driver} = await env.getEnv();
+        const api = createApi(driver);
+        await driver.get(mockHtml(`
+            <div id="div-1">D1</div>
+            <div id="div-2">D1</div>
+            <div id="div-3">D1</div>
+        `));
+        const div = await api.fetchElement({
+            locator: By.css('div'),
+            identifier: "D1[1]",
+            relations: []
+        });
+        return expect(div.getAttribute('id')).resolves.toBe('div-2');
     });
 
 });

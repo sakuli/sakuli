@@ -9,9 +9,8 @@ import {
 } from "./accessor-model.interface";
 import {RelationsResolver} from "../relations";
 import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
-import {ifPresent, Maybe} from "@sakuli/commons";
+import {ifPresent} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
-import {SahiRelation} from "../relations/sahi-relation.interface";
 
 export class AccessorUtil {
 
@@ -104,6 +103,7 @@ export class AccessorUtil {
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
+
         if (isAccessorIdentifierAttributesWithClassName(identifier)) {
             elements = await this.getElementBySahiClassName(elements, identifier);
         }
@@ -117,7 +117,7 @@ export class AccessorUtil {
             return this.getByRegEx(elements, identifier);
         }
         if (typeof identifier === 'string') {
-            return this.getByRegEx(elements, new RegExp(identifier));
+            return this.getByString(elements, identifier);
         }
         return Promise.resolve([]);
     }
@@ -138,7 +138,7 @@ export class AccessorUtil {
             })
         } catch (e) {
             if (retry === 0) throw e;
-            return this.fetchElements(query,retry - 1);
+            return this.fetchElements(query, retry - 1);
         }
     }
 
@@ -146,4 +146,22 @@ export class AccessorUtil {
         return this.fetchElements(query, retry).then(([first]) => first);
     }
 
+    async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
+        if (identifier.startsWith('/')) {
+            identifier = identifier.substr(1, identifier.length);
+        }
+        if (identifier.endsWith('/')) {
+            identifier = identifier.substr(identifier.length, 1);
+        }
+        const indexRegExp = /.*\[([0-9]+)\]/;
+        const matches = identifier.match(indexRegExp);
+        return ifPresent(matches,
+            async ([_, index]) => {
+                identifier = identifier.substr(0, identifier.lastIndexOf('['));
+                const elementsByRegExp = await this.getByRegEx(elements, new RegExp(identifier));
+                return [elementsByRegExp[Number(index)]];
+            },
+            () => this.getByRegEx(elements, new RegExp(identifier))
+        )
+    }
 }
