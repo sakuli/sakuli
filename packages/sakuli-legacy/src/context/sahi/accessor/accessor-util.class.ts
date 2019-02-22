@@ -15,8 +15,6 @@ import {SahiRelation} from "../relations/sahi-relation.interface";
 
 export class AccessorUtil {
 
-    private defaultRelations: SahiRelation[] = [];
-
     constructor(
         readonly webDriver: ThenableWebDriver,
         readonly testExecutionContext: TestExecutionContext,
@@ -45,14 +43,6 @@ export class AccessorUtil {
         } else {
             return false;
         }
-    }
-
-    addDefaultRelation(relation: SahiRelation) {
-        this.defaultRelations.push(relation);
-    }
-
-    removeLastRelation() {
-        this.defaultRelations.pop()
     }
 
     async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
@@ -93,36 +83,35 @@ export class AccessorUtil {
         `, element);
     }
 
-    async getByRegEx(elements: WebElement[], regEx: RegExp) {
+    async getByRegEx(elements: WebElement[], regEx: RegExp): Promise<WebElement[]> {
         const eAndText: [WebElement, string[]][] = await Promise.all(elements
             .map(async (e): Promise<[WebElement, string[]]> => {
                 const potentialMatches: string[] = await this.getStringIdentifiersForElement(e);
                 return [e, potentialMatches]
             })
         );
-        const e = eAndText.find(([e, potentialMatches]) => {
+        return eAndText.filter(([e, potentialMatches]) => {
             const matches = potentialMatches.filter(x => x).map(text => {
                 const match = text.match(regEx);
                 return match ? match.length > 0 : false
             });
             return !!matches.find(m => !!m);
-        });
-        return e ? Promise.resolve(e[0]) : Promise.resolve(undefined);
+        }).map(([element]) => element);
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
         return await this.webDriver.wait(until.elementsLocated(locator), 500);
     }
 
-    private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<Maybe<WebElement>> {
+    private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
         if (isAccessorIdentifierAttributesWithClassName(identifier)) {
             elements = await this.getElementBySahiClassName(elements, identifier);
         }
-        if (typeof identifier === 'number') {
-            return Promise.resolve(this.getElementBySahiIndex(elements, {sahiIndex: identifier}));
-        }
         if (isAccessorIdentifierAttributesWithSahiIndex(identifier)) {
-            return Promise.resolve(this.getElementBySahiIndex(elements, identifier));
+            return Promise.resolve([this.getElementBySahiIndex(elements, identifier)]);
+        }
+        if (typeof identifier === 'number') {
+            return Promise.resolve([this.getElementBySahiIndex(elements, {sahiIndex: identifier})]);
         }
         if (types.isRegExp(identifier)) {
             return this.getByRegEx(elements, identifier);
@@ -130,17 +119,16 @@ export class AccessorUtil {
         if (typeof identifier === 'string') {
             return this.getByRegEx(elements, new RegExp(identifier));
         }
-        return Promise.resolve(undefined);
+        return Promise.resolve([]);
     }
 
-    async fetchElement(query: SahiElementQuery, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
+    async fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
         try {
             const {locator, relations, identifier} = query;
             const elements = await this.findElements(locator);
             const elementsAfterRelations = await this.relationResolver.applyRelations(
                 elements,
                 [
-                    ...(ignoreDefaults ? [] : this.defaultRelations),
                     ...relations
                 ]
             );
@@ -150,8 +138,12 @@ export class AccessorUtil {
             })
         } catch (e) {
             if (retry === 0) throw e;
-            return this.fetchElement(query, ignoreDefaults,retry - 1);
+            return this.fetchElements(query,retry - 1);
         }
+    }
+
+    async fetchElement(query: SahiElementQuery, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
+        return this.fetchElements(query, retry).then(([first]) => first);
     }
 
 }

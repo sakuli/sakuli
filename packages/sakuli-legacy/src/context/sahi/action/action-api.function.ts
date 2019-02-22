@@ -37,7 +37,6 @@ export function actionApi(
     }
 
 
-
     async function _eval(source: string, ..._args: any[]) {
         const args = await Promise.all(_args.map(arg => {
             if (isSahiElementQuery(arg)) {

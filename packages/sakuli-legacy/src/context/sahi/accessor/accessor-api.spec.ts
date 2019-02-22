@@ -2,11 +2,8 @@ import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment
 import {AccessorUtil} from "./accessor-util.class";
 import {By, ThenableWebDriver} from "selenium-webdriver";
 import {RelationsResolver} from "../relations";
-import {AccessorApi, accessorApi} from "./accessor-api";
+import {accessorApi, AccessorFunctions} from "./accessor-api";
 import {AccessorFunction} from "../api";
-import DoneCallback = jest.DoneCallback;
-
-type AccessorFunctions = Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">;
 
 jest.setTimeout(15_000);
 describe('accessor api', () => {
@@ -29,21 +26,20 @@ describe('accessor api', () => {
         afterEach(async done => {
             env.stop().then(done);
         });
-        it('should select an active element', async done => {
+        it('should select an active element', async () => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
             await driver.get(mockHtml(`
-            <form>
-              <input type="text" id="focused" />
-            </form>
-        `));
+                <form>
+                  <input type="text" id="focused" />
+                </form>
+            `));
             await driver.findElement(By.css('#focused')).then(e => e.click());
             const ae = await au.fetchElement(api._activeElement());
-            await expect(ae.getAttribute('id')).resolves.toBe('focused');
-            done();
+            return expect(ae.getAttribute('id')).resolves.toBe('focused');
         });
 
-        it('should select an element _byId', async done => {
+        it('should select an element _byId', async () => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
             await driver.get(mockHtml(`
@@ -54,11 +50,10 @@ describe('accessor api', () => {
                 </ul>                
             `));
             const e = await au.fetchElement(api._byId('by-id'));
-            await expect(e.getText()).resolves.toBe('Beer');
-            done()
+            return expect(e.getText()).resolves.toBe('Beer');
         });
 
-        it('should select an element _byText', async done => {
+        it('should select an element _byText', async () => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
             await driver.get(mockHtml(`
@@ -69,11 +64,10 @@ describe('accessor api', () => {
                 </ul>
             `));
             const e = await au.fetchElement(api._byText('Beer', 'li'));
-            await expect(e.getText()).resolves.toBe('Beer');
-            done()
+            return expect(e.getText()).resolves.toBe('Beer');
         });
 
-        it('should select an element _byClassName', async done => {
+        it('should select an element _byClassName', async () => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
             await driver.get(mockHtml(`
@@ -84,11 +78,10 @@ describe('accessor api', () => {
                 </ul>
             `));
             const e = await au.fetchElement(api._byClassName('beer', 'li'));
-            await expect(e.getText()).resolves.toBe('Beer');
-            done();
+            return expect(e.getText()).resolves.toBe('Beer');
         });
 
-        it('should select an element _byXPath', async done => {
+        it('should select an element _byXPath', async () => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
             await driver.get(mockHtml(`
@@ -99,11 +92,9 @@ describe('accessor api', () => {
                 </ul>
             `));
             const e = await au.fetchElement(api._byXPath('//ul/li[2]'));
-            await expect(e.getText()).resolves.toBe('Beer');
-            done()
+            return expect(e.getText()).resolves.toBe('Beer');
         });
     });
-
 
     describe('generic element accessor functions', () => {
 
@@ -320,12 +311,10 @@ describe('accessor api', () => {
         ])('should find element with %s(%i)', async (
             method: AccessorFunctions,
             sahiIndex: number,
-            done: DoneCallback
         ) => {
             const accessor: AccessorFunction = api[method];
             const ae = await au.fetchElement(accessor(sahiIndex));
-            await expect(ae.getAttribute('id')).resolves.toBe(method);
-            done();
+            return expect(ae.getAttribute('id')).resolves.toBe(method);
         });
     });
 });

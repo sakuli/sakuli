@@ -4,6 +4,8 @@ import {AccessorFunction, AccessorIdentifier} from "../api";
 import {SahiElementQuery} from "../sahi-element.interface";
 
 export type AccessorApi = ReturnType<typeof accessorApi>;
+export type DefaultAccessors = Pick<AccessorApi, Exclude<keyof AccessorApi, "_activeElement" |"_byId" | "_byText" | "_byClassName" | "_byXPath">>
+export type AccessorFunctions = Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">;
 
 export function accessorApi() {
 
