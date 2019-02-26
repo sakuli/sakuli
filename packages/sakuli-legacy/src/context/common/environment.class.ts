@@ -1,5 +1,5 @@
 import {Key} from "./key.class";
-import {CommandLineResult} from "./commandlineresult.class";
+import {CommandLineResult} from "./commandline-result.class";
 
 export class Environment {
     private static DEFAULT_SIMILARITY = 0.8;
