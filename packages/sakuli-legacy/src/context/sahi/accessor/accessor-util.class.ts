@@ -44,12 +44,17 @@ export class AccessorUtil {
         }
     }
 
+    private allValuesInArray(values: string[], hayStack: string[]): boolean {
+        const matches: WebElement[] = [];
+        return values.every(v => hayStack.includes(v));
+    }
+
     async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
         const matches: WebElement[] = [];
         for (let element of elements) {
             const elementClasses = ((await element.getAttribute("class")) || "").split(" ");
             const identifierClasses = className.split(" ");
-            if (this.arrayValuesAreEqual(elementClasses, identifierClasses)) {
+            if (this.allValuesInArray(identifierClasses, elementClasses)) {
                 matches.push(element)
             }
         }
@@ -105,7 +110,7 @@ export class AccessorUtil {
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
 
         if (isAccessorIdentifierAttributesWithClassName(identifier)) {
-            elements = await this.getElementBySahiClassName(elements, identifier);
+            return await this.getElementBySahiClassName(elements, identifier);
         }
         if (isAccessorIdentifierAttributesWithSahiIndex(identifier)) {
             return Promise.resolve([this.getElementBySahiIndex(elements, identifier)]);

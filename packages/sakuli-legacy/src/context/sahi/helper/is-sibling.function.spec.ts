@@ -2,6 +2,7 @@ import {By} from "selenium-webdriver";
 import {isSibling} from "./is-sibling.function";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
+jest.setTimeout(15_000);
 describe('isSibling', () => {
 
     let env: TestEnvironment;

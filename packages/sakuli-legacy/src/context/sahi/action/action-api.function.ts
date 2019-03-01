@@ -6,6 +6,7 @@ import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
 import {focusActionApi} from "./focus-actions.function";
+import {alertActionApi} from "./alert-action.function";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -73,8 +74,13 @@ export function actionApi(
         });
     }
 
-    async function _navigateTo(url: string, forceReload: boolean = false): Promise<any> {
-        await webDriver.get(url);
+    async function _navigateTo(target: string, forceReload: boolean = false, credentials?: {user: string, password: string}): Promise<any> {
+        const url = new URL(target);
+        if(credentials) {
+            url.username = credentials.user;
+            url.password = credentials.password;
+        }
+        await webDriver.get(url.href);
         if (forceReload) {
             await webDriver.navigate().refresh()
         }
@@ -93,6 +99,10 @@ export function actionApi(
         `, content);
         await webDriver.switchTo().window(defaultWindowHandle);
     }
+
+    const {
+        _authenticate
+    } = alertActionApi(webDriver, accessorUtil, ctx);
 
     const {
         _blur,
@@ -148,6 +158,8 @@ export function actionApi(
         _highlight: runAsAction('highlight', _highlight),
         _navigateTo: runAsAction('navigateTo', _navigateTo),
         _rteWrite: runAsAction('rteWrite', _rteWrite),
-        _eval: runAsAction('eval', _eval)
+        _eval: runAsAction('eval', _eval),
+
+        _authenticate: runAsAction('authenticate', _authenticate)
     })
 }

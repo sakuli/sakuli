@@ -52,7 +52,6 @@ describe('AccessorUtil', () => {
         `));
         const api = createApi(driver);
         const divs = await api.findElements(By.css('div'));
-        //expect(divs.length).toBe(2);
         return expect(Promise.all(divs.map(e => e.getAttribute('id')))).resolves.toEqual([
             'visibility-hidden',
             'display-none',
@@ -76,6 +75,35 @@ describe('AccessorUtil', () => {
             relations: []
         });
         return expect(div.getAttribute('id')).resolves.toBe('div-2');
+    });
+
+    it('should reduce elements list by sahi class', async () => {
+        const {driver} = await env.getEnv();
+        const api = createApi(driver);
+        await driver.get(mockHtml(`
+            <div></div>
+            <div class="test-class"></div>
+            <div class="cls-1 test-class cls-2"></div>
+        `));
+        const allDivs = await driver.findElements(By.css('div'));
+        const divWithTestClass = await api.getElementBySahiClassName(allDivs, {className: 'test-class'});
+        return expect(divWithTestClass.length).toBe(2);
+    });
+
+    it('should find by classname', async () => {
+        const {driver} = await env.getEnv();
+        const api = createApi(driver);
+        await driver.get(mockHtml(`
+            <div>D1</div>
+            <div class="test-class">D2</div>
+            <div class="cls-1 test-class cls-2">D3</div>
+        `));
+        const divWithTestClass = await api.fetchElement({
+            locator: By.css('div'),
+            identifier: {className: 'test-class'},
+            relations: []
+        });
+        return expect(divWithTestClass.getText()).resolves.toBe("D2");
     });
 
 });
