@@ -39,7 +39,7 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
             throw Error('Not Implemented');
         }
 
-        saveResult() {
+        saveResult(forward: boolean = false) {
             ctx.endTestStep();
             ctx.endTestCase();
         }
