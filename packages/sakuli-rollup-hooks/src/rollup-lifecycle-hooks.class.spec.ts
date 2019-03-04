@@ -14,7 +14,7 @@ describe('RollupLifecycleHooks', () => {
     it('should ', async () => {
         const hooks = new RollupLifecycleHooks();
         const o = await hooks.readFileContent({
-            path: join(process.cwd(), 'src/__mock__/test.js')
+            path: './__mock__/test.js'
         }, {
             rootDir: '',
             testFiles: []
