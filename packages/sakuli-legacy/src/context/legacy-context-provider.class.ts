@@ -32,7 +32,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     }
 
-    onProject(project: LegacyProject): void {
+    async onProject(project: LegacyProject) {
         const browser: keyof Capabilities = <keyof Capabilities>project.properties.testsuiteBrowser;
         const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         const caps = capsProducer();
@@ -42,12 +42,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             .build();
     }
 
-    beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
+    async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
         const id = project.rootDir.split(sep).pop();
         testExecutionContext.startTestSuite({id})
     }
 
-    afterExecution(project: Project, testExecutionContext: TestExecutionContext): void {
+    async afterExecution(project: Project, testExecutionContext: TestExecutionContext) {
         testExecutionContext.endTestSuite();
         ifPresent(this.driver, async driver => {
             try {
@@ -61,12 +61,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     private currentFile: string = '';
     private currentProject: Maybe<LegacyProject>;
 
-    beforeRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext): void {
+    async beforeRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext) {
         this.currentFile = file.path;
         this.currentProject = project;
     }
 
-    afterRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext): void {
+    async afterRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext) {
         const {name} = parse(file.path);
         ifPresent(ctx.getCurrentTestCase(),
             ctc => {
@@ -77,11 +77,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         );
     }
 
-    requestContext(ctx: TestExecutionContext) {
+    async requestContext(ctx: TestExecutionContext) {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
-        return ({
+        return Promise.resolve({
             driver,
             require: (path: string) => {
                 if (path.startsWith('./') && this.currentFile && isPresent(this.currentProject)) {
@@ -104,6 +104,5 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             ...sahi,
         })
     }
-
 
 }

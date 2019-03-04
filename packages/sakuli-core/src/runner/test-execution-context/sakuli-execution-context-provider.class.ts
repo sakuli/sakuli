@@ -13,27 +13,8 @@ export function isSakuliExecutionContext(ctx: any): ctx is SakuliExecutionContex
 
 export class SakuliExecutionContextProvider implements TestExecutionLifecycleHooks<SakuliExecutionContext> {
 
-    constructor() {}
-
-    onProject(project: Project): void {
-
-    }
-
-    afterExecution(): void {
-
-    }
-
-    requestContext(): SakuliExecutionContext {
-        return ({ Sakuli: Sakuli })
-    }
-
-    afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
-    }
-
-    beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
-    }
-
-    beforeExecution(project: Project, testExecutionContext: TestExecutionContext): void {
+    async requestContext(): Promise<SakuliExecutionContext> {
+        return Promise.resolve({ Sakuli: Sakuli });
     }
 
 
