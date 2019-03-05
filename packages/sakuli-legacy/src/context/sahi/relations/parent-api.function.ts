@@ -1,7 +1,7 @@
-import {By, ThenableWebDriver} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {isSahiElementQuery, SahiElementQuery} from "../sahi-element.interface";
 import {getParent} from "../helper/get-parent.function";
 import {isPresent} from "@sakuli/commons";
 import {stripIndent} from "common-tags";
@@ -14,8 +14,10 @@ export function parentApi(
     ctx: TestExecutionContext
 ) {
 
-    async function _parentNode(query: SahiElementQuery, tagName: string, occurrence: number = 1): Promise<SahiElementQuery> {
-        const e = await accessorUtil.fetchElement(query);
+    async function _parentNode(query: SahiElementQuery | WebElement, tagName: string, occurrence: number = 1): Promise<SahiElementQuery> {
+        const e = isSahiElementQuery(query)
+            ? await accessorUtil.fetchElement(query)
+            : query;
         let parent = await getParent(e);
         while (isPresent(parent)) {
             const eTagName = await parent.getTagName();
@@ -47,7 +49,6 @@ export function parentApi(
     async function _parentTable(query: SahiElementQuery, occurrence: number = 1) {
         return _parentNode(query, 'table', occurrence);
     }
-
 
     return ({
         _parentNode,

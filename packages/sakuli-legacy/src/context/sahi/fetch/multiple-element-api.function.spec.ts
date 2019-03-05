@@ -35,7 +35,7 @@ describe('multipleElementApi', () => {
                 <div>X1</div>
                 <div>D3</div>
             `));
-            const collected = await _collect("_div", 'D.');
+            const collected = await _collect("_div", /D./);
             return expect(collected.length).toBe(3);
         });
     });

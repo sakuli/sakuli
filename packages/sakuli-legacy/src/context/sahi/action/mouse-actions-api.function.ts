@@ -178,7 +178,7 @@ export function mouseActionApi(
             } else {
                 e.removeAttribute('selected');
             }
-            done(e.textContent);
+            done(e.innerText);
         `, e, selected);
     }
 

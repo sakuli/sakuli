@@ -1,7 +1,7 @@
 import {AccessorUtil} from "../accessor";
 import {isSahiElementQuery, SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {ThenableWebDriver} from "selenium-webdriver";
+import {ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
@@ -31,12 +31,12 @@ export function actionApi(
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
+                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`)
                 ctx.endTestAction();
             }
             return res;
         }) as T;
     }
-
 
     async function _eval(source: string, ..._args: any[]) {
         const args = await Promise.all(_args.map(arg => {
@@ -53,8 +53,10 @@ export function actionApi(
         `, ...args);
     }
 
-    async function _highlight(query: SahiElementQuery, timeoutMs: number = 2000): Promise<void> {
-        const element = await accessorUtil.fetchElement(query);
+    async function _highlight(query: SahiElementQuery | WebElement, timeoutMs: number = 2000): Promise<void> {
+        const element = isSahiElementQuery(query)
+            ? await accessorUtil.fetchElement(query)
+            : query;
         const oldBorder = await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[0].style.border;
             arguments[0].style.border = '2px solid red'
@@ -74,9 +76,9 @@ export function actionApi(
         });
     }
 
-    async function _navigateTo(target: string, forceReload: boolean = false, credentials?: {user: string, password: string}): Promise<any> {
+    async function _navigateTo(target: string, forceReload: boolean = false, credentials?: { user: string, password: string }): Promise<any> {
         const url = new URL(target);
-        if(credentials) {
+        if (credentials) {
             url.username = credentials.user;
             url.password = credentials.password;
         }

@@ -1,6 +1,6 @@
 import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
-import {inspect, types} from "util";
+import {types} from "util";
 import {
     AccessorIdentifierAttributes,
     AccessorIdentifierAttributesWithClassName,
@@ -59,7 +59,7 @@ export class AccessorUtil {
      *  - [name]
      *  - [id]
      *  - className
-     *  - textContent
+     *  - innerText
      * @param element
      */
     async getStringIdentifiersForElement(element: WebElement) {
@@ -70,7 +70,7 @@ export class AccessorUtil {
                 e.getAttribute('name'),
                 e.getAttribute('id'),
                 e.className,
-                e.textContent
+                e.innerText
             ];
         `, element);
     }
@@ -92,7 +92,7 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        return await this.webDriver.wait(until.elementsLocated(locator), 500);
+        return await this.webDriver.wait(until.elementsLocated(locator), 300);
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
@@ -142,20 +142,24 @@ export class AccessorUtil {
         if (identifier.endsWith('/')) {
             identifier = identifier.substr(identifier.length, 1);
         }
+        const escape = !(identifier.startsWith('/') && identifier.endsWith('/'));
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
             async ([_, index]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
-                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier));
+                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, escape));
                 return [elementsByRegExp[Number(index)]];
             },
-            () => this.getByRegEx(elements, this.stringToRegExp(identifier))
+            () => this.getByRegEx(elements, this.stringToRegExp(identifier, escape))
         )
     }
 
-    private stringToRegExp(str: string) {
-        return new RegExp(str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    private stringToRegExp(str: string, escape: boolean = true) {
+        return new RegExp(escape
+            ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+            : str
+        );
     }
 
     private async getElementsByAccessorIdentifier(elements: WebElement[], identifier: AccessorIdentifierAttributes): Promise<WebElement[]> {

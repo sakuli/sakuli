@@ -3,19 +3,12 @@ import {join} from "path";
 
 describe('RollupLifecycleHooks', () => {
 
-    beforeEach(() => {
-
-    });
-    afterEach(() => {
-        //   mockFs.restore();
-    });
-
-    it('should ', async () => {
+    it('should create a bundle from index.js file', async () => {
         const hooks = new RollupLifecycleHooks();
         const o = await hooks.readFileContent({
-            path: 'test.js'
+            path: 'index.js'
         }, {
-            rootDir: join(process.cwd(), 'src', '__mock__'),
+            rootDir: join(__dirname, '__mock__'),
             testFiles: []
         });
         expect(o.trim().startsWith("(function () {"));
