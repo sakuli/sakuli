@@ -1,25 +1,30 @@
 import {Project, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {rollup} from "rollup";
+import {isAbsolute, join} from "path";
 
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
     async readFileContent(file: TestFile, project: Project): Promise<string> {
-        const rollupOutput = await this.useRollup(file);
-        return Promise.resolve(rollupOutput.code);
-    }
+        const filePath =  isAbsolute(project.rootDir)
+            ? join(project.rootDir, file.path)
+            : join(process.cwd(), project.rootDir, file.path);
 
-    async useRollup(file: TestFile) {
         const bundle = await rollup({
-            input: file.path,
+            input: filePath,
         });
         const {output} = await bundle.generate({
             format: 'iife',
             sourcemap: true,
             file: 'bundle-rollup.js',
         });
-        return output[0];
+        const [rollupOutput] = output;
+        return Promise.resolve(rollupOutput.code);
+    }
+
+    async useRollup(file: TestFile) {
+
     }
 
 }

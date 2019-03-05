@@ -38,26 +38,24 @@ describe('LegacyContextProviderClass', () => {
 
     describe('Sahi Api', () => {
 
-        it('should init webdriver with builder', () => {
-            lcp.onProject(minimumProject);
+        it('should init webdriver with builder', async () => {
+            await lcp.onProject(minimumProject);
             expect(builder.forBrowser).toHaveBeenCalledWith('chrome');
-            expect(builder.withCapabilities).toHaveBeenCalledWith(Capabilities.chrome());
+            return expect(builder.withCapabilities).toHaveBeenCalledWith(Capabilities.chrome());
         });
 
-        it('should publish sahi function into context', () => {
-            lcp.onProject(minimumProject);
-            const context = lcp.requestContext(testExecutionContext);
-            expect(context._navigateTo).toBeDefined()
+        it('should publish sahi function into context', async () => {
+            await lcp.onProject(minimumProject);
+            const context = await lcp.requestContext(testExecutionContext);
+            return expect(context._navigateTo).toBeDefined()
         });
 
-        it('should quit the webdriver in teardown', () => {
-            lcp.onProject(minimumProject);
-            expect(lcp.driver).toBeDefined();
-            if (isPresent(lcp.driver)) {
-                jest.spyOn(lcp.driver, 'quit');
-                lcp.afterExecution(minimumProject, testExecutionContext);
-                expect(lcp.driver.quit).toHaveBeenCalled();
-            }
+        it('should quit the webdriver in teardown', async () => {
+            await lcp.onProject(minimumProject);
+            await expect(lcp.driver).toBeDefined();
+            jest.spyOn(lcp.driver!, 'quit');
+            await lcp.afterExecution(minimumProject, testExecutionContext);
+            return expect(lcp.driver!.quit).toHaveBeenCalled();
         });
     });
 

@@ -6,6 +6,7 @@ import {html, stripIndent} from "common-tags";
 import {isChildOf} from "../helper/is-child-of.function";
 import {Vector2} from "../relations/vector2.type";
 import {isEqual} from "../helper/is-equal.function";
+import {multipleElementApi} from "./multiple-element-api.function";
 
 export type FetchApi = ReturnType<typeof fetchApi>;
 
@@ -139,7 +140,14 @@ export function fetchApi(
         return accessorUtil.fetchElement(query);
     }
 
+    const {
+        _collect,
+        _count
+    } = multipleElementApi(driver, accessorUtil, ctx);
+
     return ({
+        _collect,
+        _count,
         _fetch,
         _getValue,
         _getText,

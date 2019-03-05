@@ -83,16 +83,6 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         const sahi = sahiApi(driver, ctx);
         return Promise.resolve({
             driver,
-            require: (path: string) => {
-                if (path.startsWith('./') && this.currentFile && isPresent(this.currentProject)) {
-                    const {dir} = parse(this.currentFile);
-                    return isAbsolute(dir)
-                        ? require(join(this.currentProject.rootDir, dir, path))
-                        : require(join(process.cwd(), this.currentProject.rootDir, dir, path))
-                } else {
-                    return require(path);
-                }
-            },
             context: ctx,
             TestCase: createTestCaseClass(ctx),
             Application,

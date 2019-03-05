@@ -9,7 +9,7 @@ export interface TestExecutionLifecycleHooks<T = any> {
     beforeExecution?(project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
     afterExecution?(project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
 
-    readFileContent?(file: TestFile, project: Project): Promise<string>;
+    readFileContent?(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): Promise<string>;
 
     requestContext?(testExecutionContext: TestExecutionContext): Promise<T>
 

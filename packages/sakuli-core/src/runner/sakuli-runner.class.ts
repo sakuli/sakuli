@@ -26,8 +26,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
         process.on('unhandledRejection', error => {
-            // Will print "unhandledRejection err is not defined"
-            //console.log('unhandledRejection', error.message);
+
         });
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
@@ -35,7 +34,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         let result = {};
         await this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
-            const testFileContent = await this.readFileContent(testFile, project);
+            const testFileContent = await this.readFileContent(testFile, project, this.testExecutionContext);
             try {
                 await this.beforeRunFile(testFile, project, this.testExecutionContext);
                 const resultCtx = await this.testFileExecutor.execute(testFileContent.toString(), context, {
@@ -98,11 +97,11 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
     }
 
-    async readFileContent(testFile: TestFile, project: Project): Promise<string> {
+    async readFileContent(testFile: TestFile, project: Project, context: TestExecutionContext): Promise<string> {
         const fileReaders = this.lifecycleHooks.filter(hook => 'readFileContent' in hook);
         if (fileReaders.length >= 1) {
             const [fileReader] = fileReaders;
-            return fileReader.readFileContent!(testFile, project);
+            return await fileReader.readFileContent!(testFile, project, context);
         } else {
             return new Promise<string>((res, rej) => {
                 readFile(join(project.rootDir, testFile.path), (err, data) => {

@@ -1,5 +1,4 @@
 import {RollupLifecycleHooks} from "./rollup-lifecycle-hooks.class";
-import mockFs from 'mock-fs';
 import {join} from "path";
 
 describe('RollupLifecycleHooks', () => {
@@ -8,17 +7,20 @@ describe('RollupLifecycleHooks', () => {
 
     });
     afterEach(() => {
-     //   mockFs.restore();
+        //   mockFs.restore();
     });
 
     it('should ', async () => {
         const hooks = new RollupLifecycleHooks();
         const o = await hooks.readFileContent({
-            path: './__mock__/test.js'
+            path: 'test.js'
         }, {
-            rootDir: '',
+            rootDir: join(process.cwd(), 'src', '__mock__'),
             testFiles: []
         });
-        return expect(true).toBeTruthy();
+        expect(o.trim().startsWith("(function () {"));
+        expect(o).toContain("const pi = 3.4");
+        expect(o).toContain("console.log(pi)");
+        return expect(o.trim().endsWith("}())"));
     });
 });

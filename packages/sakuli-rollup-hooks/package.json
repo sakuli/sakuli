@@ -11,7 +11,7 @@
   "author": "Tim Keiner <keiner.tim@gmail.com>",
   "homepage": "https://github.com/sakuli/sakuli#readme",
   "license": "ISC",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sakuli/sakuli.git"
