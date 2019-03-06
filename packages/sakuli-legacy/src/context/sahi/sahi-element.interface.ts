@@ -18,7 +18,7 @@ export interface SahiElement {
 
 export function isSahiElementQuery(o: any): o is SahiElementQuery {
     return typeof o === "object"
-        && 'query' in o
+        && 'identifier' in o
         && 'locator' in o
         && 'relations' in o;
 }

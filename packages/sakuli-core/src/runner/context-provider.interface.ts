@@ -4,14 +4,16 @@ import {TestExecutionContext} from "./test-execution-context";
 
 export interface TestExecutionLifecycleHooks<T = any> {
 
-    onProject(project: Project, testExecutionContext: TestExecutionContext): void;
+    onProject?(project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
 
-    beforeExecution(project: Project, testExecutionContext: TestExecutionContext): void;
-    afterExecution(project: Project, testExecutionContext: TestExecutionContext): void;
+    beforeExecution?(project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
+    afterExecution?(project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
 
-    requestContext(testExecutionContext: TestExecutionContext): T
+    readFileContent?(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): Promise<string>;
 
-    beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void;
+    requestContext?(testExecutionContext: TestExecutionContext): Promise<T>
 
-    afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void;
+    beforeRunFile?(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
+
+    afterRunFile?(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
 }

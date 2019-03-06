@@ -33,7 +33,7 @@ export function textSelectionApi(
         return driver.executeScript(stripIndent`
             const e = arguments[0];
             const searchText = arguments[1];
-            const content = e.textContent;
+            const content = e.innerText;
             const start = content.indexOf(searchText);
             const end = start + searchText.length;
             

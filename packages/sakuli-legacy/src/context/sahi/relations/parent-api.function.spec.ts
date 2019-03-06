@@ -14,15 +14,6 @@ describe('relations-api', () => {
     let driver: ThenableWebDriver;
     let accessorUtil: AccessorUtil;
 
-
-    function createQuery(locator: Locator): SahiElementQuery {
-        return ({
-            locator,
-            identifier: 0,
-            relations: []
-        })
-    }
-
     beforeAll(async () => {
         env = createTestEnv();
         await env.start();
@@ -56,5 +47,20 @@ describe('relations-api', () => {
         const found = await accessorUtil.fetchElement(q);
         return expect(WebElement.equals(expected, found)).resolves.toBe(true)
     })
+
+    it('should find parent by webelement reference', async () => {
+        const {_parentNode} = api;
+        await driver.get(mockHtml(`
+          <div id="div2">
+            <span><div id="div1">
+              <a href="" id="a-link">aLink</a>
+            </div></span>
+          </div>
+        `))
+        const e = await driver.findElement(By.css('#a-link'));
+        const pq = await _parentNode(e, 'div', 1);
+        const found = await accessorUtil.fetchElement(pq);
+        return expect(found.getAttribute('id')).resolves.toBe('div1');
+    });
 
 });

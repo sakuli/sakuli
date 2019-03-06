@@ -1,6 +1,5 @@
-import {TestScriptExecutorOptions, TestScriptExecutor} from "./test-script-executor.interface";
-import {Context, createContext, RunningScriptOptions, Script} from "vm";
-
+import {TestScriptExecutor, TestScriptExecutorOptions} from "./test-script-executor.interface";
+import {createContext, RunningScriptOptions, Script} from "vm";
 
 export class JsScriptExecutor implements TestScriptExecutor {
 
@@ -27,7 +26,7 @@ export class JsScriptExecutor implements TestScriptExecutor {
                 ...options as RunningScriptOptions,
                 displayErrors: true
             });
-            if(!options.waitUntilDone) {
+            if (!options.waitUntilDone) {
                 res(sandbox);
             }
         })

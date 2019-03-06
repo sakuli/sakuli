@@ -1,4 +1,4 @@
-import {ThenableWebDriver} from "selenium-webdriver";
+import {ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {accessorApi as createAccessorApi, AccessorFunctions, AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
 import {SahiRelation} from "../relations/sahi-relation.interface";
@@ -18,9 +18,10 @@ export function multipleElementApi(
         accessorApiMethod: AccessorFunctions,
         identifier: AccessorIdentifier,
         ...relations: SahiRelation[]
-    ) {
+    ): Promise<WebElement[]> {
         const method = accessorApi[accessorApiMethod];
         const query = method(identifier, ...relations);
+        ctx.logger.info('Fetching for query', query);
         return accessorUtil.fetchElements(query);
     }
 
