@@ -1,11 +1,12 @@
 import {Project} from "../loader/model";
 import {TestExecutionLifecycleHooks} from "./context-provider.interface";
 import {TestScriptExecutor} from "./test-script-executor.interface";
-import {readFileSync} from "fs";
+import {readFile} from "fs";
 import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {TestExecutionContext} from "./test-execution-context";
 import {TestFile} from "../loader/model/test-file.interface";
+import {inspect} from "util";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
 
@@ -26,23 +27,22 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
         process.on('unhandledRejection', error => {
-            // Will print "unhandledRejection err is not defined"
-            //console.log('unhandledRejection', error.message);
+
         });
         // onProject Phase
-        this.onProject(project, this.testExecutionContext);
-        const context = this.requestContext(this.testExecutionContext);
+        await this.onProject(project, this.testExecutionContext);
+        const context = await this.requestContext(this.testExecutionContext);
         let result = {};
-        this.beforeExecution(project, this.testExecutionContext);
+        await this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
-            const testFileContent = readFileSync(join(project.rootDir, testFile.path));
+            const testFileContent = await this.readFileContent(testFile, project, this.testExecutionContext);
             try {
-                this.beforeRunFile(testFile, project, this.testExecutionContext);
+                await this.beforeRunFile(testFile, project, this.testExecutionContext);
                 const resultCtx = await this.testFileExecutor.execute(testFileContent.toString(), context, {
                     filename: resolve(join(project.rootDir, testFile.path)),
                     waitUntilDone: true
                 });
-                this.afterRunFile(testFile, project, this.testExecutionContext);
+                await this.afterRunFile(testFile, project, this.testExecutionContext);
                 result = {...result, ...resultCtx};
             } catch (error) {
                 if (this.testExecutionContext.getCurrentTestSuite()) {
@@ -50,32 +50,69 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
                 }
             }
         }
-        this.afterExecution(project, this.testExecutionContext);
+        await this.afterExecution(project, this.testExecutionContext);
         this.testExecutionContext.endExecution();
         return result;
     }
 
-    onProject(project: Project, tec: TestExecutionContext) {
-        this.lifecycleHooks.forEach(cp => cp.onProject(project, tec));
+    async onProject(project: Project, tec: TestExecutionContext) {
+        await Promise.all(this
+            .lifecycleHooks
+            .filter(hook => 'onProject' in hook)
+            .map(hook => hook.onProject!(project, tec)));
     }
 
-    beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
-        this.lifecycleHooks.forEach(cp => cp.beforeExecution(project, testExecutionContext));
+    async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
+        await Promise.all(this
+            .lifecycleHooks
+            .filter(hook => 'beforeExecution' in hook)
+            .map(hook => hook.beforeExecution!(project, testExecutionContext)));
     }
 
-    afterExecution(project: Project, testExecutionContext: TestExecutionContext): void {
-        this.lifecycleHooks.forEach(cp => cp.afterExecution(project, testExecutionContext));
+    async afterExecution(project: Project, testExecutionContext: TestExecutionContext) {
+        await Promise.all(this
+            .lifecycleHooks
+            .filter(hook => 'afterExecution' in hook)
+            .map(hook => hook.afterExecution!(project, testExecutionContext)));
     }
 
-    afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
-        this.lifecycleHooks.forEach(cp => cp.afterRunFile(file, project, testExecutionContext));
+    async afterRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext) {
+        await Promise.all(this
+            .lifecycleHooks
+            .filter(hook => 'afterRunFile' in hook)
+            .map(hook => hook.afterRunFile!(file, project, testExecutionContext)));
     }
 
-    beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): void {
-        this.lifecycleHooks.forEach(cp => cp.beforeRunFile(file, project, testExecutionContext));
+    async beforeRunFile(file: TestFile, project: Project, testExecutionContext: TestExecutionContext) {
+        await Promise.all(this
+            .lifecycleHooks
+            .filter(hook => 'beforeRunFile' in hook)
+            .map(hook => hook.beforeRunFile!(file, project, testExecutionContext)));
     }
 
-    requestContext(testExecutionContext: TestExecutionContext): any {
-        return this.lifecycleHooks.reduce((ctx, provider) => ({...ctx, ...provider.requestContext(this.testExecutionContext)}), {});
+    async requestContext(testExecutionContext: TestExecutionContext): Promise<any> {
+        const contexts = await Promise.all(this
+            .lifecycleHooks
+            .filter(hook => 'requestContext' in hook)
+            .map(hook => hook.requestContext!(testExecutionContext)));
+        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
+    }
+
+    async readFileContent(testFile: TestFile, project: Project, context: TestExecutionContext): Promise<string> {
+        const fileReaders = this.lifecycleHooks.filter(hook => 'readFileContent' in hook);
+        if (fileReaders.length >= 1) {
+            const [fileReader] = fileReaders;
+            return await fileReader.readFileContent!(testFile, project, context);
+        } else {
+            return new Promise<string>((res, rej) => {
+                readFile(join(project.rootDir, testFile.path), (err, data) => {
+                    if (err) {
+                        rej(err);
+                    } else {
+                        res(data.toString());
+                    }
+                })
+            })
+        }
     }
 }

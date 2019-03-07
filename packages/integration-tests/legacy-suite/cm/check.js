@@ -1,5 +1,6 @@
 (async () => {
-    await _dynamicInclude($includeFolder);
+    //await _dynamicInclude($includeFolder);
+    const {_highlightClick} = require('./common');
 
 
     var testCase = new TestCase(1200, 1300);
@@ -45,15 +46,10 @@
         done();
     }
 
-    async function _highlightClick($element) {
-        await _highlight($element);
-        await _click($element);
-    }
-
     async function loginToTrack() {
         await _navigateTo('https://showroom2.cm6demo.consol.de/track/', true);
-        await _setValue(await _textbox('username'), 'sakulikunde');
-        await _setValue(await _password('password'), '4testingonly');
+        await _setValue(_textbox('username'), 'sakulikunde');
+        await _setValue(_password('password'), '4testingonly');
         const btn = await _submit('Anmelden');
         _highlight(btn);
         await _click(btn);
@@ -99,7 +95,7 @@
             _eval("jQuery(_textarea('/froala_editor/',_in(_div('"+$targetFieldRegExp+"')))).froalaEditor('events.trigger', 'blur');");
         }
          */
-        _click(_div('fr-element fr-view'));
+        await _click(_div('fr-element fr-view'));
         _eval(`
             const textarea = arguments[0];
             const div = arguments[1];

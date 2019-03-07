@@ -4,7 +4,8 @@ import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "./relations-resolver.class";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
-describe('AccessorUtil', () => {
+jest.setTimeout(15_000);
+describe('RelationResolver', () => {
     const testExecutionContext = mockPartial<TestExecutionContext>({});
 
     let env: TestEnvironment;

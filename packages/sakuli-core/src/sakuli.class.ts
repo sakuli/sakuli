@@ -7,7 +7,6 @@ import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
-import * as winston from "winston";
 import {SimpleLogger} from "@sakuli/commons";
 
 let sakuliInstance: Maybe<SakuliClass>;
@@ -23,11 +22,6 @@ export function Sakuli(presetProvider: SakuliPresetProvider[] = []): SakuliInsta
 export class SakuliClass {
 
     private presetRegistry = new SakuliPresetRegistry();
-    // readonly logger = winston.createLogger({
-    //     transports: [
-    //         new winston.transports.File({filename: join(cwd(), '_logs/sakuli.log') })
-    //     ]
-    // });
     readonly logger = new SimpleLogger();
     readonly testExecutionContext = new TestExecutionContext(this.logger);
 
@@ -46,12 +40,6 @@ export class SakuliClass {
     get forwarder() {
         return [
             ...this.presetRegistry.forwarders,
-            // <Forwarder>{
-            //     forward(ctx: TestExecutionContext, p: Project) {
-            //         console.log(inspect(ctx.toJson(), true, null, true));
-            //         return Promise.resolve();
-            //     }
-            // }
         ]
     }
 

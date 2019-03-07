@@ -8,6 +8,7 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
             readonly criticalTime: number = 0,
             public _imagePaths: string[] = []
         ) {
+            ctx.logger.info(`Start Testcase ${caseId}`);
             ctx.startTestCase({id: caseId});
             ctx.startTestStep({});
         }

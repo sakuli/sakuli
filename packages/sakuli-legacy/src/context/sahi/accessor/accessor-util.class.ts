@@ -2,10 +2,13 @@ import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver"
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
+    AccessorIdentifierAttributes,
     AccessorIdentifierAttributesWithClassName,
     AccessorIdentifierAttributesWithSahiIndex,
+    isAccessorIdentifierAttributes,
     isAccessorIdentifierAttributesWithClassName,
-    isAccessorIdentifierAttributesWithSahiIndex
+    isAccessorIdentifierAttributesWithSahiIndex,
+    isAccessorIdentifierAttributesWithText
 } from "./accessor-model.interface";
 import {RelationsResolver} from "../relations";
 import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
@@ -29,19 +32,9 @@ export class AccessorUtil {
         return elements[identifier.sahiIndex];
     }
 
-    private arrayValuesAreEqual(arr1: string[], arr2: string[]) {
-        if (arr1.length === arr2.length) {
-            arr1.sort();
-            arr2.sort();
-            for (let i = 0; i < arr1.length; i++) {
-                if (arr1[i] !== arr2[i]) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+    private allValuesInArray(values: string[], hayStack: string[]): boolean {
+        const matches: WebElement[] = [];
+        return values.every(v => hayStack.includes(v));
     }
 
     async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
@@ -49,7 +42,7 @@ export class AccessorUtil {
         for (let element of elements) {
             const elementClasses = ((await element.getAttribute("class")) || "").split(" ");
             const identifierClasses = className.split(" ");
-            if (this.arrayValuesAreEqual(elementClasses, identifierClasses)) {
+            if (this.allValuesInArray(identifierClasses, elementClasses)) {
                 matches.push(element)
             }
         }
@@ -66,7 +59,7 @@ export class AccessorUtil {
      *  - [name]
      *  - [id]
      *  - className
-     *  - textContent
+     *  - innerText
      * @param element
      */
     async getStringIdentifiersForElement(element: WebElement) {
@@ -77,7 +70,7 @@ export class AccessorUtil {
                 e.getAttribute('name'),
                 e.getAttribute('id'),
                 e.className,
-                e.textContent
+                e.innerText
             ];
         `, element);
     }
@@ -99,16 +92,12 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        return await this.webDriver.wait(until.elementsLocated(locator), 500);
+        return await this.webDriver.wait(until.elementsLocated(locator), 300);
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
-
-        if (isAccessorIdentifierAttributesWithClassName(identifier)) {
-            elements = await this.getElementBySahiClassName(elements, identifier);
-        }
-        if (isAccessorIdentifierAttributesWithSahiIndex(identifier)) {
-            return Promise.resolve([this.getElementBySahiIndex(elements, identifier)]);
+        if (isAccessorIdentifierAttributes(identifier)) {
+            return await this.getElementsByAccessorIdentifier(elements, identifier);
         }
         if (typeof identifier === 'number') {
             return Promise.resolve([this.getElementBySahiIndex(elements, {sahiIndex: identifier})]);
@@ -153,15 +142,38 @@ export class AccessorUtil {
         if (identifier.endsWith('/')) {
             identifier = identifier.substr(identifier.length, 1);
         }
-        const indexRegExp = /.*\[([0-9]+)\]/;
+        const escape = !(identifier.startsWith('/') && identifier.endsWith('/'));
+        const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
             async ([_, index]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
-                const elementsByRegExp = await this.getByRegEx(elements, new RegExp(identifier));
+                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, escape));
                 return [elementsByRegExp[Number(index)]];
             },
-            () => this.getByRegEx(elements, new RegExp(identifier))
+            () => this.getByRegEx(elements, this.stringToRegExp(identifier, escape))
         )
+    }
+
+    private stringToRegExp(str: string, escape: boolean = true) {
+        return new RegExp(escape
+            ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+            : str
+        );
+    }
+
+    private async getElementsByAccessorIdentifier(elements: WebElement[], identifier: AccessorIdentifierAttributes): Promise<WebElement[]> {
+        if (isAccessorIdentifierAttributesWithClassName(identifier)) {
+            elements = await this.getElementBySahiClassName(elements, identifier);
+        }
+        if (isAccessorIdentifierAttributesWithText(identifier)) {
+            elements = types.isRegExp(identifier.sahiText)
+                ? await this.getByRegEx(elements, identifier.sahiText)
+                : await this.getByString(elements, identifier.sahiText);
+        }
+        if (isAccessorIdentifierAttributesWithSahiIndex(identifier)) {
+            elements = [this.getElementBySahiIndex(elements, identifier)];
+        }
+        return elements;
     }
 }

@@ -5,6 +5,7 @@ import {ifPresent, isPresent} from "@sakuli/commons";
 import Youch from "youch";
 import forTerminal from "youch-terminal";
 import chalk from "chalk";
+import {createWriteStream} from "fs";
 
 async function renderError(e: Error) {
     const youch = (new Youch(e, {}));
@@ -27,6 +28,10 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: SakuliRunOptions) {
+            const logStream = createWriteStream('sakuli.log');
+            sakuli.testExecutionContext.logger.onEvent(e => {
+                logStream.write(`[${e.time}] ${e.level} ${e.message}\n`)
+            });
             const unmount = renderExecution(sakuli.testExecutionContext);
             const testExecutionContext = await sakuli.run(runOptions);
             try {
@@ -46,6 +51,8 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 }, 500);
             } catch(e) {
                 await renderError(e);
+            } finally {
+                logStream.close();
             }
         }
     })

@@ -4,6 +4,7 @@ import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
 import {focusActionApi} from "./focus-actions.function";
 
+jest.setTimeout(15_000);
 describe('focus-api', () => {
     let env: TestEnvironment;
     let driver: ThenableWebDriver;
@@ -49,7 +50,6 @@ describe('focus-api', () => {
             <input type="text" id="text-input" autofocus />
         `));
         const inputLocator = By.css("#text-input");
-        By
         await _blur({
             locator: inputLocator,
             identifier: 0,

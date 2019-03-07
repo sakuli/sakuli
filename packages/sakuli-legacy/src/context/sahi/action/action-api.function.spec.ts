@@ -1,9 +1,8 @@
-import {createTestEnv, mockHtml, TestEnvironment, createTestExecutionContextMock} from "../__mocks__";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {ActionApiFunction, actionApi} from "./action-api.function";
+import {createTestEnv, createTestExecutionContextMock, TestEnvironment} from "../__mocks__";
+import {ThenableWebDriver} from "selenium-webdriver";
+import {actionApi, ActionApiFunction} from "./action-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
-import DoneCallback = jest.DoneCallback;
 
 jest.setTimeout(15_000);
 xdescribe('ActionApiFunction', () => {
