@@ -1,5 +1,9 @@
 import {Key} from "./key.class";
 import {CommandLineResult} from "./commandline-result.class";
+import {screen} from "@nut-tree/nut-js";
+import {parse} from "path";
+import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
+import {cwd} from "process";
 
 export class Environment {
     private static DEFAULT_SIMILARITY = 0.8;
@@ -22,12 +26,16 @@ export class Environment {
         this.currentSimilarity = Environment.DEFAULT_SIMILARITY;
     }
 
-    async takeScreenshot(filename: string): Promise<string | null> {
-        return new Promise<null>(resolve => resolve);
+    async takeScreenshot(filename: string): Promise<string> {
+        const pathParts = parse(filename);
+        const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
+        return screen.capture(pathParts.name, FileType.PNG, outputDir);
     }
 
     async takeScreenshotWithTimestamp(filename: string): Promise<string | null> {
-        return new Promise<null>(resolve => resolve);
+        const pathParts = parse(filename);
+        const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
+        return screen.capture(pathParts.name, FileType.PNG, outputDir, "", `_${Date.now()}`);
     }
 
     async sleep(s: number): Promise<void> {
