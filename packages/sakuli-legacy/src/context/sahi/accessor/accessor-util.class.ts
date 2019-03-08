@@ -100,7 +100,7 @@ export class AccessorUtil {
         return await this.webDriver.wait(until.elementsLocated(locator), 300);
     }
 
-    private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
+    async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
         if (isAccessorIdentifierAttributes(identifier)) {
             return await this.getElementsByAccessorIdentifier(elements, identifier);
         }
@@ -118,18 +118,29 @@ export class AccessorUtil {
 
     async fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
         try {
+            /*
             const {locator, relations, identifier} = query;
             const elements = await this.findElements(locator);
-            const elementsAfterRelations = await this.relationResolver.applyRelations(
-                elements,
+            this.logger.info(`Found ${elements.length} in fetchElements`);
+            this.logger.info(`Apply ${relations.length} relations`);
+            const elementsAfterIdentifier = await this.resolveByIdentifier(elements, identifier);
+            const element= await this.relationResolver.applyRelations(
+                elementsAfterIdentifier,
                 [
                     ...relations
                 ]
             );
-            const element = await this.resolveByIdentifier(elementsAfterRelations, identifier);
             return ifPresent(element, e => e, () => {
                 throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
             })
+            */
+            const queryAfterRelation = await this.relationResolver.applyRelations(query);
+            const elements = await this.findElements(queryAfterRelation.locator);
+            const elementsAfterIdentifier = this.resolveByIdentifier(elements, queryAfterRelation.identifier);
+            return ifPresent(elementsAfterIdentifier, e => e, () => {
+                throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
+            })
+
         } catch (e) {
             if (retry === 0) throw e;
             return this.fetchElements(query, retry - 1);

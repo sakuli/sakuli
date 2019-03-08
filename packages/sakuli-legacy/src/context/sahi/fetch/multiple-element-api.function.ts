@@ -22,7 +22,6 @@ export function multipleElementApi(
     ): Promise<WebElement[]> {
         const method = accessorApi[accessorApiMethod];
         const query = method(identifier, ...relations);
-        ctx.logger.info('Fetching for query', query);
         if (isSahiElementQuery(query)) {
             return accessorUtil.fetchElements(query);
         } else {
