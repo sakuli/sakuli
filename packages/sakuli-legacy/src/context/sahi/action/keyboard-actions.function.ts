@@ -1,7 +1,7 @@
 import {Key, ThenableWebDriver} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {stripIndents} from "common-tags";
 import {CharInfo, charInfoToKey} from "./char-info.interface";
 import {NativeEventDispatcher} from "./native-event-dispatcher.class";
@@ -14,7 +14,7 @@ export function keyboardActionApi(
 ) {
 
 
-    async function _setValue(query: SahiElementQuery, value: string): Promise<void> {
+    async function _setValue(query: SahiElementQueryOrWebElement, value: string): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
         try {
             for (let char of value.split('')) {
@@ -33,7 +33,7 @@ export function keyboardActionApi(
         }
     }
 
-    async function keyEvent(query: SahiElementQuery, charInfo: CharInfo, combo: string, eventName: string) {
+    async function keyEvent(query: SahiElementQueryOrWebElement, charInfo: CharInfo, combo: string, eventName: string) {
         const e = await accessorUtil.fetchElement(query);
         const dispatcher = new NativeEventDispatcher(e);
         const keys = getSeleniumKeysFromComboString(combo);
@@ -48,11 +48,11 @@ export function keyboardActionApi(
         })
     }
 
-    async function _keyDown(query: SahiElementQuery, charInfo: CharInfo, combo: string = "") {
+    async function _keyDown(query: SahiElementQueryOrWebElement, charInfo: CharInfo, combo: string = "") {
         return keyEvent(query, charInfo, combo, 'keydown');
     }
 
-    async function _keyUp(query: SahiElementQuery, charInfo: CharInfo) {
+    async function _keyUp(query: SahiElementQueryOrWebElement, charInfo: CharInfo) {
         return keyEvent(query, charInfo, '', 'keyup');
     }
 
@@ -64,11 +64,11 @@ export function keyboardActionApi(
      * @param combo
      * @private
      */
-    async function _keyPress(query: SahiElementQuery, charInfo: CharInfo, combo: string = "") {
+    async function _keyPress(query: SahiElementQueryOrWebElement, charInfo: CharInfo, combo: string = "") {
         return keyEvent(query, charInfo, combo, 'keypress');
     }
 
-    async function _type(query: SahiElementQuery, text: string) {
+    async function _type(query: SahiElementQueryOrWebElement, text: string) {
         const e = await accessorUtil.fetchElement(query);
         return e.sendKeys(...text.split(''));
     }

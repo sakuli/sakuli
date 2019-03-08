@@ -2,7 +2,7 @@ import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
 import {RelationApi, relationsApi} from "./relations-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(15_000);
@@ -16,7 +16,7 @@ describe('relations-api', () => {
         return relationsApi(driver, accessorUtil, testExecutionContext);
     }
 
-    function createQuery(locator: Locator): SahiElementQuery {
+    function createQuery(locator: Locator): SahiElementQueryOrWebElement {
         return ({
             locator,
             identifier: 0,
@@ -55,7 +55,7 @@ describe('relations-api', () => {
                 done();
             });
 
-            it('should resolve ', async done => {
+            it('should resolve within a table', async done => {
                 const {driver} = await env.getEnv();
                 const api = createApi(driver);
                 await driver.get(mockHtml(`
@@ -77,7 +77,7 @@ describe('relations-api', () => {
                   </tr>
                 </table>
             `));
-                const del2 = createQuery(By.css('._in #del2'));
+                const del2 = createQuery(By.css('#del2'));
                 const links = await driver.findElements(By.css('._in a'));
                 const relation = api._in(del2);
                 const relatedLinks = await relation(links);
@@ -85,6 +85,7 @@ describe('relations-api', () => {
                 expect(relatedLinks.length).toBe(1);
                 done();
             });
+
         });
 
         describe('_near', () => {

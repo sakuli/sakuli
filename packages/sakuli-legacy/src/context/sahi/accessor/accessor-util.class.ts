@@ -11,7 +11,12 @@ import {
     isAccessorIdentifierAttributesWithText
 } from "./accessor-model.interface";
 import {RelationsResolver} from "../relations";
-import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
+import {
+    isSahiElementQuery,
+    SahiElementQuery,
+    SahiElementQueryOrWebElement,
+    sahiQueryToString
+} from "../sahi-element.interface";
 import {ifPresent} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
 
@@ -131,8 +136,10 @@ export class AccessorUtil {
         }
     }
 
-    async fetchElement(query: SahiElementQuery, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
-        return this.fetchElements(query, retry).then(([first]) => first);
+    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
+        return isSahiElementQuery(query)
+            ? this.fetchElements(query, retry).then(([first]) => first)
+            : Promise.resolve(query)
     }
 
     async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {

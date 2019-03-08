@@ -4,7 +4,7 @@ import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
 import {FetchApi, fetchApi as createFetchApi} from "../fetch/fetch-api.function";
 import {textSelectionApi, TextSelectionApi} from "./text-selection-api.function";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 
 jest.setTimeout(15_000);
 describe('textSelectionApi', () => {
@@ -34,7 +34,7 @@ describe('textSelectionApi', () => {
         await driver.get(mockHtml(`
             <div>Lorem ipsum dolor sit amet</div>
         `));
-        const q:SahiElementQuery = {
+        const q:SahiElementQueryOrWebElement = {
             locator: By.css('div'),
             identifier: 0,
             relations: []
@@ -48,7 +48,7 @@ describe('textSelectionApi', () => {
         await driver.get(mockHtml(`
             <div>Lorem ipsum dolor sit amet</div>
         `));
-        const q:SahiElementQuery = {
+        const q:SahiElementQueryOrWebElement = {
             locator: By.css('div'),
             identifier: 0,
             relations: []

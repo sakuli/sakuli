@@ -1,5 +1,5 @@
 import {AccessorUtil} from "../accessor";
-import {isSahiElementQuery, SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
+import {isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
 import {ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
@@ -53,7 +53,7 @@ export function actionApi(
         `, ...args);
     }
 
-    async function _highlight(query: SahiElementQuery | WebElement, timeoutMs: number = 2000): Promise<void> {
+    async function _highlight(query: SahiElementQueryOrWebElement | WebElement, timeoutMs: number = 2000): Promise<void> {
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
@@ -88,11 +88,15 @@ export function actionApi(
         }
     }
 
-    async function _rteWrite(query: SahiElementQuery, content: string): Promise<void> {
+    async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
         if (tagName.toLocaleLowerCase() !== 'iframe') {
-            throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
+            if(isSahiElementQuery(query)) {
+                throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
+            } else {
+                throw Error(`WebElement must be an iframe; got ${tagName} instead`);
+            }
         }
         const defaultWindowHandle = await webDriver.getWindowHandle();
         await webDriver.switchTo().frame(e);
