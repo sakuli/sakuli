@@ -16,16 +16,19 @@ describe('accessor api', () => {
         return new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx))
     }
 
+    let driver: ThenableWebDriver;
+    let au: AccessorUtil;
+    beforeAll(async () => {
+        env = createTestEnv();
+        await env.start();
+        const e = await env.getEnv();
+        driver = e.driver;
+        au = createAccessorUtil(driver);
+    });
+
+    afterAll(async () => await env.stop());
 
     describe('generic accessor api', () => {
-        beforeEach(async done => {
-            env = createTestEnv();
-            env.start().then(done);
-        });
-
-        afterEach(async done => {
-            env.stop().then(done);
-        });
         it('should select an active element', async () => {
             const {driver} = await env.getEnv();
             const au = createAccessorUtil(driver);
@@ -98,14 +101,7 @@ describe('accessor api', () => {
 
     describe('generic element accessor functions', () => {
 
-        let driver: ThenableWebDriver;
-        let au: AccessorUtil;
-        beforeAll(async done => {
-            env = createTestEnv();
-            await env.start();
-            const e = await env.getEnv();
-            driver = e.driver;
-            au = createAccessorUtil(driver);
+        beforeAll(async () => {
             await driver.get(mockHtml(`
                 <form>
                   <input type="password" id="_password" />
@@ -213,12 +209,8 @@ describe('accessor api', () => {
                 <time id="_time"></time>
                 <video src="" id="_video"></video>
             `));
-            done();
         });
 
-        afterAll(async done => {
-            env.stop().then(done);
-        });
 
         it.each(<Array<[AccessorFunctions, number | undefined]>>[
             ['_password', 0],
