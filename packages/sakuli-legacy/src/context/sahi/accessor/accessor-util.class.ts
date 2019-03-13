@@ -97,7 +97,11 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        return await this.webDriver.wait(until.elementsLocated(locator), 300);
+        try {
+            return await this.webDriver.wait(until.elementsLocated(locator), 3000);
+        } catch (e) {
+            return Promise.resolve([]);
+        }
     }
 
     async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
