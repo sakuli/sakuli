@@ -1,12 +1,13 @@
 import {AccessorUtil} from "../accessor";
 import {isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {error, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
 import {focusActionApi} from "./focus-actions.function";
 import {alertActionApi} from "./alert-action.function";
+import StaleElementReferenceError = error.StaleElementReferenceError;
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -15,6 +16,28 @@ export function actionApi(
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ) {
+
+    function withRetries<T extends (...args: any[]) => Promise<any>>(
+        retries: number,
+        func: T,
+    ): T {
+        return (async (...args: any[]) => {
+            const initialTries = retries;
+            while (retries) {
+                try {
+                    return await func(...args);
+                } catch (e) {
+                    if (e instanceof StaleElementReferenceError) {
+                        --retries;
+                        ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
+                    } else {
+                        throw Error(`Error in action: ${name} \n${e.message}`)
+                    }
+                }
+            }
+            throw Error(`Error in action: ${name} \nFailed after ${initialTries} attempts.`)
+        }) as T;
+    }
 
     function runAsAction<T extends (...args: any[]) => Promise<any>>(
         name: string,
@@ -27,11 +50,11 @@ export function actionApi(
             ctx.logger.info(`Start action ${name}`);
             let res: any;
             try {
-                res = await fn(...args);
+                res = await withRetries(5, fn)(...args);
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
-                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`)
+                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`);
                 ctx.endTestAction();
             }
             return res;
@@ -54,9 +77,12 @@ export function actionApi(
     }
 
     async function _highlight(query: SahiElementQueryOrWebElement | WebElement, timeoutMs: number = 2000): Promise<void> {
+        ctx.logger.info("start");
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
+        ctx.logger.info("end");
+        await element.getId();
         const oldBorder = await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[0].style.border;
             arguments[0].style.border = '2px solid red'
@@ -66,12 +92,11 @@ export function actionApi(
         await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[1];
             arguments[0].style.border = oldBorder
-        `, element, oldBorder)
-
+        `, element, oldBorder);
     }
 
     async function _wait(millis: number): Promise<void> {
-        return new Promise<void>((res, rej) => {
+        return new Promise<void>((res) => {
             setTimeout(() => res(), millis);
         });
     }
