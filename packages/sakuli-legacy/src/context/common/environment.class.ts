@@ -1,9 +1,10 @@
 import {Key} from "./key.class";
 import {CommandLineResult} from "./commandline-result.class";
-import {screen} from "@nut-tree/nut-js";
+import {clipboard, Key as NutKey, keyboard, mouse, screen} from "@nut-tree/nut-js";
 import {parse} from "path";
 import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {cwd} from "process";
+import {decryptSecret, withEncryption} from "./secrets.function";
 
 export class Environment {
     private static DEFAULT_SIMILARITY = 0.8;
@@ -12,93 +13,131 @@ export class Environment {
     constructor() {
     }
 
-    getSimilarity(): number {
+    public getSimilarity(): number {
         return this.currentSimilarity;
     }
 
-    setSimilarity(similarity: number) {
+    public setSimilarity(similarity: number) {
         if (similarity > 0 && similarity <= 1) {
             this.currentSimilarity = similarity;
         }
     }
 
-    resetSimilarity() {
+    public resetSimilarity() {
         this.currentSimilarity = Environment.DEFAULT_SIMILARITY;
     }
 
-    async takeScreenshot(filename: string): Promise<string> {
+    public async takeScreenshot(filename: string): Promise<string> {
         const pathParts = parse(filename);
         const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
         return screen.capture(pathParts.name, FileType.PNG, outputDir);
     }
 
-    async takeScreenshotWithTimestamp(filename: string): Promise<string | null> {
+    public async takeScreenshotWithTimestamp(filename: string): Promise<string> {
         const pathParts = parse(filename);
         const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
         return screen.capture(pathParts.name, FileType.PNG, outputDir, "", `_${Date.now()}`);
     }
 
-    async sleep(s: number): Promise<void> {
-        return new Promise<void>(resolve => setTimeout(resolve, s * 1000));
+    public async sleep(s: number): Promise<Environment> {
+        await new Promise<void>(resolve => setTimeout(resolve, s * 1000));
+        return this;
     }
 
-    async sleepMs(ms: number): Promise<void> {
-        return new Promise<void>(resolve => setTimeout(resolve, ms));
+    public async sleepMs(ms: number): Promise<Environment> {
+        await new Promise<void>(resolve => setTimeout(resolve, ms));
+        return this;
     }
 
-    public getRegionFromFocusedWindow() {
+    public async getRegionFromFocusedWindow() {
+        // TODO
     }
 
-    public getClipboard(): Promise<string | null> {
-        return new Promise<null>(resolve => resolve);
+    public async getClipboard(): Promise<string> {
+        return clipboard.paste();
     }
 
-    public setClipboard(text: string): void {
+    public async setClipboard(text: string): Promise<Environment> {
+        await clipboard.copy(text);
+        return this;
     }
 
-    public pasteClipboard(): void {
+    public async pasteClipboard(): Promise<Environment> {
+        await keyboard.type(...this.pasteShortcut());
+        return this;
     }
 
-    public copyIntoClipboard(): void {
+    public async copyIntoClipboard(): Promise<Environment> {
+        await keyboard.type(...this.copyShortcut());
+        return this;
     }
 
-    public cleanClipboard(): void {
+    public async cleanClipboard(): Promise<void> {
+        // TODO
     }
 
-    public paste(text: string): void {
+    public async paste(text: string): Promise<Environment> {
+        await clipboard.copy(text);
+        await keyboard.type(...this.pasteShortcut());
+        return this;
     }
 
-    public pasteMasked(text: string): void {
+    public async pasteMasked(text: string): Promise<Environment> {
+        // TODO Do not log text, once we log anything at all
+        return this.paste(text);
     }
 
-    public pasteAndDecrypt(text: string): void {
+    public async pasteAndDecrypt(text: string): Promise<Environment> {
+        return withEncryption(text, async (decrypted) => {
+            return this.paste(decrypted);
+        });
     }
 
-    public type(text: string, ...optModifiers: Key[]): void {
+    public async type(text: string, ...optModifiers: Key[]): Promise<Environment> {
+        await keyboard.pressKey(...optModifiers as NutKey[]);
+        await keyboard.type(text);
+        await keyboard.releaseKey(...optModifiers as NutKey[]);
+        return this;
     }
 
-    public typeMasked(text: string, ...optModifiers: Key[]): void {
+    public async typeMasked(text: string, ...optModifiers: Key[]): Promise<Environment> {
+        // TODO Do not log text, once we log anything at all
+        return this.type(text, ...optModifiers);
     }
 
-    public typeAndDecrypt(text: string, ...optModifiers: Key[]): void {
+    public async typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Environment> {
+        return withEncryption(text, async (decrypted) => {
+            return this.type(decrypted, ...optModifiers);
+        });
     }
 
-    public decryptSecret(secret: string): void {
+    public decryptSecret(secret: string): Promise<string> {
+        return decryptSecret(secret);
     }
 
-    public keyDown(keys: any): void {
+    public async keyDown(...keys: Key[]): Promise<Environment> {
+        await keyboard.pressKey(...keys as NutKey[]);
+        return this;
     }
 
-    public keyUp(keys: any): void {
+    public async keyUp(...keys: Key[]): Promise<Environment> {
+        await keyboard.releaseKey(...keys as NutKey[]);
+        return this;
     }
 
-    public write(text: any): void {
+    public async write(text: string): Promise<Environment> {
+        await keyboard.type(text);
+        return this;
     }
 
-    public mouseWheelDown(steps: number): void {
+    public async mouseWheelDown(steps: number): Promise<Environment> {
+        await mouse.scrollDown(steps);
+        return this;
     }
 
-    public mouseWheelUp(steps: number): void {
+    public async mouseWheelUp(steps: number): Promise<Environment> {
+        await mouse.scrollUp(steps);
+        return this;
     }
 
     public isWindows(): boolean {
@@ -122,10 +161,23 @@ export class Environment {
     }
 
     public getEnv(key: string): string | undefined {
-        return process.env[key.toLocaleUpperCase()];
+        return process.env[key];
     }
 
     public getProperty(key: string): string | undefined {
+        // TODO
         return;
+    }
+
+    private copyShortcut(): NutKey[] {
+        return (process.platform === "darwin") ? [NutKey.LeftSuper, NutKey.C] : [NutKey.LeftControl, NutKey.C];
+    }
+
+    private cutShortcut(): NutKey[] {
+        return (process.platform === "darwin") ? [NutKey.LeftSuper, NutKey.X] : [NutKey.LeftControl, NutKey.X];
+    }
+
+    private pasteShortcut(): NutKey[] {
+        return (process.platform === "darwin") ? [NutKey.LeftSuper, NutKey.V] : [NutKey.LeftControl, NutKey.V];
     }
 }
