@@ -7,6 +7,7 @@ import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
 import {focusActionApi} from "./focus-actions.function";
 import {alertActionApi} from "./alert-action.function";
+import {INJECT_SAKULI_HOOK} from "./inject.const";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -86,6 +87,7 @@ export function actionApi(
         if (forceReload) {
             await webDriver.navigate().refresh()
         }
+        await webDriver.executeScript(INJECT_SAKULI_HOOK);
     }
 
     async function _rteWrite(query: SahiElementQuery, content: string): Promise<void> {

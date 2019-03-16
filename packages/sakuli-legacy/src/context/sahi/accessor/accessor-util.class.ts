@@ -1,4 +1,4 @@
-import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
+import {Locator, ThenableWebDriver, until, WebElement, WebElementCondition} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
@@ -14,6 +14,7 @@ import {RelationsResolver} from "../relations";
 import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
 import {ifPresent} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
+import {CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS} from "../action/inject.const";
 
 export class AccessorUtil {
 
@@ -91,8 +92,39 @@ export class AccessorUtil {
         }).map(([element]) => element);
     }
 
+    async enableHook() {
+        await this.webDriver.executeScript(INJECT_SAKULI_HOOK);
+    }
+
+    async openRequests(): Promise<number> {
+        return this.webDriver.executeScript<number>(CHECK_OPEN_REQUESTS);
+    }
+
+    async resetRequests() {
+        this.webDriver.executeScript(RESET_OPEN_REQUESTS);
+    }
+
+    async waitForOpenRequests(timeout: number) {
+        this.testExecutionContext.logger.info("Waiting for open requests.");
+        let openRequests = await this.openRequests();
+        this.testExecutionContext.logger.info(`Open requests: ${openRequests}`);
+        const startTime = Date.now();
+        while (openRequests) {
+            if (Date.now() - startTime > timeout) {
+                this.testExecutionContext.logger.info(`Timeout of ${timeout} ms for open requests reached.`);
+                await this.resetRequests();
+                break;
+            }
+            this.testExecutionContext.logger.info(`Waiting on ${openRequests} requests.`);
+            openRequests = await this.openRequests();
+        }
+        this.testExecutionContext.logger.info("Continuing test execution.");
+    }
+
     async findElements(locator: Locator): Promise<WebElement[]> {
-        return await this.webDriver.wait(until.elementsLocated(locator), 300);
+        await this.enableHook();
+        await this.waitForOpenRequests(3000);
+        return await this.webDriver.wait(until.elementsLocated(locator), 3000);
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
