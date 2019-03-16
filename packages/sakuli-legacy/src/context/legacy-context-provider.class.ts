@@ -1,6 +1,6 @@
 import {LegacyProject} from "../loader/legacy-project.class";
 import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
-import {ifPresent, isPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case.class";
 import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
@@ -8,8 +8,9 @@ import {Environment} from "./common/environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
-import {isAbsolute, join, parse, sep} from "path";
+import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
+import {Region} from "./common/region.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -88,6 +89,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Application,
             Key,
             Environment,
+            Region,
             Logger: createLoggerClass(ctx),
             console: console,
             $includeFolder: '',
