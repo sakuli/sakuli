@@ -1,10 +1,12 @@
 import {Key} from "./key.class";
 import {CommandLineResult} from "./commandline-result.class";
-import {clipboard, Key as NutKey, keyboard, mouse, screen} from "@nut-tree/nut-js";
+import {Key as NutKey, keyboard, mouse, screen} from "@nut-tree/nut-js";
 import {parse} from "path";
 import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {cwd} from "process";
-import {decryptSecret, withEncryption} from "./secrets.function";
+import {decryptSecret} from "./secrets.function";
+import {ClipboardApi} from "./actions/clipboard.functions";
+import {KeyboardApi} from "./actions/keyboard.functions";
 
 export class Environment {
     private static DEFAULT_SIMILARITY = 0.8;
@@ -54,21 +56,21 @@ export class Environment {
     }
 
     public async getClipboard(): Promise<string> {
-        return clipboard.paste();
+        return ClipboardApi.getClipboard();
     }
 
     public async setClipboard(text: string): Promise<Environment> {
-        await clipboard.copy(text);
+        await ClipboardApi.setClipboard(text);
         return this;
     }
 
     public async pasteClipboard(): Promise<Environment> {
-        await keyboard.type(...this.pasteShortcut());
+        await ClipboardApi.pasteClipboard();
         return this;
     }
 
     public async copyIntoClipboard(): Promise<Environment> {
-        await keyboard.type(...this.copyShortcut());
+        await ClipboardApi.copyIntoClipboard();
         return this;
     }
 
@@ -77,8 +79,7 @@ export class Environment {
     }
 
     public async paste(text: string): Promise<Environment> {
-        await clipboard.copy(text);
-        await keyboard.type(...this.pasteShortcut());
+        await KeyboardApi.paste(text);
         return this;
     }
 
@@ -88,15 +89,12 @@ export class Environment {
     }
 
     public async pasteAndDecrypt(text: string): Promise<Environment> {
-        return withEncryption(text, async (decrypted) => {
-            return this.paste(decrypted);
-        });
+        await KeyboardApi.pasteAndDecrypt(text);
+        return this;
     }
 
     public async type(text: string, ...optModifiers: Key[]): Promise<Environment> {
-        await keyboard.pressKey(...optModifiers as NutKey[]);
-        await keyboard.type(text);
-        await keyboard.releaseKey(...optModifiers as NutKey[]);
+        await KeyboardApi.type(text, ...optModifiers);
         return this;
     }
 
@@ -106,9 +104,8 @@ export class Environment {
     }
 
     public async typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Environment> {
-        return withEncryption(text, async (decrypted) => {
-            return this.type(decrypted, ...optModifiers);
-        });
+        await KeyboardApi.typeAndDecrypt(text, ...optModifiers);
+        return this;
     }
 
     public decryptSecret(secret: string): Promise<string> {
@@ -116,12 +113,12 @@ export class Environment {
     }
 
     public async keyDown(...keys: Key[]): Promise<Environment> {
-        await keyboard.pressKey(...keys as NutKey[]);
+        await KeyboardApi.pressKey(...keys);
         return this;
     }
 
     public async keyUp(...keys: Key[]): Promise<Environment> {
-        await keyboard.releaseKey(...keys as NutKey[]);
+        await KeyboardApi.releaseKey(...keys);
         return this;
     }
 
