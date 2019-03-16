@@ -1,7 +1,7 @@
 import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {isSahiElementQuery, SahiElementQuery} from "../sahi-element.interface";
+import {isSahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {getParent} from "../helper/get-parent.function";
 import {isPresent} from "@sakuli/commons";
 import {stripIndent} from "common-tags";
@@ -14,7 +14,7 @@ export function parentApi(
     ctx: TestExecutionContext
 ) {
 
-    async function _parentNode(query: SahiElementQuery | WebElement, tagName: string, occurrence: number = 1): Promise<SahiElementQuery> {
+    async function _parentNode(query: SahiElementQueryOrWebElement | WebElement, tagName: string, occurrence: number = 1): Promise<SahiElementQueryOrWebElement> {
         const e = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
@@ -22,13 +22,7 @@ export function parentApi(
         while (isPresent(parent)) {
             const eTagName = await parent.getTagName();
             if (eTagName.toLocaleLowerCase() === tagName.toLocaleLowerCase() && occurrence === 1) {
-                return ({
-                    locator: By.js(stripIndent`
-                    return arguments[0]
-                `, parent),
-                    relations: [],
-                    identifier: 0
-                })
+                return parent;
             }
             if (eTagName.toLocaleLowerCase() === tagName.toLocaleLowerCase() && occurrence > 1) {
                 occurrence = occurrence - 1;
@@ -38,15 +32,15 @@ export function parentApi(
         throw Error(`Could not find any parent of type ${tagName}`)
     }
 
-    async function _parentCell(query: SahiElementQuery, occurrence: number = 1) {
+    async function _parentCell(query: SahiElementQueryOrWebElement, occurrence: number = 1) {
         return _parentNode(query, 'td', occurrence);
     }
 
-    async function _parentRow(query: SahiElementQuery, occurrence: number = 1) {
+    async function _parentRow(query: SahiElementQueryOrWebElement, occurrence: number = 1) {
         return _parentNode(query, 'tr', occurrence);
     }
 
-    async function _parentTable(query: SahiElementQuery, occurrence: number = 1) {
+    async function _parentTable(query: SahiElementQueryOrWebElement, occurrence: number = 1) {
         return _parentNode(query, 'table', occurrence);
     }
 

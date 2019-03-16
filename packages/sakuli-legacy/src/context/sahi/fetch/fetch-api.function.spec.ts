@@ -3,7 +3,7 @@ import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment
 import {fetchApi} from "./fetch-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 
 jest.setTimeout(15_000);
 describe('fetch-api', () => {
@@ -34,7 +34,7 @@ describe('fetch-api', () => {
         await env.stop();
     });
 
-    function queryByLocator(locator: Locator): SahiElementQuery {
+    function queryByLocator(locator: Locator): SahiElementQueryOrWebElement {
         return ({locator, relations: [], identifier: 0})
     }
 

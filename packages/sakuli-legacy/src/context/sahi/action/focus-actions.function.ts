@@ -1,7 +1,7 @@
 import {ThenableWebDriver} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {stripIndents} from "common-tags";
 
 export function focusActionApi(
@@ -9,14 +9,14 @@ export function focusActionApi(
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ) {
-    async function _focus(query: SahiElementQuery) {
+    async function _focus(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         await webDriver.executeScript(stripIndents`
             arguments[0].focus();
         `, e);
     }
 
-    async function _blur(query: SahiElementQuery) {
+    async function _blur(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         await webDriver.executeScript(stripIndents`
             arguments[0].blur();

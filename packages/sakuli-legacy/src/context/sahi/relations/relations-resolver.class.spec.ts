@@ -38,12 +38,16 @@ describe('RelationResolver', () => {
         const otherItems = items.filter((_, i) => i % 2 === 0);
         const relationsMock = jest.fn(() => otherItems);
         const relationsMock2 = jest.fn();
-        await api.applyRelations(items, [
-            relationsMock,
-            relationsMock2
-        ]);
-        expect(relationsMock).toHaveBeenCalledWith(items);
-        expect(relationsMock2).toHaveBeenCalledWith(otherItems);
+        await api.applyRelations({
+            relations: [
+                relationsMock,
+                relationsMock2
+            ],
+            identifier: new RegExp('.*'),
+            locator: By.css('li')
+        });
+        expect(relationsMock).toHaveBeenCalled();
+        expect(relationsMock2).toHaveBeenCalled();
     });
 
 });

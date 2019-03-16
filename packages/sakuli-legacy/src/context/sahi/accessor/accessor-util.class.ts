@@ -1,4 +1,4 @@
-import {Locator, ThenableWebDriver, until, WebElement, WebElementCondition} from "selenium-webdriver";
+import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
@@ -11,7 +11,12 @@ import {
     isAccessorIdentifierAttributesWithText
 } from "./accessor-model.interface";
 import {RelationsResolver} from "../relations";
-import {SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
+import {
+    isSahiElementQuery,
+    SahiElementQuery,
+    SahiElementQueryOrWebElement,
+    sahiQueryToString
+} from "../sahi-element.interface";
 import {ifPresent} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
 import {CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS} from "../action/inject.const";
@@ -124,7 +129,11 @@ export class AccessorUtil {
     async findElements(locator: Locator): Promise<WebElement[]> {
         await this.enableHook();
         await this.waitForOpenRequests(3000);
-        return await this.webDriver.wait(until.elementsLocated(locator), 3000);
+        try {
+            return await this.webDriver.wait(until.elementsLocated(locator), 3000);
+        } catch (e) {
+            return Promise.resolve([]);
+        }
     }
 
     private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
@@ -145,26 +154,23 @@ export class AccessorUtil {
 
     async fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
         try {
-            const {locator, relations, identifier} = query;
-            const elements = await this.findElements(locator);
-            const elementsAfterRelations = await this.relationResolver.applyRelations(
-                elements,
-                [
-                    ...relations
-                ]
-            );
-            const element = await this.resolveByIdentifier(elementsAfterRelations, identifier);
-            return ifPresent(element, e => e, () => {
+            const queryAfterRelation = await this.relationResolver.applyRelations(query);
+            const elements = await this.findElements(queryAfterRelation.locator);
+            const elementsAfterIdentifier = this.resolveByIdentifier(elements, queryAfterRelation.identifier);
+            return ifPresent(elementsAfterIdentifier, e => e, () => {
                 throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
             })
+
         } catch (e) {
             if (retry === 0) throw e;
             return this.fetchElements(query, retry - 1);
         }
     }
 
-    async fetchElement(query: SahiElementQuery, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
-        return this.fetchElements(query, retry).then(([first]) => first);
+    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
+        return isSahiElementQuery(query)
+            ? this.fetchElements(query, retry).then(([first]) => first)
+            : Promise.resolve(query)
     }
 
     async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {

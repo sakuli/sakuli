@@ -1,52 +1,59 @@
 import {SahiRelation} from "../relations/sahi-relation.interface";
 import {By} from "selenium-webdriver";
 import {AccessorFunction, AccessorIdentifier} from "../api";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
+import {isAccessorIdentifierAttributesWithClassName} from "./accessor-model.interface";
 
 export type AccessorApi = ReturnType<typeof accessorApi>;
-export type DefaultAccessors = Pick<AccessorApi, Exclude<keyof AccessorApi, "_activeElement" |"_byId" | "_byText" | "_byClassName" | "_byXPath">>
+export type DefaultAccessors = Pick<AccessorApi, Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">>
 export type AccessorFunctions = Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">;
 
 export function accessorApi() {
 
     function createAccessorFunction(css: string): AccessorFunction {
-        return (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => ({
-            locator: By.css(css),
-            identifier,
-            relations
-        })
+        return (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
+            let extendedLocator = By.css(css);
+            if(isAccessorIdentifierAttributesWithClassName(identifier)) {
+                extendedLocator = By.css(`${css}.${identifier.className.split(" ").join(".")}`)
+            }
+            return ({
+                locator: extendedLocator,
+                identifier,
+                relations
+            });
+        }
     }
 
     return {
-        _activeElement: ():SahiElementQuery => {
+        _activeElement: (): SahiElementQueryOrWebElement => {
             return ({
                 locator: By.css(':focus'),
                 identifier: 0,
                 relations: []
             })
         },
-        _byId: (id: string):SahiElementQuery => {
+        _byId: (id: string): SahiElementQueryOrWebElement => {
             return ({
                 locator: By.css(`#${id}`),
                 identifier: 0,
                 relations: []
             })
         },
-        _byText: (text: string, tagName: string): SahiElementQuery => {
-          return ({
-              locator: By.css(tagName),
-              identifier: text,
-              relations: [],
-          })
+        _byText: (text: string, tagName: string): SahiElementQueryOrWebElement => {
+            return ({
+                locator: By.css(tagName),
+                identifier: text,
+                relations: [],
+            })
         },
-        _byClassName: (clsName: string, tagName: string): SahiElementQuery => {
+        _byClassName: (clsName: string, tagName: string): SahiElementQueryOrWebElement => {
             return ({
                 locator: By.css(`${tagName}.${clsName}`),
                 identifier: 0,
                 relations: []
             })
         },
-        _byXPath: (xPath: string): SahiElementQuery => {
+        _byXPath: (xPath: string): SahiElementQueryOrWebElement => {
             return ({
                 locator: By.xpath(xPath),
                 identifier: 0,
