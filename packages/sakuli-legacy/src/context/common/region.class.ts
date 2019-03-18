@@ -1,16 +1,257 @@
 import {Button} from "./button.class";
 import {Key} from "./key.class";
-import {keyboard, Key as NutKey, mouse,} from "@nut-tree/nut-js";
+import {Key as NutKey, keyboard, mouse,} from "@nut-tree/nut-js";
 import {MouseApi} from "./actions/mouse.functions";
 import {KeyboardApi} from "./actions/keyboard.functions";
 import {ScreenApi} from "./actions/screen.functions";
+import {TestExecutionContext} from "@sakuli/core";
+
+export function createRegionClass(ctx: TestExecutionContext) {
+    return class LoggingRegion extends Region {
+        constructor(public _left?: number, public _top?: number, public _width?: number, public _height?: number) {
+            super(_left, _top, _width, _height);
+        }
+
+        public async find(imageName: string): Promise<LoggingRegion> {
+            ctx.logger.info(`Trying to locate image ${imageName}`);
+            return new Promise<LoggingRegion>(async (resolve, reject) => {
+                try {
+                    const result = await super.find(imageName);
+                    ctx.logger.info(`Located at: (${result._left},${result._top},${result._width},${result._height})`);
+                    resolve(result as LoggingRegion);
+                } catch (e) {
+                    ctx.logger.error(e);
+                    reject(e);
+                }
+            });
+        }
+
+        public async findRegion(): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async exists(imageName: string, optWaitSeconds: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async click(): Promise<LoggingRegion> {
+            ctx.logger.info(`Executing native click.`);
+            await super.click();
+            return this;
+        }
+
+        public async doubleClick(): Promise<LoggingRegion> {
+            ctx.logger.info(`Executing native double click.`);
+            await super.doubleClick();
+            return this;
+        }
+
+        public async rightClick(): Promise<LoggingRegion> {
+            ctx.logger.info(`Executing native right click.`);
+            await super.rightClick();
+            return this;
+        }
+
+        public async mouseMove(): Promise<LoggingRegion> {
+            ctx.logger.info(`Moving mouse to: (${this._left},${this._top},${this._width},${this._height}`);
+            await super.mouseMove();
+            return this;
+        }
+
+        public async mouseDown(mouseButton: Button): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async mouseUp(mouseButton: Button): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async dragAndDropTo(targetRegion: LoggingRegion): Promise<LoggingRegion> {
+            ctx.logger.info(`Dragging mouse to: (${targetRegion._left},${targetRegion._top},${targetRegion._width},${targetRegion._height}`);
+            await super.dragAndDropTo(targetRegion);
+            return this;
+        }
+
+        public async waitForImage(imageName: string, seconds: number): Promise<LoggingRegion> {
+            ctx.logger.info(`Waiting ${seconds} for image ${imageName}`);
+            return new Promise<LoggingRegion>(resolve => setTimeout(() => {
+                resolve(ScreenApi.find(imageName, 0.99, this));
+            }, seconds * 1000));
+        }
+
+        public async paste(text: string): Promise<LoggingRegion> {
+            ctx.logger.info(`Pasting '${text}' via native clipboard`);
+            await super.paste(text);
+            return this;
+        }
+
+        public async pasteMasked(text: string): Promise<LoggingRegion> {
+            ctx.logger.info(`Pasting '****' via native clipboard`);
+            await super.paste(text);
+            return this;
+        }
+
+        public async pasteAndDecrypt(text: string): Promise<LoggingRegion> {
+            ctx.logger.info(`Pasting encrypted text '${text}' via native clipboard`);
+            await super.pasteAndDecrypt(text);
+            return this;
+        }
+
+        public async type(text: string, ...optModifiers: Key[]): Promise<LoggingRegion> {
+            ctx.logger.info(`Typing '${text}' via native keyboard`);
+            await super.type(text, ...optModifiers);
+            return this;
+        }
+
+        public async typeMasked(text: string, ...optModifiers: Key[]): Promise<LoggingRegion> {
+            ctx.logger.info(`Typing '****' via native keyboard`);
+            await super.type(text, ...optModifiers);
+            return this;
+        }
+
+        public async typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<LoggingRegion> {
+            ctx.logger.info(`Typing encrypted text '${text}' via native keyboard`);
+            await super.typeAndDecrypt(text, ...optModifiers);
+            return this;
+        }
+
+        public async keyDown(...keys: Key[]): Promise<LoggingRegion> {
+            ctx.logger.info(`Pressing keys '${keys.map(key => key).join(",")}' via native keyboard`);
+            await super.keyDown(...keys);
+            return this;
+        }
+
+        public async keyUp(...keys: Key[]): Promise<LoggingRegion> {
+            ctx.logger.info(`Releasing keys '${keys.map(key => key).join(",")}' via native keyboard`);
+            await super.keyUp(...keys);
+            return this;
+        }
+
+        public async write(text: string): Promise<LoggingRegion> {
+            ctx.logger.info(`Writing text '${text}' via native keyboard`);
+            await super.write(text);
+            return this;
+        }
+
+        public async deleteChars(amountOfChars: number): Promise<LoggingRegion> {
+            ctx.logger.info(`Deleting ${amountOfChars} characters`);
+            await super.deleteChars(amountOfChars);
+            return this;
+        }
+
+        public async mouseWheelDown(steps: number): Promise<LoggingRegion> {
+            ctx.logger.info(`Scrolling down ${steps} steps`);
+            await super.mouseWheelDown(steps);
+            return this;
+        }
+
+        public async mouseWheelUp(steps: number): Promise<LoggingRegion> {
+            ctx.logger.info(`Scrolling up ${steps} steps`);
+            await super.mouseWheelUp(steps);
+            return this;
+        }
+
+        public async move(offsetX: number, offsetY: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async grow(range: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async above(range: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async below(range: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async left(range: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async right(range: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async setH(height: number): Promise<LoggingRegion> {
+            this._height = height;
+            return this;
+        }
+
+        public async getH(): Promise<number | undefined> {
+            return Promise.resolve(this._height);
+        }
+
+        public async setW(width: number): Promise<LoggingRegion> {
+            this._width = width;
+            return this;
+        }
+
+        public async getW(): Promise<number | undefined> {
+            return Promise.resolve(this._width);
+        }
+
+        public async setX(x: number): Promise<LoggingRegion> {
+            this._left = x;
+            return this;
+        }
+
+        public async getX(): Promise<number | undefined> {
+            return Promise.resolve(this._left);
+        }
+
+        public async setY(y: number): Promise<LoggingRegion> {
+            this._top = y;
+            return this;
+        }
+
+        public async getY(): Promise<number | undefined> {
+            return Promise.resolve(this._top);
+        }
+
+        public async highlight(seconds: number): Promise<LoggingRegion> {
+            // TODO
+            return this;
+        }
+
+        public async takeScreenshot(filename: string): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async takeScreenshotWithTimestamp(filenamePostfix: string, optFolderPath?: string, optFormat?: string): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async sleep(seconds: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async sleepMs(milliseconds: number): Promise<LoggingRegion> {
+            return this;
+        }
+
+        public async extractText(): Promise<LoggingRegion> {
+            // TODO
+            return this;
+        }
+    }
+
+}
 
 export class Region {
-    constructor(private _left?: number, private _top?: number, private _width?: number, private _height?: number) {
+    constructor(public _left?: number, public _top?: number, public _width?: number, public _height?: number) {
     }
 
     public async find(imageName: string): Promise<Region> {
-        return ScreenApi.find(imageName, 0.99, this);
+        return new Promise<Region>(async (resolve, reject) => {
+            try {
+                resolve(ScreenApi.find(imageName, 0.99, this));
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     public async findRegion(): Promise<Region> {
@@ -154,11 +395,8 @@ export class Region {
         return this;
     }
 
-    public async getH(): Promise<number> {
-        if (this._height) {
-            return Promise.resolve(this._height);
-        }
-        return await ScreenApi.width();
+    public async getH(): Promise<number | undefined> {
+        return Promise.resolve(this._height);
     }
 
     public async setW(width: number): Promise<Region> {
@@ -166,11 +404,8 @@ export class Region {
         return this;
     }
 
-    public async getW(): Promise<number> {
-        if (this._width) {
-            return Promise.resolve(this._width);
-        }
-        return await ScreenApi.width();
+    public async getW(): Promise<number | undefined> {
+        return Promise.resolve(this._width);
     }
 
     public async setX(x: number): Promise<Region> {
@@ -178,11 +413,8 @@ export class Region {
         return this;
     }
 
-    public async getX(): Promise<number> {
-        if (this._left) {
-            return Promise.resolve(this._left);
-        }
-        return 0;
+    public async getX(): Promise<number | undefined> {
+        return Promise.resolve(this._left);
     }
 
     public async setY(y: number): Promise<Region> {
@@ -190,11 +422,8 @@ export class Region {
         return this;
     }
 
-    public async getY(): Promise<number> {
-        if (this._top) {
-            return Promise.resolve(this._top);
-        }
-        return 0;
+    public async getY(): Promise<number | undefined> {
+        return Promise.resolve(this._top);
     }
 
     public async highlight(seconds: number): Promise<Region> {
@@ -223,11 +452,11 @@ export class Region {
         return this;
     }
 
-    private async center() {
+    public async center() {
         await this.moveTo();
     }
 
-    private async moveTo(dest?: Region) {
+    public async moveTo(dest?: Region) {
         const target = dest ? dest : this;
         await MouseApi.move(target);
     }

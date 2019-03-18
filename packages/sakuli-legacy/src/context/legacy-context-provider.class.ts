@@ -10,7 +10,7 @@ import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakul
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
-import {Region} from "./common/region.class";
+import {createRegionClass} from "./common/region.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -89,7 +89,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Application,
             Key,
             Environment,
-            Region,
+            Region: createRegionClass(ctx),
             Logger: createLoggerClass(ctx),
             console: console,
             $includeFolder: '',

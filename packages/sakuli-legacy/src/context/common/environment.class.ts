@@ -1,6 +1,6 @@
 import {Key} from "./key.class";
 import {CommandLineResult} from "./commandline-result.class";
-import {Key as NutKey, keyboard, mouse, screen} from "@nut-tree/nut-js";
+import {keyboard, mouse, screen} from "@nut-tree/nut-js";
 import {parse} from "path";
 import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {cwd} from "process";
@@ -164,17 +164,5 @@ export class Environment {
     public getProperty(key: string): string | undefined {
         // TODO
         return;
-    }
-
-    private copyShortcut(): NutKey[] {
-        return (process.platform === "darwin") ? [NutKey.LeftSuper, NutKey.C] : [NutKey.LeftControl, NutKey.C];
-    }
-
-    private cutShortcut(): NutKey[] {
-        return (process.platform === "darwin") ? [NutKey.LeftSuper, NutKey.X] : [NutKey.LeftControl, NutKey.X];
-    }
-
-    private pasteShortcut(): NutKey[] {
-        return (process.platform === "darwin") ? [NutKey.LeftSuper, NutKey.V] : [NutKey.LeftControl, NutKey.V];
     }
 }
