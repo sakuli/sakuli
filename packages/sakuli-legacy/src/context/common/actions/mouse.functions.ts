@@ -1,12 +1,13 @@
 import {Location, mouse, movement, Region as NutRegion} from "@nut-tree/nut-js";
 import {Region} from "../region.class";
+import {ScreenApi} from "./screen.functions";
 
 const toNutRegion = async (region: Region): Promise<NutRegion> => {
     return new NutRegion(
-        await region.getX(),
-        await region.getY(),
-        await region.getW(),
-        await region.getH()
+        await region.getX() || 0,
+        await region.getY() || 0,
+        await region.getW() || await ScreenApi.width(),
+        await region.getH() || await ScreenApi.height()
     );
 };
 
