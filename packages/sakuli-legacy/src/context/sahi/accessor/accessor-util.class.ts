@@ -39,7 +39,6 @@ export class AccessorUtil {
     }
 
     private allValuesInArray(values: string[], hayStack: string[]): boolean {
-        const matches: WebElement[] = [];
         return values.every(v => hayStack.includes(v));
     }
 
@@ -120,7 +119,6 @@ export class AccessorUtil {
                 await this.resetRequests();
                 break;
             }
-            this.testExecutionContext.logger.info(`Waiting on ${openRequests} requests.`);
             openRequests = await this.openRequests();
         }
         this.testExecutionContext.logger.info("Continuing test execution.");
@@ -128,7 +126,8 @@ export class AccessorUtil {
 
     async findElements(locator: Locator): Promise<WebElement[]> {
         await this.enableHook();
-        await this.waitForOpenRequests(3000);
+        // TODO Make timeout configurable
+        await this.waitForOpenRequests(5000);
         try {
             return await this.webDriver.wait(until.elementsLocated(locator), 3000);
         } catch (e) {
@@ -136,7 +135,7 @@ export class AccessorUtil {
         }
     }
 
-    private async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
+    async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
         if (isAccessorIdentifierAttributes(identifier)) {
             return await this.getElementsByAccessorIdentifier(elements, identifier);
         }
@@ -153,17 +152,32 @@ export class AccessorUtil {
     }
 
     async fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
+        return this.webDriver.wait<WebElement[]>(() => {
+            return this._fetchElements(query, retry).then(
+                (elements) => {
+                    return (elements.length) ? elements : false
+                },
+                () => {
+                    return false
+                }
+            )
+        }, 10_000);
+    }
+
+    async _fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
         try {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
-            const elementsAfterIdentifier = this.resolveByIdentifier(elements, queryAfterRelation.identifier);
-            return ifPresent(elementsAfterIdentifier, e => e, () => {
-                throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
-            })
-
+            this.testExecutionContext.logger.info(`fetchElements: ${sahiQueryToString(queryAfterRelation)}: ${elements.length}`);
+            const elementsAfterIdentifier = await this.resolveByIdentifier(elements, queryAfterRelation.identifier);
+            if (elementsAfterIdentifier.length) {
+                return elementsAfterIdentifier;
+            }
+            throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
         } catch (e) {
             if (retry === 0) throw e;
-            return this.fetchElements(query, retry - 1);
+            this.testExecutionContext.logger.info(e.message);
+            return this._fetchElements(query, retry - 1);
         }
     }
 
@@ -180,23 +194,23 @@ export class AccessorUtil {
         if (identifier.endsWith('/')) {
             identifier = identifier.substr(identifier.length, 1);
         }
-        const escape = !(identifier.startsWith('/') && identifier.endsWith('/'));
+        const isRegEx = (identifier.startsWith('/') && identifier.endsWith('/'));
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
             async ([_, index]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
-                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, escape));
+                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx));
                 return [elementsByRegExp[Number(index)]];
             },
-            () => this.getByRegEx(elements, this.stringToRegExp(identifier, escape))
+            () => this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx))
         )
     }
 
-    private stringToRegExp(str: string, escape: boolean = true) {
-        return new RegExp(escape
-            ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-            : str
+    private stringToRegExp(str: string, isRegEx: boolean = true) {
+        return new RegExp(isRegEx
+            ? str
+            : "^\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\s*$"
         );
     }
 

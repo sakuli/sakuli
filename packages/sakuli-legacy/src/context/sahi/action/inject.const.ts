@@ -35,6 +35,7 @@ if (!("sakuliHookEnabled" in window) || !window.sakuliHookEnabled) {
         return Promise.reject(err);
       });
     }
+    window.fetch = newFetch;
 }
 `;
 
