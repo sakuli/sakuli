@@ -19,6 +19,7 @@ import {
 } from "../sahi-element.interface";
 import {ifPresent} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
+import {CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS} from "../action/inject.const";
 
 export class AccessorUtil {
 
@@ -38,7 +39,6 @@ export class AccessorUtil {
     }
 
     private allValuesInArray(values: string[], hayStack: string[]): boolean {
-        const matches: WebElement[] = [];
         return values.every(v => hayStack.includes(v));
     }
 
@@ -96,7 +96,38 @@ export class AccessorUtil {
         }).map(([element]) => element);
     }
 
+    async enableHook() {
+        await this.webDriver.executeScript(INJECT_SAKULI_HOOK);
+    }
+
+    async openRequests(): Promise<number> {
+        return this.webDriver.executeScript<number>(CHECK_OPEN_REQUESTS);
+    }
+
+    async resetRequests() {
+        this.webDriver.executeScript(RESET_OPEN_REQUESTS);
+    }
+
+    async waitForOpenRequests(timeout: number) {
+        this.testExecutionContext.logger.info("Waiting for open requests.");
+        let openRequests = await this.openRequests();
+        this.testExecutionContext.logger.info(`Open requests: ${openRequests}`);
+        const startTime = Date.now();
+        while (openRequests) {
+            if (Date.now() - startTime > timeout) {
+                this.testExecutionContext.logger.info(`Timeout of ${timeout} ms for open requests reached.`);
+                await this.resetRequests();
+                break;
+            }
+            openRequests = await this.openRequests();
+        }
+        this.testExecutionContext.logger.info("Continuing test execution.");
+    }
+
     async findElements(locator: Locator): Promise<WebElement[]> {
+        await this.enableHook();
+        // TODO Make timeout configurable
+        await this.waitForOpenRequests(5000);
         try {
             return await this.webDriver.wait(until.elementsLocated(locator), 3000);
         } catch (e) {
@@ -121,33 +152,32 @@ export class AccessorUtil {
     }
 
     async fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
+        return this.webDriver.wait<WebElement[]>(() => {
+            return this._fetchElements(query, retry).then(
+                (elements) => {
+                    return (elements.length) ? elements : false
+                },
+                () => {
+                    return false
+                }
+            )
+        }, 10_000);
+    }
+
+    async _fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
         try {
-            /*
-            const {locator, relations, identifier} = query;
-            const elements = await this.findElements(locator);
-            this.logger.info(`Found ${elements.length} in fetchElements`);
-            this.logger.info(`Apply ${relations.length} relations`);
-            const elementsAfterIdentifier = await this.resolveByIdentifier(elements, identifier);
-            const element= await this.relationResolver.applyRelations(
-                elementsAfterIdentifier,
-                [
-                    ...relations
-                ]
-            );
-            return ifPresent(element, e => e, () => {
-                throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
-            })
-            */
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
-            const elementsAfterIdentifier = this.resolveByIdentifier(elements, queryAfterRelation.identifier);
-            return ifPresent(elementsAfterIdentifier, e => e, () => {
-                throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
-            })
-
+            this.testExecutionContext.logger.info(`fetchElements: ${sahiQueryToString(queryAfterRelation)}: ${elements.length}`);
+            const elementsAfterIdentifier = await this.resolveByIdentifier(elements, queryAfterRelation.identifier);
+            if (elementsAfterIdentifier.length) {
+                return elementsAfterIdentifier;
+            }
+            throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
         } catch (e) {
             if (retry === 0) throw e;
-            return this.fetchElements(query, retry - 1);
+            this.testExecutionContext.logger.info(e.message);
+            return this._fetchElements(query, retry - 1);
         }
     }
 
@@ -164,23 +194,23 @@ export class AccessorUtil {
         if (identifier.endsWith('/')) {
             identifier = identifier.substr(identifier.length, 1);
         }
-        const escape = !(identifier.startsWith('/') && identifier.endsWith('/'));
+        const isRegEx = (identifier.startsWith('/') && identifier.endsWith('/'));
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
             async ([_, index]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
-                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, escape));
+                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx));
                 return [elementsByRegExp[Number(index)]];
             },
-            () => this.getByRegEx(elements, this.stringToRegExp(identifier, escape))
+            () => this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx))
         )
     }
 
-    private stringToRegExp(str: string, escape: boolean = true) {
-        return new RegExp(escape
-            ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-            : str
+    private stringToRegExp(str: string, isRegEx: boolean = true) {
+        return new RegExp(isRegEx
+            ? str
+            : "^\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\s*$"
         );
     }
 
