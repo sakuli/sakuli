@@ -8,6 +8,7 @@ import {keyboardActionApi} from "./keyboard-actions.function";
 import {focusActionApi} from "./focus-actions.function";
 import {alertActionApi} from "./alert-action.function";
 import StaleElementReferenceError = error.StaleElementReferenceError;
+import {INJECT_SAKULI_HOOK} from "./inject.const";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -50,6 +51,7 @@ export function actionApi(
             ctx.logger.info(`Start action ${name}`);
             let res: any;
             try {
+                // TODO Make retries configurable
                 res = await withRetries(5, fn)(...args);
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
@@ -77,11 +79,9 @@ export function actionApi(
     }
 
     async function _highlight(query: SahiElementQueryOrWebElement | WebElement, timeoutMs: number = 2000): Promise<void> {
-        ctx.logger.info("start");
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
-        ctx.logger.info("end");
         await element.getId();
         const oldBorder = await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[0].style.border;
@@ -107,10 +107,12 @@ export function actionApi(
             url.username = credentials.user;
             url.password = credentials.password;
         }
+        await webDriver.manage().window().maximize();
         await webDriver.get(url.href);
         if (forceReload) {
             await webDriver.navigate().refresh()
         }
+        await webDriver.executeScript(INJECT_SAKULI_HOOK);
     }
 
     async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {
