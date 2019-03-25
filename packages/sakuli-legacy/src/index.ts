@@ -5,6 +5,7 @@ import {Builder} from "selenium-webdriver";
 import {LegacyLoader} from "./loader/legacy-loader.class";
 import {migrationCommandProvider} from "./migration/migration-command-provider.function";
 import rollupPreset from '@sakuli/rollup-hooks'
+import {encryptCommand} from "./command/encrypt-command.class";
 
 export {LegacyLoader, LegacyLifecycleHooks};
 
@@ -12,6 +13,7 @@ const legacyPreset: SakuliPresetProvider = (reg: SakuliPresetRegistry) => {
     reg.registerContextProvider(new LegacyLifecycleHooks(new Builder()));
     reg.registerProjectLoader(new LegacyLoader());
     reg.registerCommandModule(migrationCommandProvider);
+    reg.registerCommandModule(encryptCommand);
 
     rollupPreset(reg);
 };
