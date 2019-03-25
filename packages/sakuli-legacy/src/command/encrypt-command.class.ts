@@ -1,4 +1,4 @@
-import {CommandModuleProvider, SakuliInstance} from "@sakuli/core";
+import {CommandModuleProvider} from "@sakuli/core";
 import chalk from "chalk";
 import {Argv, CommandModule} from "yargs";
 import {secret} from "@nut-tree/secrets";
