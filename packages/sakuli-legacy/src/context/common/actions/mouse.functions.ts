@@ -12,6 +12,15 @@ const toNutRegion = async (region: Region): Promise<NutRegion> => {
 };
 
 export const MouseApi = {
+    async click() {
+        await mouse.leftClick()
+    },
+    async doubleClick() {
+        await mouse.leftClick()
+    },
+    async rightClick() {
+        await mouse.rightClick()
+    },
     async dragAndDrop(region: Region) {
         await mouse.drag(
             await movement.straightTo(
