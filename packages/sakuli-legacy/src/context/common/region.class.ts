@@ -1,6 +1,5 @@
 import {Button} from "./button.class";
 import {Key} from "./key.class";
-import {Key as NutKey, keyboard, mouse,} from "@nut-tree/nut-js";
 import {MouseApi} from "./actions/mouse.functions";
 import {KeyboardApi} from "./actions/keyboard.functions";
 import {ScreenApi} from "./actions/screen.functions";
@@ -54,15 +53,19 @@ export function createRegionClass(ctx: TestExecutionContext) {
 
         public async mouseMove(): Promise<LoggingRegion> {
             ctx.logger.info(`Moving mouse to: (${this._left},${this._top},${this._width},${this._height}`);
-            await super.mouseMove();
+            await super.center();
             return this;
         }
 
         public async mouseDown(mouseButton: Button): Promise<LoggingRegion> {
+            ctx.logger.info("Mouse down");
+            await super.mouseDown(mouseButton);
             return this;
         }
 
         public async mouseUp(mouseButton: Button): Promise<LoggingRegion> {
+            ctx.logger.info("Mouse up");
+            await super.mouseUp(mouseButton);
             return this;
         }
 
@@ -152,27 +155,39 @@ export function createRegionClass(ctx: TestExecutionContext) {
         }
 
         public async move(offsetX: number, offsetY: number): Promise<LoggingRegion> {
-            return this;
+            const region = await super.move(offsetX, offsetY);
+            ctx.logger.info(`Moved region. New dimensions: ${region.toString()}`);
+            return region as LoggingRegion;
         }
 
         public async grow(range: number): Promise<LoggingRegion> {
-            return this;
+            const region = await super.grow(range);
+            ctx.logger.info(`Grew region. New dimensions: ${region.toString()}`);
+            return region as LoggingRegion;
         }
 
         public async above(range: number): Promise<LoggingRegion> {
-            return this;
+            const region = await super.above(range);
+            ctx.logger.info(`Created new region above. New dimensions: ${region.toString()}`);
+            return region as LoggingRegion;
         }
 
         public async below(range: number): Promise<LoggingRegion> {
-            return this;
+            const region = await super.below(range);
+            ctx.logger.info(`Created new region below. New dimensions: ${region.toString()}`);
+            return region as LoggingRegion;
         }
 
         public async left(range: number): Promise<LoggingRegion> {
-            return this;
+            const region = await super.left(range);
+            ctx.logger.info(`Created new region to the left. New dimensions: ${region.toString()}`);
+            return region as LoggingRegion;
         }
 
         public async right(range: number): Promise<LoggingRegion> {
-            return this;
+            const region = await super.right(range);
+            ctx.logger.info(`Created new region to the right. New dimensions: ${region.toString()}`);
+            return region as LoggingRegion;
         }
 
         public async setH(height: number): Promise<LoggingRegion> {
@@ -180,8 +195,8 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getH(): Promise<number | undefined> {
-            return Promise.resolve(this._height);
+        public async getH(): Promise<number> {
+            return super.getH();
         }
 
         public async setW(width: number): Promise<LoggingRegion> {
@@ -189,8 +204,8 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getW(): Promise<number | undefined> {
-            return Promise.resolve(this._width);
+        public async getW(): Promise<number> {
+            return super.getW();
         }
 
         public async setX(x: number): Promise<LoggingRegion> {
@@ -198,8 +213,8 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getX(): Promise<number | undefined> {
-            return Promise.resolve(this._left);
+        public async getX(): Promise<number> {
+            return super.getX();
         }
 
         public async setY(y: number): Promise<LoggingRegion> {
@@ -207,8 +222,8 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getY(): Promise<number | undefined> {
-            return Promise.resolve(this._top);
+        public async getY(): Promise<number> {
+            return super.getY();
         }
 
         public async highlight(seconds: number): Promise<LoggingRegion> {
@@ -216,20 +231,24 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async takeScreenshot(filename: string): Promise<LoggingRegion> {
-            return this;
+        public async takeScreenshot(filename: string): Promise<string> {
+            ctx.logger.info(`Taking screenshot with filename '${filename}'`);
+            return super.takeScreenshot(filename);
         }
 
-        public async takeScreenshotWithTimestamp(filenamePostfix: string, optFolderPath?: string, optFormat?: string): Promise<LoggingRegion> {
-            return this;
+        public async takeScreenshotWithTimestamp(filename: string): Promise<string> {
+            ctx.logger.info(`Taking screenshot with filename '${filename}' and timestamp`);
+            return super.takeScreenshotWithTimestamp(filename);
         }
 
         public async sleep(seconds: number): Promise<LoggingRegion> {
-            return this;
+            ctx.logger.info(`Sleeping for ${seconds} seconds`);
+            return await super.sleep(seconds) as LoggingRegion;
         }
 
         public async sleepMs(milliseconds: number): Promise<LoggingRegion> {
-            return this;
+            ctx.logger.info(`Sleeping for ${milliseconds} milliseconds`);
+            return await super.sleepMs(milliseconds) as LoggingRegion;
         }
 
         public async extractText(): Promise<LoggingRegion> {
@@ -264,20 +283,19 @@ export class Region {
 
     public async click(): Promise<Region> {
         await this.center();
-        await mouse.leftClick();
+        await MouseApi.click();
         return this;
     }
 
     public async doubleClick(): Promise<Region> {
         await this.center();
-        await mouse.leftClick();
-        await mouse.leftClick();
+        await MouseApi.doubleClick();
         return this;
     }
 
     public async rightClick(): Promise<Region> {
         await this.center();
-        await mouse.rightClick();
+        await MouseApi.rightClick();
         return this;
     }
 
@@ -311,7 +329,6 @@ export class Region {
     }
 
     public async pasteMasked(text: string): Promise<Region> {
-        // TODO Do not log text
         return this.paste(text);
     }
 
@@ -321,38 +338,37 @@ export class Region {
     }
 
     public async type(text: string, ...optModifiers: Key[]): Promise<Region> {
-        await KeyboardApi.type(text, ...optModifiers as NutKey[]);
+        await KeyboardApi.type(text, ...optModifiers);
         return this;
     }
 
     public async typeMasked(text: string, ...optModifiers: Key[]): Promise<Region> {
-        // TODO Do not log text
         return this.paste(text);
     }
 
     public async typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Region> {
-        await KeyboardApi.typeAndDecrypt(text, ...optModifiers as NutKey[]);
+        await KeyboardApi.typeAndDecrypt(text, ...optModifiers);
         return this;
     }
 
     public async keyDown(...keys: Key[]): Promise<Region> {
-        await KeyboardApi.pressKey(...keys as NutKey[]);
+        await KeyboardApi.pressKey(...keys);
         return this;
     }
 
     public async keyUp(...keys: Key[]): Promise<Region> {
-        await KeyboardApi.releaseKey(...keys as NutKey[]);
+        await KeyboardApi.releaseKey(...keys);
         return this;
     }
 
     public async write(text: string): Promise<Region> {
-        await keyboard.type(text);
+        await KeyboardApi.type(text);
         return this;
     }
 
     public async deleteChars(amountOfChars: number): Promise<Region> {
         const keys = new Array(amountOfChars).fill(Key.BACKSPACE);
-        await keyboard.type(...keys as NutKey[]);
+        await KeyboardApi.pressKey(...keys);
         return this;
     }
 
@@ -367,27 +383,27 @@ export class Region {
     }
 
     public async move(offsetX: number, offsetY: number): Promise<Region> {
-        return this;
+        return new Region((this._left || 0) + offsetX, (this._top || 0) + offsetY, this._width, this._height);
     }
 
     public async grow(range: number): Promise<Region> {
-        return this;
+        return new Region((this._left || 0) - range, (this._top || 0) - range, (this._width || 0) + range, (this._height || 0) + range);
     }
 
     public async above(range: number): Promise<Region> {
-        return this;
+        return new Region(this._left, (this._top || 0) - range, this._width, range);
     }
 
     public async below(range: number): Promise<Region> {
-        return this;
+        return new Region(this._left, (this._top || 0) + (this._height || 0), this._width, range);
     }
 
     public async left(range: number): Promise<Region> {
-        return this;
+        return new Region((this._left || 0) - range, this._top, range, this._height);
     }
 
     public async right(range: number): Promise<Region> {
-        return this;
+        return new Region((this._left || 0) + (this._width || 0), this._top, range, this._height);
     }
 
     public async setH(height: number): Promise<Region> {
@@ -395,8 +411,14 @@ export class Region {
         return this;
     }
 
-    public async getH(): Promise<number | undefined> {
-        return Promise.resolve(this._height);
+    public async getH(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            if (this._height) {
+                resolve(this._height);
+            } else {
+                reject("Region has no height");
+            }
+        });
     }
 
     public async setW(width: number): Promise<Region> {
@@ -404,8 +426,14 @@ export class Region {
         return this;
     }
 
-    public async getW(): Promise<number | undefined> {
-        return Promise.resolve(this._width);
+    public async getW(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            if (this._width) {
+                resolve(this._width);
+            } else {
+                reject("Region has no width");
+            }
+        });
     }
 
     public async setX(x: number): Promise<Region> {
@@ -413,8 +441,14 @@ export class Region {
         return this;
     }
 
-    public async getX(): Promise<number | undefined> {
-        return Promise.resolve(this._left);
+    public async getX(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            if (this._left) {
+                resolve(this._left);
+            } else {
+                reject("Region has no x coordinate");
+            }
+        });
     }
 
     public async setY(y: number): Promise<Region> {
@@ -422,8 +456,14 @@ export class Region {
         return this;
     }
 
-    public async getY(): Promise<number | undefined> {
-        return Promise.resolve(this._top);
+    public async getY(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            if (this._top) {
+                resolve(this._top);
+            } else {
+                reject("Region has no y coordinate");
+            }
+        });
     }
 
     public async highlight(seconds: number): Promise<Region> {
@@ -431,20 +471,20 @@ export class Region {
         return this;
     }
 
-    public async takeScreenshot(filename: string): Promise<Region> {
-        return this;
+    public async takeScreenshot(filename: string): Promise<string> {
+        return ScreenApi.takeScreenshot(filename);
     }
 
-    public async takeScreenshotWithTimestamp(filenamePostfix: string, optFolderPath?: string, optFormat?: string): Promise<Region> {
-        return this;
+    public async takeScreenshotWithTimestamp(filename: string): Promise<string> {
+        return ScreenApi.takeScreenshotWithTimestamp(filename);
     }
 
     public async sleep(seconds: number): Promise<Region> {
-        return this;
+        return new Promise<Region>((resolve => setTimeout(() => resolve(this), seconds * 1000)));
     }
 
     public async sleepMs(milliseconds: number): Promise<Region> {
-        return this;
+        return new Promise<Region>((resolve => setTimeout(() => resolve(this), milliseconds)));
     }
 
     public async extractText(): Promise<Region> {
@@ -459,5 +499,9 @@ export class Region {
     public async moveTo(dest?: Region) {
         const target = dest ? dest : this;
         await MouseApi.move(target);
+    }
+
+    public toString(): string {
+        return `(${this._left},${this._top},${this._width},${this._height})`;
     }
 }
