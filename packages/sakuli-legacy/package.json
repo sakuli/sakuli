@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@nut-tree/nut-js": "0.1.0-beta.3",
-    "@nut-tree/secrets": "^1.0.0",
+    "@nut-tree/secrets": "^2.0.0",
     "@sakuli/commons": "1.0.0",
     "@sakuli/core": "1.0.0",
     "@sakuli/rollup-hooks": "1.0.0",
