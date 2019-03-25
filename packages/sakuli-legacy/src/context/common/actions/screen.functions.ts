@@ -1,5 +1,8 @@
 import {Region as NutRegion, screen} from "@nut-tree/nut-js";
 import {Region} from "../region.class";
+import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
+import {parse} from "path";
+import {cwd} from "process";
 
 export const ScreenApi = {
     async find(filepath: string, similarity: number, searchRegion: Region): Promise<Region> {
@@ -30,4 +33,14 @@ export const ScreenApi = {
     async width(): Promise<number> {
         return screen.width();
     },
+    async takeScreenshot(filename: string): Promise<string> {
+        const pathParts = parse(filename);
+        const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
+        return screen.capture(pathParts.name, FileType.PNG, outputDir);
+    },
+    async takeScreenshotWithTimestamp(filename: string): Promise<string> {
+        const pathParts = parse(filename);
+        const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
+        return screen.capture(pathParts.name, FileType.PNG, outputDir,  `${Date.now()}_`, "");
+    }
 };
