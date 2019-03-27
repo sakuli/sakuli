@@ -65,6 +65,8 @@ export class AccessorUtil {
      *  - [id]
      *  - className
      *  - innerText
+     *  - value
+     *  - src
      * @param element
      */
     async getStringIdentifiersForElement(element: WebElement) {
@@ -75,7 +77,9 @@ export class AccessorUtil {
                 e.getAttribute('name'),
                 e.getAttribute('id'),
                 e.className,
-                e.innerText
+                e.innerText,
+                e.value,
+                e.src
             ];
         `, element);
     }
