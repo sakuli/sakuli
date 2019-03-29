@@ -10,7 +10,7 @@ interface SakuliEncryptOptions {
 
 export const encryptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
-        command: 'encrypt <secret>',
+        command: 'encrypt [secret]',
         describe: `Encrypts a secret using $${ENCRYPTION_KEY_VARIABLE}`,
         builder(argv: Argv) {
             return argv.positional('secret', {
