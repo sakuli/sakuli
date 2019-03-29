@@ -5,7 +5,7 @@ import {Builder} from "selenium-webdriver";
 import {LegacyLoader} from "./loader/legacy-loader.class";
 import {migrationCommandProvider} from "./migration/migration-command-provider.function";
 import rollupPreset from '@sakuli/rollup-hooks'
-import {encryptCommand} from "./command/encrypt-command.class";
+import {encryptCommand} from "./encrypt-command/encrypt-command.class";
 
 export {LegacyLoader, LegacyLifecycleHooks};
 
