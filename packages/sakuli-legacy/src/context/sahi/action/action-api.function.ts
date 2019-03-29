@@ -7,8 +7,11 @@ import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
 import {focusActionApi} from "./focus-actions.function";
 import {alertActionApi} from "./alert-action.function";
-import StaleElementReferenceError = error.StaleElementReferenceError;
 import {INJECT_SAKULI_HOOK} from "./inject.const";
+import {timeout} from "./poll-action.function";
+import StaleElementReferenceError = error.StaleElementReferenceError;
+
+type SahiExpression = (...locators: SahiElementQueryOrWebElement[]) => Promise<boolean>;
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -95,10 +98,13 @@ export function actionApi(
         `, element, oldBorder);
     }
 
-    async function _wait(millis: number): Promise<void> {
-        return new Promise<void>((res) => {
-            setTimeout(() => res(), millis);
-        });
+    async function _wait(millis: number, expression?: SahiExpression): Promise<void> {
+        if (!expression) {
+            return new Promise<void>((res) => {
+                setTimeout(() => res(), millis);
+            });
+        }
+        await timeout(200, millis, expression);
     }
 
     async function _navigateTo(target: string, forceReload: boolean = false, credentials?: { user: string, password: string }): Promise<any> {
@@ -119,7 +125,7 @@ export function actionApi(
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
         if (tagName.toLocaleLowerCase() !== 'iframe') {
-            if(isSahiElementQuery(query)) {
+            if (isSahiElementQuery(query)) {
                 throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
             } else {
                 throw Error(`WebElement must be an iframe; got ${tagName} instead`);
