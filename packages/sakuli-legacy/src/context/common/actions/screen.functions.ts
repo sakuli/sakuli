@@ -4,15 +4,40 @@ import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {parse} from "path";
 import {cwd} from "process";
 
+const getCoordinates = async (region: Region) => {
+    return ({
+        left: await region.getX() || 0,
+        top: await region.getY() || 0,
+        width: await region.getW() || await screen.width(),
+        height: await region.getH() || await screen.height(),
+    })
+};
+
 export const ScreenApi = {
     async find(filepath: string, similarity: number, searchRegion: Region): Promise<Region> {
-        const left = await searchRegion.getX() || 0;
-        const top = await searchRegion.getY() || 0;
-        const width = await searchRegion.getW() || await screen.width();
-        const height = await searchRegion.getH() || await screen.height();
+        const { left, top, width, height } = await getCoordinates(searchRegion);
         return new Promise<Region>(async (resolve, reject) => {
             try {
                 const result = await screen.find(filepath, {
+                    confidence: similarity,
+                    searchRegion: new NutRegion(
+                        left,
+                        top,
+                        width,
+                        height
+                    )
+                });
+                resolve(new Region(result.left, result.top, result.width, result.height));
+            } catch (e) {
+                reject(e);
+            }
+        });
+    },
+    async waitForImage(filepath: string, timeoutMs: number, similarity: number, searchRegion: Region) {
+        const { left, top, width, height } = await getCoordinates(searchRegion);
+        return new Promise<Region>(async (resolve, reject) => {
+            try {
+                const result = await screen.waitFor(filepath, timeoutMs, {
                     confidence: similarity,
                     searchRegion: new NutRegion(
                         left,
@@ -41,6 +66,6 @@ export const ScreenApi = {
     async takeScreenshotWithTimestamp(filename: string): Promise<string> {
         const pathParts = parse(filename);
         const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
-        return screen.capture(pathParts.name, FileType.PNG, outputDir,  `${Date.now()}_`, "");
+        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${Date.now().toLocaleString()}_`, "");
     }
 };
