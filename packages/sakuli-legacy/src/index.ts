@@ -6,6 +6,7 @@ import {LegacyLoader} from "./loader/legacy-loader.class";
 import {migrationCommandProvider} from "./migration/migration-command-provider.function";
 import rollupPreset from '@sakuli/rollup-hooks'
 import {encryptCommand} from "./command/encrypt-command.class";
+import {createCommand} from "./command/create-command.class";
 
 export {LegacyLoader, LegacyLifecycleHooks};
 
@@ -14,6 +15,7 @@ const legacyPreset: SakuliPresetProvider = (reg: SakuliPresetRegistry) => {
     reg.registerProjectLoader(new LegacyLoader());
     reg.registerCommandModule(migrationCommandProvider);
     reg.registerCommandModule(encryptCommand);
+    reg.registerCommandModule(createCommand);
 
     rollupPreset(reg);
 };
