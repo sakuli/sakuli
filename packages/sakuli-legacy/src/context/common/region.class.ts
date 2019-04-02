@@ -5,6 +5,8 @@ import {KeyboardApi} from "./actions/keyboard.functions";
 import {ScreenApi} from "./actions/screen.functions";
 import {TestExecutionContext} from "@sakuli/core";
 
+import nutConfig from "./nut-global-config.class";
+
 export function createRegionClass(ctx: TestExecutionContext) {
     return class LoggingRegion extends Region {
         constructor(public _left?: number, public _top?: number, public _width?: number, public _height?: number) {
@@ -30,7 +32,15 @@ export function createRegionClass(ctx: TestExecutionContext) {
         }
 
         public async exists(imageName: string, optWaitSeconds: number): Promise<LoggingRegion> {
-            return this;
+            ctx.logger.info(`Image '${imageName} exists in region?`);
+            return new Promise<LoggingRegion>(async (resolve, reject) => {
+                try {
+                    const result = ScreenApi.waitForImage(imageName, optWaitSeconds * 1000, nutConfig.confidence, this);
+                    resolve(result);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         }
 
         public async click(): Promise<LoggingRegion> {
@@ -77,9 +87,14 @@ export function createRegionClass(ctx: TestExecutionContext) {
 
         public async waitForImage(imageName: string, seconds: number): Promise<LoggingRegion> {
             ctx.logger.info(`Waiting ${seconds} for image ${imageName}`);
-            return new Promise<LoggingRegion>(resolve => setTimeout(() => {
-                resolve(ScreenApi.find(imageName, 0.99, this));
-            }, seconds * 1000));
+            return new Promise<LoggingRegion>(async (resolve, reject) => {
+                try {
+                    const result = await ScreenApi.waitForImage(imageName, seconds * 1000, nutConfig.confidence, this);
+                    resolve(result as LoggingRegion);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         }
 
         public async paste(text: string): Promise<LoggingRegion> {
@@ -195,7 +210,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getH(): Promise<number> {
+        public async getH(): Promise<number | undefined> {
             return super.getH();
         }
 
@@ -204,7 +219,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getW(): Promise<number> {
+        public async getW(): Promise<number | undefined> {
             return super.getW();
         }
 
@@ -213,7 +228,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getX(): Promise<number> {
+        public async getX(): Promise<number | undefined> {
             return super.getX();
         }
 
@@ -222,7 +237,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async getY(): Promise<number> {
+        public async getY(): Promise<number | undefined> {
             return super.getY();
         }
 
@@ -266,7 +281,7 @@ export class Region {
     public async find(imageName: string): Promise<Region> {
         return new Promise<Region>(async (resolve, reject) => {
             try {
-                resolve(ScreenApi.find(imageName, 0.99, this));
+                resolve(ScreenApi.find(imageName, nutConfig.confidence, this));
             } catch (e) {
                 reject(e);
             }
@@ -278,7 +293,7 @@ export class Region {
     }
 
     public async exists(imageName: string, optWaitSeconds: number): Promise<Region> {
-        return this;
+        return ScreenApi.waitForImage(imageName, optWaitSeconds * 1000, nutConfig.confidence, this);
     }
 
     public async click(): Promise<Region> {
@@ -318,9 +333,7 @@ export class Region {
     }
 
     public async waitForImage(imageName: string, seconds: number): Promise<Region> {
-        return new Promise<Region>(resolve => setTimeout(() => {
-            resolve(ScreenApi.find(imageName, 0.99, this));
-        }, seconds * 1000));
+        return ScreenApi.waitForImage(imageName, seconds * 1000, nutConfig.confidence, this);
     }
 
     public async paste(text: string): Promise<Region> {
@@ -411,14 +424,8 @@ export class Region {
         return this;
     }
 
-    public async getH(): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            if (this._height) {
-                resolve(this._height);
-            } else {
-                reject("Region has no height");
-            }
-        });
+    public async getH(): Promise<number | undefined> {
+        return Promise.resolve(this._height);
     }
 
     public async setW(width: number): Promise<Region> {
@@ -426,14 +433,8 @@ export class Region {
         return this;
     }
 
-    public async getW(): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            if (this._width) {
-                resolve(this._width);
-            } else {
-                reject("Region has no width");
-            }
-        });
+    public async getW(): Promise<number | undefined> {
+        return Promise.resolve(this._width);
     }
 
     public async setX(x: number): Promise<Region> {
@@ -441,14 +442,8 @@ export class Region {
         return this;
     }
 
-    public async getX(): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            if (this._left) {
-                resolve(this._left);
-            } else {
-                reject("Region has no x coordinate");
-            }
-        });
+    public async getX(): Promise<number | undefined> {
+        return Promise.resolve(this._left);
     }
 
     public async setY(y: number): Promise<Region> {
@@ -456,19 +451,12 @@ export class Region {
         return this;
     }
 
-    public async getY(): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            if (this._top) {
-                resolve(this._top);
-            } else {
-                reject("Region has no y coordinate");
-            }
-        });
+    public async getY(): Promise<number | undefined> {
+        return Promise.resolve(this._top);
     }
 
     public async highlight(seconds: number): Promise<Region> {
-        // TODO
-        return this;
+        throw new Error("Not implemented");
     }
 
     public async takeScreenshot(filename: string): Promise<string> {
@@ -488,8 +476,7 @@ export class Region {
     }
 
     public async extractText(): Promise<Region> {
-        // TODO
-        return this;
+        throw new Error("Not implemented");
     }
 
     public async center() {

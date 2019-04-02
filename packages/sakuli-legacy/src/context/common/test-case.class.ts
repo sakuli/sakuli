@@ -1,4 +1,6 @@
-import {Sakuli, TestExecutionContext} from "@sakuli/core";
+import {TestExecutionContext} from "@sakuli/core";
+import nutConfig from "./nut-global-config.class";
+import {ScreenApi} from "./actions/screen.functions";
 
 export function createTestCaseClass(ctx: TestExecutionContext) {
     return class TestCase {
@@ -11,10 +13,11 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
             ctx.logger.info(`Start Testcase ${caseId}`);
             ctx.startTestCase({id: caseId});
             ctx.startTestStep({});
+            nutConfig.imagePaths = _imagePaths;
         }
 
         addImagePaths(...paths: string[]) {
-            this._imagePaths = this._imagePaths.concat(paths);
+            nutConfig.addImagePath(...paths);
         }
 
         endOfStep(
@@ -32,8 +35,12 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
             ctx.startTestStep();
         }
 
-        handleException<E extends Error>(e: E) {
-            ctx.updateCurrentTestCase({error: e});
+        async handleException<E extends Error>(e: E) {
+            ctx.logger.info(`Error: ${e.message}`);
+            await ScreenApi.takeScreenshotWithTimestamp("error");
+            ctx.updateCurrentTestCase({
+                error: e,
+            });
         }
 
         getLastUrl(): string {
