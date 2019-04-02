@@ -1,4 +1,4 @@
-import {Location, mouse, movement, Region as NutRegion} from "@nut-tree/nut-js";
+import {centerOf, mouse, Region as NutRegion, straightTo} from "@nut-tree/nut-js";
 import {Region} from "../region.class";
 import {ScreenApi} from "./screen.functions";
 
@@ -23,8 +23,8 @@ export const MouseApi = {
     },
     async dragAndDrop(region: Region) {
         await mouse.drag(
-            await movement.straightTo(
-                Location.centerOf(
+            straightTo(
+                centerOf(
                     await toNutRegion(region)
                 )
             )
@@ -32,8 +32,8 @@ export const MouseApi = {
     },
     async move(region: Region) {
         await mouse.move(
-            await movement.straightTo(
-                Location.centerOf(
+            straightTo(
+                centerOf(
                     await toNutRegion(region)
                 )
             )
