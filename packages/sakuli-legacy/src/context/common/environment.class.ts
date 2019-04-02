@@ -7,6 +7,9 @@ import {TestExecutionContext} from "@sakuli/core";
 import {ScreenApi} from "./actions/screen.functions";
 import {MouseApi} from "./actions/mouse.functions";
 
+import nutConfig from "./nut-global-config.class";
+import {execute} from "./actions/command.function";
+
 export function createEnvironmentClass(ctx: TestExecutionContext) {
     return class LoggingEnvironment extends Environment {
         constructor() {
@@ -46,7 +49,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext) {
         }
 
         public async getRegionFromFocusedWindow() {
-            // TODO
+            throw new Error("Not Implemented");
         }
 
         public async getClipboard(): Promise<string> {
@@ -71,7 +74,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext) {
         }
 
         public async cleanClipboard(): Promise<void> {
-            // TODO
+            throw new Error("Not Implemented");
         }
 
         public async paste(text: string): Promise<LoggingEnvironment> {
@@ -162,31 +165,27 @@ export function createEnvironmentClass(ctx: TestExecutionContext) {
         }
 
         public getProperty(key: string): string | undefined {
-            // TODO
-            return;
+            throw new Error("Not Implemented");
         }
     }
 }
 
 export class Environment {
-    static DEFAULT_SIMILARITY = 0.99;
-    currentSimilarity = Environment.DEFAULT_SIMILARITY;
-
     constructor() {
     }
 
     public getSimilarity(): number {
-        return this.currentSimilarity;
+        return nutConfig.confidence;
     }
 
     public setSimilarity(similarity: number) {
         if (similarity > 0 && similarity <= 1) {
-            this.currentSimilarity = similarity;
+            nutConfig.confidence = similarity;
         }
     }
 
     public resetSimilarity() {
-        this.currentSimilarity = Environment.DEFAULT_SIMILARITY;
+        nutConfig.resetConfidence();
     }
 
     public async takeScreenshot(filename: string): Promise<string> {
@@ -206,7 +205,7 @@ export class Environment {
     }
 
     public async getRegionFromFocusedWindow() {
-        // TODO
+        throw new Error("Not Implemented");
     }
 
     public async getClipboard(): Promise<string> {
@@ -229,7 +228,7 @@ export class Environment {
     }
 
     public async cleanClipboard(): Promise<void> {
-        // TODO
+        throw new Error("Not Implemented");
     }
 
     public async paste(text: string): Promise<Environment> {
@@ -306,7 +305,18 @@ export class Environment {
     }
 
     public runCommand(command: string, optThrowException: boolean = false): Promise<CommandLineResult> {
-        return new Promise<CommandLineResult>(resolve => resolve);
+        return new Promise<CommandLineResult>(async (resolve, reject) => {
+            try {
+                const result = await execute(command);
+                if (result.getExitCode() !== 0 && optThrowException) {
+                    reject(`Command execution failed with exit code '${result.getExitCode()}`);
+                } else {
+                    resolve(result);
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     public getEnv(key: string): string | undefined {
@@ -314,7 +324,6 @@ export class Environment {
     }
 
     public getProperty(key: string): string | undefined {
-        // TODO
-        return;
+        throw new Error("Not Implemented");
     }
 }

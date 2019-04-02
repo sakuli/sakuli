@@ -44,4 +44,16 @@ describe("Environment", () => {
         // THEN
         expect(result).toEqual("win32");
     });
+
+    it("should contain 'Windows'", async () => {
+        // GIVEN
+        const SUT = new Environment();
+
+        // WHEN
+        const result = await SUT.runCommand("systeminfo");
+
+        // THEN
+        expect(result.getExitCode()).toEqual(0);
+        expect(result.getOutput()).toContain("Windows");
+    });
 });

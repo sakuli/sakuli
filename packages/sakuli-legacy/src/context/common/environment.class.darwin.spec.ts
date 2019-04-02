@@ -44,4 +44,16 @@ describe("Environment", () => {
         // THEN
         expect(result).toEqual("darwin");
     });
+
+    it("should return 'Darwin'", async () => {
+        // GIVEN
+        const SUT = new Environment();
+
+        // WHEN
+        const result = await SUT.runCommand("uname");
+
+        // THEN
+        expect(result.getExitCode()).toEqual(0);
+        expect(result.getOutput()).toEqual("Darwin");
+    });
 });
