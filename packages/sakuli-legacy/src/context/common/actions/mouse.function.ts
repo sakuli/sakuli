@@ -1,6 +1,6 @@
 import {centerOf, mouse, Region as NutRegion, straightTo} from "@nut-tree/nut-js";
 import {Region} from "../region.class";
-import {ScreenApi} from "./screen.functions";
+import {ScreenApi} from "./screen.function";
 
 const toNutRegion = async (region: Region): Promise<NutRegion> => {
     return new NutRegion(
@@ -16,7 +16,8 @@ export const MouseApi = {
         await mouse.leftClick()
     },
     async doubleClick() {
-        await mouse.leftClick()
+        await mouse.leftClick();
+        await mouse.leftClick();
     },
     async rightClick() {
         await mouse.rightClick()
