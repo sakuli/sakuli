@@ -14,12 +14,13 @@ const getCoordinates = async (region: Region) => {
 };
 
 export const ScreenApi = {
-    async find(filepath: string, similarity: number, searchRegion: Region): Promise<Region> {
-        const { left, top, width, height } = await getCoordinates(searchRegion);
+    async find(filename: string, path: string, confidence: number, searchRegion: Region): Promise<Region> {
+        const {left, top, width, height} = await getCoordinates(searchRegion);
         return new Promise<Region>(async (resolve, reject) => {
             try {
-                const result = await screen.find(filepath, {
-                    confidence: similarity,
+                screen.config.resourceDirectory = path;
+                const result = await screen.find(filename, {
+                    confidence,
                     searchRegion: new NutRegion(
                         left,
                         top,
@@ -33,12 +34,13 @@ export const ScreenApi = {
             }
         });
     },
-    async waitForImage(filepath: string, timeoutMs: number, similarity: number, searchRegion: Region) {
-        const { left, top, width, height } = await getCoordinates(searchRegion);
+    async waitForImage(filepath: string, path: string, confidence: number, timeoutMs: number, searchRegion: Region) {
+        const {left, top, width, height} = await getCoordinates(searchRegion);
         return new Promise<Region>(async (resolve, reject) => {
             try {
+                screen.config.resourceDirectory = path;
                 const result = await screen.waitFor(filepath, timeoutMs, {
-                    confidence: similarity,
+                    confidence,
                     searchRegion: new NutRegion(
                         left,
                         top,
@@ -66,6 +68,6 @@ export const ScreenApi = {
     async takeScreenshotWithTimestamp(filename: string): Promise<string> {
         const pathParts = parse(filename);
         const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
-        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${Date.now().toLocaleString()}_`, "");
+        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${new Date().toISOString()}_`, "");
     }
 };
