@@ -1,8 +1,10 @@
+import {cwd} from "process";
+
 class NutGlobalConfig {
     constructor(
         private _confidence: number = 0.99,
-        private _imagePaths: string[] = [],
-        private readonly defaultConfidence: number = 0.95,
+        private _imagePaths: string[] = [cwd()],
+        private readonly defaultConfidence: number = 0.99,
     ) {
     }
 
@@ -27,7 +29,7 @@ class NutGlobalConfig {
     }
 
     addImagePath(...newPath: string[]) {
-        this._imagePaths.concat(newPath);
+        this._imagePaths = this._imagePaths.concat(newPath);
     }
 }
 
