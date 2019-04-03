@@ -3,7 +3,6 @@ import { join } from 'path';
 import { pathExists, readdir, readFileSync } from 'fs-extra';
 import { parseSahiTestsuiteDefiniton } from './parse-sahi-testsuite-definition.function';
 import { throwIfAbsent, ifPresent } from '@sakuli/commons';
-import { marshallPropertiesToObject } from '../properties/marshall-properties-to-object.function';
 import { LegacyProjectProperties } from './legacy-project-properties.class';
 import PropertiesReader from 'properties-reader'
 import { LegacyProject } from './legacy-project.class';
@@ -37,7 +36,8 @@ export class LegacyLoader implements ProjectLoader {
             () => PropertiesReader(join(path, testsuitePropertiesFile))
         )
 
-        return marshallPropertiesToObject(LegacyProjectProperties, propertyReader);
+        // TODO: use new API
+        return new LegacyProjectProperties()
     }
 
     async load(path: string): Promise<LegacyProject> {

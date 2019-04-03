@@ -12,7 +12,7 @@ describe('JavaPropertiesReader', () => {
         property.bar=overridden
         property.baz=bazval
         `}
-    ]
+    ];
 
     beforeAll(() => {
         testFiles.forEach(({name, content}) => writeFileSync(name, content))
@@ -20,7 +20,7 @@ describe('JavaPropertiesReader', () => {
 
     it('should create a reader', () => {
         const [testfile] = testFiles;
-        const reader = createPropertyReader(testfile.name)
+        const reader = createPropertyReader(testfile.name);
         const all = reader.getAllProperties();
         expect(Object.keys(all).length).toBe(2);
         expect(all['property.foo']).toBe('fooval');

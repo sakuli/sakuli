@@ -1,8 +1,7 @@
 import mockFs from 'mock-fs';
-import { LegacyLoader } from "./legacy-loader.class";
-import { readdirSync } from "fs-extra";
-import { stripIndent } from 'common-tags';
-import { LegacyProject } from './legacy-project.class';
+import {LegacyLoader} from "./legacy-loader.class";
+import {stripIndent} from 'common-tags';
+import {LegacyProject} from './legacy-project.class';
 
 describe('LegacyLoader', () => {
 
@@ -36,7 +35,7 @@ describe('LegacyLoader', () => {
         })
 
         it('should read property files in correct priority', () => {
-            expect(project.properties.testsuiteName).toBe('test')
+            expect(project.properties.testsuiteName).toBe('test');
             expect(project.properties.sakuliEnvironmentSimilarityDefault).toEqual(.99);
         });
 
@@ -101,8 +100,6 @@ describe('LegacyLoader', () => {
             done();
         }
     })
-
-
 
 
     afterEach(() => {
