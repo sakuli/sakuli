@@ -1,5 +1,5 @@
 import {clipboard, Key, keyboard} from "@nut-tree/nut-js";
-import {copyShortcut, pasteShortcut} from "./shortcut.functions";
+import {copyShortcut, pasteShortcut} from "./shortcut.function";
 
 export const ClipboardApi = {
     async paste(): Promise<string> {

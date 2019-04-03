@@ -1,5 +1,5 @@
 import {clipboard, Key as NutKey, keyboard} from "@nut-tree/nut-js";
-import {pasteShortcut} from "./shortcut.functions";
+import {pasteShortcut} from "./shortcut.function";
 import {withEncryption} from "../secrets.function";
 import {Key} from "../key.class";
 
