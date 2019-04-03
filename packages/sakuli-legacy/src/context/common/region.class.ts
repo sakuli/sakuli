@@ -1,11 +1,23 @@
 import {Button} from "./button.class";
 import {Key} from "./key.class";
-import {MouseApi} from "./actions/mouse.functions";
-import {KeyboardApi} from "./actions/keyboard.functions";
-import {ScreenApi} from "./actions/screen.functions";
+import {MouseApi} from "./actions/mouse.function";
+import {KeyboardApi} from "./actions/keyboard.function";
+import {ScreenApi} from "./actions/screen.function";
 import {TestExecutionContext} from "@sakuli/core";
 
 import nutConfig from "./nut-global-config.class";
+import {existsSync} from "fs";
+import {join} from "path";
+
+const determineResourcePath = (imageName: string) => {
+    for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {
+        const path = nutConfig.imagePaths[(nutConfig.imagePaths.length - 1) - idx];
+        if (existsSync(join(path, imageName))) {
+            return path;
+        }
+    }
+    throw new Error(`Failed to locate ${imageName} in directories [${nutConfig.imagePaths}]`);
+};
 
 export function createRegionClass(ctx: TestExecutionContext) {
     return class LoggingRegion extends Region {
@@ -15,13 +27,14 @@ export function createRegionClass(ctx: TestExecutionContext) {
 
         public async find(imageName: string): Promise<LoggingRegion> {
             ctx.logger.info(`Trying to locate image ${imageName}`);
-            return new Promise<LoggingRegion>(async (resolve, reject) => {
+            return new Promise<Region>(async (resolve, reject) => {
                 try {
-                    const result = await super.find(imageName);
+                    const resourcePath = determineResourcePath(imageName);
+                    ctx.logger.info(`Loading '${imageName}' from path '${resourcePath}'`);
+                    const result = await ScreenApi.find(imageName, resourcePath, nutConfig.confidence, this);
                     ctx.logger.info(`Located at: (${result._left},${result._top},${result._width},${result._height})`);
-                    resolve(result as LoggingRegion);
+                    resolve(result);
                 } catch (e) {
-                    ctx.logger.error(e);
                     reject(e);
                 }
             });
@@ -31,13 +44,15 @@ export function createRegionClass(ctx: TestExecutionContext) {
             return this;
         }
 
-        public async exists(imageName: string, optWaitSeconds: number): Promise<LoggingRegion> {
+        public async exists(imageName: string, optWaitSeconds: number = 0): Promise<LoggingRegion> {
             ctx.logger.info(`Image '${imageName} exists in region?`);
-            return new Promise<LoggingRegion>(async (resolve, reject) => {
+            return new Promise<Region>(async (resolve, reject) => {
                 try {
-                    const result = ScreenApi.waitForImage(imageName, optWaitSeconds * 1000, nutConfig.confidence, this);
-                    resolve(result);
+                    const resourcePath = determineResourcePath(imageName);
+                    ctx.logger.info(`Loading '${imageName}' from path '${resourcePath}'`);
+                    resolve(ScreenApi.waitForImage(imageName, resourcePath, nutConfig.confidence, optWaitSeconds * 1000, this));
                 } catch (e) {
+                    ctx.logger.error(e);
                     reject(e);
                 }
             });
@@ -87,11 +102,13 @@ export function createRegionClass(ctx: TestExecutionContext) {
 
         public async waitForImage(imageName: string, seconds: number): Promise<LoggingRegion> {
             ctx.logger.info(`Waiting ${seconds} for image ${imageName}`);
-            return new Promise<LoggingRegion>(async (resolve, reject) => {
+            return new Promise<Region>(async (resolve, reject) => {
                 try {
-                    const result = await ScreenApi.waitForImage(imageName, seconds * 1000, nutConfig.confidence, this);
-                    resolve(result as LoggingRegion);
+                    const resourcePath = determineResourcePath(imageName);
+                    ctx.logger.info(`Loading '${imageName}' from path '${resourcePath}'`);
+                    resolve(ScreenApi.waitForImage(imageName, resourcePath, nutConfig.confidence, seconds * 1000, this));
                 } catch (e) {
+                    ctx.logger.error(e);
                     reject(e);
                 }
             });
@@ -267,11 +284,9 @@ export function createRegionClass(ctx: TestExecutionContext) {
         }
 
         public async extractText(): Promise<LoggingRegion> {
-            // TODO
-            return this;
+            return super.extractText();
         }
     }
-
 }
 
 export class Region {
@@ -279,9 +294,10 @@ export class Region {
     }
 
     public async find(imageName: string): Promise<Region> {
-        return new Promise<Region>(async (resolve, reject) => {
+        return new Promise<Region>((resolve, reject) => {
             try {
-                resolve(ScreenApi.find(imageName, nutConfig.confidence, this));
+                const resourcePath = determineResourcePath(imageName);
+                resolve(ScreenApi.find(imageName, resourcePath, nutConfig.confidence, this));
             } catch (e) {
                 reject(e);
             }
@@ -292,8 +308,15 @@ export class Region {
         return this;
     }
 
-    public async exists(imageName: string, optWaitSeconds: number): Promise<Region> {
-        return ScreenApi.waitForImage(imageName, optWaitSeconds * 1000, nutConfig.confidence, this);
+    public async exists(imageName: string, optWaitSeconds: number = 0): Promise<Region> {
+        return new Promise<Region>((resolve, reject) => {
+            try {
+                const resourcePath = determineResourcePath(imageName);
+                resolve(ScreenApi.waitForImage(imageName, resourcePath, nutConfig.confidence, optWaitSeconds * 1000, this));
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     public async click(): Promise<Region> {
@@ -333,7 +356,14 @@ export class Region {
     }
 
     public async waitForImage(imageName: string, seconds: number): Promise<Region> {
-        return ScreenApi.waitForImage(imageName, seconds * 1000, nutConfig.confidence, this);
+        return new Promise<Region>((resolve, reject) => {
+            try {
+                const resourcePath = determineResourcePath(imageName);
+                resolve(ScreenApi.waitForImage(imageName, resourcePath, nutConfig.confidence, seconds * 1000, this));
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     public async paste(text: string): Promise<Region> {

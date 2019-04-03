@@ -1,11 +1,11 @@
 import {Key} from "./key.class";
 import {CommandLineResult} from "./commandline-result.class";
 import {decryptSecret} from "./secrets.function";
-import {ClipboardApi} from "./actions/clipboard.functions";
-import {KeyboardApi} from "./actions/keyboard.functions";
+import {ClipboardApi} from "./actions/clipboard.function";
+import {KeyboardApi} from "./actions/keyboard.function";
 import {TestExecutionContext} from "@sakuli/core";
-import {ScreenApi} from "./actions/screen.functions";
-import {MouseApi} from "./actions/mouse.functions";
+import {ScreenApi} from "./actions/screen.function";
+import {MouseApi} from "./actions/mouse.function";
 
 import nutConfig from "./nut-global-config.class";
 import {execute} from "./actions/command.function";
