@@ -1,6 +1,7 @@
 import {TestExecutionContext} from "@sakuli/core";
 import nutConfig from "./nut-global-config.class";
-import {ScreenApi} from "./actions/screen.functions";
+import {ScreenApi} from "./actions/screen.function";
+import {ifPresent} from "@sakuli/commons";
 
 export function createTestCaseClass(ctx: TestExecutionContext) {
     return class TestCase {
@@ -13,7 +14,7 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
             ctx.logger.info(`Start Testcase ${caseId}`);
             ctx.startTestCase({id: caseId});
             ctx.startTestStep({});
-            nutConfig.imagePaths = _imagePaths;
+            nutConfig.addImagePath(..._imagePaths);
         }
 
         addImagePaths(...paths: string[]) {
@@ -37,7 +38,9 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
 
         async handleException<E extends Error>(e: E) {
             ctx.logger.info(`Error: ${e.message}`);
-            await ScreenApi.takeScreenshotWithTimestamp("error");
+            const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => suite.id, () => "UNKNOWN_TESTSUITE");
+            const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => testCase.id, () => "UNKNOWN_TESTCASE");
+            await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
             ctx.updateCurrentTestCase({
                 error: e,
             });
