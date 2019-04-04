@@ -36,12 +36,14 @@ describe('AccessorUtil', () => {
             aria-describedby="aria"
             class="so many names"
             name="my-name-is-earl"
+            value="some-value"
+            src="some-image.png"
           >Some Text content</div>
         `));
         const element = await driver.findElement(By.id('element-to-test'));
         const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
         return expect(identifiers).toEqual([
-            'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'Some Text content'
+            'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'Some Text content', 'some-value', 'some-image.png'
         ]);
     });
 

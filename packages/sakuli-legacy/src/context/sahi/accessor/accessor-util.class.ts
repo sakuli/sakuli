@@ -172,7 +172,6 @@ export class AccessorUtil {
         try {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
-            this.testExecutionContext.logger.info(`fetchElements: ${sahiQueryToString(queryAfterRelation)}: ${elements.length}`);
             const elementsAfterIdentifier = await this.resolveByIdentifier(elements, queryAfterRelation.identifier);
             if (elementsAfterIdentifier.length) {
                 return elementsAfterIdentifier;
