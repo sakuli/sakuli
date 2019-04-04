@@ -18,7 +18,7 @@ describe("argvLens", () => {
         [['foo'], 'foo'],
         [['foo', 'bar'], 'fooBar'],
         [['foo', 'deepBar', 'bar'], 'fooDeepBar'],
-    ])("should read from path %s the value %s", (path: string[], expectedValue: string) => {
+    ])("should read from path %s the value %s", (path: any, expectedValue: any) => {
         const lens = argvLens(path);
         expect(lens(data)).toEqual(expectedValue);
 
