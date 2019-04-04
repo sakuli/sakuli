@@ -1,7 +1,7 @@
-import * as fs from "fs";
-import {fs as memfs, vol} from 'memfs';
-const {patchFs} = require('fs-monkey');
+import {vol, Volume} from 'memfs';
 import {join} from "path";
+
+const {patchFs} = require('fs-monkey');
 
 interface FsLayout {
     [path: string]: LayoutNode;
@@ -29,12 +29,16 @@ export function flattenLayout(l: FsLayout): Record<string, string> {
                 })
             }
         }, current);
-    })(first, '/');
+    })(first, '');
 }
 
 export function mockFs(_layout: FsLayout) {
+    (process.env.MEMFS_DONT_WARN as any) = true;
     layout = _layout;
 
     vol.fromJSON(flattenLayout(_layout));
-    patchFs(vol);
+}
+
+export function getVol() {
+    return vol;
 }

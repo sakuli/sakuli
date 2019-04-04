@@ -5,9 +5,7 @@ import mockFs from 'mock-fs'
 import {mockPartial} from "sneer";
 import {Project} from "../loader/model";
 import Mocked = jest.Mocked;
-import Mock = jest.Mock;
 
-type RequiredLifecycleHooks = Required<TestExecutionLifecycleHooks>;
 
 describe('SakuliRunner', () => {
 
@@ -20,7 +18,7 @@ describe('SakuliRunner', () => {
         beforeExecution: jest.fn(),
     });
 
-    const createScriptExecutorMock = (): TestScriptExecutor => mockPartial<TestScriptExecutor>({
+    const createScriptExecutorMock = (): Mocked<TestScriptExecutor> => mockPartial<Mocked<TestScriptExecutor>>({
         execute: jest.fn((_: any, ctx: any) => ({...ctx}))
     });
 
@@ -40,7 +38,7 @@ describe('SakuliRunner', () => {
         let sakuliRunner: SakuliRunner;
         let lifecycleHooks1: jest.Mocked<TestExecutionLifecycleHooks>;
         let lifecycleHooks2: jest.Mocked<TestExecutionLifecycleHooks>;
-        let scriptExecutor: TestScriptExecutor;
+        let scriptExecutor: jest.Mocked<TestScriptExecutor>;
         const projectWithThreeTestFiles = mockPartial<Project>({
             rootDir: 'somedir',
             testFiles: [
@@ -89,8 +87,8 @@ describe('SakuliRunner', () => {
         });
 
         it('should execute with a merged context object from all lifecyclehooks', async done => {
-            (lifecycleHooks1.requestContext! as Mock).mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}));
-            (lifecycleHooks2.requestContext! as Mock).mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}));
+            lifecycleHooks1.requestContext!.mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}) as any);
+            lifecycleHooks2.requestContext!.mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}) as any);
             await sakuliRunner.execute(projectWithThreeTestFiles);
             const expectedContext = expect.objectContaining({
                 ctx1: 'ctx1',
@@ -104,8 +102,8 @@ describe('SakuliRunner', () => {
         });
 
         it('should get all proceed contexts from execute', async () => {
-            (lifecycleHooks1.requestContext! as Mock).mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}));
-            (lifecycleHooks2.requestContext! as Mock).mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}));
+            lifecycleHooks1.requestContext!.mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}) as any);
+            lifecycleHooks2.requestContext!.mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}) as any);
             const result = await sakuliRunner.execute(projectWithThreeTestFiles);
             return expect(result).toEqual(expect.objectContaining({
                 common: 'overridden',

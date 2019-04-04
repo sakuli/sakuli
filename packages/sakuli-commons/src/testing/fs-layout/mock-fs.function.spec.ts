@@ -1,5 +1,10 @@
-import {flattenLayout} from "./mock-fs.function";
+import {flattenLayout, mockFs} from "./mock-fs.function";
 import {stripIndent} from "common-tags";
+import {vol} from "memfs";
+jest.mock('fs', () => vol);
+import {readdirSync, readFileSync} from "fs";
+
+
 
 describe('mock-fs', () => {
 
@@ -28,11 +33,39 @@ describe('mock-fs', () => {
             });
 
             expect(flatted).toEqual(expect.objectContaining({
-                "/path/to/testsuites/sakuli.properties": expect.stringContaining('sakuli.environment.similarity'),
-                "/path/to/testsuites/suite/case2/sakuli_demo.js": "// Test"
+                "path/to/testsuites/sakuli.properties": expect.stringContaining('sakuli.environment.similarity'),
+                "path/to/testsuites/suite/case2/sakuli_demo.js": "// Test"
             }))
         });
 
+    })
+
+    describe('mocked function', () => {
+        it('should mock a file', () => {
+            mockFs({
+                "path": {
+                    "to": {
+                        "file.txt": "Hello World"
+                    }
+                }
+            });
+
+            const fileContent = readFileSync('path/to/file.txt').toString();
+            expect(fileContent).toEqual('Hello World')
+
+        });
+
+        it('should readDir', () => {
+            mockFs({
+                "path": {
+                    "to": {
+                        "file.txt": "Hello World"
+                    }
+                }
+            });
+            const dirCnt = readdirSync('path');
+            expect(dirCnt).toEqual(expect.arrayContaining(['to']))
+        });
     })
 
 });

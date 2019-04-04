@@ -1,38 +1,35 @@
 import {LegacyLoader} from "./legacy-loader.class";
 import {stripIndent} from 'common-tags';
 import {Project} from "@sakuli/core";
-import {mockFs} from "@sakuli/commons";
+import {promises as fs} from 'fs';
+import {tmpdir} from 'os';
+import {join, sep} from 'path';
 
 describe('LegacyLoader', () => {
 
+    let tmpDir: string = '';
     describe('with a valid project structure', () => {
         let loader: LegacyLoader;
         let project: Project;
         beforeEach(async function mockValidProjectLayout(done) {
-            mockFs({
-                'path/to/testsuites': {
-                    'sakuli.properties': `
-                        sakuli.environment.similarity.default=0.99
-                    `,
-                    'suite': {
-                        'testsuite.properties': `testsuite.name=test`,
-                        'testsuite.suite': stripIndent`
+            tmpDir = await fs.mkdtemp(`${tmpdir()}${sep}`);
+
+            await fs.mkdir(join(tmpDir, 'path/to/testsuites/suite/case1'), {recursive: true});
+            await fs.mkdir(join(tmpDir, 'path/to/testsuites/suite/case2'), {recursive: true});
+            await fs.writeFile(join(tmpDir, 'path/to/testsuites/sakuli.properties'), 'sakuli.environment.similarity.default=0.99');
+            await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/testsuite.properties'), 'testsuite.name=test');
+            await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/testsuite.suite'), stripIndent`
                             case1/sakuli_demo.js http://sahi.example.com/_s_/dyn/Driver_initialized
                             case2/sakuli_demo.js http://sahi.example.com/_s_/dyn/Driver_initialized
-                        `,
-                        case1: {
-                            'sakuli_demo.js': '// Test'
-                        },
-                        case2: {
-                            'sakuli_demo.js': '// Test'
-                        }
-                    }
-                }
-            });
+                `);
+            await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/case1/sakuli_demo.js'), '// Test');
+            await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/case2/sakuli_demo.js'), '// Test');
+
             loader = new LegacyLoader();
-            project = await loader.load(new Project('path/to/testsuites/suite'));
+            project = await loader.load(new Project(join(tmpDir, 'path/to/testsuites/suite')));
             done();
         });
+
 
         it('should read sahi file', () => {
             expect(project.testFiles.length).toBe(2);
@@ -42,37 +39,33 @@ describe('LegacyLoader', () => {
 
     it('should throw with missing testsuite.properties', async (done) => {
         let loader: LegacyLoader;
+        let project: Project;
+        tmpDir = await fs.mkdtemp(`${tmpdir()}${sep}`);
 
-        mockFs({
-            'path/to/testsuites': {
-                'sakuli.properties': `
-                        sakuli.environment.similarity.default=0.99
-                    `,
-                'suite': {
-                    'testsuite.suite': stripIndent`
+        await fs.mkdir(join(tmpDir, 'path/to/testsuites/suite/case1'), {recursive: true});
+        await fs.mkdir(join(tmpDir, 'path/to/testsuites/suite/case2'), {recursive: true});
+        await fs.writeFile(join(tmpDir, 'path/to/testsuites/sakuli.properties'), 'sakuli.environment.similarity.default=0.99');
+        await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/testsuite.suite'), stripIndent`
                             case1/sakuli_demo.js http://sahi.example.com/_s_/dyn/Driver_initialized
                             case2/sakuli_demo.js http://sahi.example.com/_s_/dyn/Driver_initialized
-                        `,
-                    case1: {
-                        'sakuli_demo.js': '// Test'
-                    },
-                    case2: {
-                        'sakuli_demo.js': '// Test'
-                    }
-                }
-            }
-        });
+                `);
+        await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/case1/sakuli_demo.js'), '// Test');
+        await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/case2/sakuli_demo.js'), '// Test');
+
         try {
             loader = new LegacyLoader();
-            await loader.load(new Project('path/to/testsuites/suite'));
+            project = await loader.load(new Project(join(tmpDir, 'path/to/testsuites/suite')));
             done.fail();
         } catch (e) {
             expect(e.message).toContain('testsuite.properties');
-            done()
+            done();
         }
     });
 
-    afterEach(() => {
-        mockFs.restore();
+    afterEach(async () => {
+        try {
+            await fs.unlink(tmpDir)
+        } catch (e) {
+        }
     })
 });

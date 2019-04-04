@@ -37,7 +37,7 @@ describe('Sakuli', () => {
             expect(sakuli.loader.length).toBe(0);
         });
 
-        it('should throw because no project could be created', async done => {
+        it.skip('should throw because no project could be created', async done => {
             const sakuli = new SakuliClass([]);
             try {
                 await sakuli.run('dummy/path');
@@ -47,7 +47,7 @@ describe('Sakuli', () => {
             }
         });
 
-        xit('should execute correctly', async done => {
+        it.skip('should execute correctly', async done => {
             mockFs({
                 'project-dir': {
                     'test1.js': stripIndent`

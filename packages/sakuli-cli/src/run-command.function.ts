@@ -27,7 +27,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
             }).demandOption('path');
         },
 
-        async handler(runOptions: SakuliRunOptions) {
+        async handler(runOptions: any) {
             const logStream = createWriteStream('sakuli.log');
             sakuli.testExecutionContext.logger.onEvent(e => {
                 logStream.write(`[${e.time}] ${e.level} ${e.message}\n`)
