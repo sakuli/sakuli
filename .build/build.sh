@@ -22,7 +22,8 @@ cd $targetDir
 echo "Installing node version $nodeVersion"
 nvm install $nodeVersion
 echo "Installing Docker"
-apt-get update && apt-get install -y docker
+apt-get install -y curl
+curl https://get.docker.com | bash
 docker pull selenium/standalone-chrome-debug
 docker pull httpd
 echo "Installing dependencies"
