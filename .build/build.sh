@@ -23,12 +23,14 @@ echo "Installing node version $nodeVersion"
 nvm install $nodeVersion
 echo "Installing Docker"
 apt-get update && apt-get install -y docker
+docker pull selenium/standalone-chrome-debug
+docker pull httpd
 echo "Installing dependencies"
 npm i -g lerna gh-pages
 echo "npm ci"
 npm ci > /dev/null 2>&1
-echo "lerna run build"
-lerna run build
+echo "npm run build"
+npm run build
 echo "lerna run test"
 npm test -- --coverage --runInBand --ci --bail --coverageReporters=text-lcov
 npx coveralls
