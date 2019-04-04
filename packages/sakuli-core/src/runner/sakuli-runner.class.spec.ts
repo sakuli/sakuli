@@ -3,6 +3,7 @@ import {TestExecutionLifecycleHooks} from "./context-provider.interface";
 import {TestScriptExecutor} from "./test-script-executor.interface";
 import mockFs from 'mock-fs'
 import {mockPartial} from "sneer";
+import {Project} from "../loader/model";
 
 type RequiredLifecycleHooks = Required<TestExecutionLifecycleHooks>;
 
@@ -38,14 +39,14 @@ describe('SakuliRunner', () => {
         let lifecycleHooks1: jest.Mocked<TestExecutionLifecycleHooks>;
         let lifecycleHooks2: jest.Mocked<TestExecutionLifecycleHooks>;
         let scriptExecutor: jest.Mocked<TestScriptExecutor>;
-        const projectWithThreeTestFiles = {
+        const projectWithThreeTestFiles = mockPartial<Project>({
             rootDir: 'somedir',
             testFiles: [
                 {path: 'root/test1.js'},
                 {path: 'root/test2.js'},
                 {path: 'root/test3.js'}
             ]
-        };
+        });
         beforeEach(() => {
             lifecycleHooks1 = createContextProviderMock();
             lifecycleHooks2 = createContextProviderMock();

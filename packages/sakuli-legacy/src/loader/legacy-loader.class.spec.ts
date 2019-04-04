@@ -1,13 +1,13 @@
-import mockFs from 'mock-fs';
 import {LegacyLoader} from "./legacy-loader.class";
 import {stripIndent} from 'common-tags';
-import {LegacyProject} from './legacy-project.class';
+import {Project} from "@sakuli/core";
+import {mockFs} from "@sakuli/commons";
 
 describe('LegacyLoader', () => {
 
     describe('with a valid project structure', () => {
         let loader: LegacyLoader;
-        let project: LegacyProject;
+        let project: Project;
         beforeEach(async function mockValidProjectLayout(done) {
             mockFs({
                 'path/to/testsuites': {
@@ -28,26 +28,20 @@ describe('LegacyLoader', () => {
                         }
                     }
                 }
-            })
+            });
             loader = new LegacyLoader();
-            project = await loader.load('path/to/testsuites/suite');
+            project = await loader.load(new Project('path/to/testsuites/suite'));
             done();
-        })
-
-        it('should read property files in correct priority', () => {
-            expect(project.properties.testsuiteName).toBe('test');
-            expect(project.properties.sakuliEnvironmentSimilarityDefault).toEqual(.99);
         });
 
         it('should read sahi file', () => {
             expect(project.testFiles.length).toBe(2);
         })
 
-    })
+    });
 
     it('should throw with missing testsuite.properties', async (done) => {
         let loader: LegacyLoader;
-        let project: LegacyProject;
 
         mockFs({
             'path/to/testsuites': {
@@ -67,40 +61,16 @@ describe('LegacyLoader', () => {
                     }
                 }
             }
-        })
+        });
         try {
             loader = new LegacyLoader();
-            project = await loader.load('path/to/testsuites/suite');
+            await loader.load(new Project('path/to/testsuites/suite'));
             done.fail();
         } catch (e) {
             expect(e.message).toContain('testsuite.properties');
             done()
         }
-    })
-
-    it('should throw with missing testsuite.properties', async (done) => {
-        let loader: LegacyLoader;
-        let project: LegacyProject;
-        mockFs({
-            'path/to/testsuites': {
-                'sakuli.properties': `
-                        sakuli.environment.similarity.default=0.99
-                    `,
-                'suite': {
-                    'testsuite.properties': ''
-                }
-            }
-        })
-        try {
-            loader = new LegacyLoader();
-            project = await loader.load('path/to/testsuites/suite');
-            done.fail();
-        } catch (e) {
-            expect(e.message).toContain('testsuite.suite')
-            done();
-        }
-    })
-
+    });
 
     afterEach(() => {
         mockFs.restore();

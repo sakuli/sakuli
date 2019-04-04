@@ -1,6 +1,5 @@
-import {LegacyProject} from "../loader/legacy-project.class";
 import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
-import {ifPresent, isPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case.class";
 import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
@@ -8,7 +7,7 @@ import {Environment} from "./common/environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
-import {isAbsolute, join, parse, sep} from "path";
+import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
@@ -32,8 +31,9 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     }
 
-    async onProject(project: LegacyProject) {
-        const browser: keyof Capabilities = <keyof Capabilities>project.properties.testsuiteBrowser;
+    async onProject(project: Project) {
+        //const props: LegacyProjectProperties = project.
+        const browser: keyof typeof Capabilities = 'chrome';
         const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         const caps = capsProducer();
         this.driver = this.builder
@@ -59,14 +59,14 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     private currentFile: string = '';
-    private currentProject: Maybe<LegacyProject>;
+    private currentProject: Maybe<Project>;
 
-    async beforeRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext) {
+    async beforeRunFile(file: TestFile, project: Project, ctx: TestExecutionContext) {
         this.currentFile = file.path;
         this.currentProject = project;
     }
 
-    async afterRunFile(file: TestFile, project: LegacyProject, ctx: TestExecutionContext) {
+    async afterRunFile(file: TestFile, project: Project, ctx: TestExecutionContext) {
         const {name} = parse(file.path);
         ifPresent(ctx.getCurrentTestCase(),
             ctc => {

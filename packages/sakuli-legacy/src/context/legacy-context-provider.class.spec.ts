@@ -2,10 +2,10 @@ import {LegacyLifecycleHooks} from "./legacy-context-provider.class";
 import {Builder, Capabilities, ThenableWebDriver} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {isPresent} from "@sakuli/commons";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import Mock = jest.Mock;
+import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
 
 describe('LegacyContextProviderClass', () => {
 
@@ -30,11 +30,13 @@ describe('LegacyContextProviderClass', () => {
     const lcp = new LegacyLifecycleHooks(builder);
     const legacyProps = new LegacyProjectProperties();
     legacyProps.testsuiteBrowser = 'chrome';
-    const minimumProject = {
+    const minimumProject = mockPartial<Project>({
         rootDir: '',
         testFiles: [],
-        properties: legacyProps
-    };
+        ...(createPropertyMapMock({
+
+        }))
+    });
 
     describe('Sahi Api', () => {
 
@@ -60,14 +62,12 @@ describe('LegacyContextProviderClass', () => {
     });
 
     describe('Lifecycle', () => {
-        it('should set suite id by file name', () => {
+        it('should set suite id by file name', async () => {
             const file: TestFile = {
                 path: 'my-suite/my-case/case1.js',
             };
-            (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({
-
-            });
-            lcp.afterRunFile(file, minimumProject, testExecutionContext);
+            (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+            await lcp.afterRunFile(file, minimumProject, testExecutionContext);
             expect(testExecutionContext.updateCurrentTestCase).toHaveBeenCalledWith(
                 expect.objectContaining({id: 'case1'})
             )

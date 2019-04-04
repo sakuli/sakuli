@@ -56,13 +56,11 @@ export class SakuliClass {
 
     async run(_opts: string | SakuliRunOptions): Promise<TestExecutionContext> {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
-        const projects = await Promise.all(
-            this.loader.map(loader => loader.load(opts.path))
-        );
-        const project: Project = throwIfAbsent(
-            projects.find(p => p != null),
-            Error(`Non of the configured loaders could create project from ${opts.path}`)
-        );
+        let project: Project = new Project(opts.path || process.cwd());
+
+        for(let loader of this.loader) {
+            project = (await loader.load(project)) || project;
+        }
 
         const runner = new SakuliRunner(
             this.contextProviders,

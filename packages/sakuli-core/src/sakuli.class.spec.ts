@@ -6,6 +6,7 @@ import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
 import {Project} from "./loader";
 import {stripIndent} from "common-tags";
 import mockFs from 'mock-fs';
+import {mockPartial} from "sneer";
 
 
 describe('Sakuli', () => {
@@ -60,12 +61,12 @@ describe('Sakuli', () => {
             const sakuli = new SakuliClass([
                 (<any>jest.fn)((reg: SakuliPresetRegistry) => {
                     reg.registerProjectLoader({
-                        load: (<any>jest.fn)((root: string): Project => ({
+                        load: (<any>jest.fn)((root: string): Project => (mockPartial<Project>({
                             rootDir: root,
                             testFiles: [
                                 {path: 'test1.js'}
                             ]
-                        }))
+                        })))
                     })
                 })
             ]);

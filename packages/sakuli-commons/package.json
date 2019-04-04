@@ -15,15 +15,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/jest": "^23.3.9",
+    "@types/jest": "^24.0.11",
     "@types/yargs": "^12.0.11",
     "jest": "^23.6.0",
+    "memfs": "^2.15.2",
+    "sneer": "^1.0.1",
     "ts-jest": "^23.10.4",
     "typedoc": "^0.13.0",
     "typescript": "^3.1.6",
     "yargs": "^13.2.2"
   },
   "dependencies": {
+    "fs-monkey": "^0.3.3",
     "winston": "^3.1.0",
     "winston-transport": "^4.2.0"
   }
