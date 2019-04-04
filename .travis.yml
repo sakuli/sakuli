@@ -24,7 +24,7 @@ before_install:
   - docker pull s1hofmann/nut-ci:latest
   - docker pull selenium/standalone-chrome-debug
   - docker pull httpd
-  - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v /var/run.docker.sock:/var/run/docker.sock -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
+  - docker run -it -d --name nut-ci --user 0 -v /var/run.docker.sock:/var/run/docker.sock -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
 
 install: true
 
