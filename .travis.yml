@@ -22,6 +22,8 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker pull s1hofmann/nut-ci:latest
+  - docker pull selenium/standalone-chrome-debug
+  - docker pull httpd
   - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v /var/run.docker.sock:/var/run/docker.sock -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
 
 install: true

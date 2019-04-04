@@ -22,8 +22,6 @@ cd $targetDir
 echo "Installing node version $nodeVersion"
 nvm install $nodeVersion
 echo "Installing dependencies"
-docker pull selenium/standalone-chrome-debug
-docker pull httpd
 npm i -g lerna gh-pages
 echo "npm ci"
 npm ci > /dev/null 2>&1
