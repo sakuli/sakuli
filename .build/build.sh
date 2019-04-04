@@ -27,8 +27,6 @@ echo "Installing dependencies"
 npm i -g lerna gh-pages
 echo "npm ci"
 npm ci > /dev/null 2>&1
-echo "git fetch --unshallow"
-git fetch --unshallow
 echo "lerna run build"
 lerna run build
 echo "lerna run test"
