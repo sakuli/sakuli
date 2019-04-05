@@ -1,10 +1,13 @@
+os: linux
+dist: xenial
+
 language: node_js
 node_js:
   - "10"
 cache: npm
 services:
-  - docker
   - xvfb
+  - docker
 
 addons:
   sonarcloud:
@@ -20,6 +23,7 @@ before_install:
 
 script:
   - git fetch --unshallow
-  - xvfb-run lerna run build > /dev/null 2>&1 && npm test --runInBand --ci
+  - lerna run build > /dev/null 2>&1
+  - xvfb-run npm test --runInBand --ci
   - sonar-scanner
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then lerna run typedoc && gh-pages -d docs; fi
