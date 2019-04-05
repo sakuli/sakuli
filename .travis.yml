@@ -6,8 +6,8 @@ node_js:
   - "10"
 cache: npm
 services:
-  - xvfb
   - docker
+  - xvfb
 
 addons:
   sonarcloud:
