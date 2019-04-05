@@ -3,7 +3,7 @@ import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
-import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {CliArgsSource, ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
@@ -43,10 +43,10 @@ export class SakuliClass {
         ]
     }
 
-    get contextProviders() {
+    get lifecycleHooks() {
         return [
             new SakuliExecutionContextProvider(),
-            ...this.presetRegistry.contextProviders
+            ...this.presetRegistry.lifecycleHooks
         ];
     }
 
@@ -57,13 +57,13 @@ export class SakuliClass {
     async run(_opts: string | SakuliRunOptions): Promise<TestExecutionContext> {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         let project: Project = new Project(opts.path || process.cwd());
-
+        await project.installPropertySource(new CliArgsSource(process.argv));
         for(let loader of this.loader) {
             project = (await loader.load(project)) || project;
         }
 
         const runner = new SakuliRunner(
-            this.contextProviders,
+            this.lifecycleHooks,
             this.testExecutionContext
         );
         await runner.execute(project);

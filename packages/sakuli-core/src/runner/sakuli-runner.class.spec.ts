@@ -18,9 +18,9 @@ describe('SakuliRunner', () => {
         beforeExecution: jest.fn(),
     });
 
-    const createScriptExecutorMock = (): Mocked<TestScriptExecutor> => mockPartial<Mocked<TestScriptExecutor>>({
-        execute: jest.fn((_: any, ctx: any) => ({...ctx}))
-    });
+    const createScriptExecutorMock = (): Mocked<TestScriptExecutor> => mockPartial<TestScriptExecutor>({
+        execute: jest.fn((_: any, ctx: any) => Promise.resolve(({...ctx})))
+    }) as Mocked<TestScriptExecutor>;
 
     const testExecutionContext: TestExecutionContext = mockPartial<TestExecutionContext>({
         startTestCase: jest.fn(),
