@@ -4,6 +4,14 @@ import {Project} from "@sakuli/core";
 import {promises as fs} from 'fs';
 import {tmpdir} from 'os';
 import {join, sep} from 'path';
+import {JavaPropertiesFileSource} from "@sakuli/commons";
+
+jest.mock('@sakuli/commons', () => ({
+    ...(jest.requireActual('@sakuli/commons')),
+    JavaPropertiesFileSource: jest.fn(() => ({
+        createPropertyMap: jest.fn()
+    }))
+}));
 
 describe('LegacyLoader', () => {
 
@@ -11,7 +19,7 @@ describe('LegacyLoader', () => {
     describe('with a valid project structure', () => {
         let loader: LegacyLoader;
         let project: Project;
-        beforeEach(async function mockValidProjectLayout(done) {
+        beforeEach(async () => {
             tmpDir = await fs.mkdtemp(`${tmpdir()}${sep}`);
 
             await fs.mkdir(join(tmpDir, 'path/to/testsuites/suite/case1'), {recursive: true});
@@ -26,14 +34,31 @@ describe('LegacyLoader', () => {
             await fs.writeFile(join(tmpDir, 'path/to/testsuites/suite/case2/sakuli_demo.js'), '// Test');
 
             loader = new LegacyLoader();
-            project = await loader.load(new Project(join(tmpDir, 'path/to/testsuites/suite')));
-            done();
+            project = new Project(join(tmpDir, 'path/to/testsuites/suite'));
+            jest.spyOn(project, 'addTestFile');
+            jest.spyOn(project, 'installPropertySource');
+            await loader.load(project);
         });
 
+        it('should add two testfiles', () => {
+            expect(project.addTestFile).toHaveBeenNthCalledWith(1, expect.objectContaining({
+                path: "case1/sakuli_demo.js"
+            }));
+            expect(project.addTestFile).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                path: "case2/sakuli_demo.js"
+            }))
+        });
 
         it('should read sahi file', () => {
             expect(project.testFiles.length).toBe(2);
-        })
+        });
+
+        it('should install JavaPropertiesFileSource with two property-files', () => {
+            expect(JavaPropertiesFileSource).toHaveBeenCalledWith(expect.arrayContaining([
+                join(tmpDir, 'path/to/testsuites/sakuli.properties'),
+                join(tmpDir, 'path/to/testsuites/suite/testsuite.properties'),
+            ]))
+        });
 
     });
 

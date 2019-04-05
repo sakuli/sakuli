@@ -1,4 +1,5 @@
 import {Property} from "@sakuli/commons";
+import {Capabilities} from "selenium-webdriver";
 
 export class LegacyProjectProperties {
     /**
@@ -76,8 +77,9 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: firefox
      */
+    @Property('browser')
     @Property('testsuite.browser')
-    testsuiteBrowser: string = "firefox";
+    testsuiteBrowser: keyof typeof Capabilities = "firefox";
 
     /**
      *######################################################################################

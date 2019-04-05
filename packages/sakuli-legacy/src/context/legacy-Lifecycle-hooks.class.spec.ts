@@ -1,4 +1,4 @@
-import {LegacyLifecycleHooks} from "./legacy-context-provider.class";
+import {LegacyLifecycleHooks} from "./legacy-Lifecycle-hooks.class";
 import {Builder, Capabilities, ThenableWebDriver} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";

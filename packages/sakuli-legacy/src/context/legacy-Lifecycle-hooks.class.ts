@@ -9,6 +9,7 @@ import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakul
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
+import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -33,7 +34,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     async onProject(project: Project) {
         //const props: LegacyProjectProperties = project.
-        const browser: keyof typeof Capabilities = 'chrome';
+        const properties = project.objectFactory(LegacyProjectProperties);
+        const browser: keyof typeof Capabilities = properties.testsuiteBrowser;
         const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         const caps = capsProducer();
         this.driver = this.builder
