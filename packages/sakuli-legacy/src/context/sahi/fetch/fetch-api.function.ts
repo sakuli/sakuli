@@ -49,8 +49,8 @@ export function fetchApi(
 
     async function _exists(query: SahiElementQueryOrWebElement) {
         try {
-            await accessorUtil.fetchElement(query);
-            return true
+            const result = await accessorUtil.fetchElement(query);
+            return (result !== undefined);
         } catch (e) {
             return false;
         }
