@@ -4,6 +4,8 @@ node_js:
 cache: npm
 services:
   - docker
+  - xvfb
+
 addons:
   sonarcloud:
     organization: "sakuli"
@@ -18,6 +20,6 @@ before_install:
 
 script:
   - git fetch --unshallow
-  - lerna run build > /dev/null 2>&1 && npm test --runInBand --ci
+  - xvfb-run lerna run build > /dev/null 2>&1 && npm test --runInBand --ci
   - sonar-scanner
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then lerna run typedoc && gh-pages -d docs; fi
