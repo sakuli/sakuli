@@ -36,14 +36,46 @@ describe('AccessorUtil', () => {
             aria-describedby="aria"
             class="so many names"
             name="my-name-is-earl"
-            value="some-value"
-            src="some-image.png"
           >Some Text content</div>
         `));
         const element = await driver.findElement(By.id('element-to-test'));
         const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
         return expect(identifiers).toEqual([
-            'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'Some Text content', 'some-value', 'some-image.png'
+            'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'Some Text content', null, null
+        ]);
+    });
+
+    it('should fetch img src for fuzzy matching', async () => {
+        await driver.get(mockHtml(`
+         <img 
+            src="https://www.consol.de/fileadmin/images/svg/consol-logo.svg"
+            id="element-to-test"
+            aria-describedby="aria"
+            class="so many names"
+            name="my-name-is-earl"
+            />
+        `));
+        const element = await driver.findElement(By.id('element-to-test'));
+        const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
+        return expect(identifiers).toEqual([
+            'aria', 'my-name-is-earl', 'element-to-test', 'so many names', '', null, 'https://www.consol.de/fileadmin/images/svg/consol-logo.svg'
+        ]);
+    });
+
+    it('should fetch button value for fuzzy matching', async () => {
+        await driver.get(mockHtml(`
+         <button
+            value="foo"
+            id="element-to-test"
+            aria-describedby="aria"
+            class="so many names"
+            name="my-name-is-earl"
+            >button text</button>
+        `));
+        const element = await driver.findElement(By.id('element-to-test'));
+        const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
+        return expect(identifiers).toEqual([
+            'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'button text', 'foo', null
         ]);
     });
 
