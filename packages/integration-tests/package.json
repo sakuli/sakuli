@@ -12,7 +12,7 @@
   },
   "scripts": {
     "demo-page": "node index",
-    "test": "sakuli run wetter-light --browser=firefox",
+    "test": "sakuli run legacy-suite --browser=firefox",
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run legacy-suite"
   },
   "dependencies": {

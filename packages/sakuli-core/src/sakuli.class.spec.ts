@@ -1,12 +1,21 @@
-//jest.mock('fs');
-
 import {Sakuli, SakuliClass} from "./sakuli.class";
 import {SakuliExecutionContextProvider} from "./runner/test-execution-context";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
-import {Project} from "./loader";
+import {Project, ProjectLoader} from "./loader";
 import {stripIndent} from "common-tags";
 import mockFs from 'mock-fs';
+import {mockPartial} from "sneer";
+import {CliArgsSource} from "@sakuli/commons";
 
+const installPropertySourceMock = jest.fn();
+jest.mock('./loader/model/project.class', () => ({
+    Project: jest.fn(() => ({
+        installPropertySource: installPropertySourceMock,
+        testFiles: []
+    })),
+}));
+
+afterEach(() => installPropertySourceMock.mockReset());
 
 describe('Sakuli', () => {
 
@@ -22,13 +31,8 @@ describe('Sakuli', () => {
 
         it('Should have at least the sakuli context provider', () => {
             const sakuli = new SakuliClass([]);
-            expect(sakuli.contextProviders.length).toBe(1);
-            expect(sakuli.contextProviders[0]).toBeInstanceOf(SakuliExecutionContextProvider);
-        });
-
-        xit('Should have at least one forwarder', () => {
-            const sakuli = new SakuliClass([]);
-            expect(sakuli.forwarder.length).toBe(1);
+            expect(sakuli.lifecycleHooks.length).toBe(1);
+            expect(sakuli.lifecycleHooks[0]).toBeInstanceOf(SakuliExecutionContextProvider);
         });
 
         it('should have no loaders', () => {
@@ -36,17 +40,14 @@ describe('Sakuli', () => {
             expect(sakuli.loader.length).toBe(0);
         });
 
-        it('should throw because no project could be created', async done => {
+        it('should create a Project', async () => {
             const sakuli = new SakuliClass([]);
-            try {
-                await sakuli.run('dummy/path');
-                done.fail();
-            } catch (e) {
-                done()
-            }
+            await sakuli.run('dummy/path');
+            expect(Project).toHaveBeenCalledWith('dummy/path');
+            expect(installPropertySourceMock).toHaveBeenCalledWith(expect.any(CliArgsSource));
         });
 
-        xit('should execute correctly', async done => {
+        it.skip('should execute correctly', async () => {
             mockFs({
                 'project-dir': {
                     'test1.js': stripIndent`
@@ -57,21 +58,24 @@ describe('Sakuli', () => {
                 }
             });
 
+            const project = (mockPartial<Project>({
+                rootDir: 'project-dir',
+                testFiles: [
+                    {path: 'test1.js'}
+                ]
+            }));
+            const loaderMock: ProjectLoader = {
+                load: jest.fn().mockReturnValue(Promise.resolve(project))
+            };
             const sakuli = new SakuliClass([
                 (<any>jest.fn)((reg: SakuliPresetRegistry) => {
-                    reg.registerProjectLoader({
-                        load: (<any>jest.fn)((root: string): Project => ({
-                            rootDir: root,
-                            testFiles: [
-                                {path: 'test1.js'}
-                            ]
-                        }))
-                    })
+
+                    reg.registerProjectLoader(loaderMock)
                 })
             ]);
-
-            await sakuli.run('project-dir');
-            done();
+            const tec = await sakuli.run('project-dir');
+            expect(loaderMock.load).toHaveBeenCalled();
+            expect(tec).toBeDefined();
         });
 
 

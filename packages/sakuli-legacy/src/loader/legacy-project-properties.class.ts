@@ -1,4 +1,5 @@
-import {JavaProperty} from "../properties/java-properties.decorator";
+import {Property} from "@sakuli/commons";
+import {Capabilities} from "selenium-webdriver";
 
 export class LegacyProjectProperties {
     /**
@@ -39,14 +40,14 @@ export class LegacyProjectProperties {
      * over all executions and configuration changes.
      * The 'testsuite.id' MUST be defined in the 'testsuite.properties'
      */
-    @JavaProperty('testsuite.id')
-    testsuiteId: string = ""
+    @Property('testsuite.id')
+    testsuiteId: string = "";
 
     /**
      * Descriptive name for the current test suite
      * DEFAULT: value of 'testsuite.id'
      */
-    @JavaProperty('testsuite.name')
+    @Property('testsuite.name')
     testsuiteName: string = "";
 
     /**
@@ -56,7 +57,7 @@ export class LegacyProjectProperties {
      * If the threshold is set to 0, the execution time will never exceed, so the state will be always OK!
      * DEFAULT:0
      */
-    @JavaProperty('testsuite.warningTime')
+    @Property('testsuite.warningTime')
     testsuiteWarningTime: number = 0;
 
     /**
@@ -66,7 +67,7 @@ export class LegacyProjectProperties {
      * If the threshold is set to 0, the execution time will never exceed, so the state will be always OK!
      * DEFAULT:0
      */
-    @JavaProperty('testsuite.criticalTime')
+    @Property('testsuite.criticalTime')
     testsuiteCriticalTime: number = 0;
 
     /**
@@ -76,8 +77,9 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: firefox
      */
-    @JavaProperty('testsuite.browser')
-    testsuiteBrowser: string = "firefox";
+    @Property('browser')
+    @Property('testsuite.browser')
+    testsuiteBrowser: keyof typeof Capabilities = "firefox";
 
     /**
      *######################################################################################
@@ -92,7 +94,7 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: true
      */
-    @JavaProperty('sakuli.environment.similarity.default')
+    @Property('sakuli.environment.similarity.default')
     sakuliEnvironmentSimilarityDefault: number = 0.99;
 
     /**
@@ -100,8 +102,8 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: true
      */
-    @JavaProperty('sakuli.screenshot.onError')
-    sakuliScreenshotOnError: boolean = true
+    @Property('sakuli.screenshot.onError')
+    sakuliScreenshotOnError: boolean = true;
 
     /**
      *## If true, every region gets highlighted automatically
@@ -109,30 +111,30 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: false
      */
-    @JavaProperty('sakuli.autoHighlight.enabled')
-    sakuliAutoHighlightEnabled: boolean = false
+    @Property('sakuli.autoHighlight.enabled')
+    sakuliAutoHighlightEnabled: boolean = false;
 
     /**
      * Auto highlight duration (float)
      *
      * DEFAULT: 1.1f
      */
-    @JavaProperty('sakuli.highlight.seconds')
-    sakuliHighlightSeconds: number = 1.1
+    @Property('sakuli.highlight.seconds')
+    sakuliHighlightSeconds: number = 1.1;
 
     /**
      *## Sikuli Action Delays
      *
      *set the default type and click delay in seconds;
      */
-    @JavaProperty('sikuli.typeDelay')
-    sikuliTypeDelay: number = 0
+    @Property('sikuli.typeDelay')
+    sikuliTypeDelay: number = 0;
 
     /**
 
      */
-    @JavaProperty('sikuli.clickDelay')
-    sikuliClickDelay: number = 0.2
+    @Property('sikuli.clickDelay')
+    sikuliClickDelay: number = 0.2;
 
     /**
      *######################################################################################
@@ -149,8 +151,8 @@ export class LegacyProjectProperties {
      * * "interface" using the host ethernet interface MAC address to encrypt a secret.
      *
      */
-    @JavaProperty('sakuli.encryption.mode')
-    sakuliEncryptionMode: string = "environment"
+    @Property('sakuli.encryption.mode')
+    sakuliEncryptionMode: string = "environment";
 
     /**
      *## Encryption environment Settings (sakuli.encryption.mode=environment)
@@ -160,8 +162,8 @@ export class LegacyProjectProperties {
      * Overwrite this property or us the environment var `SAKULI_ENCRYPTION_KEY` as master key for en- and decryption
      *
      */
-    @JavaProperty('sakuli.encryption.key')
-    sakuliEncryptionKey: string = ""
+    @Property('sakuli.encryption.key')
+    sakuliEncryptionKey: string = "";
 
     /**
      *
@@ -172,8 +174,8 @@ export class LegacyProjectProperties {
      *
      * DEFAULT:true
      */
-    @JavaProperty('sakuli.encryption.interface.autodetect')
-    sakuliEncryptionInterfaceAutodetect: boolean = true
+    @Property('sakuli.encryption.interface.autodetect')
+    sakuliEncryptionInterfaceAutodetect: boolean = true;
 
     /**
      *
@@ -182,8 +184,8 @@ export class LegacyProjectProperties {
      *
      * Example: sakuli.encryption.interface=eth0
      */
-    @JavaProperty('sakuli.encryption.interface')
-    sakuliEncryptionInterface: string = ""
+    @Property('sakuli.encryption.interface')
+    sakuliEncryptionInterface: string = "";
 
     /**
      *######################################################################################
@@ -195,8 +197,8 @@ export class LegacyProjectProperties {
      * (e.g. the Check_MK templates are placed in a subdirectory check_mk).
      * For more information about twig templates, please refer to http://jtwig.org/
      */
-    @JavaProperty('sakuli.forwarder.template.folder')
-    sakuliForwarderTemplateFolder: string = "${sakuli.home.folder}/config/templates"
+    @Property('sakuli.forwarder.template.folder')
+    sakuliForwarderTemplateFolder: string = "${sakuli.home.folder}/config/templates";
 
     /**
      *#### GEARMAN - FORWARDER
@@ -206,26 +208,26 @@ export class LegacyProjectProperties {
      *# Gearman server settings:
      * DEFAULT: false
      */
-    @JavaProperty('sakuli.forwarder.gearman.enabled')
-    sakuliForwarderGearmanEnabled: boolean = false
+    @Property('sakuli.forwarder.gearman.enabled')
+    sakuliForwarderGearmanEnabled: boolean = false;
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.server.host')
-    sakuliForwarderGearmanServerHost: string = "changeme"
+    @Property('sakuli.forwarder.gearman.server.host')
+    sakuliForwarderGearmanServerHost: string = "changeme";
 
     /**
      * DEFAULT: 4730
      */
-    @JavaProperty('sakuli.forwarder.gearman.server.port')
-    sakuliForwarderGearmanServerPort: number = 4730
+    @Property('sakuli.forwarder.gearman.server.port')
+    sakuliForwarderGearmanServerPort: number = 4730;
 
     /**
      * Nagios host where all Sakuli services are defined on. If necessary, overwrite this value per test suite.
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.hostname')
-    sakuliForwarderGearmanNagiosHostname: string = "changeme"
+    @Property('sakuli.forwarder.gearman.nagios.hostname')
+    sakuliForwarderGearmanNagiosHostname: string = "changeme";
 
     /**
      *
@@ -233,106 +235,106 @@ export class LegacyProjectProperties {
      *## OPTIONAL GEARMAN PROPERTIES:
      * DEFAULT: check_results
      */
-    @JavaProperty('sakuli.forwarder.gearman.server.queue')
-    sakuliForwarderGearmanServerQueue: string = "check_results"
+    @Property('sakuli.forwarder.gearman.server.queue')
+    sakuliForwarderGearmanServerQueue: string = "check_results";
 
     /**
      *
      *# Encryption:
      * For serverside configuration see https://labs.consol.de/de/nagios/mod-gearman/index.html.
      */
-    @JavaProperty('sakuli.forwarder.gearman.encryption')
-    sakuliForwarderGearmanEncryption: boolean = true
+    @Property('sakuli.forwarder.gearman.encryption')
+    sakuliForwarderGearmanEncryption: boolean = true;
 
     /**
      * ATTENTION: change the secret for production use!!!
      */
-    @JavaProperty('sakuli.forwarder.gearman.secret.key')
-    sakuliForwarderGearmanSecretKey: string = "sakuli_secret"
+    @Property('sakuli.forwarder.gearman.secret.key')
+    sakuliForwarderGearmanSecretKey: string = "sakuli_secret";
 
     /**
      *
      *# Result caching:
      * Caches results when gearman server is temporarily not available.
      */
-    @JavaProperty('sakuli.forwarder.gearman.cache.enabled')
-    sakuliForwarderGearmanCacheEnabled: boolean = true
+    @Property('sakuli.forwarder.gearman.cache.enabled')
+    sakuliForwarderGearmanCacheEnabled: boolean = true;
 
     /**
      * Time in milliseconds to wait between result job submit (used when processing cached results)
      */
-    @JavaProperty('sakuli.forwarder.gearman.job.interval')
-    sakuliForwarderGearmanJobInterval: number = 1000
+    @Property('sakuli.forwarder.gearman.job.interval')
+    sakuliForwarderGearmanJobInterval: number = 1000;
 
     /**
      *
      *# Nagios service options:
      * check_command gets appended to the perfdata string and will be used as PNP template name (check_sakuli = default)
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.check_command')
-    sakuliForwarderGearmanNagiosCheck_command: string = "check_sakuli"
+    @Property('sakuli.forwarder.gearman.nagios.check_command')
+    sakuliForwarderGearmanNagiosCheck_command: string = "check_sakuli";
 
     /**
      * optional service description forwarded to nagios check result. DEFAULT: testsuite.id
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.service_description')
-    sakuliForwarderGearmanNagiosService_description: string = "${testsuite.id}"
+    @Property('sakuli.forwarder.gearman.nagios.service_description')
+    sakuliForwarderGearmanNagiosService_description: string = "${testsuite.id}";
 
     /**
      *
      *# Result template:
      * Output message template strings. Change only if needed.
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.suite.summary')
-    sakuliForwarderGearmanNagiosTemplateSuiteSummary: string = "{{state_short}} Sakuli suite \"{{id}}\" {{suite_summary}}. (Last suite run: {{stop_date}})"
+    @Property('sakuli.forwarder.gearman.nagios.template.suite.summary')
+    sakuliForwarderGearmanNagiosTemplateSuiteSummary: string = "{{state_short}} Sakuli suite \"{{id}}\" {{suite_summary}}. (Last suite run: {{stop_date}})";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.suite.summary.maxLength')
-    sakuliForwarderGearmanNagiosTemplateSuiteSummaryMaxLength: number = 200
+    @Property('sakuli.forwarder.gearman.nagios.template.suite.summary.maxLength')
+    sakuliForwarderGearmanNagiosTemplateSuiteSummaryMaxLength: number = 200;
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.suite.table')
-    sakuliForwarderGearmanNagiosTemplateSuiteTable: string = "{{state_short}} Sakuli suite \"{{id}}\" {{suite_summary}}. (Last suite run: {{stop_date}}){{error_screenshot}}"
+    @Property('sakuli.forwarder.gearman.nagios.template.suite.table')
+    sakuliForwarderGearmanNagiosTemplateSuiteTable: string = "{{state_short}} Sakuli suite \"{{id}}\" {{suite_summary}}. (Last suite run: {{stop_date}}){{error_screenshot}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.case.ok')
-    sakuliForwarderGearmanNagiosTemplateCaseOk: string = "{{state_short}} case \"{{id}}\" ran in {{duration}}s - {{state_description}}"
+    @Property('sakuli.forwarder.gearman.nagios.template.case.ok')
+    sakuliForwarderGearmanNagiosTemplateCaseOk: string = "{{state_short}} case \"{{id}}\" ran in {{duration}}s - {{state_description}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.case.warning')
-    sakuliForwarderGearmanNagiosTemplateCaseWarning: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}"
+    @Property('sakuli.forwarder.gearman.nagios.template.case.warning')
+    sakuliForwarderGearmanNagiosTemplateCaseWarning: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.case.warningInStep')
-    sakuliForwarderGearmanNagiosTemplateCaseWarningInStep: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}"
+    @Property('sakuli.forwarder.gearman.nagios.template.case.warningInStep')
+    sakuliForwarderGearmanNagiosTemplateCaseWarningInStep: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.case.critical')
-    sakuliForwarderGearmanNagiosTemplateCaseCritical: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/crit at {{critical_threshold}}s){{step_information}}"
+    @Property('sakuli.forwarder.gearman.nagios.template.case.critical')
+    sakuliForwarderGearmanNagiosTemplateCaseCritical: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/crit at {{critical_threshold}}s){{step_information}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.case.error')
-    sakuliForwarderGearmanNagiosTemplateCaseError: string = "{{state_short}} case \"{{id}}\" {{state_description}}: {{error_message}}{{error_screenshot}}"
+    @Property('sakuli.forwarder.gearman.nagios.template.case.error')
+    sakuliForwarderGearmanNagiosTemplateCaseError: string = "{{state_short}} case \"{{id}}\" {{state_description}}: {{error_message}}{{error_screenshot}}";
 
     /**
      *# Screenshot dimensions in Gearman output
      */
-    @JavaProperty('sakuli.forwarder.gearman.nagios.template.screenshotDivWidth')
-    sakuliForwarderGearmanNagiosTemplateScreenshotDivWidth: number = 640
+    @Property('sakuli.forwarder.gearman.nagios.template.screenshotDivWidth')
+    sakuliForwarderGearmanNagiosTemplateScreenshotDivWidth: number = 640;
 
     /**
      *#### ICINGA2 - FORWARDER
@@ -341,96 +343,96 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: false
      */
-    @JavaProperty('sakuli.forwarder.icinga2.enabled')
-    sakuliForwarderIcinga2Enabled: boolean = false
+    @Property('sakuli.forwarder.icinga2.enabled')
+    sakuliForwarderIcinga2Enabled: boolean = false;
 
     /**
      *# Icinga API settings
      */
-    @JavaProperty('sakuli.forwarder.icinga2.api.host')
-    sakuliForwarderIcinga2ApiHost: string = "changeme"
+    @Property('sakuli.forwarder.icinga2.api.host')
+    sakuliForwarderIcinga2ApiHost: string = "changeme";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.api.port')
-    sakuliForwarderIcinga2ApiPort: number = 5665
+    @Property('sakuli.forwarder.icinga2.api.port')
+    sakuliForwarderIcinga2ApiPort: number = 5665;
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.api.username')
-    sakuliForwarderIcinga2ApiUsername: string = "icinga-api-user"
+    @Property('sakuli.forwarder.icinga2.api.username')
+    sakuliForwarderIcinga2ApiUsername: string = "icinga-api-user";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.api.password')
-    sakuliForwarderIcinga2ApiPassword: string = "icinga-api-password"
+    @Property('sakuli.forwarder.icinga2.api.password')
+    sakuliForwarderIcinga2ApiPassword: string = "icinga-api-password";
 
     /**
      * Icinga host with sakuli services
      */
-    @JavaProperty('sakuli.forwarder.icinga2.hostname')
-    sakuliForwarderIcinga2Hostname: string = "changeme"
+    @Property('sakuli.forwarder.icinga2.hostname')
+    sakuliForwarderIcinga2Hostname: string = "changeme";
 
     /**
      *
      *## OPTIONAL ICINGA2 PROPERTIES:
      * Icinga service description. DEFAULT: testsuite.id
      */
-    @JavaProperty('sakuli.forwarder.icinga2.service_description')
-    sakuliForwarderIcinga2Service_description: string = "${testsuite.id}"
+    @Property('sakuli.forwarder.icinga2.service_description')
+    sakuliForwarderIcinga2Service_description: string = "${testsuite.id}";
 
     /**
      * REST-URL where to send the Icinga2 results
      */
-    @JavaProperty('sakuli.forwarder.icinga2.api.url')
-    sakuliForwarderIcinga2ApiUrl: string = "https://${sakuli.forwarder.icinga2.api.host}:${sakuli.forwarder.icinga2.api.port}/v1/actions/process-check-result?service"
+    @Property('sakuli.forwarder.icinga2.api.url')
+    sakuliForwarderIcinga2ApiUrl: string = "https://${sakuli.forwarder.icinga2.api.host}:${sakuli.forwarder.icinga2.api.port}/v1/actions/process-check-result?service";
 
     /**
      *
      *# Result template:
      *Icinga 'plugin_output' template strings. Change only if needed.
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.suite.summary')
-    sakuliForwarderIcinga2TemplateSuiteSummary: string = "{{state_short}} Sakuli suite \"{{id}}\" {{suite_summary}}. (Last suite run: {{stop_date}})"
+    @Property('sakuli.forwarder.icinga2.template.suite.summary')
+    sakuliForwarderIcinga2TemplateSuiteSummary: string = "{{state_short}} Sakuli suite \"{{id}}\" {{suite_summary}}. (Last suite run: {{stop_date}})";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.suite.summary.maxLength')
-    sakuliForwarderIcinga2TemplateSuiteSummaryMaxLength: number = 200
+    @Property('sakuli.forwarder.icinga2.template.suite.summary.maxLength')
+    sakuliForwarderIcinga2TemplateSuiteSummaryMaxLength: number = 200;
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.case.ok')
-    sakuliForwarderIcinga2TemplateCaseOk: string = "{{state_short}} case \"{{id}}\" ran in {{duration}}s - {{state_description}}"
+    @Property('sakuli.forwarder.icinga2.template.case.ok')
+    sakuliForwarderIcinga2TemplateCaseOk: string = "{{state_short}} case \"{{id}}\" ran in {{duration}}s - {{state_description}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.case.warning')
-    sakuliForwarderIcinga2TemplateCaseWarning: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}"
+    @Property('sakuli.forwarder.icinga2.template.case.warning')
+    sakuliForwarderIcinga2TemplateCaseWarning: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.case.warningInStep')
-    sakuliForwarderIcinga2TemplateCaseWarningInStep: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}"
+    @Property('sakuli.forwarder.icinga2.template.case.warningInStep')
+    sakuliForwarderIcinga2TemplateCaseWarningInStep: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/warn at {{warning_threshold}}s){{step_information}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.case.critical')
-    sakuliForwarderIcinga2TemplateCaseCritical: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/crit at {{critical_threshold}}s){{step_information}}"
+    @Property('sakuli.forwarder.icinga2.template.case.critical')
+    sakuliForwarderIcinga2TemplateCaseCritical: string = "{{state_short}} case \"{{id}}\" over runtime ({{duration}}s/crit at {{critical_threshold}}s){{step_information}}";
 
     /**
 
      */
-    @JavaProperty('sakuli.forwarder.icinga2.template.case.error')
-    sakuliForwarderIcinga2TemplateCaseError: string = "{{state_short}} case \"{{id}}\" {{state_description}}: {{error_message}}"
+    @Property('sakuli.forwarder.icinga2.template.case.error')
+    sakuliForwarderIcinga2TemplateCaseError: string = "{{state_short}} case \"{{id}}\" {{state_description}}: {{error_message}}";
 
     /**
      *#### DATABASE - FORWARDER
@@ -438,50 +440,50 @@ export class LegacyProjectProperties {
      * For more information see https://github.com/ConSol/sakuli/blob/master/docs/receivers/database.md
      * DEFAULT: false
      */
-    @JavaProperty('sakuli.forwarder.database.enabled')
-    sakuliForwarderDatabaseEnabled: boolean = false
+    @Property('sakuli.forwarder.database.enabled')
+    sakuliForwarderDatabaseEnabled: boolean = false;
 
     /**
      *# database host
      */
-    @JavaProperty('sakuli.forwarder.database.host')
-    sakuliForwarderDatabaseHost: string = "changeme"
+    @Property('sakuli.forwarder.database.host')
+    sakuliForwarderDatabaseHost: string = "changeme";
 
     /**
      *# database port:
      */
-    @JavaProperty('sakuli.forwarder.database.port')
-    sakuliForwarderDatabasePort: number = 3306
+    @Property('sakuli.forwarder.database.port')
+    sakuliForwarderDatabasePort: number = 3306;
 
     /**
      *# database name
      */
-    @JavaProperty('sakuli.forwarder.database')
-    sakuliForwarderDatabase: string = "sakuli"
+    @Property('sakuli.forwarder.database')
+    sakuliForwarderDatabase: string = "sakuli";
 
     /**
      *# database username
      */
-    @JavaProperty('sakuli.forwarder.database.user')
-    sakuliForwarderDatabaseUser: string = "sakuli"
+    @Property('sakuli.forwarder.database.user')
+    sakuliForwarderDatabaseUser: string = "sakuli";
 
     /**
      *# database password
      */
-    @JavaProperty('sakuli.forwarder.database.password')
-    sakuliForwarderDatabasePassword: string = "sakuli"
+    @Property('sakuli.forwarder.database.password')
+    sakuliForwarderDatabasePassword: string = "sakuli";
 
     /**
      *# JDBC-Driver
      */
-    @JavaProperty('sakuli.forwarder.database.jdbc.driverClass')
-    sakuliForwarderDatabaseJdbcDriverClass: string = "com.mysql.jdbc.Driver"
+    @Property('sakuli.forwarder.database.jdbc.driverClass')
+    sakuliForwarderDatabaseJdbcDriverClass: string = "com.mysql.jdbc.Driver";
 
     /**
      *# pattern for JDBC database connection URL
      */
-    @JavaProperty('sakuli.forwarder.database.jdbc.url')
-    sakuliForwarderDatabaseJdbcUrl: string = "jdbc:mysql://${sakuli.forwarder.database.host}:${sakuli.forwarder.database.port}/${sakuli.forwarder.database}"
+    @Property('sakuli.forwarder.database.jdbc.url')
+    sakuliForwarderDatabaseJdbcUrl: string = "jdbc:mysql://${sakuli.forwarder.database.host}:${sakuli.forwarder.database.port}/${sakuli.forwarder.database}";
 
     /**
      *#### CheckMK - FORWARDER
@@ -490,8 +492,8 @@ export class LegacyProjectProperties {
      *
      *# DEFAULT: false
      */
-    @JavaProperty('sakuli.forwarder.check_mk.enabled')
-    sakuliForwarderCheck_mkEnabled: boolean = false
+    @Property('sakuli.forwarder.check_mk.enabled')
+    sakuliForwarderCheck_mkEnabled: boolean = false;
 
     /**
      *
@@ -499,40 +501,40 @@ export class LegacyProjectProperties {
      *
      * spool dir, default /var/lib/check_mk_agent/spool (Linux) / (installation_path)\spool (Windows)
      */
-    @JavaProperty('sakuli.forwarder.check_mk.spooldir')
-    sakuliForwarderCheck_mkSpooldir: string = "/var/lib/check_mk_agent/spool"
+    @Property('sakuli.forwarder.check_mk.spooldir')
+    sakuliForwarderCheck_mkSpooldir: string = "/var/lib/check_mk_agent/spool";
 
     /**
      *  Max result age. Prepend this number on the file name, e.g. 600_sakuli_suite_XYZ
      */
-    @JavaProperty('sakuli.forwarder.check_mk.freshness')
-    sakuliForwarderCheck_mkFreshness: number = 600
+    @Property('sakuli.forwarder.check_mk.freshness')
+    sakuliForwarderCheck_mkFreshness: number = 600;
 
     /**
      * Prefix of the file name for CheckMK
      */
-    @JavaProperty('sakuli.forwarder.check_mk.spoolfile_prefix')
-    sakuliForwarderCheck_mkSpoolfile_prefix: string = "sakuli_suite_"
+    @Property('sakuli.forwarder.check_mk.spoolfile_prefix')
+    sakuliForwarderCheck_mkSpoolfile_prefix: string = "sakuli_suite_";
 
     /**
      * optional service description forwarded to the output check result, when not set, testsuite.id is used
      */
-    @JavaProperty('sakuli.forwarder.check_mk.service_description')
-    sakuliForwarderCheck_mkService_description: string = "${testsuite.id}"
+    @Property('sakuli.forwarder.check_mk.service_description')
+    sakuliForwarderCheck_mkService_description: string = "${testsuite.id}";
 
     /**
      *#### JSON - FORWARDER
      * Save results into a json file. The JSON forwarder is enabled per default.
      * DEFAULT: true
      */
-    @JavaProperty('sakuli.forwarder.json.enabled')
-    sakuliForwarderJsonEnabled: boolean = true
+    @Property('sakuli.forwarder.json.enabled')
+    sakuliForwarderJsonEnabled: boolean = true;
 
     /**
      *# folder where to save the json file on the test execution host
      */
-    @JavaProperty('sakuli.forwarder.json.dir')
-    sakuliForwarderJsonDir: string = "${sakuli.log.folder}/_json"
+    @Property('sakuli.forwarder.json.dir')
+    sakuliForwarderJsonDir: string = "${sakuli.log.folder}/_json";
 
     /**
      *##############################
@@ -545,32 +547,32 @@ export class LegacyProjectProperties {
      *## log levels for the different components - levels `DEBUG - INFO - WARN - ERROR`
      *logging level for Sakuli output
      */
-    @JavaProperty('log.level.sakuli')
-    logLevelSakuli: string = "INFO"
+    @Property('log.level.sakuli')
+    logLevelSakuli: string = "INFO";
 
     /**
      *logging level for Sikuli output
      */
-    @JavaProperty('log.level.sikuli')
-    logLevelSikuli: string = "WARN"
+    @Property('log.level.sikuli')
+    logLevelSikuli: string = "WARN";
 
     /**
      *logging level for Sahi output
      */
-    @JavaProperty('log.level.sahi')
-    logLevelSahi: string = "WARN"
+    @Property('log.level.sahi')
+    logLevelSahi: string = "WARN";
 
     /**
      *logging level for the Spring framework (only used internally)
      */
-    @JavaProperty('log.level.spring')
-    logLevelSpring: string = "WARN"
+    @Property('log.level.spring')
+    logLevelSpring: string = "WARN";
 
     /**
      *logging level for all other **Java classes and libraries**
      */
-    @JavaProperty('log.level.root')
-    logLevelRoot: string = "INFO"
+    @Property('log.level.root')
+    logLevelRoot: string = "INFO";
 
     /**
      * If you use the argument 'resumeOnException=true' in methods like `new Region("username",true)`
@@ -592,8 +594,8 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: false
      */
-    @JavaProperty('sakuli.exception.suppressResumedExceptions')
-    sakuliExceptionSuppressResumedExceptions: boolean = false
+    @Property('sakuli.exception.suppressResumedExceptions')
+    sakuliExceptionSuppressResumedExceptions: boolean = false;
 
     /**
      * Log pattern
@@ -602,46 +604,46 @@ export class LegacyProjectProperties {
      * sakuli.log.pattern=%-5level %d{YYYY-MM-dd HH:mm:ss.SSS} [%thread]  %logger{36} - %msg%n
      * default log pattern
      */
-    @JavaProperty('sakuli.log.pattern')
-    sakuliLogPattern: string = " %-5level [%d{YYYY-MM-dd HH:mm:ss.SSS}] - %msg%n"
+    @Property('sakuli.log.pattern')
+    sakuliLogPattern: string = " %-5level [%d{YYYY-MM-dd HH:mm:ss.SSS}] - %msg%n";
 
     /**
      * log file folder
      */
-    @JavaProperty('sakuli.log.folder')
-    sakuliLogFolder: string = "${sakuli.testsuite.folder}/_logs"
+    @Property('sakuli.log.folder')
+    sakuliLogFolder: string = "${sakuli.testsuite.folder}/_logs";
 
     /**
      * Deletes all files that are older than the defined days in the folder `sakuli.log.folder`
      *
      * DEFAULT: 14 days
      */
-    @JavaProperty('sakuli.log.maxAge')
-    sakuliLogMaxAge: number = 14
+    @Property('sakuli.log.maxAge')
+    sakuliLogMaxAge: number = 14;
 
     /**
      * folder for screenshot files (if activated)
      */
-    @JavaProperty('sakuli.screenshot.dir')
-    sakuliScreenshotDir: string = "${sakuli.log.folder}/_screenshots"
+    @Property('sakuli.screenshot.dir')
+    sakuliScreenshotDir: string = "${sakuli.log.folder}/_screenshots";
 
     /**
      * screenshot file format (Possible values: jpg, png)
      */
-    @JavaProperty('sakuli.screenshot.format')
-    sakuliScreenshotFormat: string = "png"
+    @Property('sakuli.screenshot.format')
+    sakuliScreenshotFormat: string = "png";
 
     /**
      *## URLs for documentation links
      */
-    @JavaProperty('sahi.doc.base.url')
-    sahiDocBaseUrl: string = "http://sahipro.com/docs/all-topics.html?q"
+    @Property('sahi.doc.base.url')
+    sahiDocBaseUrl: string = "http://sahipro.com/docs/all-topics.html?q";
 
     /**
 
      */
-    @JavaProperty('sakuli.doc.base.url')
-    sakuliDocBaseUrl: string = "http://consol.github.io/sakuli/latest/index.html#"
+    @Property('sakuli.doc.base.url')
+    sakuliDocBaseUrl: string = "http://consol.github.io/sakuli/latest/index.html#";
 
     /**
      *######################################################################################
@@ -653,38 +655,38 @@ export class LegacyProjectProperties {
      * sahi proxy port
      *(internal proxy for the test execution)
      */
-    @JavaProperty('sahi.proxy.port')
-    sahiProxyPort: number = 9999
+    @Property('sahi.proxy.port')
+    sahiProxyPort: number = 9999;
 
     /**
      * Sahi installation folder
      */
-    @JavaProperty('sahi.proxy.homePath')
-    sahiProxyHomePath: string = "${sakuli.home.folder}/../sahi"
+    @Property('sahi.proxy.homePath')
+    sahiProxyHomePath: string = "${sakuli.home.folder}/../sahi";
 
     /**
      * Sahi config folder
      */
-    @JavaProperty('sahi.proxy.configurationPath')
-    sahiProxyConfigurationPath: string = "${sahi.proxy.homePath}/userdata"
+    @Property('sahi.proxy.configurationPath')
+    sahiProxyConfigurationPath: string = "${sahi.proxy.homePath}/userdata";
 
     /**
      * number of max. attempts to connect to a site before aborting
      */
-    @JavaProperty('sahi.proxy.maxConnectTries')
-    sahiProxyMaxConnectTries: number = 25
+    @Property('sahi.proxy.maxConnectTries')
+    sahiProxyMaxConnectTries: number = 25;
 
     /**
      * wait time in seconds between retry attempts
      */
-    @JavaProperty('sahi.proxy.reconnectSeconds')
-    sahiProxyReconnectSeconds: number = 1
+    @Property('sahi.proxy.reconnectSeconds')
+    sahiProxyReconnectSeconds: number = 1;
 
     /**
      * amount of firefox profiles
      */
-    @JavaProperty('ff.profiles.max_number')
-    ffProfilesMax_number: number = 1
+    @Property('ff.profiles.max_number')
+    ffProfilesMax_number: number = 1;
 
     /**
      *### Sahi customisations done by Sakuli only
@@ -708,14 +710,14 @@ export class LegacyProjectProperties {
      *
      * (gets only enabled if delayPerKey is set)
      */
-    @JavaProperty('sahi.proxy.onSikuliInput.delayBeforeInput')
-    sahiProxyOnSikuliInputDelayBeforeInput: number = 500
+    @Property('sahi.proxy.onSikuliInput.delayBeforeInput')
+    sahiProxyOnSikuliInputDelayBeforeInput: number = 500;
 
     /**
 
      */
-    @JavaProperty('sahi.proxy.onSikuliInput.delayPerKey')
-    sahiProxyOnSikuliInputDelayPerKey: string = ""
+    @Property('sahi.proxy.onSikuliInput.delayPerKey')
+    sahiProxyOnSikuliInputDelayPerKey: string = "";
 
     /**
      *
@@ -723,88 +725,88 @@ export class LegacyProjectProperties {
      * See: http://consol.github.io/sakuli/latest/index.html#sahi-authorization-headers
      * (Default by Sahi OS: true)
      */
-    @JavaProperty('sahi.proxy.removeAuthorizationHeader.enabled')
-    sahiProxyRemoveAuthorizationHeaderEnabled: boolean = true
+    @Property('sahi.proxy.removeAuthorizationHeader.enabled')
+    sahiProxyRemoveAuthorizationHeaderEnabled: boolean = true;
 
     /**
      *## HTTP/HTTPS proxy Settings
      *## Set a company proxy Sahi should use
      * external HTTP proxy
      */
-    @JavaProperty('ext.http.proxy.enable')
-    extHttpProxyEnable: boolean = false
+    @Property('ext.http.proxy.enable')
+    extHttpProxyEnable: boolean = false;
 
     /**
 
      */
-    @JavaProperty('ext.http.proxy.host')
-    extHttpProxyHost: string = "proxy.server.com"
+    @Property('ext.http.proxy.host')
+    extHttpProxyHost: string = "proxy.server.com";
 
     /**
 
      */
-    @JavaProperty('ext.http.proxy.port')
-    extHttpProxyPort: number = 8080
+    @Property('ext.http.proxy.port')
+    extHttpProxyPort: number = 8080;
 
     /**
 
      */
-    @JavaProperty('ext.http.proxy.auth.enable')
-    extHttpProxyAuthEnable: boolean = false
+    @Property('ext.http.proxy.auth.enable')
+    extHttpProxyAuthEnable: boolean = false;
 
     /**
 
      */
-    @JavaProperty('ext.http.proxy.auth.name')
-    extHttpProxyAuthName: string = "user"
+    @Property('ext.http.proxy.auth.name')
+    extHttpProxyAuthName: string = "user";
 
     /**
 
      */
-    @JavaProperty('ext.http.proxy.auth.password')
-    extHttpProxyAuthPassword: string = "password"
+    @Property('ext.http.proxy.auth.password')
+    extHttpProxyAuthPassword: string = "password";
 
     /**
      * external HTTPS proxy
      */
-    @JavaProperty('ext.https.proxy.enable')
-    extHttpsProxyEnable: boolean = false
+    @Property('ext.https.proxy.enable')
+    extHttpsProxyEnable: boolean = false;
 
     /**
 
      */
-    @JavaProperty('ext.https.proxy.host')
-    extHttpsProxyHost: string = "proxy.server.com"
+    @Property('ext.https.proxy.host')
+    extHttpsProxyHost: string = "proxy.server.com";
 
     /**
 
      */
-    @JavaProperty('ext.https.proxy.port')
-    extHttpsProxyPort: number = 8080
+    @Property('ext.https.proxy.port')
+    extHttpsProxyPort: number = 8080;
 
     /**
 
      */
-    @JavaProperty('ext.https.proxy.auth.enable')
-    extHttpsProxyAuthEnable: boolean = false
+    @Property('ext.https.proxy.auth.enable')
+    extHttpsProxyAuthEnable: boolean = false;
 
     /**
 
      */
-    @JavaProperty('ext.https.proxy.auth.name')
-    extHttpsProxyAuthName: string = "user"
+    @Property('ext.https.proxy.auth.name')
+    extHttpsProxyAuthName: string = "user";
 
     /**
 
      */
-    @JavaProperty('ext.https.proxy.auth.password')
-    extHttpsProxyAuthPassword: string = "password"
+    @Property('ext.https.proxy.auth.password')
+    extHttpsProxyAuthPassword: string = "password";
 
     /**
      * There is only one bypass list for both secure and insecure.
      */
-    @JavaProperty('ext.http.both.proxy.bypass_hosts')
-    extHttpBothProxyBypass_hosts: string = "localhost|127.0.0.1|*.internaldomain.com|www.verisign.com"
+    @Property('ext.http.both.proxy.bypass_hosts')
+    extHttpBothProxyBypass_hosts: string = "localhost|127.0.0.1|*.internaldomain.com|www.verisign.com";
 
     /**
      *## SSL-Certificate settings (experimental)
@@ -819,55 +821,55 @@ export class LegacyProjectProperties {
      *## more logging options for Sahi:
      * log folder for sahi HTML report
      */
-    @JavaProperty('logs.dir')
-    logsDir: string = "${sakuli.log.folder}"
+    @Property('logs.dir')
+    logsDir: string = "${sakuli.log.folder}";
 
     /**
      * handlers to create in the root logger
      * (all loggers are children of the root logger)
      */
-    @JavaProperty('handlers ')
-    handlers: string = " java.util.logging.ConsoleHandler, java.util.logging.FileHandler"
+    @Property('handlers')
+    handlers: string = " java.util.logging.ConsoleHandler, java.util.logging.FileHandler";
 
     /**
      * default logging level for new ConsoleHandler instances
      */
-    @JavaProperty('java.util.logging.ConsoleHandler.level ')
-    javaUtilLoggingConsoleHandlerLevel: string = " ALL"
+    @Property('java.util.logging.ConsoleHandler.level')
+    javaUtilLoggingConsoleHandlerLevel: string = " ALL";
 
     /**
      * default logging level for new FileHandler instances
      */
-    @JavaProperty('java.util.logging.FileHandler.level ')
-    javaUtilLoggingFileHandlerLevel: string = " ALL"
+    @Property('java.util.logging.FileHandler.level')
+    javaUtilLoggingFileHandlerLevel: string = " ALL";
 
     /**
      * default formatter for new ConsoleHandler instances
      */
-    @JavaProperty('java.util.logging.ConsoleHandler.formatter ')
-    javaUtilLoggingConsoleHandlerFormatter: string = " java.util.logging.SimpleFormatter"
+    @Property('java.util.logging.ConsoleHandler.formatter')
+    javaUtilLoggingConsoleHandlerFormatter: string = " java.util.logging.SimpleFormatter";
 
     /**
 
      */
-    @JavaProperty('java.util.logging.FileHandler.formatter ')
-    javaUtilLoggingFileHandlerFormatter: string = " java.util.logging.SimpleFormatter"
+    @Property('java.util.logging.FileHandler.formatter')
+    javaUtilLoggingFileHandlerFormatter: string = " java.util.logging.SimpleFormatter";
 
     /**
 
      */
-    @JavaProperty('java.util.logging.FileHandler.limit')
-    javaUtilLoggingFileHandlerLimit: number = 102400
+    @Property('java.util.logging.FileHandler.limit')
+    javaUtilLoggingFileHandlerLimit: number = 102400;
 
     /**
 
      */
-    @JavaProperty('java.util.logging.FileHandler.count')
-    javaUtilLoggingFileHandlerCount: number = 10
+    @Property('java.util.logging.FileHandler.count')
+    javaUtilLoggingFileHandlerCount: number = 10;
 
     /**
 
      */
-    @JavaProperty('java.util.logging.FileHandler.pattern')
+    @Property('java.util.logging.FileHandler.pattern')
     javaUtilLoggingFileHandlerPattern: string = "%t/sahi%g.log"
 }
