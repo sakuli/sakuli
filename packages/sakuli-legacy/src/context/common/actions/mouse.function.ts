@@ -1,6 +1,6 @@
 import {centerOf, mouse, Region as NutRegion, straightTo} from "@nut-tree/nut-js";
-import {Region} from "../region.class";
 import {ScreenApi} from "./screen.function";
+import {Region} from "../region.interface";
 
 const toNutRegion = async (region: Region): Promise<NutRegion> => {
     return new NutRegion(

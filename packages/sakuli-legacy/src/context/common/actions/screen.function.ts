@@ -1,8 +1,8 @@
 import {Region as NutRegion, screen} from "@nut-tree/nut-js";
-import {Region} from "../region.class";
 import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {parse} from "path";
 import {cwd} from "process";
+import {Region} from "../region.interface";
 
 const getCoordinates = async (region: Region) => {
     return ({
@@ -13,10 +13,12 @@ const getCoordinates = async (region: Region) => {
     })
 };
 
+export type SearchResult = {left: number, top: number, width: number, height: number};
+
 export const ScreenApi = {
-    async find(filename: string, path: string, confidence: number, searchRegion: Region): Promise<Region> {
+    async find(filename: string, path: string, confidence: number, searchRegion: Region): Promise<SearchResult> {
         const {left, top, width, height} = await getCoordinates(searchRegion);
-        return new Promise<Region>(async (resolve, reject) => {
+        return new Promise<SearchResult>(async (resolve, reject) => {
             try {
                 screen.config.resourceDirectory = path;
                 const result = await screen.find(filename, {
@@ -28,15 +30,20 @@ export const ScreenApi = {
                         height
                     )
                 });
-                resolve(new Region(result.left, result.top, result.width, result.height));
+                resolve({
+                    left: result.left,
+                    top: result.top,
+                    width: result.width,
+                    height: result.height
+                });
             } catch (e) {
                 reject(e);
             }
         });
     },
-    async waitForImage(filepath: string, path: string, confidence: number, timeoutMs: number, searchRegion: Region) {
+    async waitForImage(filepath: string, path: string, confidence: number, timeoutMs: number, searchRegion: Region): Promise<SearchResult> {
         const {left, top, width, height} = await getCoordinates(searchRegion);
-        return new Promise<Region>(async (resolve, reject) => {
+        return new Promise<SearchResult>(async (resolve, reject) => {
             try {
                 screen.config.resourceDirectory = path;
                 const result = await screen.waitFor(filepath, timeoutMs, {
@@ -48,7 +55,12 @@ export const ScreenApi = {
                         height
                     )
                 });
-                resolve(new Region(result.left, result.top, result.width, result.height));
+                resolve({
+                    left: result.left,
+                    top: result.top,
+                    width: result.width,
+                    height: result.height
+                });
             } catch (e) {
                 reject(e);
             }
