@@ -1,12 +1,15 @@
-import {Environment} from "./environment.class";
 import {describe} from "selenium-webdriver/testing";
 import {ENCRYPTION_KEY_VARIABLE} from "./secrets.function";
+import {createEnvironmentClass} from "./sakuli-environment.class";
+import {SimpleLogger} from "@sakuli/commons";
+import {TestExecutionContext} from "@sakuli/core";
 
 describe("Similarity ", () => {
-    it("should have a default value of 0.8", async () => {
+    it("should have a default value of 0.99", async () => {
         // GIVEN
-        const SUT = new Environment();
-        const expectedResult = 0.8;
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
+        const expectedResult = 0.99;
 
         // WHEN
 
@@ -16,8 +19,9 @@ describe("Similarity ", () => {
 
     it("should not update for value <= 0", async () => {
         // GIVEN
-        const SUT = new Environment();
-        const expectedResult = 0.8;
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
+        const expectedResult = 0.99;
 
         // WHEN
         SUT.setSimilarity(-10);
@@ -28,8 +32,9 @@ describe("Similarity ", () => {
 
     it("should not update for value == 0", async () => {
         // GIVEN
-        const SUT = new Environment();
-        const expectedResult = 0.8;
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
+        const expectedResult = 0.99;
 
         // WHEN
         SUT.setSimilarity(0);
@@ -40,8 +45,9 @@ describe("Similarity ", () => {
 
     it("should not update for values > 1", async () => {
         // GIVEN
-        const SUT = new Environment();
-        const expectedResult = 0.8;
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
+        const expectedResult = 0.99;
 
         // WHEN
         SUT.setSimilarity(10);
@@ -52,8 +58,9 @@ describe("Similarity ", () => {
 
     it("should reset to its default value", async () => {
         // GIVEN
-        const SUT = new Environment();
-        const expectedResult = 0.8;
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
+        const expectedResult = 0.99;
 
         // WHEN
         SUT.setSimilarity(0.6);
@@ -67,7 +74,8 @@ describe("Similarity ", () => {
 describe("sleep", () => {
     it("should pause execution for a given delay in seconds", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
         const pauseInSeconds = 1;
         const expectedPauseInMilliseconds = 1000;
         const start = Date.now();
@@ -82,7 +90,8 @@ describe("sleep", () => {
 
     it("should pause execution for a given delay in ms", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
         const expectedPause = 200;
         const start = Date.now();
 
@@ -98,7 +107,8 @@ describe("sleep", () => {
 describe("getEnv", () => {
     it("should return an existing variables value", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
         const variableKey = "sakuliEnvVar";
         const variableValue = "Hi from Sakuli!";
         process.env[variableKey] = variableValue;
@@ -112,7 +122,8 @@ describe("getEnv", () => {
 
     it("should return undefined for unknown variables", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
         const variableKey = "unknownVar";
 
         // WHEN
@@ -126,7 +137,8 @@ describe("getEnv", () => {
 describe("type", () => {
     it("should type via keyboard", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
 
@@ -136,7 +148,8 @@ describe("type", () => {
 
     it("should decrypt and type via keyboard", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
         process.env[ENCRYPTION_KEY_VARIABLE] = "C9HikSYQW/K+ZvRphxEuSw==";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
@@ -148,7 +161,8 @@ describe("type", () => {
 
     it("should throw when no encryption key is set via env var", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
         // WHEN

@@ -1,9 +1,12 @@
-import {Environment} from "./environment.class";
+import {createEnvironmentClass} from "./sakuli-environment.class";
+import {TestExecutionContext} from "@sakuli/core";
+import {SimpleLogger} from "@sakuli/commons";
 
 describe("Environment", () => {
     it("should return false for isWindows", () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
         const result = SUT.isWindows();
@@ -14,7 +17,8 @@ describe("Environment", () => {
 
     it("should return true for isLinux", () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
         const result = SUT.isLinux();
@@ -25,7 +29,8 @@ describe("Environment", () => {
 
     it("should return false for isDarwin", () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
         const result = SUT.isDarwin();
@@ -36,7 +41,8 @@ describe("Environment", () => {
 
     it("should return 'linux'", () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
         const result = SUT.getOsIdentifier();
@@ -47,7 +53,8 @@ describe("Environment", () => {
 
     it("should return 'Linux'", async () => {
         // GIVEN
-        const SUT = new Environment();
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
         const result = await SUT.runCommand("uname");
