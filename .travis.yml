@@ -6,7 +6,6 @@ node_js:
   - "10"
 cache: npm
 services:
-  - xvfb
   - docker
 
 addons:
@@ -19,11 +18,14 @@ before_install:
   - sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
   - docker pull selenium/standalone-chrome-debug
   - docker pull httpd
+  - docker pull s1hofmann/nut-ci
+  - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
   - npm i -g lerna gh-pages
 
 script:
   - git fetch --unshallow
   - lerna run build > /dev/null 2>&1
-  - xvfb-run npm test --runInBand --ci
+  - npm test --runInBand --ci
+  - exec nut-ci bash -c "bash $PWD/.build/build.sh ${PWD} lts/dubnium"
   - sonar-scanner
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then lerna run typedoc && gh-pages -d docs; fi

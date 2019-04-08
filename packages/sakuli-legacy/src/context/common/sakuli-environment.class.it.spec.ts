@@ -135,19 +135,34 @@ describe("getEnv", () => {
 });
 
 describe("type", () => {
+    it("should throw when no encryption key is set via env var", async () => {
+        // GIVEN
+        jest.setTimeout(10_000);
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const SUT = new EnvironmentImpl();
+        const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
+
+        // WHEN
+
+        // THEN
+        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`'${ENCRYPTION_KEY_VARIABLE}' is empty. Missing master key for secrets.`);
+    });
+
     it("should type via keyboard", async () => {
         // GIVEN
+        jest.setTimeout(10_000);
         const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
         const SUT = new EnvironmentImpl();
 
         // WHEN
 
         // THEN
-        await expect(SUT.type("Hello from Sakuli!")).not.toThrow();
+        await expect(SUT.type("Hello from Sakuli!")).resolves.not.toThrow();
     });
 
     it("should decrypt and type via keyboard", async () => {
         // GIVEN
+        jest.setTimeout(10_000);
         const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
         const SUT = new EnvironmentImpl();
         process.env[ENCRYPTION_KEY_VARIABLE] = "C9HikSYQW/K+ZvRphxEuSw==";
@@ -159,15 +174,17 @@ describe("type", () => {
         await expect(SUT.typeAndDecrypt(input)).resolves.not.toThrow();
     });
 
-    it("should throw when no encryption key is set via env var", async () => {
+    it("should throw when key with invalid length is provided", async () => {
         // GIVEN
+        jest.setTimeout(10_000);
         const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
         const SUT = new EnvironmentImpl();
+        process.env[ENCRYPTION_KEY_VARIABLE] = "foo";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
         // WHEN
 
         // THEN
-        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`'${ENCRYPTION_KEY_VARIABLE}' is empty. Missing master key for secrets.`);
+        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`Invalid key length: 2`);
     });
 });
