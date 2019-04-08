@@ -3,7 +3,7 @@ import {CommandLineResult} from "./commandline-result.class";
 import {decryptSecret} from "./secrets.function";
 import {ClipboardApi} from "./actions/clipboard.function";
 import {KeyboardApi} from "./actions/keyboard.function";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {ScreenApi} from "./actions/screen.function";
 import {MouseApi} from "./actions/mouse.function";
 
@@ -12,7 +12,7 @@ import {execute} from "./actions/command.function";
 import {Environment} from "./environment.interface";
 import {Region} from "./region.interface";
 
-export function createEnvironmentClass(ctx: TestExecutionContext) {
+export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {
     return class SakuliEnvironment implements Environment {
         constructor() {
         }
@@ -195,13 +195,15 @@ export function createEnvironmentClass(ctx: TestExecutionContext) {
             });
         }
 
-        public getEnv(key: string): string | undefined {
-            ctx.logger.info(`Accessing environment variable '${key}': ${process.env[key]}`);
-            return process.env[key];
+        public getEnv(key: string): string | null {
+            const result = process.env[key];
+            ctx.logger.info(`Accessing environment variable '${key}': ${result}`);
+            return process.env[key] || null;
         }
 
-        public getProperty(key: string): string | undefined {
-            throw new Error("Not Implemented");
+        public getProperty(key: string): string | null{
+            ctx.logger.info(`Accessing property ${key}: ${project.get(key)}`)
+            return project.get(key);
         }
     }
 }

@@ -1,11 +1,16 @@
 import {createEnvironmentClass} from "./sakuli-environment.class";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {SimpleLogger} from "@sakuli/commons";
+import {mockPartial} from "sneer";
+
+const mockProject = mockPartial<Project>({
+    get: jest.fn(() => "foo"),
+});
 
 describe("Environment", () => {
     it("should return true for isWindows", () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
         const SUT = new EnvironmentImpl();
 
         // WHEN
@@ -17,7 +22,7 @@ describe("Environment", () => {
 
     it("should return false for isLinux", () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
         const SUT = new EnvironmentImpl();
 
         // WHEN
@@ -29,7 +34,7 @@ describe("Environment", () => {
 
     it("should return false for isDarwin", () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
         const SUT = new EnvironmentImpl();
 
         // WHEN
@@ -41,7 +46,7 @@ describe("Environment", () => {
 
     it("should return 'win32'", () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
         const SUT = new EnvironmentImpl();
 
         // WHEN
@@ -53,7 +58,7 @@ describe("Environment", () => {
 
     it("should contain 'Windows'", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()));
+        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
         const SUT = new EnvironmentImpl();
 
         // WHEN

@@ -80,17 +80,17 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         );
     }
 
-    async requestContext(ctx: TestExecutionContext) {
+    async requestContext(ctx: TestExecutionContext, project: Project) {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
         return Promise.resolve({
             driver,
             context: ctx,
-            TestCase: createTestCaseClass(ctx),
+            TestCase: createTestCaseClass(ctx, project),
             Application,
             Key,
-            Environment: createEnvironmentClass(ctx),
+            Environment: createEnvironmentClass(ctx, project),
             Region: createRegionClass(ctx),
             Logger: createLoggerClass(ctx),
             console: console,

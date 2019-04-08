@@ -33,6 +33,6 @@ export interface Environment {
     isDarwin(): boolean;
     getOsIdentifier(): string;
     runCommand(command: string, optThrowException: boolean): Promise<CommandLineResult>;
-    getEnv(key: string): string | undefined;
-    getProperty(key: string): string | undefined;
+    getEnv(key: string): string | null;
+    getProperty(key: string): string | null;
 }

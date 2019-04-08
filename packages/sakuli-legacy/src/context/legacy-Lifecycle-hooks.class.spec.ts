@@ -49,7 +49,7 @@ describe(LegacyLifecycleHooks.name, () => {
 
         it('should publish sahi function into context', async () => {
             await lcp.onProject(minimumProject);
-            const context = await lcp.requestContext(testExecutionContext);
+            const context = await lcp.requestContext(testExecutionContext, minimumProject);
             return expect(context._navigateTo).toBeDefined()
         });
 
