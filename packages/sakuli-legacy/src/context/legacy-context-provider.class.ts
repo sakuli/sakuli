@@ -4,13 +4,13 @@ import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case.class";
 import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
-import {createEnvironmentClass} from "./common/environment.class";
+import {createEnvironmentClass} from "./common/sakuli-environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
-import {createRegionClass} from "./common/region.class";
+import {createRegionClass} from "./common/sakuli-region.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 

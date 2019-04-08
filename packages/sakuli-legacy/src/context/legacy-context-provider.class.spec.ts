@@ -2,7 +2,6 @@ import {LegacyLifecycleHooks} from "./legacy-context-provider.class";
 import {Builder, Capabilities, ThenableWebDriver} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {isPresent} from "@sakuli/commons";
 import {TestExecutionContext} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import Mock = jest.Mock;
