@@ -23,6 +23,8 @@ echo "Installing node version $nodeVersion"
 nvm install $nodeVersion
 echo "npm ci"
 npm ci > /dev/null 2>&1
+echo "npm i -g lerna"
+npm i -g lerna gh-pages
 echo "lerna run build"
 lerna run build
 echo "nmp run test:it"
