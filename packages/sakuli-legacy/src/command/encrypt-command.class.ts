@@ -4,10 +4,6 @@ import {Argv, CommandModule} from "yargs";
 import {secret} from "@nut-tree/secrets";
 import {ENCRYPTION_KEY_VARIABLE} from "../context/common/secrets.function";
 
-interface SakuliEncryptOptions {
-    secret: string
-}
-
 export const encryptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
         command: 'encrypt [secret]',
@@ -17,7 +13,7 @@ export const encryptCommand: CommandModuleProvider = (): CommandModule => {
                 describe: 'The secret to encrypt'
             }).demandOption('secret');
         },
-        async handler(opts: SakuliEncryptOptions) {
+        async handler(opts: any) {
             const key = process.env[ENCRYPTION_KEY_VARIABLE];
             if (!key) {
                 console.log(chalk`{red.bold Missing master key.} Please export a master key to $${ENCRYPTION_KEY_VARIABLE}`);

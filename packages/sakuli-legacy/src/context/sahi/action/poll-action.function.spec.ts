@@ -93,7 +93,7 @@ describe("poll-action", () => {
         const action = jest.fn(() => {
             console.log(`Polling...`);
             const interval = (Date.now() - start);
-            return new Promise((resolve, reject) => (interval > delay) ? resolve(true) : reject());
+            return new Promise<boolean>((resolve, reject) => (interval > delay) ? resolve(true) : reject());
         });
 
         // WHEN

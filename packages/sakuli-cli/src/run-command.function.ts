@@ -1,5 +1,5 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, SakuliInstance, SakuliRunOptions, TestExecutionContext} from "@sakuli/core";
+import {CommandModuleProvider, SakuliInstance, TestExecutionContext} from "@sakuli/core";
 import renderExecution from "./components";
 import {ifPresent, isPresent} from "@sakuli/commons";
 import Youch from "youch";
@@ -27,11 +27,11 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
             }).demandOption('path');
         },
 
-        async handler(runOptions: SakuliRunOptions) {
+        async handler(runOptions: any) {
             const logStream = createWriteStream('sakuli.log', {flags: 'a'});
             sakuli.testExecutionContext.logger.onEvent(e => {
                 logStream.write(`[${e.time}] ${e.level} ${e.message}\n`)
-                if(e.data) {
+                if (e.data) {
                     logStream.write(`${JSON.stringify(e.data, null, 2)}\n`)
                 }
             });
@@ -52,7 +52,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                     unmount();
                     process.exit(testExecutionContext.resultState)
                 }, 500);
-            } catch(e) {
+            } catch (e) {
                 await renderError(e);
             } finally {
                 logStream.close();

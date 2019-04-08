@@ -4,17 +4,26 @@ export const INJECT_SAKULI_HOOK = stripIndent`
 if (!("sakuliHookEnabled" in window) || !window.sakuliHookEnabled) {
     window.openRequests = 0;
     window.sakuliHookEnabled = true;
+    
+    const increaseOpenRequests = () => {
+        ++window.openRequests;
+    }
+    
+    const decreaseOpenRequests = () => {
+        --window.openRequests;
+        window.openRequests = (window.openRequests >= 0) ? window.openRequests : 0;
+    }
 
     const oldOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function(...args) {
-      ++window.openRequests;
+      increaseOpenRequests();
       console.log("Open requests before XHR: " + window.openRequests);
       this.addEventListener('load', () => {
         while (this.readyState > 1 && this.readyState < 4) {
           console.log("Waiting on request");
         }
         if (this.readyState === 4) {
-          --window.openRequests;
+          decreaseOpenRequests();
           console.log("Open requests after XHR: " + window.openRequests);
         }
       })
@@ -23,15 +32,15 @@ if (!("sakuliHookEnabled" in window) || !window.sakuliHookEnabled) {
 
     const oldFetch = fetch;
     const newFetch = (input, init) => {
-      ++window.openRequests;
+      increaseOpenRequests();
       console.log("Open requests before fetch: " + window.openRequests);
       return oldFetch(input, init).then(resp => {
-          --window.openRequests;
+          decreaseOpenRequests();
           console.log("Open requests after fetch: " + window.openRequests);
           return Promise.resolve(resp);
       }).catch(err => {
-        --window.openRequests;
-          console.log("Open requests after fetch: " + window.openRequests);
+        decreaseOpenRequests();
+        console.log("Open requests after fetch: " + window.openRequests);
         return Promise.reject(err);
       });
     }

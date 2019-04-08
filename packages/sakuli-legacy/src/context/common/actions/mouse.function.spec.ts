@@ -1,6 +1,7 @@
 import {mouse, Point} from "@nut-tree/nut-js";
 import {MouseApi} from "./mouse.function";
 import {SakuliRegion} from "./__mocks__/sakuli-region.class";
+import {Mouse} from "@nut-tree/nut-js/dist/lib/mouse.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -88,9 +89,10 @@ describe("MouseApi", () => {
         // GIVEN
         const source = new SakuliRegion(0, 0, 100, 100);
         const target = new Point(50, 50);
-        let capturedArgument: Promise<number[]> = Promise.resolve([]);
-        mouse.drag = jest.fn((param: Promise<number[]>) => {
+        let capturedArgument: Promise<Point[]> = Promise.resolve([]);
+        mouse.drag = jest.fn((param: Promise<Point[]>): Promise<Mouse> => {
             capturedArgument = param;
+            return Promise.resolve(mouse);
         });
 
         // WHEN
@@ -105,9 +107,10 @@ describe("MouseApi", () => {
         // GIVEN
         const source = new SakuliRegion(0, 0, 100, 100);
         const target = new Point(50, 50);
-        let capturedArgument: Promise<number[]> = Promise.resolve([]);
-        mouse.move = jest.fn((param: Promise<number[]>) => {
+        let capturedArgument: Promise<Point[]> = Promise.resolve([]);
+        mouse.move = jest.fn((param: Promise<Point[]>): Promise<Mouse> => {
             capturedArgument = param;
+            return Promise.resolve(mouse);
         });
 
         // WHEN
