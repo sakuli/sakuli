@@ -19,7 +19,7 @@
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^10.12.1",
     "@types/properties-reader": "0.0.1",
-    "@types/yargs": "^12.0.1",
+    "@types/yargs": "^13.0.0",
     "@types/common-tags": "^1.4.0",
     "jest": "^23.6.0",
     "mock-fs": "^4.7.0",
