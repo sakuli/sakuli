@@ -3,14 +3,14 @@
     try {
         tc.endOfStep('Init');
         await _navigateTo('https://consol.github.io/sakuli/');
-        await _wait(3000);
         tc.endOfStep('Load Page and wait');
-        const htmlLink = await _link('HTML');
+        const htmlLink = _link('HTML');
         await _highlight(htmlLink);
         await _click(htmlLink);
+        await _wait(3000);
+        await(_highlight(_heading1(/Sakuli E2E testing and -monitoring/)));
         tc.endOfStep('Open Documentation');
     } catch (e) {
-        await _wait(3000);
         tc.handleException(e);
     } finally {
         tc.saveResult();

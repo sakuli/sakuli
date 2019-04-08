@@ -1,3 +1,3 @@
-export * from './in-memory-fs'
-export {restoreFsLayout, InMemoryFile, mockFsLayout} from './fs-mocks'
-export {MockFsLayout} from './mock-fs.class'
+export * from './fs-layout/mock-fs.function'
+export * from './fs-layout/fs-layout-entry.interface'
+export * from './fs-layout/file.function'

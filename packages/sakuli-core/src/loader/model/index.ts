@@ -1,1 +1,1 @@
-export {Project} from './project.interface'
+export {Project} from './project.class'
