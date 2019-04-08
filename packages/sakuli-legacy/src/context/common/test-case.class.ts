@@ -1,9 +1,9 @@
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import nutConfig from "./nut-global-config.class";
 import {ScreenApi} from "./actions/screen.function";
 import {ifPresent} from "@sakuli/commons";
 
-export function createTestCaseClass(ctx: TestExecutionContext) {
+export function createTestCaseClass(ctx: TestExecutionContext, project: Project) {
     return class TestCase {
         constructor(
             readonly caseId?: string,
@@ -60,15 +60,15 @@ export function createTestCaseClass(ctx: TestExecutionContext) {
         }
 
         getTestCaseFolderPath() {
-            throw Error('Not Implemented')
+            throw Error('Not Implemented');
         }
 
         getTestSuiteFolderPath() {
-            throw Error('Not Implemented')
+            return project.rootDir;
         }
 
         throwExecption(message: string, screenshot: boolean) {
-            throw Error('Not Implemented')
+            throw Error(message);
         }
     }
 }
