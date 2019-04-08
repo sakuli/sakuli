@@ -5,7 +5,7 @@ module.exports = {
     displayName: 'sakuli-legacy',
     rootDir: 'src/',
     testMatch: [
-        `**/!(*.aix.*|*.darwin.*|*.freebsd.*|*.linux.*|*.openbsd.*|*.sunos.*|*.win32.*)+(spec|test).[jt]s?(x)`,
-        `**/?(*.${process.platform}.it.)+(spec|test).[jt]s?(x)`
+        `**/!(*.+(aix|it).*|*.+(darwin|it).*|*.+(freebsd|it).*|*.+(linux|it).*|*.+(openbsd|it).*|*.+(sunos|it).*|*.+(win32|it).*)+(spec|test).[jt]s?(x)`,
+        `**/?(*.${process.platform}!(.it).*)+(spec|test).[jt]s?(x)`
     ]
 };
