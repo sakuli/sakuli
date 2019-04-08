@@ -7,7 +7,7 @@ import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import Mock = jest.Mock;
 import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
 
-describe('LegacyContextProviderClass', () => {
+describe(LegacyLifecycleHooks.name, () => {
 
     const driver: ThenableWebDriver = mockPartial<ThenableWebDriver>({
         quit: jest.fn()
@@ -33,6 +33,7 @@ describe('LegacyContextProviderClass', () => {
     const minimumProject = mockPartial<Project>({
         rootDir: '',
         testFiles: [],
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
         ...(createPropertyMapMock({
 
         }))

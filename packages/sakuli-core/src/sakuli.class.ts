@@ -3,7 +3,7 @@ import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
-import {CliArgsSource, ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {CliArgsSource, ifPresent, Maybe} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
