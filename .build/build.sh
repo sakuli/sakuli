@@ -23,11 +23,13 @@ echo "Installing node version $nodeVersion"
 nvm install $nodeVersion
 echo "npm i -g lerna"
 npm i -g lerna
-echo "clean node_modules"
-rm -rf **/node_modules
+echo "clean build"
+git clean -fdx
+echo "npm ci"
+npm ci
 echo "lerna bootstrap"
 lerna bootstrap --ci
 echo "lerna run build"
 lerna run build
-echo "nmp run test:it"
+echo "npm run test:it"
 npm run test:it
