@@ -5,7 +5,7 @@
     "postinstall": "lerna bootstrap --progress --no-ci",
     "build": "lerna run build",
     "test": "jest",
-    "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --detectOpenHandles",
+    "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
     "bootstrap": "lerna bootstrap",
     "share-scripts": "node scripts/distribute-npm-scripts"
   },

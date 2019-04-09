@@ -21,10 +21,12 @@ echo "Entering working directory $targetDir"
 cd $targetDir
 echo "Installing node version $nodeVersion"
 nvm install $nodeVersion
-echo "npm ci"
-npm ci > /dev/null 2>&1
 echo "npm i -g lerna"
-npm i -g lerna gh-pages
+npm i -g lerna
+echo "clean node_modules"
+rm -rf **/node_modules
+echo "lerna bootstrap"
+lerna bootstrap --ci
 echo "lerna run build"
 lerna run build
 echo "nmp run test:it"
