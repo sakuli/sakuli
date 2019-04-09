@@ -9,8 +9,8 @@ type TestMetaData = {
 };
 
 const getTestMetaData = (ctx: TestExecutionContext): TestMetaData => {
-    const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => suite.id, () => "UNKNOWN_TESTSUITE");
-    const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => testCase.id, () => "UNKNOWN_TESTCASE");
+    const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => ifPresent(suite.id, id => id, () => "UNKNOWN_TESTSUITE"), () => "UNKNOWN_TESTSUITE");
+    const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => ifPresent(testCase.id, id => id, () => "UNKNOWN_TESTCASE"), () => "UNKNOWN_TESTCASE");
 
     return ({
         suiteName,
@@ -53,7 +53,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
 
         async handleException<E extends Error>(e: E) {
             ctx.logger.info(`Error: ${e.message}`);
-            const { suiteName, caseName } = getTestMetaData(this.ctx);
+            const { suiteName, caseName } = getTestMetaData(ctx);
             await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
             ctx.updateCurrentTestCase({
                 error: e,
@@ -82,7 +82,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
 
         async throwExecption(message: string, screenshot: boolean) {
             if (screenshot) {
-                const { suiteName, caseName } = getTestMetaData(this.ctx);
+                const { suiteName, caseName } = getTestMetaData(ctx);
                 await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
             }
             throw Error(message);
