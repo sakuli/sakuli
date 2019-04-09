@@ -3,6 +3,21 @@ import nutConfig from "./nut-global-config.class";
 import {ScreenApi} from "./actions/screen.function";
 import {ifPresent} from "@sakuli/commons";
 
+type TestMetaData = {
+    suiteName: string,
+    caseName: string
+};
+
+const getTestMetaData = (ctx: TestExecutionContext): TestMetaData => {
+    const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => suite.id, () => "UNKNOWN_TESTSUITE");
+    const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => testCase.id, () => "UNKNOWN_TESTCASE");
+
+    return ({
+        suiteName,
+        caseName
+    });
+};
+
 export function createTestCaseClass(ctx: TestExecutionContext, project: Project) {
     return class TestCase {
         constructor(
@@ -38,8 +53,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
 
         async handleException<E extends Error>(e: E) {
             ctx.logger.info(`Error: ${e.message}`);
-            const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => suite.id, () => "UNKNOWN_TESTSUITE");
-            const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => testCase.id, () => "UNKNOWN_TESTCASE");
+            const { suiteName, caseName } = getTestMetaData(this.ctx);
             await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
             ctx.updateCurrentTestCase({
                 error: e,
@@ -60,14 +74,17 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
         }
 
         getTestCaseFolderPath() {
-            throw Error('Not Implemented');
         }
 
         getTestSuiteFolderPath() {
             return project.rootDir;
         }
 
-        throwExecption(message: string, screenshot: boolean) {
+        async throwExecption(message: string, screenshot: boolean) {
+            if (screenshot) {
+                const { suiteName, caseName } = getTestMetaData(this.ctx);
+                await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
+            }
             throw Error(message);
         }
     }

@@ -11,6 +11,7 @@ import nutConfig from "./nut-global-config.class";
 import {execute} from "./actions/command.function";
 import {Environment} from "./environment.interface";
 import {Region} from "./region.interface";
+import {createRegionClass} from "./sakuli-region.class";
 
 export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {
     return class SakuliEnvironment implements Environment {
@@ -56,7 +57,9 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async getRegionFromFocusedWindow(): Promise<Region> {
-            throw new Error("Not Implemented");
+            ctx.logger.warn(`Unable to determine region of focused window, falling back to screen`);
+            const RegionImpl = createRegionClass(ctx);
+            return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
         }
 
         public async getClipboard(): Promise<string> {
@@ -202,7 +205,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public getProperty(key: string): string | null{
-            ctx.logger.info(`Accessing property ${key}: ${project.get(key)}`)
+            ctx.logger.info(`Accessing property ${key}: ${project.get(key)}`);
             return project.get(key);
         }
     }

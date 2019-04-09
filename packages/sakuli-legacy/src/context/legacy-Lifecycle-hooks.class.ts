@@ -1,7 +1,6 @@
 import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case.class";
-import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
 import {createEnvironmentClass} from "./common/sakuli-environment.class";
 import {sahiApi} from "./sahi/api";
@@ -11,6 +10,7 @@ import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {createRegionClass} from "./common/sakuli-region.class";
+import {createApplicationClass} from "./common/sakuli-application.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -88,7 +88,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             driver,
             context: ctx,
             TestCase: createTestCaseClass(ctx, project),
-            Application,
+            Application: createApplicationClass(ctx),
             Key,
             Environment: createEnvironmentClass(ctx, project),
             Region: createRegionClass(ctx),
