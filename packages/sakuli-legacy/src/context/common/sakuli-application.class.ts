@@ -3,7 +3,15 @@ import {Application} from "./application.interface";
 import {TestExecutionContext} from "@sakuli/core";
 import {Region} from "./region.interface";
 import {createRegionClass} from "./sakuli-region.class";
-import {ChildProcess, exec} from "child_process";
+import {ChildProcess, exec, spawn} from "child_process";
+
+const killProcess = (pid: number) => {
+    if (process.platform === "win32") {
+        exec(`Taskkill /PID ${pid} /F`);
+    } else {
+        exec(`kill -9 ${pid}`);
+    }
+};
 
 export function createApplicationClass(ctx: TestExecutionContext) {
     return class SakuliApplication implements Application {
@@ -18,7 +26,7 @@ export function createApplicationClass(ctx: TestExecutionContext) {
             return new Promise<Application>((resolve, reject) => {
                 try {
                     if (!this.process) {
-                        this.process = exec(this.name);
+                        this.process = spawn(this.name);
                     } else {
                         ctx.logger.info(`Application already open: PID=${this.process.pid}`)
                     }
@@ -44,7 +52,7 @@ export function createApplicationClass(ctx: TestExecutionContext) {
                 ctx.logger.info(`Closing application '${this.name}${optSilent ? ' silently' : ''}`);
                 if (this.process) {
                     try {
-                        this.process.kill();
+                        killProcess(this.process.pid);
                         resolve(this);
                     } catch (e) {
                         if (!optSilent) {
@@ -65,7 +73,7 @@ export function createApplicationClass(ctx: TestExecutionContext) {
                 ctx.logger.info(`Killing application '${this.name}${optSilent ? ' silently' : ''}`);
                 if (this.process) {
                     try {
-                        this.process.kill();
+                        killProcess(this.process.pid);
                         resolve(this);
                     } catch (e) {
                         if (!optSilent) {
