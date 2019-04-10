@@ -3,6 +3,7 @@ import {accessorApi as createAccessorApi, AccessorFunctions, AccessorUtil} from 
 import {TestExecutionContext} from "@sakuli/core";
 import {SahiRelation} from "../relations/sahi-relation.interface";
 import {AccessorIdentifier} from "../api";
+import {isSahiElementQuery} from "../sahi-element.interface";
 
 export type MultipleElementApi = ReturnType<typeof multipleElementApi>;
 
@@ -21,8 +22,11 @@ export function multipleElementApi(
     ): Promise<WebElement[]> {
         const method = accessorApi[accessorApiMethod];
         const query = method(identifier, ...relations);
-        ctx.logger.info('Fetching for query', query);
-        return accessorUtil.fetchElements(query);
+        if (isSahiElementQuery(query)) {
+            return accessorUtil.fetchElements(query);
+        } else {
+            return [query];
+        }
     }
 
     async function _count(

@@ -1,7 +1,7 @@
 import {By, ThenableWebDriver} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {html, stripIndent} from "common-tags";
 import {isChildOf} from "../helper/is-child-of.function";
 import {Vector2} from "../relations/vector2.type";
@@ -16,17 +16,17 @@ export function fetchApi(
     ctx: TestExecutionContext
 ) {
 
-    async function _getValue(query: SahiElementQuery) {
+    async function _getValue(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         return e.getAttribute('value');
     }
 
-    async function _getText(query: SahiElementQuery) {
+    async function _getText(query: SahiElementQueryOrWebElement): Promise<string> {
         const e = await accessorUtil.fetchElement(query);
         return e.getText();
     }
 
-    async function _getOptions(query: SahiElementQuery, value?: "value") {
+    async function _getOptions(query: SahiElementQueryOrWebElement, value?: "value") {
         const e = await accessorUtil.fetchElement(query);
         const options = await e.findElements(By.css('option'));
         return Promise.all(options.map(option => value === 'value'
@@ -37,26 +37,26 @@ export function fetchApi(
 
     const _getCellText = _getText;
 
-    async function _getSelectedText(query: SahiElementQuery) {
+    async function _getSelectedText(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         return e.findElement(By.css('[selected]')).then(e => e.getText());
     }
 
-    async function _getAttribute(query: SahiElementQuery, name: string) {
+    async function _getAttribute(query: SahiElementQueryOrWebElement, name: string) {
         const e = await accessorUtil.fetchElement(query);
         return e.getAttribute(name)
     }
 
-    async function _exists(query: SahiElementQuery) {
+    async function _exists(query: SahiElementQueryOrWebElement) {
         try {
-            await accessorUtil.fetchElement(query);
-            return true
+            const result = await accessorUtil.fetchElement(query);
+            return (result !== undefined);
         } catch (e) {
             return false;
         }
     }
 
-    async function _areEqual(q1: SahiElementQuery, q2: SahiElementQuery) {
+    async function _areEqual(q1: SahiElementQueryOrWebElement, q2: SahiElementQueryOrWebElement) {
         const [e1, e2] = await Promise.all([
             accessorUtil.fetchElement(q1),
             accessorUtil.fetchElement(q2)
@@ -64,34 +64,34 @@ export function fetchApi(
         return isEqual(e1, e2);
     }
 
-    async function _isVisible(query: SahiElementQuery) {
+    async function _isVisible(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         return e.isDisplayed();
     }
 
-    async function _isChecked(query: SahiElementQuery) {
+    async function _isChecked(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         return e.getAttribute('checked').then(v => !!v)
     }
 
-    async function _isEnabled(query: SahiElementQuery) {
+    async function _isEnabled(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         return e.getAttribute('disabled').then(v => !v)
     }
 
-    async function _containsText(query: SahiElementQuery, text: string) {
+    async function _containsText(query: SahiElementQueryOrWebElement, text: string) {
         const e = await accessorUtil.fetchElement(query);
         return e.getText().then(elementText => new RegExp(text).test(elementText))
     }
 
-    async function _containsHTML(query: SahiElementQuery, htmlText: string) {
+    async function _containsHTML(query: SahiElementQueryOrWebElement, htmlText: string) {
         const e = await accessorUtil.fetchElement(query);
         return e.getAttribute('innerHTML').then(elementHtml => {
             return new RegExp(html`${htmlText}`).test(html`${elementHtml}`);
         })
     }
 
-    async function _contains(parent: SahiElementQuery, child: SahiElementQuery) {
+    async function _contains(parent: SahiElementQueryOrWebElement, child: SahiElementQueryOrWebElement) {
         const [parentElement, childElement] = await Promise.all([
             accessorUtil.fetchElement(parent),
             accessorUtil.fetchElement(child)
@@ -113,12 +113,12 @@ export function fetchApi(
      * @param attr
      * @private
      */
-    async function _style(query: SahiElementQuery, attr: string) {
+    async function _style(query: SahiElementQueryOrWebElement, attr: string) {
         const e = await accessorUtil.fetchElement(query);
         return e.getCssValue(attr);
     }
 
-    async function _position(query: SahiElementQuery) {
+    async function _position(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         return e.getLocation().then(({x, y}) => [x, y] as Vector2)
     }
@@ -136,7 +136,7 @@ export function fetchApi(
         `)
     }
 
-    async function _fetch(query: SahiElementQuery) {
+    async function _fetch(query: SahiElementQueryOrWebElement) {
         return accessorUtil.fetchElement(query);
     }
 

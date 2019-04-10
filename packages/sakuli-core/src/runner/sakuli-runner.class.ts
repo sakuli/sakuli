@@ -30,7 +30,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         });
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
-        const context = await this.requestContext(this.testExecutionContext);
+        const context = await this.requestContext(this.testExecutionContext, project);
         let result = {};
         await this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
@@ -89,11 +89,11 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
             .map(hook => hook.beforeRunFile!(file, project, testExecutionContext)));
     }
 
-    async requestContext(testExecutionContext: TestExecutionContext): Promise<any> {
+    async requestContext(testExecutionContext: TestExecutionContext, project: Project): Promise<any> {
         const contexts = await Promise.all(this
             .lifecycleHooks
             .filter(hook => 'requestContext' in hook)
-            .map(hook => hook.requestContext!(testExecutionContext)));
+            .map(hook => hook.requestContext!(testExecutionContext, project)));
         return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
     }
 

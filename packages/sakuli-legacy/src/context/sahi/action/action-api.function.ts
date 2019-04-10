@@ -1,12 +1,17 @@
 import {AccessorUtil} from "../accessor";
-import {isSahiElementQuery, SahiElementQuery, sahiQueryToString} from "../sahi-element.interface";
+import {isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {error, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {stripIndents} from "common-tags";
 import {mouseActionApi} from "./mouse-actions-api.function";
 import {keyboardActionApi} from "./keyboard-actions.function";
 import {focusActionApi} from "./focus-actions.function";
 import {alertActionApi} from "./alert-action.function";
+import {INJECT_SAKULI_HOOK} from "./inject.const";
+import {timeout} from "./poll-action.function";
+import StaleElementReferenceError = error.StaleElementReferenceError;
+
+type SahiExpression = (...locators: SahiElementQueryOrWebElement[]) => Promise<boolean>;
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -15,6 +20,28 @@ export function actionApi(
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ) {
+
+    function withRetries<T extends (...args: any[]) => Promise<any>>(
+        retries: number,
+        func: T,
+    ): T {
+        return (async (...args: any[]) => {
+            const initialTries = retries;
+            while (retries) {
+                try {
+                    return await func(...args);
+                } catch (e) {
+                    if (e instanceof StaleElementReferenceError) {
+                        --retries;
+                        ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
+                    } else {
+                        throw Error(`Error in action: ${name} \n${e.message}`)
+                    }
+                }
+            }
+            throw Error(`Error in action: ${name} \nFailed after ${initialTries} attempts.`)
+        }) as T;
+    }
 
     function runAsAction<T extends (...args: any[]) => Promise<any>>(
         name: string,
@@ -27,11 +54,12 @@ export function actionApi(
             ctx.logger.info(`Start action ${name}`);
             let res: any;
             try {
-                res = await fn(...args);
+                // TODO Make retries configurable
+                res = await withRetries(5, fn)(...args);
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
-                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`)
+                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`);
                 ctx.endTestAction();
             }
             return res;
@@ -53,10 +81,11 @@ export function actionApi(
         `, ...args);
     }
 
-    async function _highlight(query: SahiElementQuery | WebElement, timeoutMs: number = 2000): Promise<void> {
+    async function _highlight(query: SahiElementQueryOrWebElement | WebElement, timeoutMs: number = 2000): Promise<void> {
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
+        await element.getId();
         const oldBorder = await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[0].style.border;
             arguments[0].style.border = '2px solid red'
@@ -66,14 +95,16 @@ export function actionApi(
         await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[1];
             arguments[0].style.border = oldBorder
-        `, element, oldBorder)
-
+        `, element, oldBorder);
     }
 
-    async function _wait(millis: number): Promise<void> {
-        return new Promise<void>((res, rej) => {
-            setTimeout(() => res(), millis);
-        });
+    async function _wait(millis: number, expression?: SahiExpression): Promise<void> {
+        if (!expression) {
+            return new Promise<void>((res) => {
+                setTimeout(() => res(), millis);
+            });
+        }
+        await timeout(200, millis, expression);
     }
 
     async function _navigateTo(target: string, forceReload: boolean = false, credentials?: { user: string, password: string }): Promise<any> {
@@ -82,17 +113,23 @@ export function actionApi(
             url.username = credentials.user;
             url.password = credentials.password;
         }
+        await webDriver.manage().window().maximize();
         await webDriver.get(url.href);
         if (forceReload) {
             await webDriver.navigate().refresh()
         }
+        await webDriver.executeScript(INJECT_SAKULI_HOOK);
     }
 
-    async function _rteWrite(query: SahiElementQuery, content: string): Promise<void> {
+    async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
         if (tagName.toLocaleLowerCase() !== 'iframe') {
-            throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
+            if (isSahiElementQuery(query)) {
+                throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
+            } else {
+                throw Error(`WebElement must be an iframe; got ${tagName} instead`);
+            }
         }
         const defaultWindowHandle = await webDriver.getWindowHandle();
         await webDriver.switchTo().frame(e);

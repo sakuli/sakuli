@@ -2,7 +2,7 @@ import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
 import {RelationApi, relationsApi} from "./relations-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(15_000);
@@ -10,13 +10,16 @@ describe('relations-api', () => {
     const testExecutionContext = createTestExecutionContextMock();
 
     let env: TestEnvironment;
+    let accessorUtil: AccessorUtil;
+    let driver: ThenableWebDriver;
+    let api: RelationApi;
 
     function createApi(driver: ThenableWebDriver) {
         const accessorUtil = new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext));
         return relationsApi(driver, accessorUtil, testExecutionContext);
     }
 
-    function createQuery(locator: Locator): SahiElementQuery {
+    function createQuery(locator: Locator): SahiElementQueryOrWebElement {
         return ({
             locator,
             identifier: 0,
@@ -27,6 +30,9 @@ describe('relations-api', () => {
     beforeAll(async done => {
         env = createTestEnv();
         await env.start();
+        driver = (await env.getEnv()).driver;
+        accessorUtil = new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext));
+        api = relationsApi(driver, accessorUtil, testExecutionContext);
         done();
     });
 
@@ -35,13 +41,29 @@ describe('relations-api', () => {
         done();
     });
 
+    it('should locate by js', async () => {
+        const {driver} = await env.getEnv();
+        await driver.get(mockHtml(`
+            <div id="d1"></div>
+            <div id="d2"></div>
+            <div id="d3"></div> 
+        `));
+        const elements = await driver.findElements(By.css('div'));
+
+        const elementsByJs = await driver.findElements(By.js(`return arguments[0]`, elements));
+
+        return expect(elementsByJs.length).toBe(3);
+    });
+
+    function createCssQuery(locator: Locator): SahiElementQuery {
+        return ({locator, identifier: new RegExp('.*'), relations: []})
+    }
+
 
     describe('dom', () => {
 
         describe('_in', () => {
             it('should find span in div', async done => {
-                const {driver} = await env.getEnv();
-                const api = createApi(driver);
                 await driver.get(mockHtml(`
                 <span id="outside"></span>
                 <div>
@@ -49,15 +71,14 @@ describe('relations-api', () => {
                 </div>
             `));
                 const inRel = api._in(createQuery(By.css('div')));
-                const related = await inRel(await driver.findElements(By.css('span')));
+                const relatedQuery = await inRel(createCssQuery(By.css('span')));
+                const related = await accessorUtil.fetchElements(relatedQuery);
                 expect(related.length).toBe(1);
                 await expect(related[0].getAttribute('id')).resolves.toBe('inside');
                 done();
             });
 
-            it('should resolve ', async done => {
-                const {driver} = await env.getEnv();
-                const api = createApi(driver);
+            it('should resolve within a table', async done => {
                 await driver.get(mockHtml(`
                 <table style="width:300px" class="_in">
                   <tr>
@@ -77,20 +98,20 @@ describe('relations-api', () => {
                   </tr>
                 </table>
             `));
-                const del2 = createQuery(By.css('._in #del2'));
+                const del2 = createQuery(By.css('#del2'));
                 const links = await driver.findElements(By.css('._in a'));
                 const relation = api._in(del2);
-                const relatedLinks = await relation(links);
+                const relatedLinksQuery = await relation(createCssQuery(By.css('._in a')));
+                const relatedLinks = await accessorUtil.fetchElements(relatedLinksQuery);
                 expect(links.length).toBe(2);
                 expect(relatedLinks.length).toBe(1);
                 done();
             });
+
         });
 
         describe('_near', () => {
             it('should work', async () => {
-                const {driver} = await env.getEnv();
-                const api = createApi(driver);
                 const html = mockHtml(`                                
                     <table class="_in">
                       <tr>
@@ -112,8 +133,8 @@ describe('relations-api', () => {
                 `);
                 await driver.get(html);
                 const nearUserTwo = api._near(createQuery(By.css('#user-two')));
-                const links = await driver.findElements(By.css('a'));
-                const linksNearUserTwo = await nearUserTwo(links);
+                const linksNearUserTwoQuery = await nearUserTwo(createCssQuery(By.css('a')));
+                const linksNearUserTwo = await accessorUtil.fetchElements(linksNearUserTwoQuery);
                 return await expect(linksNearUserTwo[0].getText()).resolves.toEqual(expect.stringContaining('user two'));
             });
 
@@ -129,14 +150,7 @@ describe('relations-api', () => {
         | "_underOrAbove";
     describe('position', () => {
 
-        let driver: ThenableWebDriver;
-        let api: RelationApi;
         beforeAll(async () => {
-            // env = createTestEnv();
-            // await env.start();
-            const _env = await env.getEnv();
-            driver = _env.driver;
-            api = createApi(driver);
             await driver.get(mockHtml(`
                     <table class="_left _right" style="width:100%">
                       <thead>
@@ -213,8 +227,8 @@ describe('relations-api', () => {
             'should relate %i elements which are %s the #anchor with an offset of %i and contains %j',
             async (expected: number, method: Exclude<keyof RelationApi, "_parentNode" | "_near" | "_in">, offset: number, text: string[]) => {
                 const anchor = await createQuery(By.css('#anchor'));
-                const allElements = await driver.findElements(By.css('td'));
-                const leftOf = await api[method](anchor, offset)(allElements);
+                const leftOfQuery = await api[method](anchor, offset)(createCssQuery(By.css('td')));
+                const leftOf = await accessorUtil.fetchElements(leftOfQuery);
                 const content = await Promise.all(leftOf.map(e => e.getText()));
                 expect(content).toEqual(text);
                 return expect(leftOf.length).toBe(expected);

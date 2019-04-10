@@ -1,15 +1,16 @@
 import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case.class";
-import {Application} from "./common/application.class";
 import {Key} from "./common/key.class";
-import {Environment} from "./common/environment.class";
+import {createEnvironmentClass} from "./common/sakuli-environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
+import {createRegionClass} from "./common/sakuli-region.class";
+import {createApplicationClass} from "./common/sakuli-application.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -79,17 +80,18 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         );
     }
 
-    async requestContext(ctx: TestExecutionContext) {
+    async requestContext(ctx: TestExecutionContext, project: Project) {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
         return Promise.resolve({
             driver,
             context: ctx,
-            TestCase: createTestCaseClass(ctx),
-            Application,
+            TestCase: createTestCaseClass(ctx, project),
+            Application: createApplicationClass(ctx),
             Key,
-            Environment,
+            Environment: createEnvironmentClass(ctx, project),
+            Region: createRegionClass(ctx),
             Logger: createLoggerClass(ctx),
             console: console,
             $includeFolder: '',

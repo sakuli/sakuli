@@ -11,7 +11,7 @@ export interface TestExecutionLifecycleHooks<T = any> {
 
     readFileContent?(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): Promise<string>;
 
-    requestContext?(testExecutionContext: TestExecutionContext): Promise<T>
+    requestContext?(testExecutionContext: TestExecutionContext, project: Project): Promise<T>
 
     beforeRunFile?(file: TestFile, project: Project, testExecutionContext: TestExecutionContext): Promise<void>;
 

@@ -3,7 +3,7 @@ import {TestExecutionContext} from "@sakuli/core";
 import {AccessorApi, accessorApi, AccessorIdentifierAttributes, AccessorUtil} from "./accessor";
 import {SahiRelation} from "./relations/sahi-relation.interface";
 import {RelationApi, relationsApi, RelationsResolver} from "./relations";
-import {SahiElementQuery} from "./sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "./sahi-element.interface";
 import {ActionApiFunction, actionApi} from "./action";
 import {fetchApi, FetchApi} from "./fetch/fetch-api.function";
 
@@ -11,7 +11,7 @@ import {fetchApi, FetchApi} from "./fetch/fetch-api.function";
 type pr_i_AB = [number, number];
 
 export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
-export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElementQuery;
+export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElementQueryOrWebElement;
 
 export type SahiApi = ActionApiFunction
     & AccessorApi

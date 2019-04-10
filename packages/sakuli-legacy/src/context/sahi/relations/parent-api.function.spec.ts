@@ -1,7 +1,7 @@
 import {By, Locator, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {ParentApi, parentApi} from "./parent-api.function";
 
@@ -37,7 +37,7 @@ describe('relations-api', () => {
                 </div></span>
             </div>
         `));
-        const linkQ: SahiElementQuery = {
+        const linkQ: SahiElementQueryOrWebElement = {
             locator: By.css('a'),
             identifier: 'aLink',
             relations: []

@@ -1,30 +1,32 @@
+os: linux
+dist: xenial
+
 language: node_js
 node_js:
-- 10
+  - "10"
 cache: npm
 services:
   - docker
+  - xvfb
+
 addons:
   sonarcloud:
     organization: "sakuli"
     token:
       secure: "kyPFHtVbo9gHNp7fy2B3d2I6g4/+v4h1/rjLm3LnLx1XECI13F/htxLI6tWOQGNnWeC3MRAMsrd2BJ2/ovJY0qz3EtfMBuFByEbwPiLobB+YJqaTTTnXcNsPVN+AibkbGk9jQEiO/2TIebo+29XtBH6EQLdsew1qNxGAXPCHyCFtrJT1x9jj+RO8RFxTP3PMFKzZaXAGd7Twl4AcWPTd6EYUCnV+2rq/mkIqmZwH0ckYIiVnIKm5g69P3i+LLabUl/tdftXU4+J+BHaHxwb7X+D0k9NsTXPWn19grmC8FdubO7GNX5zf+gvHX0d40oZGGYYe/55CSJKS0Coerj9Wmd380ZGzZZwnZl9pfyh6BITOWJlOUw8WoILX2w8k0jiZVF2puQ/h82+m9jfnPuk9v6cnIsJmO/2cSDz3T0ZznbhA4W/yGdsEfK0SKVn3VjyV6Gbd2R7YvZC3hag5UgRz2L8odIXn7y3U9KXQhpquxX/HLkVOKd2w/PXCcOX1BsMUcgjQiP2VfZuZKkGvkFg+E/iLovoSwlG0FYRu2Qmu5C74saz1K4H5IyVe3WzZZzWoLWSWwdWN0ZEXmpFI5Lxyy/3H6x4b+mkVld7j1ProuxQdf1TjFoYd0OWYcxVcedG6FdaNDmGc3FMtmVuSjeBYcpbMyU7d7l7xdigeNTK86J8="
 
-stages:
-- test
-- analyse
-- name: deploy-docs
-  if: branch = master
-
 before_install:
-- docker pull selenium/standalone-chrome-debug
-- docker pull httpd
-- npm i -g lerna gh-pages
-jobs:
-  include:
-  - stage: test
-    script: lerna run build && npm test -- --coverage --runInBand --ci --bail --coverageReporters=text-lcov | npx coveralls
-  - stage: analyse
-    script: sonar-scanner
-  - stage: deploy-docs
-    script: lerna run typedoc && gh-pages -d docs
+  - sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
+  - docker pull selenium/standalone-chrome-debug
+  - docker pull httpd
+  - docker pull s1hofmann/nut-ci
+  - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
+  - npm i -g lerna gh-pages
+
+script:
+  - git fetch --unshallow
+  - lerna run build > /dev/null 2>&1
+  - npm test --runInBand --ci
+  - docker exec nut-ci bash -c "bash $PWD/.build/build.sh ${PWD} lts/dubnium"
+  - sonar-scanner
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then lerna run typedoc && gh-pages -d docs; fi

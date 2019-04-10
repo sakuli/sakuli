@@ -1,6 +1,7 @@
 import {ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {SahiRelation} from "./sahi-relation.interface";
+import {SahiElementQuery} from "../sahi-element.interface";
 
 export class RelationsResolver {
     constructor(
@@ -8,9 +9,9 @@ export class RelationsResolver {
         readonly testExecutionContext: TestExecutionContext
     ) {}
 
-    applyRelations(elements: WebElement[], relations: SahiRelation[]): Promise<WebElement[]> {
-        return relations.reduce(async (last: Promise<WebElement[]>, relation: SahiRelation) => {
+    applyRelations(elementsQuery: SahiElementQuery): Promise<SahiElementQuery> {
+        return elementsQuery.relations.reduce(async (last: Promise<SahiElementQuery>, relation: SahiRelation) => {
             return await relation(await last);
-        }, Promise.resolve(elements))
+        }, Promise.resolve(elementsQuery))
     }
 }

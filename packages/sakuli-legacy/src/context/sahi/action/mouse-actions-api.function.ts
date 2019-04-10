@@ -1,7 +1,7 @@
 import {ActionSequence, Button, By, ILocation, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {stripIndents} from "common-tags";
 import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
 import {positionalInfo} from "../relations/positional-info.function";
@@ -52,7 +52,7 @@ export function mouseActionApi(
      This argument is applicable only for Browser mode
      * @private
      */
-    async function _click(query: SahiElementQuery, combo: string = ""): Promise<void> {
+    async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
             webDriver.actions(),
@@ -62,7 +62,7 @@ export function mouseActionApi(
         ).perform();
     }
 
-    async function _mouseDown(query: SahiElementQuery, isRight: boolean = false, combo: string = ''): Promise<void> {
+    async function _mouseDown(query: SahiElementQueryOrWebElement, isRight: boolean = false, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const mouseButton = isRight ? Button.RIGHT : Button.LEFT;
         return runActionsWithComboKeys(
@@ -72,7 +72,7 @@ export function mouseActionApi(
         ).perform();
     }
 
-    async function _mouseUp(query: SahiElementQuery, isRight: boolean = false, combo: string = ''): Promise<void> {
+    async function _mouseUp(query: SahiElementQueryOrWebElement, isRight: boolean = false, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const mouseButton = isRight ? Button.RIGHT : Button.LEFT;
         return runActionsWithComboKeys(
@@ -82,7 +82,7 @@ export function mouseActionApi(
         ).perform();
     }
 
-    async function _rightClick(query: SahiElementQuery, combo: string = ''): Promise<void> {
+    async function _rightClick(query: SahiElementQueryOrWebElement, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
             webDriver.actions(),
@@ -91,7 +91,7 @@ export function mouseActionApi(
         ).perform();
     }
 
-    async function _mouseOver(query: SahiElementQuery, combo: string = '') {
+    async function _mouseOver(query: SahiElementQueryOrWebElement, combo: string = '') {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
             webDriver.actions(),
@@ -100,7 +100,7 @@ export function mouseActionApi(
         ).perform();
     }
 
-    async function _check(query: SahiElementQuery) {
+    async function _check(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
         const type = await e.getAttribute("type");
@@ -111,7 +111,7 @@ export function mouseActionApi(
         }
     }
 
-    async function _uncheck(query: SahiElementQuery) {
+    async function _uncheck(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
         const type = await e.getAttribute("type");
@@ -122,7 +122,7 @@ export function mouseActionApi(
         }
     }
 
-    async function _dragDrop(eSource: SahiElementQuery, eTarget: SahiElementQuery): Promise<void> {
+    async function _dragDrop(eSource: SahiElementQueryOrWebElement, eTarget: SahiElementQueryOrWebElement): Promise<void> {
 
         const [src, target] = await Promise.all([
             accessorUtil.fetchElement(eSource),
@@ -132,7 +132,7 @@ export function mouseActionApi(
             .dragAndDrop(src, target).perform();
     }
 
-    async function _dragDropXY(q: SahiElementQuery, x: number, y: number, $isRelative: boolean = false): Promise<void> {
+    async function _dragDropXY(q: SahiElementQueryOrWebElement, x: number, y: number, $isRelative: boolean = false): Promise<void> {
         const e = await accessorUtil.fetchElement(q);
         let location: ILocation = {x, y};
         if ($isRelative) {
@@ -143,7 +143,7 @@ export function mouseActionApi(
         return webDriver.actions().dragAndDrop(e, location).perform();
     }
 
-    async function _setSelected(query: SahiElementQuery, optionToSelect: string | number | string[] | number[], isMultiple: boolean = false): Promise<void> {
+    async function _setSelected(query: SahiElementQueryOrWebElement, optionToSelect: string | number | string[] | number[], isMultiple: boolean = false): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const options = await e.findElements(By.css('option'));
         const valuesOrIndices = typeof optionToSelect === 'string' || typeof optionToSelect === 'number' ? [optionToSelect] : optionToSelect;

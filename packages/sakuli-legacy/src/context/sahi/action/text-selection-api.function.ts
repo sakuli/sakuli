@@ -1,7 +1,7 @@
 import {ThenableWebDriver} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {stripIndent} from "common-tags";
 
 export type TextSelectionApi = ReturnType<typeof textSelectionApi>;
@@ -12,7 +12,7 @@ export function textSelectionApi(
     ctx: TestExecutionContext
 ) {
 
-    async function _selectRange(query: SahiElementQuery, start: number, end: number) {
+    async function _selectRange(query: SahiElementQueryOrWebElement, start: number, end: number) {
         const e = accessorUtil.fetchElement(query);
         return driver.executeScript(stripIndent`
             const e = arguments[0];
@@ -28,7 +28,7 @@ export function textSelectionApi(
         `, e, start, end)
     }
     
-    async function _selectTextRange(query: SahiElementQuery, searchText: string) {
+    async function _selectTextRange(query: SahiElementQueryOrWebElement, searchText: string) {
         const e = accessorUtil.fetchElement(query);
         return driver.executeScript(stripIndent`
             const e = arguments[0];

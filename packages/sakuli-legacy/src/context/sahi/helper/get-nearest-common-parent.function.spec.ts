@@ -3,7 +3,7 @@ import {TestExecutionContext} from "@sakuli/core";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {AccessorUtil} from "../accessor";
 import {By, Locator} from "selenium-webdriver";
-import {SahiElementQuery} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {getNearestCommonParent} from "./get-nearest-common-parent.function";
 
 jest.setTimeout(50000);
@@ -22,7 +22,7 @@ describe('getNearestCommonParent', () => {
         done();
     });
 
-    function createQuery(locator: Locator): SahiElementQuery {
+    function createQuery(locator: Locator): SahiElementQueryOrWebElement {
         return ({
             locator,
             identifier: 0,
