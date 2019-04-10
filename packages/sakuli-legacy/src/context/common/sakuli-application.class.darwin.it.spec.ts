@@ -3,9 +3,9 @@ import {SimpleLogger} from "@sakuli/commons";
 import {createApplicationClass} from "./sakuli-application.class";
 
 describe("Application", () => {
-    it("should open gnome-calculator", async () => {
+    it("should open calculator", async () => {
         // GIVEN
-        const application = "gnome-calculator";
+        const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
         const ApplicationImpl = createApplicationClass(new TestExecutionContext(new SimpleLogger()));
         const SUT = new ApplicationImpl(application);
 
@@ -16,9 +16,9 @@ describe("Application", () => {
         await expect(SUT.close()).resolves.not.toThrow();
     });
 
-    it("should open gnome-calculator with a startup delay", async () => {
+    it("should open calculator with a startup delay", async () => {
         // GIVEN
-        const application = "gnome-calculator";
+        const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
         const ApplicationImpl = createApplicationClass(new TestExecutionContext(new SimpleLogger()));
         const SUT = new ApplicationImpl(application);
         const startupDelay = 3;
@@ -36,7 +36,7 @@ describe("Application", () => {
 
     it("should return correct application name", async () => {
         // GIVEN
-        const application = "gnome-calculator";
+        const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
         const ApplicationImpl = createApplicationClass(new TestExecutionContext(new SimpleLogger()));
         const SUT = new ApplicationImpl(application);
 
