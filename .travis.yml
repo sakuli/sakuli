@@ -7,7 +7,6 @@ node_js:
 cache: npm
 services:
   - docker
-  - xvfb
 
 addons:
   sonarcloud:
@@ -24,7 +23,6 @@ before_install:
   - npm i -g lerna gh-pages
 
 script:
-  - git fetch --unshallow
   - lerna run build > /dev/null 2>&1
   - npm test --runInBand --ci
   - docker exec nut-ci bash -c "bash $PWD/.build/build.sh ${PWD} lts/dubnium"
