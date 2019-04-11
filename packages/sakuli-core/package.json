@@ -6,10 +6,11 @@
   "typings": "dist",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch --coverage",
     "build": "tsc",
-    "typedoc": "typedoc --out ../../docs/api/sakuli-core --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
-    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+    "typedoc": "typedoc --out ../../docs/api/sakuli-cli --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
+    "test:watch": "jest --watch --coverage",
+    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
+    "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [],
   "author": "",

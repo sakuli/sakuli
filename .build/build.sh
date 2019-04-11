@@ -27,8 +27,6 @@ echo "clean build"
 git clean -fdx
 echo "npm ci"
 npm ci
-echo "git fetch --unshallow"
-git fetch --unshallow
 echo "lerna run build"
 lerna run build
 echo "npm run test:it"
