@@ -1,6 +1,6 @@
 {
   "name": "integration-tests",
-  "version": "1.0.0",
+  "version": "2.0.0-RC1",
   "private": true,
   "description": "Integration tests for Sakuli",
   "author": "Tim Keiner <keiner.tim@gmail.com>",
@@ -16,8 +16,8 @@
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run legacy-suite"
   },
   "dependencies": {
-    "@sakuli/cli": "^1.0.0",
-    "@sakuli/legacy": "^1.0.0",
+    "@sakuli/cli": "^2.0.0-RC1",
+    "@sakuli/legacy": "^2.0.0-RC1",
     "chromedriver": "^2.44.1",
     "concurrently": "^4.1.0",
     "execa": "^1.0.0",

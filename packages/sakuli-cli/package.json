@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/cli",
-  "version": "1.0.0",
+  "version": "2.0.0-RC1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -15,9 +15,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sakuli/commons": "1.0.0",
-    "@sakuli/core": "1.0.0",
-    "@sakuli/legacy": "1.0.0",
+    "@sakuli/commons": "^2.0.0-RC1",
+    "@sakuli/core": "^2.0.0-RC1",
+    "@sakuli/legacy": "^2.0.0-RC1",
     "chalk": "^2.4.1",
     "date-fns": "^1.30.1",
     "figlet": "^1.2.1",
