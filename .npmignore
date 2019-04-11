@@ -1,0 +1,7 @@
+/packages/**/src
+tsconfig.json
+.travis.yml
+.vscode
+.idea
+coverage
+.build
