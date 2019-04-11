@@ -8,9 +8,12 @@
     "testing",
     "e2e"
   ],
-  "author": "Tim Keiner <keiner.tim@gmail.com>",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
   "homepage": "https://github.com/sakuli/sakuli#readme",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "main": "dist/index.js",
   "repository": {
     "type": "git",

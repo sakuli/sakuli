@@ -13,8 +13,11 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
+  "license": "Apache-2.0",
   "dependencies": {
     "@nut-tree/nut-js": "1.0.1",
     "@nut-tree/secrets": "3.0.0",

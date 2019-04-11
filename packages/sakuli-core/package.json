@@ -13,8 +13,11 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
+  "license": "Apache-2.0",
   "devDependencies": {
     "@types/common-tags": "^1.4.0",
     "@types/jest": "^23.3.13",

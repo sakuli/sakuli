@@ -13,8 +13,11 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
+  "license": "Apache-2.0",
   "dependencies": {
     "@sakuli/commons": "^2.0.0-RC1",
     "@sakuli/core": "^2.0.0-RC1",
