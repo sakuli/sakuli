@@ -1,19 +1,23 @@
 {
   "name": "@sakuli/core",
-  "version": "1.0.0",
+  "version": "2.0.0-RC1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch --coverage",
     "build": "tsc",
-    "typedoc": "typedoc --out ../../docs/api/sakuli-core --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
-    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+    "typedoc": "typedoc --out ../../docs/api/sakuli-cli --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
+    "test:watch": "jest --watch --coverage",
+    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
+    "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
+  "license": "Apache-2.0",
   "devDependencies": {
     "@types/common-tags": "^1.4.0",
     "@types/jest": "^23.3.13",
@@ -29,7 +33,7 @@
     "typescript": "^3.4.1"
   },
   "dependencies": {
-    "@sakuli/commons": "1.0.0",
+    "@sakuli/commons": "^2.0.0-RC1",
     "class-validator": "^0.9.1",
     "common-tags": "^1.8.0",
     "date-fns": "^1.29.0",
