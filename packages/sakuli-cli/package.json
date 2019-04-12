@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/cli",
-  "version": "1.0.0",
+  "version": "2.0.0-RC1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -9,27 +9,41 @@
     "build": "tsc",
     "typedoc": "typedoc --out ../../docs/api/sakuli-cli --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",
-    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
+    "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
+  "license": "Apache-2.0",
   "dependencies": {
-    "@sakuli/core": "1.0.0",
-    "@sakuli/commons": "1.0.0",
-    "@sakuli/legacy": "1.0.0",
+    "@sakuli/commons": "^2.0.0-RC1",
+    "@sakuli/core": "^2.0.0-RC1",
+    "@sakuli/legacy": "^2.0.0-RC1",
     "chalk": "^2.4.1",
+    "date-fns": "^1.30.1",
+    "figlet": "^1.2.1",
+    "get-cursor-position": "^1.0.5",
+    "ink": "^0.5.1",
+    "winston": "^3.1.0",
+    "winston-transport": "^4.2.0",
     "yargonaut": "^1.1.4",
-    "yargs": "^12.0.5"
+    "yargs": "^12.0.5",
+    "youch": "^2.0.10",
+    "youch-terminal": "^1.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.8",
-    "@types/node": "^10.12.1",
+    "@types/figlet": "^1.2.0",
+    "@types/jest": "^23.3.13",
+    "@types/node": "^11.13.0",
     "@types/yargs": "^12.0.1",
     "jest": "^23.6.0",
+    "sneer": "^1.0.1",
     "ts-jest": "^23.10.4",
     "typedoc": "^0.13.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.4.1"
   },
   "bin": {
     "sakuli": "./dist/index.js"

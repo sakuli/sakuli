@@ -1,15 +1,35 @@
-import { TestScriptExecutor } from "./test-script-executor.interface";
-import { createContext, Script, Context, RunningScriptOptions } from "vm";
+import {TestScriptExecutor, TestScriptExecutorOptions} from "./test-script-executor.interface";
+import {createContext, RunningScriptOptions, Script} from "vm";
 
 export class JsScriptExecutor implements TestScriptExecutor {
 
-    constructor(readonly options: RunningScriptOptions = {}) {}
+    constructor(readonly options: TestScriptExecutorOptions = {}) {
+    }
 
-    execute<T = {}>(source: string, context: T): T {
-        const script = new Script(source);
-        const sandbox = createContext(context);
-        script.runInContext(sandbox, this.options);
-        return sandbox as T;
+    async execute<T = {}>(source: string, context: T, _options: TestScriptExecutorOptions = {}): Promise<T> {
+        const options = {...this.options, ..._options};
+        const script = new Script(source, {
+            filename: options.filename,
+            displayErrors: true
+        });
+        return new Promise<T>((res, rej) => {
+            if (options.timeout) {
+                setTimeout(rej, options.timeout);
+            }
+            let sandbox: T;
+            sandbox = <T>createContext(Object.assign({},
+                context,
+                console,
+                {done: () => res(sandbox)}
+            ));
+            script.runInNewContext(sandbox, {
+                ...options as RunningScriptOptions,
+                displayErrors: true
+            });
+            if (!options.waitUntilDone) {
+                res(sandbox);
+            }
+        })
     }
 
 }

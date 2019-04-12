@@ -1,16 +1,23 @@
 import {SakuliPresetProvider} from "@sakuli/core/dist/sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "@sakuli/core/dist/sakuli-preset-registry.class";
-import {LegacyContextProvider} from "./context/legacy-context-provider.class";
+import {LegacyLifecycleHooks} from "./context";
 import {Builder} from "selenium-webdriver";
 import {LegacyLoader} from "./loader/legacy-loader.class";
 import {migrationCommandProvider} from "./migration/migration-command-provider.function";
+import rollupPreset from '@sakuli/rollup-hooks'
+import {encryptCommand} from "./command/encrypt-command.class";
+import {createCommand} from "./command/create-command.class";
 
-export {LegacyLoader, LegacyContextProvider};
+export {LegacyLoader, LegacyLifecycleHooks};
 
 const legacyPreset: SakuliPresetProvider = (reg: SakuliPresetRegistry) => {
-    reg.registerContextProvider(new LegacyContextProvider(new Builder()));
+    reg.registerContextProvider(new LegacyLifecycleHooks(new Builder()));
     reg.registerProjectLoader(new LegacyLoader());
-    reg.registerCommandModule(migrationCommandProvider)
+    reg.registerCommandModule(migrationCommandProvider);
+    reg.registerCommandModule(encryptCommand);
+    reg.registerCommandModule(createCommand);
+
+    rollupPreset(reg);
 };
 
 export default legacyPreset;
