@@ -1,6 +1,6 @@
 ---
 name: Enhancement
-about: Suggest a possible enhancement to the project
+about: Suggest a possible enhancement to Sakuli
 ---
 
 **Short overview**

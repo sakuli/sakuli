@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a bug report to help us enhance our images
+about: Create a bug report to help us enhance Sakuli
 ---
 
 **Version**
