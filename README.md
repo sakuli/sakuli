@@ -44,13 +44,13 @@ Use the full power of typescript, nodejs and their corresponding ecosystems.
 Running 
 
 ```bash
-npm i @sakuli/sakuli-cli
+npm i @sakuli/cli
 ```
 
 or
 
 ```bash
-yarn add @sakuli/sakuli-cli
+yarn add @sakuli/cli
 ```
 
 will install Sakuli and its required dependencies.
