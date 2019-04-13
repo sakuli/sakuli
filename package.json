@@ -12,6 +12,7 @@
   "devDependencies": {
     "coveralls": "^3.0.2",
     "jest": "^23.6.0",
+    "jest-sonar-reporter": "^2.0.0",
     "lerna": "^3.4.3",
     "ts-jest": "^23.10.5",
     "yargs": "^12.0.4"
@@ -20,5 +21,8 @@
     "typedoc": "typedoc --out ../../docs/api/{package} --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+  },
+  "jest": {
+    "testResultsProcessor": "jest-sonar-reporter"
   }
 }
