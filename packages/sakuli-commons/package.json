@@ -12,7 +12,12 @@
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
     "prepublishOnly": "npm run build && npm test"
   },
-  "keywords": [],
+  "keywords": [
+    "sakuli",
+    "e2e",
+    "ui",
+    "testing"
+  ],
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
     "Simon Hofmann <simon.hofmann@consol.de>"
