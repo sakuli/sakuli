@@ -1,5 +1,25 @@
 {
   "name": "sakuli",
+  "keywords": [
+    "sakuli",
+    "e2e",
+    "ui",
+    "testing"
+  ],
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de"
+  ],
+  "homepage": "https://github.com/sakuli/sakuli#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakuli/sakuli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sakuli/sakuli/issues"
+  },
   "private": true,
   "scripts": {
     "postinstall": "lerna bootstrap --progress --no-ci",
@@ -10,7 +30,6 @@
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
     "jest": "^23.6.0",
     "lerna": "^3.4.3",
     "ts-jest": "^23.10.5",

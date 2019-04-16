@@ -4,7 +4,8 @@
   "description": "Integration tests for Sakuli",
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
-    "Simon Hofmann <simon.hofmann@consol.de>"
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de"
   ],
   "homepage": "https://github.com/sakuli/sakuli#readme",
   "license": "Apache-2.0",

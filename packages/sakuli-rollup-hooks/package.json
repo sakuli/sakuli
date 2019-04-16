@@ -3,14 +3,16 @@
   "version": "2.0.0-RC1",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
-    "rollup",
     "sakuli",
+    "e2e",
+    "ui",
     "testing",
-    "e2e"
+    "rollup"
   ],
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
-    "Simon Hofmann <simon.hofmann@consol.de>"
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de"
   ],
   "homepage": "https://github.com/sakuli/sakuli#readme",
   "license": "Apache-2.0",
@@ -48,6 +50,7 @@
   "dependencies": {
     "@sakuli/commons": "^2.0.0-RC1",
     "@sakuli/core": "^2.0.0-RC1",
-    "rollup-plugin-node-resolve": "^4.0.1"
+    "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup": "^1.10.0"
   }
 }
