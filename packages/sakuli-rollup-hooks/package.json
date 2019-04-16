@@ -3,6 +3,7 @@
   "version": "2.0.0-RC1",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
+    "rollup",
     "sakuli",
     "e2e",
     "ui",
