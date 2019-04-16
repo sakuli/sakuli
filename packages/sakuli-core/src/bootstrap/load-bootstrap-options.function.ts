@@ -1,8 +1,7 @@
 import {join} from "path";
-import {SakuliBootstrapOptions} from "./bootstrap-options.interface";
+import {SakuliBootstrapDefaults, SakuliBootstrapOptions} from "./bootstrap-options.interface";
 import {readJsonSync} from "fs-extra";
 import {ifPresent, Maybe} from "@sakuli/commons";
-import {inspect} from "util";
 
 /**
  * Reads sakuli bootconfiguration from a json file. The configuration is considered under a sakuli wich must implement the {@see SakuliBootstrapOptions} interface.*
@@ -23,12 +22,10 @@ export async function loadBootstrapOptions(path: string = '.', file: string = 'p
             conf = packageJson.sakuli
         }
     } catch (e) {
-
     }
+
     return ifPresent(conf,
         c => c,
-        () => ({
-            presetProvider: []
-        })
-        )
+        () => SakuliBootstrapDefaults
+    );
 }
