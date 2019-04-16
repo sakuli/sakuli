@@ -81,3 +81,11 @@ Please make sure to also install all required peer dependencies:
 - [robotjs](http://robotjs.io/docs/building)
 
 The installation process is an open issue and will be enhanced in the near future, so using Sakuli becomes even more enjoyable!
+
+# Development
+
+To start developing Sakuli 2 some setup on your workstation is required.
+
+* Make sure to have [cmake](https://cmake.org/) installed.
+* Make sure to have docker installed and started
+* Make sure to execute `docker pull selenium/standalone-chrome-debug` before you start developing.
