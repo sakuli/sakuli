@@ -58,7 +58,7 @@
     "dockerode": "^2.5.8",
     "express": "^4.16.4",
     "geckodriver": "^1.14.1",
-    "jest": "^23.6.0",
+    "jest": "^24.7.1",
     "node-fetch": "^2.3.0",
     "sneer": "^1.0.1",
     "ts-jest": "^23.10.4",

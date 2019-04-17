@@ -29,7 +29,7 @@
     "@types/node": "^11.13.0",
     "@types/properties-reader": "^0.0.1",
     "@types/yargs": "^12.0.11",
-    "jest": "^23.6.0",
+    "jest": "^24.7.1",
     "memfs": "^2.15.2",
     "sneer": "^1.0.1",
     "ts-jest": "^23.10.4",
