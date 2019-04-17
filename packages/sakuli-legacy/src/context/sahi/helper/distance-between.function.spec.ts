@@ -2,7 +2,6 @@ import {By} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {TestExecutionContext} from "@sakuli/core";
 import {distanceBetween} from "./distance-between.function";
-import DoneCallback = jest.DoneCallback;
 import {relationsApi, RelationsResolver} from "../relations";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 import {AccessorUtil} from "../accessor";
