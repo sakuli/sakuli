@@ -27,11 +27,13 @@
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
     "bootstrap": "lerna bootstrap",
-    "share-scripts": "node scripts/distribute-npm-scripts"
+    "share-scripts": "node scripts/distribute-npm-scripts",
+    "update": "lernaupdate"
   },
   "devDependencies": {
     "jest": "^23.6.0",
     "lerna": "^3.4.3",
+    "lerna-update-wizard": "^0.13.0",
     "ts-jest": "^23.10.5",
     "yargs": "^12.0.4"
   },
