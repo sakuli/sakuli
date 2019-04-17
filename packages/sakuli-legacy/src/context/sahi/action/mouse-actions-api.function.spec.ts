@@ -33,7 +33,7 @@ describe('mouse-actions', () => {
     });
 
     describe('_setSelected', () => {
-        it.each([
+        it.each(<(number | string)[]>[
             'Beer',
             2,
             'v_beer'
@@ -60,7 +60,7 @@ describe('mouse-actions', () => {
 
     describe('mouse interaction', () => {
         type MouseMethods = "_click" | "_rightClick" | "_mouseOver" | "_mouseUp" | "_mouseDown";
-        it.each([
+        it.each(<[MouseMethods, string, string][]>[
             ['_click', 'click', ""],
             ['_rightClick', 'contextmenu', ""],
             ['_mouseOver', 'mouseover', ""],
@@ -115,7 +115,7 @@ describe('mouse-actions', () => {
     });
 
     describe('_[un]Check', () => {
-        it.each([
+        it.each(<['_check' | "_uncheck", "checkbox" | "radio", "checked" | "", "true" | null][]>[
             ['_check', 'checkbox', '', 'true'],
             ['_check', 'checkbox', 'checked', 'true'],
             ['_uncheck', 'checkbox', 'checked', null],

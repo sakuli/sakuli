@@ -28,14 +28,15 @@ describe('KeyboardActions', () => {
         )
     }
 
-    it.each([
+    type KeyMethod = "_keyDown" | "_keyUp" | "_keyPress";
+    it.each(<[KeyMethod, string, string, string][]>[
         ['_keyDown', 'keydown', 'a', ''],
         ['_keyDown', 'keydown', 'b', 'CTRL|SHIFT'],
         ['_keyUp', 'keyup', 'c', ''],
         ['_keyPress', 'keypress', 'd', ''],
         ['_keyPress', 'keypress', 'e', 'META'],
     ])('should invoke %s to emit %s with key %s and combo %s',
-        async (method: "_keyDown" | "_keyUp" | "_keyPress", event: string, value: string, combo: string) => {
+        async (method: KeyMethod, event: string, value: string, combo: string) => {
             const api = createApi(driver);
             await driver.get(mockHtml(`
                 <form>

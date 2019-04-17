@@ -1,4 +1,4 @@
-import {By, Locator, ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
@@ -26,7 +26,7 @@ describe('relations-api', () => {
         await env.stop();
     });
 
-    it.each([
+    it.each(<[string, number][]>[
         ['#div1', 1],
         ['#div2', 2],
     ])('should find parent %s with offset %s', async (parentId: string, offset: number) => {

@@ -1,6 +1,5 @@
 import {By} from "selenium-webdriver";
 import {getSiblingIndex} from "./get-sibling-index.function";
-import DoneCallback = jest.DoneCallback;
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 
 jest.setTimeout(10000);
@@ -18,7 +17,7 @@ describe('getSiblingIndex', () => {
         done();
     });
 
-    it.each([0, 1, 2])('should resolve #li-%i at this index', async (i: number, done: DoneCallback) => {
+    it.each(<number[]>[0, 1, 2])('should resolve #li-%i at this index', async (i: number) => {
         const {driver} = await env.getEnv();
         await driver.get(mockHtml(`
             <ul>
@@ -29,7 +28,6 @@ describe('getSiblingIndex', () => {
         `));
         const li = await driver.findElement(By.css(`#li-${i}`));
         await expect(getSiblingIndex(li)).resolves.toBe(i);
-        done();
     });
 
 
