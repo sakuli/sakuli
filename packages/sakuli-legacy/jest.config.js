@@ -3,6 +3,7 @@ module.exports = {
     testEnvironment: 'node',
     name: 'sakuli-legacy',
     displayName: 'sakuli-legacy',
+    coverageDirectory: '<rootDir>/../coverage/sakuli-legacy',
     rootDir: 'src/',
     testMatch: [
         `**/!(*.+(aix|it).*|*.+(darwin|it).*|*.+(freebsd|it).*|*.+(linux|it).*|*.+(openbsd|it).*|*.+(sunos|it).*|*.+(win32|it).*)+(spec|test).[jt]s?(x)`,
