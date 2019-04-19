@@ -1,24 +1,44 @@
 {
   "name": "@sakuli/commons",
-  "version": "1.0.0",
+  "version": "2.0.0-RC2",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch --coverage",
     "build": "tsc",
     "typedoc": "typedoc --out ../../docs/api/sakuli-commons --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
-    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+    "test:watch": "jest --watch --coverage",
+    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
+    "prepublishOnly": "npm run build && npm test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "sakuli",
+    "e2e",
+    "ui",
+    "testing"
+  ],
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>"
+  ],
+  "license": "Apache-2.0",
   "devDependencies": {
-    "@types/jest": "^23.3.9",
-    "jest": "^23.6.0",
-    "ts-jest": "^23.10.4",
-    "typedoc": "^0.13.0",
-    "typescript": "^3.1.6"
+    "@types/common-tags": "^1.8.0",
+    "@types/jest": "^23.3.13",
+    "@types/node": "^11.13.5",
+    "@types/properties-reader": "^0.0.1",
+    "@types/yargs": "^12.0.12",
+    "jest": "^24.7.1",
+    "sneer": "^1.0.1",
+    "ts-jest": "^24.0.2",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.4.3",
+    "yargs": "^13.2.2"
+  },
+  "dependencies": {
+    "common-tags": "^1.8.0",
+    "properties-reader": "^0.0.16",
+    "reflect-metadata": "^0.1.13"
   }
 }

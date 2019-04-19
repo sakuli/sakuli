@@ -1,66 +1,91 @@
-import {Sakuli, TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
+import nutConfig from "./nut-global-config.class";
+import {ScreenApi} from "./actions/screen.function";
+import {ifPresent} from "@sakuli/commons";
 
+type TestMetaData = {
+    suiteName: string,
+    caseName: string
+};
 
-export class TestCase {
-    private readonly execution: TestExecutionContext;
-    constructor(
-        readonly caseId?: string,
-        readonly warningTime: number = 0,
-        readonly criticalTime: number = 0,
-        private _imagePaths: string[] = []
-    ) {
-        this.execution = Sakuli().testExecutionContext;
-        this.execution.startTestCase({id: caseId});
-        this.execution.startTestStep({});
-    }
+const getTestMetaData = (ctx: TestExecutionContext): TestMetaData => {
+    const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => ifPresent(suite.id, id => id, () => "UNKNOWN_TESTSUITE"), () => "UNKNOWN_TESTSUITE");
+    const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => ifPresent(testCase.id, id => id, () => "UNKNOWN_TESTCASE"), () => "UNKNOWN_TESTCASE");
 
-    addImagePaths(...paths: string[]) {
-        this._imagePaths = this._imagePaths.concat(paths);
-    }
+    return ({
+        suiteName,
+        caseName
+    });
+};
 
-    endOfStep(
-        stepName: string,
-        warning: number = 0,
-        critical: number = 0,
-        forward: boolean = false
-    ) {
-        this.execution.updateCurrentTestStep({
-            id: stepName,
-            warningTime: warning,
-            criticalTime: critical
-        });
-        this.execution.endTestStep();
-        this.execution.startTestStep();
-    }
+export function createTestCaseClass(ctx: TestExecutionContext, project: Project) {
+    return class TestCase {
+        constructor(
+            readonly caseId?: string,
+            readonly warningTime: number = 0,
+            readonly criticalTime: number = 0,
+            public _imagePaths: string[] = []
+        ) {
+            ctx.logger.info(`Start Testcase ${caseId}`);
+            ctx.startTestCase({id: caseId});
+            ctx.startTestStep({});
+            nutConfig.addImagePath(..._imagePaths);
+        }
 
-    handleException<E extends Error>(e: E) {
-        console.warn('Error occurred: ', e);
-        this.execution.updateCurrentTestStep({error: e});
-    }
+        addImagePaths(...paths: string[]) {
+            nutConfig.addImagePath(...paths);
+        }
 
-    getLastUrl(): string {
-        throw Error('Not Implemented');
+        endOfStep(
+            stepName: string,
+            warning: number = 0,
+            critical: number = 0,
+            forward: boolean = false
+        ) {
+            ctx.updateCurrentTestStep({
+                id: stepName,
+                warningTime: warning,
+                criticalTime: critical
+            });
+            ctx.endTestStep();
+            ctx.startTestStep();
+        }
 
-    }
+        async handleException<E extends Error>(e: E) {
+            ctx.logger.info(`Error: ${e.message}`);
+            const { suiteName, caseName } = getTestMetaData(ctx);
+            await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
+            ctx.updateCurrentTestCase({
+                error: e,
+            });
+        }
 
-    saveResult() {
-        this.execution.endTestStep();
-        this.execution.endTestCase();
-    }
+        getLastUrl(): string {
+            throw Error('Not Implemented');
+        }
 
-    getID() {
-        return this.caseId;
-    }
+        saveResult(forward: boolean = false) {
+            ctx.endTestStep();
+            ctx.endTestCase();
+        }
 
-    getTestCaseFolderPath() {
-        throw Error('Not Implemented')
-    }
+        getID() {
+            return this.caseId;
+        }
 
-    getTestSuiteFolderPath() {
-        throw Error('Not Implemented')
-    }
+        getTestCaseFolderPath() {
+        }
 
-    throwExecption(message: string, screenshot: boolean) {
-        throw Error('Not Implemented')
+        getTestSuiteFolderPath() {
+            return project.rootDir;
+        }
+
+        async throwExecption(message: string, screenshot: boolean) {
+            if (screenshot) {
+                const { suiteName, caseName } = getTestMetaData(ctx);
+                await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
+            }
+            throw Error(message);
+        }
     }
 }

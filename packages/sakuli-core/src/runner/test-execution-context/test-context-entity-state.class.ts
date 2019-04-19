@@ -18,3 +18,11 @@ export class TestContextEntityStates {
     static readonly UNKNOWN: TestContextEntityStateUnknown = 3;
     static readonly ERROR: TestContextEntityStateError = 4;
 };
+
+export function getReadableStateName(state: TestContextEntityState): string {
+    function keys<T>(o:T): (keyof T)[] {
+        return Object.keys(o) as (keyof T)[];
+    }
+    return keys(TestContextEntityStates)
+        .find((key) => TestContextEntityStates[key] === state) || ''
+}

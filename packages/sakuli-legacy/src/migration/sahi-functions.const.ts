@@ -172,9 +172,19 @@ export const SAHI_FUNCTIONS = [
     "_address",
 
     "_highlight",
-    "_div"
+    "_div",
+    "_setValue",
+    "_navigateTo",
+    "_setSelected",
+    "_click"
 ];
 
 export function isSahiFunction(name: string) {
     return SAHI_FUNCTIONS.indexOf(name) > 0;
+}
+
+export function registerSahiFunction(name: string) {
+    if(!isSahiFunction(name)) {
+        SAHI_FUNCTIONS.push(name);
+    }
 }

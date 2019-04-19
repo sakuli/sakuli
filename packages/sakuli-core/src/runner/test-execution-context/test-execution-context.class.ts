@@ -1,27 +1,43 @@
-import { TestSuiteContext } from "./test-suite-context.class";
-import { Maybe, ifPresent, throwIfAbsent } from "@sakuli/commons";
-import { Measurable, isStarted, isFinished, StartedMeasurable, FinishedMeasurable, getDuration } from "./measureable.interface";
-import { TestCaseContext } from "./test-case-context.class";
-import { TestStepContext } from "./test-step-context.class";
-import { TestActionContext } from "./test-action-context.class";
-import { toJson } from "./test-context-entity-to-json.function";
-import {DeferredStack} from "@sakuli/commons/dist/deferred-stack.class";
+import {TestSuiteContext} from "./test-suite-context.class";
+import {Maybe, SimpleLogger, throwIfAbsent} from "@sakuli/commons";
+import {
+    FinishedMeasurable,
+    getDuration,
+    isFinished,
+    isStarted,
+    Measurable,
+    StartedMeasurable
+} from "./measureable.interface";
+import {TestCaseContext} from "./test-case-context.class";
+import {TestStepContext} from "./test-step-context.class";
+import {TestActionContext} from "./test-action-context.class";
+import {toJson} from "./test-context-entity-to-json.function";
+import {TestExecutionContextRaw} from "./test-execution-context-raw.interface";
+import {TestContextEntityState} from "./test-context-entity-state.class";
+
+export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
 
 /**
  * An execution-context is the main bridge between sakuli and any api that runs on sakuli
- * 
+ *
  */
 export class TestExecutionContext implements Measurable {
 
-
-    private deferredStack = new DeferredStack();
+    private changeListeners: TestExecutionChangeListener[] = [];
     startDate: Date | null = null;
     endDate: Date | null = null;
     readonly testSuites: TestSuiteContext[] = [];
+    error: Maybe<Error>;
+
+    constructor(
+        readonly logger: SimpleLogger
+    ) {
+    }
 
     startExecution() {
         this.startDate = new Date();
-        this.deferredStack.put();
+        this.logger.info( "Started Execution");
+        this.emitChange();
     }
 
     isExecutionStarted(): this is StartedMeasurable {
@@ -38,7 +54,29 @@ export class TestExecutionContext implements Measurable {
         } else {
             throw new Error('You cannot end an execution before it has been started. Please call TestExecutionContext::startExecution before call endExecution')
         }
-        this.deferredStack.pop();
+        this.logger.info( "Finished Execution");
+        this.emitChange();
+    }
+
+    get entites() {
+        return [
+            ...this.testSuites,
+            ...this.testCases,
+            ...this.testSteps,
+            ...this.testActions
+        ]
+    }
+
+    get testCases() {
+        return this.testSuites.reduce((tc, ts)=> [...ts.testCases], [] as TestCaseContext[])
+    }
+
+    get testSteps() {
+        return this.testCases.reduce((ts, tc) => [...tc.testSteps], [] as TestStepContext[]);
+    }
+
+    get testActions() {
+        return this.testSteps.reduce((ta, ts) => [...ts.testActions], [] as TestActionContext[]);
     }
 
     get duration() {
@@ -52,9 +90,9 @@ export class TestExecutionContext implements Measurable {
     startTestSuite(testSuite: Partial<TestSuiteContext> = {}) {
         if (this.isExecutionStarted()) {
             this.testSuites.push(new TestSuiteContext);
-            this.updateCurrentTestSuite({ startDate: new Date() });
+            this.updateCurrentTestSuite({startDate: new Date()});
             this.updateCurrentTestSuite(testSuite);
-            this.deferredStack.put();
+            this.emitChange();
         } else {
             throw Error('You have to start execution before starting a testsuite');
         }
@@ -73,12 +111,13 @@ export class TestExecutionContext implements Measurable {
             (new TestSuiteContext),
             current,
             testSuite
-        )
+        );
+        this.emitChange();
     }
 
     endTestSuite() {
-        this.updateCurrentTestSuite({ endDate: new Date() });
-        this.deferredStack.pop();
+        this.updateCurrentTestSuite({endDate: new Date()});
+        this.emitChange();
     }
 
     startTestCase(testCase: Partial<TestCaseContext> = {}) {
@@ -92,8 +131,8 @@ export class TestExecutionContext implements Measurable {
                 Object.assign(new TestCaseContext, testCase)
             ]
         });
-        this.updateCurrentTestCase({ startDate: new Date() })
-        this.deferredStack.put();
+        this.updateCurrentTestCase({startDate: new Date()});
+        this.emitChange();
     }
 
     getCurrentTestCase(): Maybe<TestCaseContext> {
@@ -117,17 +156,18 @@ export class TestExecutionContext implements Measurable {
             new TestCaseContext,
             testCase,
             testCaseContext
-        )
+        );
         this.updateCurrentTestSuite({
             testCases: suite.testCases
-        })
+        });
+        this.emitChange();
     }
 
     endTestCase() {
         this.updateCurrentTestCase({
             endDate: new Date()
-        })
-        this.deferredStack.pop();
+        });
+        this.emitChange();
     }
 
     startTestStep(testStep: Partial<TestStepContext> = {}) {
@@ -141,8 +181,8 @@ export class TestExecutionContext implements Measurable {
                 Object.assign(new TestStepContext, testStep)
             ]
         });
-        this.updateCurrentTestStep({startDate: new Date()})
-        this.deferredStack.put();
+        this.updateCurrentTestStep({startDate: new Date()});
+        this.emitChange();
     }
 
     updateCurrentTestStep(testStep: Partial<TestStepContext>) {
@@ -158,10 +198,11 @@ export class TestExecutionContext implements Measurable {
             new TestStepContext,
             step,
             testStep
-        )
+        );
         this.updateCurrentTestCase({
             testSteps: testCase.testSteps
-        })
+        });
+        this.emitChange();
     }
 
     getCurrentTestStep(): Maybe<TestStepContext> {
@@ -175,8 +216,8 @@ export class TestExecutionContext implements Measurable {
     endTestStep() {
         this.updateCurrentTestStep({
             endDate: new Date()
-        })
-        this.deferredStack.pop();
+        });
+        this.emitChange();
     }
 
     startTestAction(testaction: Partial<TestActionContext>) {
@@ -190,8 +231,8 @@ export class TestExecutionContext implements Measurable {
                 Object.assign(new TestActionContext, testaction)
             ]
         });
-        this.updateCurrentTestAction({startDate: new Date()})
-        this.deferredStack.put();
+        this.updateCurrentTestAction({startDate: new Date()});
+        this.emitChange();
     }
 
     updateCurrentTestAction(testaction: Partial<TestActionContext>): any {
@@ -210,8 +251,10 @@ export class TestExecutionContext implements Measurable {
         );
         this.updateCurrentTestStep({
             testActions: testStep.testActions
-        })
+        });
+        this.emitChange();
     }
+
     getCurrentTestAction(): Maybe<TestActionContext> {
         const teststep = throwIfAbsent(
             this.getCurrentTestStep(),
@@ -222,19 +265,30 @@ export class TestExecutionContext implements Measurable {
 
     endTestAction() {
         this.updateCurrentTestAction({endDate: new Date});
-        this.deferredStack.pop();
+        this.emitChange();
     }
 
-    get allEntitiesFinished(): Promise<void> {
-        return this.deferredStack.resolved();
+    private emitChange() {
+        this.changeListeners.forEach(listener => {
+            listener(this);
+        })
     }
 
-    toJson() {
+    onChange(listener: TestExecutionChangeListener) {
+        this.changeListeners.push(listener);
+    }
+
+    get resultState(): TestContextEntityState {
+        return Math.max(...this.testSuites.map(ts => ts.state)) as TestContextEntityState;
+    }
+
+    toJson(): TestExecutionContextRaw {
         return ({
             duration: this.duration,
             startDate: this.startDate,
             endDate: this.endDate,
-            testSuites: this.testSuites.map(ts => toJson(ts))
+            testSuites: this.testSuites.map(ts => toJson(ts)),
+            error: this.error
         });
     }
 

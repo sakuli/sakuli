@@ -5,10 +5,13 @@ import { TestContextEntity } from "./test-context-entity.class";
 import { SakuliContextTestSuiteRaw, SakuliContextTestCaseRaw, SakuliContextTestStepRaw, SakuliContextEntityRaw, SakuliContextTestActionRaw } from "./test-context-entity-raw.interface";
 import { inspect } from "util";
 import { TestActionContext } from "./test-action-context.class";
+import {stripIndents} from "common-tags";
+import {validateSync} from "class-validator";
 
 function toJsonBase(e: TestContextEntity): SakuliContextEntityRaw {
     if(e.isValid()) {
         return ({
+            id: e.id || '',
             startDate: e.startDate,
             endDate: e.endDate,
             criticalTime: e.criticalTime,
@@ -17,8 +20,14 @@ function toJsonBase(e: TestContextEntity): SakuliContextEntityRaw {
             state: e.state
         })
     } else {
-        //console.log(e);
-        throw Error('Cannot convert an invalid ContextEntity');
+        throw Error(stripIndents`
+            Cannot convert an invalid ContextEntity (${e.kind}).
+            ${validateSync(e).map(err => stripIndents`
+                - ${err.toString()}
+            `)}
+            
+            
+        `);
     }
 }
 

@@ -1,8 +1,16 @@
-import { Maybe, ifPresent } from "@sakuli/commons";
-import { Measurable, isStarted, isFinished, StartedMeasurable, FinishedMeasurable, getDuration } from "./measureable.interface";
-import { IsDate, IsNumber, IsString, validateSync } from "class-validator";
-import { TestContextEntityState, TestContextEntityStates } from "./test-context-entity-state.class";
-import { isBefore, isEqual } from "date-fns";
+import {ifPresent, Maybe} from "@sakuli/commons";
+import {
+    FinishedMeasurable,
+    getDuration,
+    isFinished,
+    isStarted,
+    Measurable,
+    StartedMeasurable
+} from "./measureable.interface";
+import {IsDate, IsNumber, validateSync} from "class-validator";
+import {TestContextEntityState, TestContextEntityStates} from "./test-context-entity-state.class";
+import {isBefore, isEqual} from "date-fns";
+
 export type TestContextKindSuite = "suite";
 export type TestContextKindCase = "case";
 export type TestContextKindStep = "step";
@@ -16,8 +24,7 @@ export type TestContextEntityKind =
 export abstract class TestContextEntity implements Measurable {
     abstract kind: TestContextEntityKind;
 
-    @IsString()
-    id: Maybe<string>;
+    id: Maybe<string> = '';
 
     @IsDate()
     startDate: Maybe<Date>;
@@ -33,14 +40,6 @@ export abstract class TestContextEntity implements Measurable {
 
     error: Maybe<Error>;
 
-    isStarted(): this is StartedMeasurable {
-        return isStarted(this);
-    }
-
-    isFinished(): this is FinishedMeasurable {
-        return this.isStarted() && isFinished(this);
-    }
-
     get duration() {
         if (this.isFinished()) {
             return getDuration(this);
@@ -49,14 +48,9 @@ export abstract class TestContextEntity implements Measurable {
         }
     }
 
-    isValid(): this is FinishedMeasurable {
-        const err = validateSync(this);
-        return err.length === 0 
-            && (isEqual(<Date>this.startDate, <Date>this.endDate)
-            || isBefore(<Date>this.startDate, <Date>this.endDate));
-    }
+    abstract getChildren(): TestContextEntity[];
 
-    get state(): TestContextEntityState {
+    get ownState(): TestContextEntityState {
         return ifPresent(this.error,
             _ => TestContextEntityStates.ERROR,
             () => {
@@ -69,6 +63,28 @@ export abstract class TestContextEntity implements Measurable {
                 return TestContextEntityStates.OK
             }
         )
+    }
+
+    get state(): TestContextEntityState {
+        return Math.max(
+            this.ownState,
+            ...this.getChildren().map(tc => tc.state)
+        ) as TestContextEntityState
+    }
+
+    isStarted(): this is StartedMeasurable {
+        return isStarted(this);
+    }
+
+    isFinished(): this is FinishedMeasurable {
+        return this.isStarted() && isFinished(this);
+    }
+
+    isValid(): this is FinishedMeasurable {
+        const err = validateSync(this);
+        return err.length === 0
+            && (isEqual(<Date>this.startDate, <Date>this.endDate)
+                || isBefore(<Date>this.startDate, <Date>this.endDate));
     }
 
 }

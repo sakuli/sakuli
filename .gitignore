@@ -1,5 +1,8 @@
 .idea
 
+tsconfig.tsbuildinfo
+
+.vscode/
 # Logs
 logs
 *.log

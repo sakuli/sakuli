@@ -28,6 +28,6 @@ export function ensure<T>(maybe: Maybe<T>, fallback: T): T {
     return ifPresent(maybe, x => x, () => fallback);
 }
 
-export function throwIfAbsent<T>(maybe: Maybe<T>, error: Error): T | never {
+export function throwIfAbsent<T>(maybe: Maybe<T>, error: Error = Error('Value is absent')): T | never {
     return ifPresent(maybe, x => x, () => {throw error});
 }

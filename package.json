@@ -1,19 +1,40 @@
 {
   "name": "sakuli",
+  "keywords": [
+    "sakuli",
+    "e2e",
+    "ui",
+    "testing"
+  ],
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de"
+  ],
+  "homepage": "https://github.com/sakuli/sakuli#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakuli/sakuli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sakuli/sakuli/issues"
+  },
   "private": true,
   "scripts": {
-    "postinstall": "lerna bootstrap --progress --no-ci --hoist",
-    "build": " lerna run build",
+    "postinstall": "lerna bootstrap --progress --no-ci",
+    "build": "lerna run build",
     "test": "jest",
+    "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
     "bootstrap": "lerna bootstrap",
+    "lerna:publish": "lerna publish from-git --yes ",
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
-    "jest": "^23.6.0",
-    "lerna": "^3.4.3",
-    "ts-jest": "^23.10.5",
-    "yargs": "^12.0.4"
+    "jest": "^24.7.1",
+    "lerna": "^3.13.3",
+    "ts-jest": "^24.0.2",
+    "yargs": "^12.0.5"
   },
   "sharedScripts": {
     "typedoc": "typedoc --out ../../docs/api/{package} --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",

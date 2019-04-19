@@ -8,3 +8,9 @@ export interface SakuliBootstrapOptions {
      */
     presetProvider: string[]
 }
+
+export const SakuliBootstrapDefaults = {
+    presetProvider: [
+        "@sakuli/legacy"
+    ]
+};

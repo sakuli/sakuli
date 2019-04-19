@@ -1,102 +1,130 @@
-import {SakuliRunner} from ".";
-import {ContextProvider} from "./context-provider.interface";
+import {SakuliRunner, TestExecutionContext} from ".";
+import {TestExecutionLifecycleHooks} from "./context-provider.interface";
 import {TestScriptExecutor} from "./test-script-executor.interface";
-import mockFs from 'mock-fs'
+import {mockPartial} from "sneer";
+import {Project} from "../loader/model";
+import {tmpdir} from 'os'
+import {join, sep} from 'path';
+import {promises as fs} from 'fs';
+import Mocked = jest.Mocked;
 
 describe('SakuliRunner', () => {
 
-    const createContextProviderMock = (): jest.Mocked<ContextProvider> => ({
-        tearUp: jest.fn(),
-        tearDown: jest.fn(),
-        getContext: jest.fn()
+    let tempDir: string;
+    beforeEach(async () => tempDir = await fs.mkdtemp(`${tmpdir()}${sep}`));
+    afterEach(async () => fs.unlink(tempDir).catch(_ => {
+    }));
+
+    const createContextProviderMock = (): jest.Mocked<TestExecutionLifecycleHooks> => ({
+        onProject: jest.fn(),
+        afterExecution: jest.fn(),
+        requestContext: jest.fn(),
+        afterRunFile: jest.fn(),
+        beforeRunFile: jest.fn(),
+        beforeExecution: jest.fn(),
     });
 
-    const createScriptexecutorMock = (): jest.Mocked<TestScriptExecutor> => ({
-        execute: jest.fn((_, ctx) => ({...ctx}))
+    const createScriptExecutorMock = (): Mocked<TestScriptExecutor> => mockPartial<TestScriptExecutor>({
+        execute: jest.fn((_: any, ctx: any) => Promise.resolve(({...ctx})))
+    }) as Mocked<TestScriptExecutor>;
+
+    const testExecutionContext: TestExecutionContext = mockPartial<TestExecutionContext>({
+        startTestCase: jest.fn(),
+        endTestSuite: jest.fn(),
+        startTestSuite: jest.fn(),
+        getCurrentTestCase: jest.fn(),
+        updateCurrentTestCase: jest.fn(),
+        startExecution: jest.fn(),
+        endExecution: jest.fn(),
+        getCurrentTestAction: jest.fn(),
+        getCurrentTestSuite: jest.fn()
     });
 
-    describe('basic execution flow', () => {
-        let sakuliRunner: SakuliRunner;
-        let ctxProvider1: jest.Mocked<ContextProvider>;
-        let ctxProvider2: jest.Mocked<ContextProvider>;
-        let scriptExecutor: jest.Mocked<TestScriptExecutor>;
-        const projectWithThreeTestFiles = {
-            rootDir: 'somedir',
+    let sakuliRunner: SakuliRunner;
+    let lifecycleHooks1: jest.Mocked<TestExecutionLifecycleHooks>;
+    let lifecycleHooks2: jest.Mocked<TestExecutionLifecycleHooks>;
+    let scriptExecutor: jest.Mocked<TestScriptExecutor>;
+    let projectWithThreeTestFiles: Project;
+
+    beforeEach(async () => {
+        await fs.mkdir(join(tempDir, 'somedir/root'), {recursive: true});
+        for (let i of [1, 2, 3]) {
+            await fs.writeFile(join(tempDir, `somedir/root/test${i}.js`), `done(); // test ${i}`);
+        }
+        lifecycleHooks1 = createContextProviderMock();
+        lifecycleHooks2 = createContextProviderMock();
+        scriptExecutor = createScriptExecutorMock();
+        projectWithThreeTestFiles = mockPartial<Project>({
+            rootDir: join(tempDir, 'somedir'),
             testFiles: [
                 {path: 'root/test1.js'},
                 {path: 'root/test2.js'},
                 {path: 'root/test3.js'}
             ]
-        };
-        beforeEach(() => {
-            ctxProvider1 = createContextProviderMock();
-            ctxProvider2 = createContextProviderMock();
-            scriptExecutor = createScriptexecutorMock();
-            sakuliRunner = new SakuliRunner(
-                [ctxProvider1, ctxProvider2],
-                scriptExecutor
-            );
-
-            mockFs({
-                somedir: {
-                    root: {
-                        'test1.js': '// test 1',
-                        'test2.js': '// test 2',
-                        'test3.js': '// test 3',
-                    }
-                }
-            })
         });
+        sakuliRunner = new SakuliRunner(
+            [lifecycleHooks1, lifecycleHooks2],
+            testExecutionContext,
+            scriptExecutor
+        );
+    });
 
-        it('should tearUp all providers for each test', async done => {
-            await sakuliRunner.execute(projectWithThreeTestFiles);
-            expect(ctxProvider1.tearUp).toHaveBeenCalledTimes(1);
-            expect(ctxProvider1.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles);
+    it('should tearUp all providers for each test', async done => {
+        await sakuliRunner.execute(projectWithThreeTestFiles);
+        expect(lifecycleHooks1.onProject).toHaveBeenCalledTimes(1);
+        expect(lifecycleHooks1.onProject).toHaveBeenCalledWith(projectWithThreeTestFiles, testExecutionContext);
 
-            expect(ctxProvider2.tearUp).toHaveBeenCalledTimes(1);
-            expect(ctxProvider2.tearUp).toHaveBeenCalledWith(projectWithThreeTestFiles)
-            done();
+        expect(lifecycleHooks2.onProject).toHaveBeenCalledTimes(1);
+        expect(lifecycleHooks2.onProject).toHaveBeenCalledWith(projectWithThreeTestFiles, testExecutionContext);
+        done();
+    });
+
+    it('should tearDown all providers for each test', async done => {
+        await sakuliRunner.execute(projectWithThreeTestFiles);
+
+        expect(lifecycleHooks1.afterExecution).toHaveBeenCalledTimes(1);
+        expect(lifecycleHooks2.afterExecution).toHaveBeenCalledTimes(1);
+        done();
+    });
+
+    it('should execute with a merged context object from all lifecyclehooks', async done => {
+        (lifecycleHooks1.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}) as any);
+        (lifecycleHooks2.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}) as any);
+        await sakuliRunner.execute(projectWithThreeTestFiles);
+        const expectedContext = expect.objectContaining({
+            ctx1: 'ctx1',
+            ctx2: 'ctx2',
+            common: 'overridden'
         });
+        expect(scriptExecutor.execute).toHaveBeenNthCalledWith(1, 'done(); // test 1', expectedContext, expect.anything());
+        expect(scriptExecutor.execute).toHaveBeenNthCalledWith(2, 'done(); // test 2', expectedContext, expect.anything());
+        expect(scriptExecutor.execute).toHaveBeenNthCalledWith(3, 'done(); // test 3', expectedContext, expect.anything());
+        done();
+    });
 
-        it('should tearDown all providers for each test', async done => {
-            await sakuliRunner.execute(projectWithThreeTestFiles);
+    it('should get all proceed contexts from execute', async () => {
+        (lifecycleHooks1.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}) as any);
+        (lifecycleHooks2.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}) as any);
+        const result = await sakuliRunner.execute(projectWithThreeTestFiles);
+        return expect(result).toEqual(expect.objectContaining({
+            common: 'overridden',
+            ctx1: 'ctx1',
+            ctx2: 'ctx2'
+        }));
+    });
 
-            expect(ctxProvider1.tearDown).toHaveBeenCalledTimes(1);
-            expect(ctxProvider2.tearDown).toHaveBeenCalledTimes(1);
-            done();
-        });
+    it('should call beforeRunFile of lifecyclehooks for each file', async done => {
+        await sakuliRunner.execute(projectWithThreeTestFiles);
+        expect(lifecycleHooks1.beforeRunFile).toHaveBeenCalledTimes(3);
+        expect(lifecycleHooks2.beforeRunFile).toHaveBeenCalledTimes(3);
+        done();
+    });
 
-        it('should execute with a merged context object from all contextproviders', async done => {
-            ctxProvider1.getContext.mockReturnValue({ctx1: 'ctx1', common: 'ignore'});
-            ctxProvider2.getContext.mockReturnValue({ctx2: 'ctx2', common: 'overridden'});
-            await sakuliRunner.execute(projectWithThreeTestFiles);
-            const matchContext = () => expect.objectContaining({
-                ctx1: 'ctx1',
-                ctx2: 'ctx2',
-                common: 'overridden'
-            });
-            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(1, '// test 1', expect.anything());
-            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(2, '// test 2', expect.anything());
-            expect(scriptExecutor.execute).toHaveBeenNthCalledWith(3, '// test 3', expect.anything());
-            done();
-        });
-
-        it('should get all proceed contexts from execute', async done => {
-            ctxProvider1.getContext.mockReturnValue({ctx1: 'ctx1', common: 'ignore'});
-            ctxProvider2.getContext.mockReturnValue({ctx2: 'ctx2', common: 'overridden'});
-            const result = await sakuliRunner.execute(projectWithThreeTestFiles);
-            expect(result).toEqual(expect.objectContaining({
-                common: 'overridden',
-                ctx1: 'ctx1',
-                ctx2: 'ctx2'
-            }));
-            done();
-        });
-
-        afterEach(() => {
-            mockFs.restore()
-        })
-    })
-
+    it('should call afterRunFile of lifecyclehooks for each file', async done => {
+        await sakuliRunner.execute(projectWithThreeTestFiles);
+        expect(lifecycleHooks1.afterRunFile).toHaveBeenCalledTimes(3);
+        expect(lifecycleHooks2.afterRunFile).toHaveBeenCalledTimes(3);
+        done();
+    });
 
 });

@@ -6,6 +6,7 @@ import { TestCaseContext } from "./test-case-context.class";
 import { TestStepContext } from "./test-step-context.class";
 
 export interface SakuliContextEntityRaw {
+    id: string;
     state: TestContextEntityState;
     startDate: Date;
     endDate: Date;
