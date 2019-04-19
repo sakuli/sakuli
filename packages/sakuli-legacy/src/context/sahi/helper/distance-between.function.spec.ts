@@ -2,7 +2,6 @@ import {By} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {TestExecutionContext} from "@sakuli/core";
 import {distanceBetween} from "./distance-between.function";
-import DoneCallback = jest.DoneCallback;
 import {relationsApi, RelationsResolver} from "../relations";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 import {AccessorUtil} from "../accessor";
@@ -29,7 +28,7 @@ describe('distanceBetween', () => {
     });
 
 
-    it.each([
+    it.each(<[string, number][]>[
         ['n1', 4],
         ['n2', 4],
         ['n3', 4],
@@ -38,7 +37,7 @@ describe('distanceBetween', () => {
         ['n6', 0],
         ['n7', 4],
         ['n8', 0],
-    ])('should calculate distance for %s as %i', async (id: string, distance: number, done: DoneCallback) => {
+    ])('should calculate distance for %s as %i', async (id: string, distance: number) => {
         const {driver} = await env.getEnv();
         const html = mockHtml(`                                
             <div>              
@@ -69,6 +68,5 @@ describe('distanceBetween', () => {
         const e = await driver.findElement(By.css(`#${id}`));
         const root = await driver.findElement(By.css('#anchor'));
         await expect(distanceBetween(root, e)).resolves.toBe(distance);
-        done();
     });
 });

@@ -4,6 +4,7 @@ import {By, ThenableWebDriver} from "selenium-webdriver";
 import {RelationsResolver} from "../relations";
 import {accessorApi, AccessorFunctions} from "./accessor-api";
 import {AccessorFunction} from "../api";
+import {throwIfAbsent} from "@sakuli/commons";
 
 jest.setTimeout(15_000);
 describe('accessor api', () => {
@@ -212,7 +213,7 @@ describe('accessor api', () => {
         });
 
 
-        it.each(<Array<[AccessorFunctions, number | undefined]>>[
+        it.each(<Array<[AccessorFunctions, number]>>[
             ['_password', 0],
             ['_textbox', 0],
             ['_hidden', 0],

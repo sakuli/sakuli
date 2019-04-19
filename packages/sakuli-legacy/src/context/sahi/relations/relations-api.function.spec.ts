@@ -211,7 +211,8 @@ describe('relations-api', () => {
                 `));
         });
 
-        it.each([
+        type PositionMethod = Exclude<keyof RelationApi, "_parentNode" | "_near" | "_in">;
+        it.each(<[number, PositionMethod, number, string[]][]>[
             [3, '_leftOf', 0, ["Rhona Davidson", "Integration Specialist", "Tokyo"]],
             [2, '_leftOf', 1, ["Integration Specialist", "Tokyo"]],
             [3, '_rightOf', 0, ["55", "2010/10/14", "$327,900"]],
@@ -225,7 +226,7 @@ describe('relations-api', () => {
             [1, '_underOrAbove', 2, ["San Francisco"]],
         ])(
             'should relate %i elements which are %s the #anchor with an offset of %i and contains %j',
-            async (expected: number, method: Exclude<keyof RelationApi, "_parentNode" | "_near" | "_in">, offset: number, text: string[]) => {
+            async (expected: number, method: PositionMethod, offset: number, text: string[]) => {
                 const anchor = await createQuery(By.css('#anchor'));
                 const leftOfQuery = await api[method](anchor, offset)(createCssQuery(By.css('td')));
                 const leftOf = await accessorUtil.fetchElements(leftOfQuery);

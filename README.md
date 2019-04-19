@@ -89,3 +89,10 @@ To start developing Sakuli 2 some setup on your workstation is required.
 * Make sure to have [cmake](https://cmake.org/) installed.
 * Make sure to have docker installed and started
 * Make sure to execute `docker pull selenium/standalone-chrome-debug` before you start developing.
+
+## Updating dependencies
+Long story short: `npm run update`
+
+As this is a multi module project using [lerna](https://www.npmjs.com/package/lerna), dependency updates have to be
+consistent for the whole project. To achieve this, we use the [lerna-update-wizard](https://www.npmjs.com/package/lerna-update-wizard)
+and added the npm script `npm run update`.

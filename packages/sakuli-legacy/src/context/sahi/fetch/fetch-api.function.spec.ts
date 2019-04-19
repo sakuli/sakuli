@@ -58,7 +58,7 @@ describe('fetch-api', () => {
         return expect(_getText(q)).resolves.toBe('Hello World');
     });
 
-    test.each([
+    test.each(<["value" | undefined, string[]][]>[
         [undefined, ['Water', 'Wine', 'Beer']],
         ['value', ['water', 'wine', 'beer']],
     ])('_getOptions to return a list of options innerTexts', async (value: "value" | undefined, expected: string[]) => {
@@ -98,7 +98,7 @@ describe('fetch-api', () => {
         return expect(_getAttribute(q, 'data-custom')).resolves.toEqual('test');
     });
 
-    test.each([
+    test.each(<[string, boolean][]>[
         ['h1', true],
         ['h2', false]
     ])('_exists to resolve %s to %s', async (element: string, expected: boolean) => {
@@ -110,7 +110,7 @@ describe('fetch-api', () => {
         return expect(_exists(q)).resolves.toBe(expected);
     });
 
-    test.each([
+    test.each(<[string, string, boolean][]>[
         ['h1', '#heading1', true],
         ['h2', '#heading1', false],
     ])('_areEqual to identify "%s" and "%s" to equal %s', async (cssSelector1: string, cssSelector2: string, expected: boolean) => {
@@ -124,7 +124,7 @@ describe('fetch-api', () => {
         return expect(_areEqual(q1, q2)).resolves.toBe(expected);
     });
 
-    test.each([
+    test.each(<[string, boolean][]>[
         ['#hidden', false],
         ['#display-none', false],
         ['#visible', true],
@@ -141,7 +141,7 @@ describe('fetch-api', () => {
         return expect(_isVisible(q1)).resolves.toBe(expected);
     });
 
-    test.each([
+    test.each(<[boolean, string][]>[
         [true, '#checked'],
         [false, '#unchecked'],
     ])('_isChecked to be %s for %s', async (expected: boolean, selector: string) => {
@@ -154,7 +154,7 @@ describe('fetch-api', () => {
         return expect(_isChecked(q1)).resolves.toBe(expected);
     });
 
-    test.each([
+    test.each(<[boolean, string][]>[
         [true, '#enabled'],
         [false, '#disabled'],
     ])('_isChecked to be %s for %s', async (expected: boolean, selector: string) => {
@@ -176,7 +176,7 @@ describe('fetch-api', () => {
         return expect(_containsText(q1, 'llo Wo')).resolves.toBe(true);
     });
 
-    test.each([
+    test.each(<[string, boolean][]>[
         ['<i>Formatted</i>', true],
         ['Text', true],
         ['<i>Formatted</i> Text', true],
