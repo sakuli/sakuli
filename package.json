@@ -27,14 +27,13 @@
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
     "bootstrap": "lerna bootstrap",
-    "share-scripts": "node scripts/distribute-npm-scripts",
-    "update": "lernaupdate"
+    "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
-    "jest": "24.7.1",
-    "lerna": "3.13.3",
-    "lerna-update-wizard": "^0.13.0",
-    "ts-jest": "24.0.2"
+    "jest": "^24.7.1",
+    "lerna": "^3.13.3",
+    "ts-jest": "^24.0.2",
+    "yargs": "^12.0.5"
   },
   "sharedScripts": {
     "typedoc": "typedoc --out ../../docs/api/{package} --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",

@@ -1,8 +1,16 @@
-import {By, ThenableWebDriver} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "./relations-resolver.class";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
+
+const webElementToQuery = (elements: WebElement[]) => {
+    return ({
+        locator: By.js(`return arguments[0]`, elements),
+        relations: [],
+        identifier: RegExp('.*')
+    });
+};
 
 jest.setTimeout(15_000);
 describe('RelationResolver', () => {
@@ -16,7 +24,7 @@ describe('RelationResolver', () => {
 
     afterAll(async () => {
         await env.stop();
-    })
+    });
 
     function createApi(driver: ThenableWebDriver) {
         return new RelationsResolver(driver, testExecutionContext);
@@ -36,7 +44,7 @@ describe('RelationResolver', () => {
         const api = createApi(driver);
         const items = await driver.findElements(By.css('li'));
         const otherItems = items.filter((_, i) => i % 2 === 0);
-        const relationsMock = jest.fn(() => otherItems);
+        const relationsMock = jest.fn(() => Promise.resolve(webElementToQuery(otherItems)));
         const relationsMock2 = jest.fn();
         await api.applyRelations({
             relations: [
@@ -49,5 +57,4 @@ describe('RelationResolver', () => {
         expect(relationsMock).toHaveBeenCalled();
         expect(relationsMock2).toHaveBeenCalled();
     });
-
 });
