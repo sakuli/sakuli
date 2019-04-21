@@ -1,39 +1,31 @@
 os: linux
 dist: xenial
-
 language: node_js
 node_js:
-  - "10"
+  - '10'
 cache: npm
 services:
   - docker
-
 addons:
   sonarcloud:
-    organization: "sakuli"
+    organization: sakuli
     token:
-      secure: "kyPFHtVbo9gHNp7fy2B3d2I6g4/+v4h1/rjLm3LnLx1XECI13F/htxLI6tWOQGNnWeC3MRAMsrd2BJ2/ovJY0qz3EtfMBuFByEbwPiLobB+YJqaTTTnXcNsPVN+AibkbGk9jQEiO/2TIebo+29XtBH6EQLdsew1qNxGAXPCHyCFtrJT1x9jj+RO8RFxTP3PMFKzZaXAGd7Twl4AcWPTd6EYUCnV+2rq/mkIqmZwH0ckYIiVnIKm5g69P3i+LLabUl/tdftXU4+J+BHaHxwb7X+D0k9NsTXPWn19grmC8FdubO7GNX5zf+gvHX0d40oZGGYYe/55CSJKS0Coerj9Wmd380ZGzZZwnZl9pfyh6BITOWJlOUw8WoILX2w8k0jiZVF2puQ/h82+m9jfnPuk9v6cnIsJmO/2cSDz3T0ZznbhA4W/yGdsEfK0SKVn3VjyV6Gbd2R7YvZC3hag5UgRz2L8odIXn7y3U9KXQhpquxX/HLkVOKd2w/PXCcOX1BsMUcgjQiP2VfZuZKkGvkFg+E/iLovoSwlG0FYRu2Qmu5C74saz1K4H5IyVe3WzZZzWoLWSWwdWN0ZEXmpFI5Lxyy/3H6x4b+mkVld7j1ProuxQdf1TjFoYd0OWYcxVcedG6FdaNDmGc3FMtmVuSjeBYcpbMyU7d7l7xdigeNTK86J8="
-
+      secure: kyPFHtVbo9gHNp7fy2B3d2I6g4/+v4h1/rjLm3LnLx1XECI13F/htxLI6tWOQGNnWeC3MRAMsrd2BJ2/ovJY0qz3EtfMBuFByEbwPiLobB+YJqaTTTnXcNsPVN+AibkbGk9jQEiO/2TIebo+29XtBH6EQLdsew1qNxGAXPCHyCFtrJT1x9jj+RO8RFxTP3PMFKzZaXAGd7Twl4AcWPTd6EYUCnV+2rq/mkIqmZwH0ckYIiVnIKm5g69P3i+LLabUl/tdftXU4+J+BHaHxwb7X+D0k9NsTXPWn19grmC8FdubO7GNX5zf+gvHX0d40oZGGYYe/55CSJKS0Coerj9Wmd380ZGzZZwnZl9pfyh6BITOWJlOUw8WoILX2w8k0jiZVF2puQ/h82+m9jfnPuk9v6cnIsJmO/2cSDz3T0ZznbhA4W/yGdsEfK0SKVn3VjyV6Gbd2R7YvZC3hag5UgRz2L8odIXn7y3U9KXQhpquxX/HLkVOKd2w/PXCcOX1BsMUcgjQiP2VfZuZKkGvkFg+E/iLovoSwlG0FYRu2Qmu5C74saz1K4H5IyVe3WzZZzWoLWSWwdWN0ZEXmpFI5Lxyy/3H6x4b+mkVld7j1ProuxQdf1TjFoYd0OWYcxVcedG6FdaNDmGc3FMtmVuSjeBYcpbMyU7d7l7xdigeNTK86J8=
 before_install:
   - sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
   - docker pull selenium/standalone-chrome-debug
   - docker pull s1hofmann/nut-ci
   - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
   - npm i -g lerna gh-pages
-
 install: true
-
 script:
   - travis_wait npm ci
   - lerna run build > /dev/null 2>&1
   - npm test -- --runInBand --ci --bail
   - sonar-scanner
   - docker exec nut-ci bash -c "bash $PWD/.build/build.sh ${PWD} lts/dubnium"
-#  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then lerna run typedoc && gh-pages -d docs; fi
-
 before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
-
 deploy:
   provider: script
   skip_cleanup: false
@@ -41,3 +33,8 @@ deploy:
   on:
     branch: master
     tags: true
+notifications:
+  slack:
+    secure: hJYutXM5L8xtAhHjd4pJ+FKa3yX9dDWI+HtO7uC5eIwNUo7NJSrmmMBYvxPeFOwGat+newUP1BqwRAwmPs1MKEMYfDDa507glzXYplt5cSDYqjh4EY+E5Jr22h7FH3MpxbBAlGefAkPKijvtNDxiQVQKXTOyzRq7cZfvH7R95OBUOARUcsXDzkswfeu/uDDGKUceu0WJxE7h3T0sGjCjvMgIXcLhixThrPt2iD/wCfJt0chfxpZ/Cc3Ext0n7/egfLw5AfL3hSOeFeRFim7yGjc9rwCfoldpnlKV+INA1dBomxpDVDcmwL2cGujGubUD+5mEVc7Hfho2p89jOvQ6ypjnyxb5L8rc5OIJGW7iKQPjsdUlHUP7ajL+kTRnCx29TMLXm4G28rprDU4NbwQAJdeUDo4yCWHa6awTOJEFeSNhdvyVWSQd+Hxb/bpRFXung/v45ZQPT1IyVD4ybg4TbpbV8neBhfApNztCkbFmE7+J8huVHHAkGbbv5fm9I0WGgpYsqdRKIMmWOl5u9OmDsz4V1K66/h1Q3REs0K6sl92TxMBcwXY99OSsackMM/OofsMVikWLSgOuWGmLg3VEdOwlxjFax+xPSX2q4l1eyZX1N2+vFsEooiwKqu4MW2+ett2af+VDFfw1Bq2/AOoJ6TXTqD7VX94gJXyTBlLKfyQ=
+    on_success: change # default: always
+    on_failure: always # default: always
