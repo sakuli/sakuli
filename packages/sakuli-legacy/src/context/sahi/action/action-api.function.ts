@@ -35,11 +35,11 @@ export function actionApi(
                         --retries;
                         ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
                     } else {
-                        throw Error(`Error in action: ${name} \n${e.message}`)
+                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e.message}`)
                     }
                 }
             }
-            throw Error(`Error in action: ${name} \nFailed after ${initialTries} attempts.`)
+            throw Error(`Failed on an action after ${initialTries} attempts.`)
         }) as T;
     }
 
