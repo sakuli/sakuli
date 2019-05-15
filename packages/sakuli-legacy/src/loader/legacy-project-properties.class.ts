@@ -82,6 +82,16 @@ export class LegacyProjectProperties {
     testsuiteBrowser: keyof typeof Capabilities = "firefox";
 
     /**
+     * Defines a comma-seperated list of browser extension files for
+     * the browser to load.
+     *
+     * DEFAULT: ""
+     */
+    @Property('browser.extensions')
+    @Property('testsuite.browser.extensions')
+    testsuiteBrowserExtensions: string = "";
+
+    /**
      *######################################################################################
      * SAKULI-ACTION-PROPERTIES
      *

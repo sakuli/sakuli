@@ -12,6 +12,7 @@ abstract class CapabilitiesBuilder {
     properties : LegacyProjectProperties;
 
     abstract produce() : Capabilities;
+    abstract applyExtensions(capabilities : Capabilities) : void;
 
     constructor(project : Project) {
         this.project = project;
@@ -20,6 +21,8 @@ abstract class CapabilitiesBuilder {
 
     build() {
         const caps = this.produce();
+
+        this.applyExtensions(caps);
 
         return caps;
     }
@@ -45,5 +48,8 @@ export class GenericCapabilitiesBuilder extends CapabilitiesBuilder implements C
         const browser: keyof typeof Capabilities = this.properties.testsuiteBrowser;
         const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         return capsProducer();
+    }
+
+    applyExtensions(capabilities : Capabilities) : void {
     }
 }
