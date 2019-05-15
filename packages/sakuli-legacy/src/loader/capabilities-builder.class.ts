@@ -7,7 +7,7 @@ export interface CapabilitiesBuilderInterface {
     build() : Capabilities;
 }
 
-abstract class CapabilitiesBuilder {
+export abstract class CapabilitiesBuilder {
     project : Project;
     properties : LegacyProjectProperties;
 

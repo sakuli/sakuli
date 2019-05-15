@@ -13,12 +13,13 @@ import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
 import {CapabilitiesBuilderInterface, GenericCapabilitiesBuilder} from "../loader/capabilities-builder.class";
+import {ChromeCapabilitiesBuilder} from "../loader/chrome-capabilities-builder.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
 
     capabilityMap: { [key: string]: (project : Project) => CapabilitiesBuilderInterface } = {
-        'chrome': (project) => new GenericCapabilitiesBuilder(project),
+        'chrome': (project) => new ChromeCapabilitiesBuilder(project),
         'firefox': (project) => new GenericCapabilitiesBuilder(project),
         'edge': (project) => new GenericCapabilitiesBuilder(project),
         'safari': (project) => new GenericCapabilitiesBuilder(project),
