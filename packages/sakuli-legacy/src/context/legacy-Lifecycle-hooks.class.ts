@@ -12,18 +12,20 @@ import {LegacyProjectProperties} from "../loader/legacy-project-properties.class
 import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
+import {CapabilitiesBuilderInterface, GenericCapabilitiesBuilder} from "../loader/capabilities-builder.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
-    capabilityMap: { [key: string]: () => Capabilities } = {
-        'chrome': () => Capabilities.chrome(),
-        'firefox': () => Capabilities.firefox(),
-        'edge': () => Capabilities.edge(),
-        'safari': () => Capabilities.safari(),
-        'ie': () => Capabilities.ie(),
-        'phantomjs': () => Capabilities.phantomjs(),
-        'htmlunit': () => Capabilities.htmlunit(),
-        'htmlunitwithjs': () => Capabilities.htmlunitwithjs(),
+
+    capabilityMap: { [key: string]: (project : Project) => CapabilitiesBuilderInterface } = {
+        'chrome': (project) => new GenericCapabilitiesBuilder(project),
+        'firefox': (project) => new GenericCapabilitiesBuilder(project),
+        'edge': (project) => new GenericCapabilitiesBuilder(project),
+        'safari': (project) => new GenericCapabilitiesBuilder(project),
+        'ie': (project) => new GenericCapabilitiesBuilder(project),
+        'phantomjs': (project) => new GenericCapabilitiesBuilder(project),
+        'htmlunit': (project) => new GenericCapabilitiesBuilder(project),
+        'htmlunitwithjs': (project) => new GenericCapabilitiesBuilder(project),
     };
     driver: Maybe<ThenableWebDriver> = null;
 
@@ -39,11 +41,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         //const props: LegacyProjectProperties = project.
         const properties = project.objectFactory(LegacyProjectProperties);
         const browser: keyof typeof Capabilities = properties.testsuiteBrowser;
-        const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
-        const caps = capsProducer();
+        const capsBuilderProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
+        const capsBuilder = capsBuilderProducer(project);
+
         this.driver = this.builder
             .forBrowser(browser)
-            .withCapabilities(caps)
+            .withCapabilities(capsBuilder.build())
             .build();
     }
 
