@@ -1,7 +1,9 @@
+import {cwd} from "process";
 import {Project, TestExecutionContext} from "@sakuli/core";
 import nutConfig from "./nut-global-config.class";
 import {ScreenApi} from "./actions/screen.function";
-import {ifPresent} from "@sakuli/commons";
+import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {isAbsolute, join} from "path";
 
 type TestMetaData = {
     suiteName: string,
@@ -18,7 +20,7 @@ const getTestMetaData = (ctx: TestExecutionContext): TestMetaData => {
     });
 };
 
-export function createTestCaseClass(ctx: TestExecutionContext, project: Project) {
+export function createTestCaseClass(ctx: TestExecutionContext, project: Project, currentTestFolder: Maybe<string>) {
     return class TestCase {
         constructor(
             readonly caseId?: string,
@@ -29,11 +31,22 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
             ctx.logger.info(`Start Testcase ${caseId}`);
             ctx.startTestCase({id: caseId});
             ctx.startTestStep({});
-            nutConfig.addImagePath(..._imagePaths);
+            nutConfig.imagePaths = [cwd()];
+            const testFolder = throwIfAbsent(currentTestFolder, new Error("No testcase folder provided"));
+            nutConfig.addImagePath(testFolder);
+            this.addImagePaths(..._imagePaths);
         }
 
         addImagePaths(...paths: string[]) {
-            nutConfig.addImagePath(...paths);
+            for (let path of paths) {
+                if (isAbsolute(path)) {
+                    nutConfig.addImagePath(path);
+                } else {
+                    ifPresent(currentTestFolder,
+                        testFolder => nutConfig.addImagePath(join(testFolder, path))
+                    );
+                }
+            }
         }
 
         endOfStep(
@@ -53,7 +66,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
 
         async handleException<E extends Error>(e: E) {
             ctx.logger.info(`Error: ${e.message}`);
-            const { suiteName, caseName } = getTestMetaData(ctx);
+            const {suiteName, caseName} = getTestMetaData(ctx);
             await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
             ctx.updateCurrentTestCase({
                 error: e,
@@ -74,6 +87,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
         }
 
         getTestCaseFolderPath() {
+            return throwIfAbsent(currentTestFolder, new Error("No test path configured."));
         }
 
         getTestSuiteFolderPath() {
@@ -82,7 +96,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project)
 
         async throwExecption(message: string, screenshot: boolean) {
             if (screenshot) {
-                const { suiteName, caseName } = getTestMetaData(ctx);
+                const {suiteName, caseName} = getTestMetaData(ctx);
                 await ScreenApi.takeScreenshotWithTimestamp(`error_${suiteName}_${caseName}`);
             }
             throw Error(message);
