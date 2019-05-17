@@ -35,15 +35,14 @@ before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 
 deploy:
-  - provider: script
-    skip_cleanup: false
-    script: npm run lerna:publish
-    on:
-      branch: master
-      tags: true
   - provider: pages
     repo: sakuli/apidocs
     local_dir: ./docs
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
     keep_history: true
+  - provider: script
+    skip_cleanup: false
+    script: npm run lerna:publish
+    on:
+      tags: true
