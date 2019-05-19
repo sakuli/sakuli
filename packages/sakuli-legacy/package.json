@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/legacy",
-  "version": "2.0.0-RC2",
+  "version": "2.0.0-RC3",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
