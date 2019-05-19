@@ -57,23 +57,8 @@ will install Sakuli and its required dependencies.
 
 
 One of Sakulis core components, [nut.js](https://github.com/nut-tree/nut-js) requires OpenCV.
-As of now the installation process assumes you do not have an existing OpenCV installation and will try to build it from source via [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs).
-
-Building OpenCV from scratch requires a [cmake](https://cmake.org/) installation.
-
-In case you already have an OpenCV installation (version 3.x.x required, e.g. via `brew install opencv@3` or [else](https://docs.opencv.org/3.4/df/d65/tutorial_table_of_content_introduction.html)), you can disable the build process via environment variable:
-
-```bash
-export OPENCV4NODEJS_DISABLE_AUTOBUILD=1
-```
-
-on *nix systems, or 
-
-```bash
-set OPENCV4NODEJS_DISABLE_AUTOBUILD=1
-```
-
-on Windows.
+The installation process comes with a pre-built version of OpenCV for the respective target platform (via [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs)).
+It's not required to manually build OpenCV, but the installation process has some 3rd-party dependencies.
 
 Please make sure to also install all required peer dependencies:
  
