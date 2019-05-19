@@ -39,6 +39,7 @@ export abstract class TestContextEntity implements Measurable {
     warningTime: number = 0;
 
     error: Maybe<Error>;
+    screenshot: Maybe<string>;
 
     get duration() {
         if (this.isFinished()) {
