@@ -25,7 +25,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@nut-tree/nut-js": "1.0.1",
+    "@nut-tree/nut-js": "1.1.0",
     "@nut-tree/secrets": "3.0.0",
     "@sakuli/commons": "^2.0.0-RC2",
     "@sakuli/core": "^2.0.0-RC2",
