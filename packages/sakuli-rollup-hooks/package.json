@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/rollup-hooks",
-  "version": "2.0.0-RC2",
+  "version": "2.0.0-RC3",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
     "rollup",
