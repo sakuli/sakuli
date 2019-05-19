@@ -1,5 +1,3 @@
-__Sakuli2 is still under development and therefore not published or considered for public use. Please use [Sakuli](https://github.com/consol/sakuli) until Sakuli2 is ready.
-
 # Sakuli2
 
 [![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=master)](https://travis-ci.com/sakuli/sakuli) 
@@ -71,7 +69,6 @@ The installation process is an open issue and will be enhanced in the near futur
 
 To start developing Sakuli 2 some setup on your workstation is required.
 
-* Make sure to have [cmake](https://cmake.org/) installed.
 * Make sure to have docker installed and started
 * Make sure to execute `docker pull selenium/standalone-chrome-debug` before you start developing.
 
