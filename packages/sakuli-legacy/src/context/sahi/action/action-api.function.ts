@@ -35,7 +35,7 @@ export function actionApi(
                         --retries;
                         ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
                     } else {
-                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e.message}`)
+                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
                     }
                 }
             }
@@ -118,7 +118,11 @@ export function actionApi(
         if (forceReload) {
             await webDriver.navigate().refresh()
         }
-        await webDriver.executeScript(INJECT_SAKULI_HOOK);
+        try {
+            await webDriver.executeScript(INJECT_SAKULI_HOOK);
+        } catch (e) {
+            // ignore
+        }
     }
 
     async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {

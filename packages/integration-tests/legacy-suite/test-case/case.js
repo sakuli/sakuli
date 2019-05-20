@@ -1,18 +1,15 @@
 (async () => {
-    const tc = new TestCase();
+    const testCase = new TestCase();
     try {
-        tc.endOfStep('Init');
-        await _navigateTo('https://consol.github.io/sakuli/');
-        tc.endOfStep('Load Page and wait');
-        const htmlLink = _link('HTML');
-        await _highlight(htmlLink);
-        await _click(htmlLink);
-        await _wait(3000);
-        await(_highlight(_heading1(/Sakuli E2E testing and -monitoring/)));
-        tc.endOfStep('Open Documentation');
+        await _navigateTo("https://sakuli.io");                                  // 1
+        testCase.endOfStep("Open Landing Page",5);             // 2
+        await _click(_link("Getting started"));                         // 3
+        testCase.endOfStep("Navigate to Getting Started",3);   // 4
+        await _highlight(_code("npm init"));                            // 5
+        testCase.endOfStep("Find npm init code sample");
     } catch (e) {
-        tc.handleException(e);
+        testCase.handleException(e);
     } finally {
-        tc.saveResult();
+        testCase.saveResult();
     }
 })().then(done);

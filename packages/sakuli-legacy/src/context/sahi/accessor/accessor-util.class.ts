@@ -101,37 +101,46 @@ export class AccessorUtil {
     }
 
     async enableHook() {
-        await this.webDriver.executeScript(INJECT_SAKULI_HOOK);
+            await this.webDriver.executeScript(INJECT_SAKULI_HOOK);
     }
 
     async openRequests(): Promise<number> {
-        return this.webDriver.executeScript<number>(CHECK_OPEN_REQUESTS);
+            return this.webDriver.executeScript<number>(CHECK_OPEN_REQUESTS);
     }
 
     async resetRequests() {
-        this.webDriver.executeScript(RESET_OPEN_REQUESTS);
+            this.webDriver.executeScript(RESET_OPEN_REQUESTS);
     }
 
     async waitForOpenRequests(timeout: number) {
         this.testExecutionContext.logger.info("Waiting for open requests.");
-        let openRequests = await this.openRequests();
-        this.testExecutionContext.logger.info(`Open requests: ${openRequests}`);
-        const startTime = Date.now();
-        while (openRequests) {
-            if (Date.now() - startTime > timeout) {
-                this.testExecutionContext.logger.info(`Timeout of ${timeout} ms for open requests reached.`);
-                await this.resetRequests();
-                break;
-            }
+        let openRequests = 0;
+        try {
             openRequests = await this.openRequests();
+            this.testExecutionContext.logger.info(`Open requests: ${openRequests}`);
+            const startTime = Date.now();
+            while (openRequests) {
+                if (Date.now() - startTime > timeout) {
+                    this.testExecutionContext.logger.info(`Timeout of ${timeout} ms for open requests reached.`);
+                    await this.resetRequests();
+                    break;
+                }
+                openRequests = await this.openRequests();
+            }
+        } catch (e) {
+            this.testExecutionContext.logger.info(`Dynamic wait cancelled, reason: ${e}`);
         }
         this.testExecutionContext.logger.info("Continuing test execution.");
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        await this.enableHook();
-        // TODO Make timeout configurable
-        await this.waitForOpenRequests(5000);
+        try {
+            await this.enableHook();
+            // TODO Make timeout configurable
+            await this.waitForOpenRequests(5000);
+        } catch (e) {
+            this.testExecutionContext.logger.info(`Dynamic wait not initialised, reason: ${e}`);
+        }
         try {
             return await this.webDriver.wait(until.elementsLocated(locator), 3000);
         } catch (e) {

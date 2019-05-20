@@ -30,13 +30,13 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         });
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
-        const context = await this.requestContext(this.testExecutionContext, project);
         let result = {};
         await this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
             const testFileContent = await this.readFileContent(testFile, project, this.testExecutionContext);
             try {
                 await this.beforeRunFile(testFile, project, this.testExecutionContext);
+                const context = await this.requestContext(this.testExecutionContext, project);
                 const resultCtx = await this.testFileExecutor.execute(testFileContent.toString(), context, {
                     filename: resolve(join(project.rootDir, testFile.path)),
                     waitUntilDone: true
