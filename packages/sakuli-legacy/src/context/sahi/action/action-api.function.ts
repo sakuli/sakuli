@@ -35,7 +35,7 @@ export function actionApi(
                         --retries;
                         ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
                     } else {
-                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e.message}`)
+                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
                     }
                 }
             }
