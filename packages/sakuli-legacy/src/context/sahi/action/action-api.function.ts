@@ -35,11 +35,11 @@ export function actionApi(
                         --retries;
                         ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
                     } else {
-                        throw Error(`Error in action: ${name} \n${e.message}`)
+                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
                     }
                 }
             }
-            throw Error(`Error in action: ${name} \nFailed after ${initialTries} attempts.`)
+            throw Error(`Failed on an action after ${initialTries} attempts.`)
         }) as T;
     }
 
@@ -118,7 +118,11 @@ export function actionApi(
         if (forceReload) {
             await webDriver.navigate().refresh()
         }
-        await webDriver.executeScript(INJECT_SAKULI_HOOK);
+        try {
+            await webDriver.executeScript(INJECT_SAKULI_HOOK);
+        } catch (e) {
+            // ignore
+        }
     }
 
     async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {

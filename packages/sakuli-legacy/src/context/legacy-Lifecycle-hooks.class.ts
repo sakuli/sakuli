@@ -6,14 +6,14 @@ import {createEnvironmentClass} from "./common/sakuli-environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
-import {parse, sep} from "path";
+import {dirname, join, parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
+import {promises as fs} from "fs";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
-
 
     capabilityMap: { [key: string]: () => Capabilities } = {
         'chrome': () => Capabilities.chrome(),
@@ -26,6 +26,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         'htmlunitwithjs': () => Capabilities.htmlunitwithjs(),
     };
     driver: Maybe<ThenableWebDriver> = null;
+
+    currentTest: Maybe<string> = null;
 
     constructor(
         readonly builder: Builder
@@ -67,6 +69,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     async beforeRunFile(file: TestFile, project: Project, ctx: TestExecutionContext) {
         this.currentFile = file.path;
         this.currentProject = project;
+        this.currentTest = dirname(await fs.realpath(join(project.rootDir, file.path)));
     }
 
     async afterRunFile(file: TestFile, project: Project, ctx: TestExecutionContext) {
@@ -87,7 +90,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         return Promise.resolve({
             driver,
             context: ctx,
-            TestCase: createTestCaseClass(ctx, project),
+            TestCase: createTestCaseClass(ctx, project, this.currentTest),
             Application: createApplicationClass(ctx),
             Key,
             Environment: createEnvironmentClass(ctx, project),

@@ -35,7 +35,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
                     ctx.logger.info(`Located at: (${result.left},${result.top},${result.width},${result.height})`);
                     resolve(new SakuliRegion(result.left, result.top, result.width, result.height));
                 } catch (e) {
-                    ctx.logger.info(`Failed to locate ${imageName}. Reason: ${e.message}`);
+                    ctx.logger.info(`Failed to locate ${imageName}. Reason: ${e}`);
                     reject(e);
                 }
             });
