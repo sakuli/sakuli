@@ -27,9 +27,9 @@
   "dependencies": {
     "@nut-tree/nut-js": "1.1.1",
     "@nut-tree/secrets": "3.0.0",
-    "@sakuli/commons": "^2.0.0-RC2",
-    "@sakuli/core": "^2.0.0-RC2",
-    "@sakuli/rollup-hooks": "^2.0.0-RC2",
+    "@sakuli/commons": "^2.0.0-RC3",
+    "@sakuli/core": "^2.0.0-RC3",
+    "@sakuli/rollup-hooks": "^2.0.0-RC3",
     "class-validator": "^0.9.1",
     "common-tags": "^1.8.0",
     "escodegen": "^1.11.0",

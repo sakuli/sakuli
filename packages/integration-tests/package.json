@@ -20,8 +20,8 @@
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run legacy-suite"
   },
   "dependencies": {
-    "@sakuli/cli": "^2.0.0-RC2",
-    "@sakuli/legacy": "^2.0.0-RC2",
+    "@sakuli/cli": "^2.0.0-RC3",
+    "@sakuli/legacy": "^2.0.0-RC3",
     "chromedriver": "^2.46.0",
     "concurrently": "^4.1.0",
     "execa": "^1.0.0",
