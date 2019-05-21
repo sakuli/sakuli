@@ -4,7 +4,7 @@ import {AccessorUtil} from "../accessor";
 import {By, Locator} from "selenium-webdriver";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {getNearestCommonParent} from "./get-nearest-common-parent.function";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(50000);
 

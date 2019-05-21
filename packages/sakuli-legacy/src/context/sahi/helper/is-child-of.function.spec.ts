@@ -1,7 +1,7 @@
 import {By} from "selenium-webdriver";
 import {isChildOf} from "./is-child-of.function";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 
 jest.setTimeout(25_000);

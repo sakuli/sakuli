@@ -1,7 +1,7 @@
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 import {By, ThenableWebDriver} from "selenium-webdriver";
 import {NativeEventDispatcher} from "./native-event-dispatcher.class";
-import {getTestBrowserList} from "./__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('NativeEventDispatcher', () => {

@@ -4,7 +4,7 @@ import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('relations-api', () => {
@@ -15,11 +15,6 @@ describe('relations-api', () => {
         let accessorUtil: AccessorUtil;
         let driver: ThenableWebDriver;
         let api: RelationApi;
-
-        function createApi(driver: ThenableWebDriver) {
-            const accessorUtil = new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext));
-            return relationsApi(driver, accessorUtil, testExecutionContext);
-        }
 
         function createQuery(locator: Locator): SahiElementQueryOrWebElement {
             return ({

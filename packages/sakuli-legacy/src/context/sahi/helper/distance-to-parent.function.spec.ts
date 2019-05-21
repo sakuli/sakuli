@@ -3,7 +3,7 @@ import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment
 import {AccessorUtil} from "../accessor";
 import {By} from "selenium-webdriver";
 import {distanceToParent} from "./distance-to-parent.function";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(50000);
 

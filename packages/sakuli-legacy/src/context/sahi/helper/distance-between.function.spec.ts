@@ -5,7 +5,7 @@ import {distanceBetween} from "./distance-between.function";
 import {relationsApi, RelationsResolver} from "../relations";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
 import {AccessorUtil} from "../accessor";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(50000);
 

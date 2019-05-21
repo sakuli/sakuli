@@ -20,6 +20,8 @@ before_install:
   - docker pull selenium/standalone-firefox-debug
   - docker pull s1hofmann/nut-ci
   - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
+  - docker run -p 4444:4444 selenium/standalone-firefox-debug
+  - docker run -p 4445:4444 selenium/standalone-chrome-debug
   - npm i -g lerna gh-pages
 
 install: true
@@ -27,7 +29,7 @@ install: true
 script:
   - travis_wait npm ci
   - lerna run build > /dev/null 2>&1
-  - npm test -- --runInBand --ci --bail
+  - FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm test -- --runInBand --ci --bail
   - sonar-scanner
   - docker exec nut-ci bash -c "bash $PWD/.build/build.sh ${PWD} lts/dubnium"
 #  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then lerna run typedoc && gh-pages -d docs; fi

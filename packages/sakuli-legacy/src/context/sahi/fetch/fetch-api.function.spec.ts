@@ -4,7 +4,7 @@ import {fetchApi} from "./fetch-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "../relations";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('fetch-api', () => {

@@ -3,7 +3,7 @@ import {mockPartial} from "sneer";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationsResolver} from "./relations-resolver.class";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 const webElementToQuery = (elements: WebElement[]) => {
     return ({

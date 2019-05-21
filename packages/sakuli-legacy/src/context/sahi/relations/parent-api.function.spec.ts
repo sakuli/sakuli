@@ -1,11 +1,11 @@
-import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {By, ThenableWebDriver} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {ParentApi, parentApi} from "./parent-api.function";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
 import {isEqual} from "../helper/is-equal.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('relations-api', () => {

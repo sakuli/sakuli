@@ -3,7 +3,7 @@ import {ifPresent} from "@sakuli/commons";
 import {getParent} from "./get-parent.function";
 import {isEqual} from "./is-equal.function";
 import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('getParent', () => {

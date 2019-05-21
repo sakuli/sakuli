@@ -5,7 +5,7 @@ import {RelationsResolver} from "../relations";
 import {FetchApi, fetchApi as createFetchApi} from "../fetch/fetch-api.function";
 import {textSelectionApi, TextSelectionApi} from "./text-selection-api.function";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {getTestBrowserList} from "./__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('textSelectionApi', () => {

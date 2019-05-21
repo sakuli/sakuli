@@ -1,7 +1,5 @@
 import {Builder, ThenableWebDriver} from "selenium-webdriver";
-import {RunContainer, runContainer} from "./run-container.function";
-import {waitForConnection} from "./wait-for-connection.function";
-import {throwIfAbsent} from "@sakuli/commons";
+import {RunContainer} from "./run-container.function";
 
 export interface TestEnvironment {
     start(): Promise<void>;
@@ -18,36 +16,30 @@ export const createTestEnv = (browser: "firefox" | "chrome" = "chrome", local: b
     const driverPackage = ({
         firefox: {
             package: 'geckodriver',
+            server: process.env.FIREFOX_WD_URL
         },
         chrome: {
             package: 'chromedriver',
+            server: process.env.CHROME_WD_URL
         }
     })[browser];
 
     async function start() {
+        console.log(`Starting ${browser}, local=${local} with url: ${driverPackage.server}`);
         if (local) {
             await import(driverPackage.package);
-            driver = new Builder()
-                .forBrowser(browser)
-                .build();
-        } else {
-            const rc1 = await runContainer(`selenium/standalone-${browser}-debug`, {
-                ports: [4444, 5900]
-            });
-            wdc = throwIfAbsent(rc1, Error('Could not init webdriver container'));
-            await wdc.start();
-            await waitForConnection({port: await wdc.getMappedPort(4444)})();
         }
+        const builder = new Builder()
+            .forBrowser(browser);
+
+        if (!local) {
+            builder.usingServer(`${driverPackage.server}`);
+        }
+        driver = builder.build();
     }
 
 
     async function getEnv() {
-        if (driver == null) {
-            driver = new Builder()
-                .forBrowser(browser)
-                .usingServer(`http://localhost:${wdc.getMappedPort(4444)}/wd/hub`)
-                .build();
-        }
         return ({
             driver,
         })

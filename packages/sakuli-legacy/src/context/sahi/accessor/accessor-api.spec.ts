@@ -4,8 +4,7 @@ import {By, ThenableWebDriver} from "selenium-webdriver";
 import {RelationsResolver} from "../relations";
 import {accessorApi, AccessorFunctions} from "./accessor-api";
 import {AccessorFunction} from "../api";
-import {throwIfAbsent} from "@sakuli/commons";
-import {getTestBrowserList} from "../action/__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('accessor api', () => {
