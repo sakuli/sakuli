@@ -1,4 +1,4 @@
-import {clipboard, Key, keyboard} from "@nut-tree/nut-js";
+import {clipboard, Key as NutKey, keyboard} from "@nut-tree/nut-js";
 import {copyShortcut, pasteShortcut} from "./shortcut.function";
 
 export const ClipboardApi = {
@@ -12,10 +12,12 @@ export const ClipboardApi = {
         await clipboard.copy(text);
     },
     async pasteClipboard() {
-        await keyboard.type(...pasteShortcut());
+        await keyboard.pressKey(...pasteShortcut() as NutKey[]);
+        await keyboard.releaseKey(...pasteShortcut() as NutKey[]);
     },
     async copyIntoClipboard() {
-        await keyboard.type(...copyShortcut());
+        await keyboard.pressKey(...copyShortcut() as NutKey[]);
+        await keyboard.releaseKey(...copyShortcut() as NutKey[]);
     },
     async cleanClipboard() {
         // TODO

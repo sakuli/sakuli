@@ -12,11 +12,14 @@ type TestMetaData = {
 
 const getTestMetaData = (ctx: TestExecutionContext): TestMetaData => {
     const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => ifPresent(suite.id, id => id, () => "UNKNOWN_TESTSUITE"), () => "UNKNOWN_TESTSUITE");
-    const caseName = ifPresent(ctx.getCurrentTestCase(), testCase => ifPresent(testCase.id, id => id, () => "UNKNOWN_TESTCASE"), () => "UNKNOWN_TESTCASE");
+    let caseName = ifPresent(ctx.getCurrentTestCase(), testCase => testCase.id, () => null);
+    caseName = ifPresent(caseName, () => caseName, () => {
+        return ifPresent(ctx.getCurrentTestSuite(), ts => `testcase_${ts.testCases.length}`, () => "testcase_1");
+    });
 
     return ({
         suiteName,
-        caseName
+        caseName: caseName || "testcase_1"
     });
 };
 

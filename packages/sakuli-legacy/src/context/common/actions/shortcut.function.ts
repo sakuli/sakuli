@@ -1,7 +1,7 @@
-import {Key} from "@nut-tree/nut-js";
+import {Key} from "../key.class";
 
 export const getSuperKey = () => {
-    return (process.platform === "darwin") ? Key.LeftSuper : Key.LeftControl;
+    return (process.platform === "darwin") ? Key.CMD : Key.CTRL;
 };
 
 export const copyShortcut = () => {
