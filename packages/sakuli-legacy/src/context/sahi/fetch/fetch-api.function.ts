@@ -120,7 +120,7 @@ export function fetchApi(
 
     async function _position(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
-        return e.getLocation().then(({x, y}) => [x, y] as Vector2)
+        return e.getRect().then(({x, y}) => [x, y] as Vector2)
     }
 
     async function _getSelectionText() {

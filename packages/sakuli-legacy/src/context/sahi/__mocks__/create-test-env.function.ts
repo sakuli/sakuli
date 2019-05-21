@@ -1,4 +1,4 @@
-import {Builder, Capabilities, ThenableWebDriver} from "selenium-webdriver";
+import {Builder, ThenableWebDriver} from "selenium-webdriver";
 import {RunContainer, runContainer} from "./run-container.function";
 import {waitForConnection} from "./wait-for-connection.function";
 import {throwIfAbsent} from "@sakuli/commons";
@@ -11,19 +11,16 @@ export interface TestEnvironment {
     stop(): Promise<void>;
 }
 
-export function createTestEnv(browser: "firefox" | "chrome" = "chrome", local: boolean = false): TestEnvironment {
+export const createTestEnv = (browser: "firefox" | "chrome" = "chrome", local: boolean = false): TestEnvironment => {
     let wdc: RunContainer;
     let driver: ThenableWebDriver;
 
-    const ffCaps = Capabilities.firefox() //.set("marionette", false);
     const driverPackage = ({
         firefox: {
             package: 'geckodriver',
-            caps: ffCaps
         },
         chrome: {
             package: 'chromedriver',
-            caps: Capabilities.chrome()
         }
     })[browser];
 
@@ -31,7 +28,6 @@ export function createTestEnv(browser: "firefox" | "chrome" = "chrome", local: b
         if (local) {
             await import(driverPackage.package);
             driver = new Builder()
-                .withCapabilities(driverPackage.caps)
                 .forBrowser(browser)
                 .build();
         } else {
@@ -47,10 +43,8 @@ export function createTestEnv(browser: "firefox" | "chrome" = "chrome", local: b
 
     async function getEnv() {
         if (driver == null) {
-
             driver = new Builder()
                 .forBrowser(browser)
-                .withCapabilities(driverPackage.caps)
                 .usingServer(`http://localhost:${wdc.getMappedPort(4444)}/wd/hub`)
                 .build();
         }
@@ -63,7 +57,10 @@ export function createTestEnv(browser: "firefox" | "chrome" = "chrome", local: b
         if (driver) {
             await driver.close();
         }
-        await wdc.stop();
+        if (wdc) {
+            await wdc.stop();
+        }
+        await new Promise(res => setTimeout(res, 500));
     }
 
     return ({

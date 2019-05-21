@@ -9,13 +9,12 @@ import {SahiElementQuery} from "../sahi-element.interface";
 jest.setTimeout(25_000);
 describe('mouse-actions', () => {
 
-    describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome") => {
-
+    describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
 
         let env: TestEnvironment;
         let driver: ThenableWebDriver;
         beforeAll(async () => {
-            env = createTestEnv(browser, false);
+            env = createTestEnv(browser, local);
             await env.start();
             driver = (await env.getEnv()).driver;
         });

@@ -1,6 +1,6 @@
-export function getTestBrowserList(): ("firefox" | "chrome")[][] {
+export function getTestBrowserList(): [("firefox" | "chrome"), boolean][] {
     return [
-        ['chrome'],
-        ['firefox']
+        ['firefox', true],
+        ['chrome', true],
     ];
 }
