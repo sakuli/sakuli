@@ -30,9 +30,13 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         async handler(runOptions: any) {
             const logStream = createWriteStream('sakuli.log', {flags: 'a'});
             sakuli.testExecutionContext.logger.onEvent(e => {
-                logStream.write(`[${e.time}] ${e.level} ${e.message}\n`)
-                if (e.data) {
-                    logStream.write(`${JSON.stringify(e.data, null, 2)}\n`)
+                try {
+                    logStream.write(`[${e.time}] ${e.level} ${e.message}\n`);
+                    if (e.data) {
+                        logStream.write(`${JSON.stringify(e.data, null, 2)}\n`)
+                    }
+                } catch (e) {
+                    // ignore
                 }
             });
             const unmount = renderExecution(sakuli.testExecutionContext);
