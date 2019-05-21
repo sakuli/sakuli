@@ -20,8 +20,8 @@ before_install:
   - docker pull selenium/standalone-firefox-debug
   - docker pull s1hofmann/nut-ci
   - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
-  - docker run -p 4444:4444 selenium/standalone-firefox-debug
-  - docker run -p 4445:4444 selenium/standalone-chrome-debug
+  - docker run -d -p 4444:4444 selenium/standalone-firefox-debug
+  - docker run -d -p 4445:4444 selenium/standalone-chrome-debug
   - npm i -g lerna gh-pages
 
 install: true
