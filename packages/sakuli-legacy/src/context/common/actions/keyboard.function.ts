@@ -6,7 +6,8 @@ import {Key} from "../key.class";
 export const KeyboardApi = {
     async paste(text: string) {
         await clipboard.copy(text);
-        await keyboard.type(...pasteShortcut());
+        await keyboard.pressKey(...pasteShortcut() as NutKey[]);
+        await keyboard.releaseKey(...pasteShortcut() as NutKey[]);
     },
     async pasteAndDecrypt(text: string) {
         return withEncryption(text, async (decrypted) => {
