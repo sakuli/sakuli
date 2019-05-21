@@ -1,4 +1,3 @@
-import {describe} from "selenium-webdriver/testing";
 import {ENCRYPTION_KEY_VARIABLE} from "./secrets.function";
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {SimpleLogger} from "@sakuli/commons";

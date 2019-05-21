@@ -17,6 +17,7 @@ addons:
 before_install:
   - sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
   - docker pull selenium/standalone-chrome-debug
+  - docker pull selenium/standalone-firefox-debug
   - docker pull s1hofmann/nut-ci
   - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
   - npm i -g lerna gh-pages

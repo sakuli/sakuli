@@ -1,11 +1,11 @@
-import {ActionSequence, Button, By, ILocation, ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {Button, By, ILocation, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {stripIndents} from "common-tags";
-import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
 import {positionalInfo} from "../relations/positional-info.function";
 import {runActionsWithComboKeys} from "./run-actions-with-combo.keys.function";
+import 'selenium-webdriver/lib/input'
 
 export function mouseActionApi(
     webDriver: ThenableWebDriver,
@@ -13,21 +13,7 @@ export function mouseActionApi(
     ctx: TestExecutionContext
 ) {
 
-    function pressComboKeys(actions: ActionSequence, e: WebElement, combo: string) {
-        const keys = getSeleniumKeysFromComboString(combo);
-        keys.forEach(k => {
-            actions.keyDown(k);
-        });
-        return actions;
-    }
-
-    function releaseComboKeys(actions: ActionSequence, e: WebElement, combo: string) {
-        const keys = getSeleniumKeysFromComboString(combo);
-        keys.forEach(k => {
-            actions.keyUp(k);
-        });
-        return actions;
-    }
+    const toElement = (origin:WebElement) => ({origin, x:0,y:0});
 
     async function _xy() {
         throw Error('Not yet implemented due to api incompability');
@@ -55,10 +41,10 @@ export function mouseActionApi(
     async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
-            webDriver.actions(),
+            webDriver.actions({bridge: true}),
             e,
             combo,
-            a => a.click(e)
+            a => a.move({origin: e}).press().release()
         ).perform();
     }
 
@@ -66,9 +52,9 @@ export function mouseActionApi(
         const e = await accessorUtil.fetchElement(query);
         const mouseButton = isRight ? Button.RIGHT : Button.LEFT;
         return runActionsWithComboKeys(
-            webDriver.actions(),
+            webDriver.actions({bridge: true}),
             e, combo,
-            a => a.mouseDown(e, mouseButton)
+            a => a.move(toElement(e)).press(mouseButton)
         ).perform();
     }
 
@@ -76,27 +62,27 @@ export function mouseActionApi(
         const e = await accessorUtil.fetchElement(query);
         const mouseButton = isRight ? Button.RIGHT : Button.LEFT;
         return runActionsWithComboKeys(
-            webDriver.actions(),
+            webDriver.actions({bridge: true}),
             e, combo,
-            a => a.mouseUp(e, mouseButton)
+            a => a.move(toElement(e)).release(mouseButton)
         ).perform();
     }
 
     async function _rightClick(query: SahiElementQueryOrWebElement, combo: string = ''): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
-            webDriver.actions(),
+            webDriver.actions({bridge: true}),
             e, combo,
-            a => a.mouseDown(e, Button.RIGHT).mouseUp(e, Button.RIGHT)
+            a => a.contextClick(e)
         ).perform();
     }
 
     async function _mouseOver(query: SahiElementQueryOrWebElement, combo: string = '') {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
-            webDriver.actions(),
+            webDriver.actions({bridge: true}),
             e, combo,
-            a => a.mouseMove(e)
+            a => a.move({origin: e, x:1, y:1}).move(toElement(e))
         ).perform();
     }
 
@@ -123,13 +109,21 @@ export function mouseActionApi(
     }
 
     async function _dragDrop(eSource: SahiElementQueryOrWebElement, eTarget: SahiElementQueryOrWebElement): Promise<void> {
-
         const [src, target] = await Promise.all([
             accessorUtil.fetchElement(eSource),
             accessorUtil.fetchElement(eTarget)
         ]);
-        return webDriver.actions()
+        /*
+        return webDriver.actions({bridge: true})
             .dragAndDrop(src, target).perform();
+
+         */
+        return webDriver.actions({bridge: true})
+            .move({origin: src})
+            .press()
+            .move({origin: target})
+            .release()
+            .perform()
     }
 
     async function _dragDropXY(q: SahiElementQueryOrWebElement, x: number, y: number, $isRelative: boolean = false): Promise<void> {
@@ -140,7 +134,7 @@ export function mouseActionApi(
             location = {x: x + pi.location.x, y: y + pi.location.y};
         }
 
-        return webDriver.actions().dragAndDrop(e, location).perform();
+        return webDriver.actions({bridge: true}).dragAndDrop(e, location).perform();
     }
 
     async function _setSelected(query: SahiElementQueryOrWebElement, optionToSelect: string | number | string[] | number[], isMultiple: boolean = false): Promise<void> {
