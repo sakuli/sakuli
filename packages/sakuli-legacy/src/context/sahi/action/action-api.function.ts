@@ -59,7 +59,11 @@ export function actionApi(
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
-                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`);
+                const log =[`Finish action ${name}`];
+                if(ctx.getCurrentTestAction()) {
+                    log.push(`after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`);
+                }
+                ctx.logger.info(log.join(' '));
                 ctx.endTestAction();
             }
             return res;
