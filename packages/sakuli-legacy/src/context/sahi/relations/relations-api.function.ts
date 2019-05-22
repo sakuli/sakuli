@@ -1,11 +1,11 @@
 import {By, ILocation, ISize, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationProducer, RelationProducerWithOffset, SahiRelation} from "./sahi-relation.interface";
-import {filterAsync, ifPresent, mapAsync} from "@sakuli/commons";
+import {ifPresent, mapAsync} from "@sakuli/commons";
 import {edges} from "./edges.function";
 import {isLeftOf, isRightOf} from "./vector2.type";
 import {AccessorUtil} from "../accessor";
-import {isSahiElementQuery, SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
+import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {isChildOf} from "../helper/is-child-of.function";
 import {distanceBetween} from "../helper/distance-between.function";
 import {getSiblingIndex} from "../helper/get-sibling-index.function";
@@ -20,11 +20,12 @@ interface PositionalInfo {
 }
 
 export async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
-    const [location, size] = await Promise.all([
-        origin.getLocation(),
-        origin.getSize()
-    ]);
-    return ({location, size, origin});
+    const rect = await origin.getRect();
+    return ({
+        location: {x: rect.x, y: rect.y},
+        size: {width: rect.width, height: rect.height},
+        origin
+    });
 }
 
 export type RelationApi = ReturnType<typeof relationsApi>;
