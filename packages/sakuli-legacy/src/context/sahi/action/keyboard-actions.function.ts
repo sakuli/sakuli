@@ -17,11 +17,11 @@ export function keyboardActionApi(
     async function _setValue(query: SahiElementQueryOrWebElement, value: string): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
         try {
+            await element.clear();
             for (let char of value.split('')) {
                 await new Promise(res => setTimeout(res, 10));
                 await element.sendKeys(char);
             }
-            //await element.sendKeys(...value.split(''));
         } catch (e) {
             await webDriver.executeAsyncScript(stripIndents`
                 const e = arguments[0];
