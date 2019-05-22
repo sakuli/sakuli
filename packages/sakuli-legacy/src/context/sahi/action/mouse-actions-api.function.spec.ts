@@ -71,21 +71,7 @@ describe('mouse-actions', () => {
 
         describe('mouse interaction', () => {
             type MouseMethods = "_click" | "_rightClick" | "_mouseOver" | "_mouseUp" | "_mouseDown";
-            it.each(<[MouseMethods, string, string][]>[
-                ['_click', 'click', ""],
-                ['_rightClick', 'contextmenu', ""],
-                ['_mouseOver', 'mouseover', ""],
-                ['_mouseUp', 'mouseup', ""],
-                ['_mouseDown', 'mousedown', ""],
-                // ['_click', 'click', "CTRL"],
-                ['_click', 'click', "META|ALT"],
-                ['_rightClick', 'contextmenu', "META|ALT"],
-                ['_mouseOver', 'mouseover', "META"],
-                ['_mouseUp', 'mouseup', "SHIFT|ALT"],
-                ['_mouseDown', 'mousedown', "ALT"],
-            ])('%s should invoke native event %s with %s pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
-                const api = createApi(driver);
-                await driver.get(mockHtml(`
+            const htmlSnippet = (nativeEvent: string, method: string) => `
             <style>
               #btn:hover {background: red;} 
             </style>
@@ -105,17 +91,48 @@ describe('mouse-actions', () => {
                   out.innerHTML = '${method} ' + keyAddon.join("|");
                   return false;
               });
-            </script>
-        `));
+            </script>`;
+
+
+            it.each(<[MouseMethods, string, string][]>[
+                ['_mouseUp', 'mouseup', ""],
+                ['_mouseUp', 'mouseup', "SHIFT|ALT"],
+            ])('%s should invoke native %s with %s pressed and an invoked mopusedown', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
                 const apiMethod: any = api[method];
                 const query: SahiElementQuery = {
                     locator: By.css('#btn'),
                     identifier: 0,
                     relations: []
                 };
-                if(method === '_mouseUp') {
-                    await api._mouseDown(query)
+                await api._mouseDown(query);
+                if (apiMethod.length === 2) {
+                    await apiMethod(query,combo);
+                } else {
+                    await apiMethod(query,false,combo);
                 }
+                const out = await driver.findElement(By.css('#out'));
+                return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
+            });
+            it.each(<[MouseMethods, string, string][]>[
+                ['_click', 'click', ""],
+                ['_rightClick', 'contextmenu', ""],
+                ['_mouseOver', 'mouseover', ""],
+                ['_mouseDown', 'mousedown', ""],
+                ['_click', 'click', "META|ALT"],
+                ['_rightClick', 'contextmenu', "META|ALT"],
+                ['_mouseOver', 'mouseover', "META"],
+                ['_mouseDown', 'mousedown', "ALT"],
+            ])('%s should invoke native event %s with %s pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
+                const apiMethod: any = api[method];
+                const query: SahiElementQuery = {
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                };
                 if (apiMethod.length === 2) {
                     await apiMethod(query,combo);
                 } else {
