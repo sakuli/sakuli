@@ -130,6 +130,7 @@ describe('fetch-api', () => {
             ['#display-none', false],
             ['#visible', true],
             ['#no-content', false],
+            ['#no-existing', false]
         ])('_isVisible is %s for %s', async (selector: string, expected: boolean) => {
             const {_isVisible} = api;
             await driver.get(mockHtml(`

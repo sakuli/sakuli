@@ -65,8 +65,12 @@ export function fetchApi(
     }
 
     async function _isVisible(query: SahiElementQueryOrWebElement) {
-        const e = await accessorUtil.fetchElement(query);
-        return e.isDisplayed();
+        try {
+            const e = await accessorUtil.fetchElement(query);
+            return e.isDisplayed();
+        } catch (e) {
+            return false;
+        }
     }
 
     async function _isChecked(query: SahiElementQueryOrWebElement) {
