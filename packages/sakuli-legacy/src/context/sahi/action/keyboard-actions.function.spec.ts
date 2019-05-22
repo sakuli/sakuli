@@ -93,5 +93,41 @@ describe('KeyboardActions', () => {
             const inputElement = await driver.findElement(inputLocator);
             return expect(inputElement.getAttribute('value')).resolves.toBe(value)
         })
+
+        it('should replace existing value in textbox in _setValue', async () => {
+            const {_setValue} = createApi(driver);
+            await driver.get(mockHtml(`
+            <input type="text" id="text-input" value="foo" />
+        `));
+            const inputLocator = By.css('#text-input');
+            const query = {
+                locator: inputLocator,
+                identifier: 0,
+                relations: []
+            };
+            const value = 'Test';
+            await _setValue(query, value);
+            const inputElement = await driver.findElement(inputLocator);
+            return expect(inputElement.getAttribute('value')).resolves.toBe(value)
+        });
+
+        it('should replace existing value in textbox when calling _setValue twice', async () => {
+            const {_setValue} = createApi(driver);
+            await driver.get(mockHtml(`
+            <input type="text" id="text-input"  />
+        `));
+            const inputLocator = By.css('#text-input');
+            const query = {
+                locator: inputLocator,
+                identifier: 0,
+                relations: []
+            };
+            const value = 'Test';
+            await _setValue(query, 'foo');
+            await _setValue(query, value);
+            const inputElement = await driver.findElement(inputLocator);
+            return expect(inputElement.getAttribute('value')).resolves.toBe(value)
+        });
+
     })
 });
