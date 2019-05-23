@@ -1,11 +1,12 @@
 import {LegacyLifecycleHooks} from "./legacy-Lifecycle-hooks.class";
-import {Builder, Capabilities, ThenableWebDriver} from "selenium-webdriver";
+import {Builder, ThenableWebDriver} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {Project, TestExecutionContext} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import Mock = jest.Mock;
 import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
+import {ChromeCapabilitiesBuilder} from "../loader/chrome-capabilities-builder.class";
 
 describe(LegacyLifecycleHooks.name, () => {
 
@@ -44,7 +45,9 @@ describe(LegacyLifecycleHooks.name, () => {
         it('should init webdriver with builder', async () => {
             await lcp.onProject(minimumProject);
             expect(builder.forBrowser).toHaveBeenCalledWith('chrome');
-            return expect(builder.withCapabilities).toHaveBeenCalledWith(Capabilities.chrome());
+            return expect(builder.withCapabilities).toHaveBeenCalledWith(
+                new ChromeCapabilitiesBuilder(minimumProject).build()
+            );
         });
 
         it('should publish sahi function into context', async () => {
