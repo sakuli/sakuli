@@ -11,7 +11,8 @@ export class ChromeCapabilitiesBuilder extends CapabilitiesBuilder implements Ca
 
     applyExtensions(capabilities : Capabilities) : void {
         const options = capabilities.get(OPTIONS_CAPABILITY_KEY) || new ChromeOptions();
-        const extensions : string[] = this.properties.testsuiteBrowserExtensions.split(",");
+        const extensions : string[] =
+            this.properties.testsuiteBrowserExtensions.split(",").map(ext => ext.trim());
 
         extensions.forEach(each => options.addExtensions(each));
 
