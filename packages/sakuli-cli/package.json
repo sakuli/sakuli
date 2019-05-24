@@ -33,6 +33,7 @@
     "figlet": "^1.2.1",
     "get-cursor-position": "^1.0.5",
     "ink": "^0.5.1",
+    "ora": "^3.4.0",
     "winston": "^3.1.0",
     "winston-transport": "^4.2.0",
     "yargonaut": "^1.1.4",
