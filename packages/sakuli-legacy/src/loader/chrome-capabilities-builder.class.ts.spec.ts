@@ -21,8 +21,9 @@ describe(ChromeCapabilitiesBuilder.name, () => {
     describe('Chrome capability builder', () => {
         it('should build Chrome capabilities with extensions', async () => {
             const capabilities = await ccb.build();
+	console.log(capabilities.get('chromeOptions'));
             return expect(
-                capabilities.get('chromeOptions')['extensions_']
+                capabilities.get('chromeOptions')['options_']['extensions']
             ).toEqual(expect.arrayContaining(['foo', 'bar']));
         });
     });
