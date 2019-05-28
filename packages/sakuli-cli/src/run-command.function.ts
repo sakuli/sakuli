@@ -1,11 +1,11 @@
 import {Argv, CommandModule} from "yargs";
 import {CommandModuleProvider, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import renderExecution from "./components";
 import {ifPresent, isPresent} from "@sakuli/commons";
 import Youch from "youch";
 import forTerminal from "youch-terminal";
 import chalk from "chalk";
 import {createWriteStream} from "fs";
+import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
 
 async function renderError(e: Error) {
     const youch = (new Youch(e, {}));
@@ -39,8 +39,9 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                     // ignore
                 }
             });
-            const unmount = renderExecution(sakuli.testExecutionContext);
+            const rendering = testExecutionContextRenderer(sakuli.testExecutionContext);
             const testExecutionContext = await sakuli.run(runOptions);
+            await rendering;
             try {
                 await ifPresent(testExecutionContext.error, async error => {
                     console.log(chalk`Error during Execution: \n`);
@@ -52,14 +53,11 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                         await renderError(e);
                     });
                 });
-                setTimeout(() => {
-                    unmount();
-                    process.exit(testExecutionContext.resultState)
-                }, 500);
             } catch (e) {
                 await renderError(e);
             } finally {
                 logStream.close();
+                process.exit(testExecutionContext.resultState)
             }
         }
     })
