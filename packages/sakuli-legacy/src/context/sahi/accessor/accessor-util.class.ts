@@ -20,6 +20,7 @@ import {
 import {ifPresent} from "@sakuli/commons";
 import {AccessorIdentifier} from "../api";
 import {CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS} from "../action/inject.const";
+import {id} from "common-tags";
 
 export class AccessorUtil {
 
@@ -199,27 +200,36 @@ export class AccessorUtil {
             : Promise.resolve(query)
     }
 
-    async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
+    private isRegExpString(identifier: string) {
+        return (identifier.startsWith('/') && identifier.endsWith('/'));
+    }
+
+    private normaliseIdentifierString(identifier: string) {
         if (identifier.startsWith('/')) {
             identifier = identifier.substr(1, identifier.length);
         }
         if (identifier.endsWith('/')) {
             identifier = identifier.substr(identifier.length, 1);
         }
-        const isRegEx = (identifier.startsWith('/') && identifier.endsWith('/'));
+        return identifier;
+    }
+
+    async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
             async ([_, index]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
-                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx));
+                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier));
                 return [elementsByRegExp[Number(index)]];
             },
-            () => this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx))
+            () => this.getByRegEx(elements, this.stringToRegExp(identifier))
         )
     }
 
-    private stringToRegExp(str: string, isRegEx: boolean = true) {
+    private stringToRegExp(str: string) {
+        const isRegEx = this.isRegExpString(str);
+        str = this.normaliseIdentifierString(str);
         return new RegExp(isRegEx
             ? str
             : "^\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\s*$"
