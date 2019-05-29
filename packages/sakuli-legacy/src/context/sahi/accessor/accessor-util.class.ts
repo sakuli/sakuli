@@ -193,7 +193,7 @@ export class AccessorUtil {
         }
     }
 
-    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
+    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, retry: number = 10): Promise<WebElement> {
         return isSahiElementQuery(query)
             ? this.fetchElements(query, retry).then(([first]) => first)
             : Promise.resolve(query)
