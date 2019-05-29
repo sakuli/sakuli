@@ -57,7 +57,8 @@ export class TestExecutionContext extends EventEmitter implements Measurable  {
     on(e: typeof END_TESTACTION , cb:(e: TestActionContext) => void): this;
     on(e: 'change', cb: (e: TestExecutionContext) => void): this;
     on(type: TestExecutionContextEventTypes | 'change', listener: (...args: any[]) => void): this {
-        return super.on(type, listener);
+        super.on(type, listener);
+        return this;
     }
 
     startExecution() {

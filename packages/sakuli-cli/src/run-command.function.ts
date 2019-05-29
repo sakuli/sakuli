@@ -6,6 +6,7 @@ import forTerminal from "youch-terminal";
 import chalk from "chalk";
 import {createWriteStream} from "fs";
 import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
+import * as os from "os";
 
 async function renderError(e: Error) {
     const youch = (new Youch(e, {}));
@@ -15,7 +16,7 @@ async function renderError(e: Error) {
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
     function findError(testExecutionContext: TestExecutionContext) {
-        return testExecutionContext.entites.find(e => isPresent(e.error));
+        return testExecutionContext.entities.find(e => isPresent(e.error));
     }
 
     return ({
@@ -31,10 +32,12 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
             const logStream = createWriteStream('sakuli.log', {flags: 'a'});
             sakuli.testExecutionContext.logger.onEvent(e => {
                 try {
-                    logStream.write(`[${e.time}] ${e.level} ${e.message}\n`);
-                    if (e.data) {
-                        logStream.write(`${JSON.stringify(e.data, null, 2)}\n`)
-                    }
+                    logStream.write(`[${e.time}] ${e.level} ${e.message}`);
+                    logStream.write(os.EOL);
+                    e.data.forEach(d => {
+                        logStream.write(`${JSON.stringify(d, null, 2)}`);
+                        logStream.write(os.EOL);
+                    });
                 } catch (e) {
                     // ignore
                 }
