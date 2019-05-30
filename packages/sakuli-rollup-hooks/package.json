@@ -52,6 +52,7 @@
     "@sakuli/commons": "2.0.0",
     "@sakuli/core": "2.0.0",
     "rollup": "^1.10.0",
-    "rollup-plugin-node-resolve": "^4.2.3"
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-typescript": "^1.0.1"
   }
 }
