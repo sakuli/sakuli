@@ -63,7 +63,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async getClipboard(): Promise<string> {
-            const content = ClipboardApi.getClipboard();
+            const content = await ClipboardApi.getClipboard();
             ctx.logger.info(`Clipboard content: '${content}'`);
             return content;
         }
