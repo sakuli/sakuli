@@ -32,8 +32,8 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public resetSimilarity() {
-            ctx.logger.info(`Resetting similarity to default value`);
             nutConfig.resetConfidence();
+            ctx.logger.info(`Reset similarity to default value ${nutConfig.confidence}`);
         }
 
         public async takeScreenshot(filename: string): Promise<string> {
@@ -68,8 +68,19 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             return content;
         }
 
+        public async getClipboardMasked(): Promise<string> {
+            ctx.logger.info(`Getting clipboard content`);
+            return ClipboardApi.getClipboard();
+        }
+
         public async setClipboard(text: string): Promise<Environment> {
             ctx.logger.info(`Setting clipboard content: '${text}'`);
+            await ClipboardApi.setClipboard(text);
+            return this;
+        }
+
+        public async setClipboardMasked(text: string): Promise<Environment> {
+            ctx.logger.info(`Setting clipboard content`);
             await ClipboardApi.setClipboard(text);
             return this;
         }
@@ -204,8 +215,18 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             return process.env[key] || null;
         }
 
+        public getEnvMasked(key: string): string | null {
+            ctx.logger.info(`Accessing environment variable`);
+            return process.env[key] || null;
+        }
+
         public getProperty(key: string): string | null{
-            ctx.logger.info(`Accessing property ${key}: ${project.get(key)}`);
+            ctx.logger.info(`Accessing property '${key}': ${project.get(key)}`);
+            return project.get(key);
+        }
+
+        public getPropertyMasked(key: string): string | null{
+            ctx.logger.info(`Accessing property`);
             return project.get(key);
         }
     }
