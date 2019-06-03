@@ -1,5 +1,7 @@
 .idea
 
+.rpt2_cache/
+
 tsconfig.tsbuildinfo
 
 .vscode/
