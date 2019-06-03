@@ -40,5 +40,8 @@
     "typedoc": "typedoc --out ../../docs/api/{package} --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+  },
+  "dependencies": {
+    "@sakuli/legacy": "latest"
   }
 }

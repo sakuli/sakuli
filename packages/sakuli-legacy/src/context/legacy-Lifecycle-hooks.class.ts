@@ -12,6 +12,7 @@ import {LegacyProjectProperties} from "../loader/legacy-project-properties.class
 import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
+import {LegacyDsl} from "./legacy-dsl.interface";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -83,7 +84,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         );
     }
 
-    async requestContext(ctx: TestExecutionContext, project: Project) {
+    async requestContext(ctx: TestExecutionContext, project: Project): Promise<LegacyDsl> {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
