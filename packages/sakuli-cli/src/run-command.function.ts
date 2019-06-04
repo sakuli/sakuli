@@ -1,11 +1,12 @@
 import {Argv, CommandModule} from "yargs";
 import {CommandModuleProvider, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import renderExecution from "./components";
-import {ifPresent, isPresent} from "@sakuli/commons";
+import {createCombinedLogConsumer, createFileLogConsumer, ifPresent, isPresent} from "@sakuli/commons";
 import Youch from "youch";
 import forTerminal from "youch-terminal";
 import chalk from "chalk";
 import {createWriteStream} from "fs";
+import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
+import * as os from "os";
 
 async function renderError(e: Error) {
     const youch = (new Youch(e, {}));
@@ -15,7 +16,7 @@ async function renderError(e: Error) {
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
     function findError(testExecutionContext: TestExecutionContext) {
-        return testExecutionContext.entites.find(e => isPresent(e.error));
+        return testExecutionContext.entities.find(e => isPresent(e.error));
     }
 
     return ({
@@ -28,19 +29,13 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: any) {
-            const logStream = createWriteStream('sakuli.log', {flags: 'a'});
-            sakuli.testExecutionContext.logger.onEvent(e => {
-                try {
-                    logStream.write(`[${e.time}] ${e.level} ${e.message}\n`);
-                    if (e.data) {
-                        logStream.write(`${JSON.stringify(e.data, null, 2)}\n`)
-                    }
-                } catch (e) {
-                    // ignore
-                }
-            });
-            const unmount = renderExecution(sakuli.testExecutionContext);
+            const logConsumer = createCombinedLogConsumer(
+                createFileLogConsumer({path: 'sakuli.log'})
+            );
+            const cleanLogConsumer = logConsumer(sakuli.testExecutionContext.logger);
+            const rendering = testExecutionContextRenderer(sakuli.testExecutionContext);
             const testExecutionContext = await sakuli.run(runOptions);
+            await rendering;
             try {
                 await ifPresent(testExecutionContext.error, async error => {
                     console.log(chalk`Error during Execution: \n`);
@@ -52,14 +47,11 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                         await renderError(e);
                     });
                 });
-                setTimeout(() => {
-                    unmount();
-                    process.exit(testExecutionContext.resultState)
-                }, 500);
             } catch (e) {
                 await renderError(e);
             } finally {
-                logStream.close();
+                cleanLogConsumer();
+                process.exit(testExecutionContext.resultState)
             }
         }
     })
