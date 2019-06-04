@@ -63,13 +63,13 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async getClipboard(): Promise<string> {
+            ctx.logger.info(`Accessing clipboard`);
             const content = await ClipboardApi.getClipboard();
-            ctx.logger.info(`Clipboard content: '${content}'`);
             return content;
         }
 
         public async setClipboard(text: string): Promise<Environment> {
-            ctx.logger.info(`Setting clipboard content: '${text}'`);
+            ctx.logger.info(`Setting clipboard content`);
             await ClipboardApi.setClipboard(text);
             return this;
         }
@@ -199,13 +199,12 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public getEnv(key: string): string | null {
-            const result = process.env[key];
-            ctx.logger.info(`Accessing environment variable '${key}': ${result}`);
+            ctx.logger.info(`Accessing environment variable '${key}'`);
             return process.env[key] || null;
         }
 
         public getProperty(key: string): string | null{
-            ctx.logger.info(`Accessing property ${key}: ${project.get(key)}`);
+            ctx.logger.info(`Accessing property ${key}`);
             return project.get(key);
         }
     }
