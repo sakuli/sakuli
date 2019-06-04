@@ -17,9 +17,24 @@ import {TestContextEntityState} from "./test-context-entity-state.class";
 import {EventEmitter} from "events";
 import {
     END_EXECUTION,
-    END_TESTACTION, END_TESTCASE, END_TESTSTEP, END_TESTSUITE,
-    START_EXECUTION, START_TESTACTION, START_TESTCASE, START_TESTSTEP, START_TESTSUITE,
-    TestExecutionContextEventTypes, UPDATE_TESTACTION, UPDATE_TESTCASE, UPDATE_TESTSTEP, UPDATE_TESTSUITE
+    END_TESTACTION,
+    END_TESTCASE,
+    END_TESTSTEP,
+    END_TESTSUITE,
+    START_EXECUTION,
+    START_TESTACTION,
+    START_TESTCASE,
+    START_TESTSTEP,
+    START_TESTSUITE,
+    TestActionChangeListener,
+    TestCaseChangeListener,
+    TestExecutionContextEventTypes,
+    TestStepChangeListener,
+    TestSuiteChangeListener,
+    UPDATE_TESTACTION,
+    UPDATE_TESTCASE,
+    UPDATE_TESTSTEP,
+    UPDATE_TESTSUITE
 } from "./test-execution-context.events";
 
 export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
@@ -28,7 +43,7 @@ export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
  * An execution-context is the main bridge between sakuli and any api that runs on sakuli
  *
  */
-export class TestExecutionContext extends EventEmitter implements Measurable  {
+export class TestExecutionContext extends EventEmitter implements Measurable {
 
     startDate: Date | null = null;
     endDate: Date | null = null;
@@ -43,18 +58,18 @@ export class TestExecutionContext extends EventEmitter implements Measurable  {
 
     on(e: typeof START_EXECUTION, cb: (e: TestExecutionContext) => void): this;
     on(e: typeof END_EXECUTION, cb: (e: TestExecutionContext) => void): this;
-    on(e: typeof START_TESTSUITE , cb:(e: TestSuiteContext) => void): this;
-    on(e: typeof UPDATE_TESTSUITE , cb:(e: TestSuiteContext) => void): this;
-    on(e: typeof END_TESTSUITE , cb:(e: TestSuiteContext) => void): this;
-    on(e: typeof START_TESTCASE , cb:(e: TestCaseContext) => void): this;
-    on(e: typeof UPDATE_TESTCASE , cb:(e: TestCaseContext) => void): this;
-    on(e: typeof END_TESTCASE , cb:(e: TestCaseContext) => void): this;
-    on(e: typeof START_TESTSTEP , cb:(e: TestStepContext) => void): this;
-    on(e: typeof UPDATE_TESTSTEP , cb:(e: TestStepContext) => void): this;
-    on(e: typeof END_TESTSTEP , cb:(e: TestStepContext) => void): this;
-    on(e: typeof START_TESTACTION , cb:(e: TestActionContext) => void): this;
-    on(e: typeof UPDATE_TESTACTION , cb:(e: TestActionContext) => void): this;
-    on(e: typeof END_TESTACTION , cb:(e: TestActionContext) => void): this;
+    on(e: typeof START_TESTSUITE, cb: TestSuiteChangeListener): this;
+    on(e: typeof UPDATE_TESTSUITE, cb: TestSuiteChangeListener): this;
+    on(e: typeof END_TESTSUITE, cb: TestSuiteChangeListener): this;
+    on(e: typeof START_TESTCASE, cb: TestCaseChangeListener): this;
+    on(e: typeof UPDATE_TESTCASE, cb: TestCaseChangeListener): this;
+    on(e: typeof END_TESTCASE, cb: TestCaseChangeListener): this;
+    on(e: typeof START_TESTSTEP, cb: TestStepChangeListener): this;
+    on(e: typeof UPDATE_TESTSTEP, cb: TestStepChangeListener): this;
+    on(e: typeof END_TESTSTEP, cb: TestStepChangeListener): this;
+    on(e: typeof START_TESTACTION, cb: TestActionChangeListener): this;
+    on(e: typeof UPDATE_TESTACTION, cb: TestActionChangeListener): this;
+    on(e: typeof END_TESTACTION, cb: TestActionChangeListener): this;
     on(e: 'change', cb: (e: TestExecutionContext) => void): this;
     on(type: TestExecutionContextEventTypes | 'change', listener: (...args: any[]) => void): this {
         super.on(type, listener);
@@ -63,7 +78,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable  {
 
     startExecution() {
         this.startDate = new Date();
-        this.logger.info( "Started Execution");
+        this.logger.info("Started Execution");
         this.emit(START_EXECUTION, this);
         this.emitChange();
     }
@@ -82,7 +97,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable  {
         } else {
             throw new Error('You cannot end an execution before it has been started. Please call TestExecutionContext::startExecution before call endExecution')
         }
-        this.logger.info( "Finished Execution");
+        this.logger.info("Finished Execution");
         this.emit(END_EXECUTION, this);
         this.emitChange();
     }
@@ -97,7 +112,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable  {
     }
 
     get testCases() {
-        return this.testSuites.reduce((tc, ts)=> [...ts.testCases], [] as TestCaseContext[])
+        return this.testSuites.reduce((tc, ts) => [...ts.testCases], [] as TestCaseContext[])
     }
 
     get testSteps() {

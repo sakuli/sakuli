@@ -1,3 +1,9 @@
+import {TestContextEntity} from "./test-context-entity.class";
+import {TestSuiteContext} from "./test-suite-context.class";
+import {TestCaseContext} from "./test-case-context.class";
+import {TestStepContext} from "./test-step-context.class";
+import {TestActionContext} from "./test-action-context.class";
+
 export const START_EXECUTION = 'START_EXECUTION';
 export const END_EXECUTION = 'END_EXECUTION';
 export const START_TESTSUITE = 'START_TESTSUITE';
@@ -28,3 +34,10 @@ export type TestExecutionContextEventTypes =
  | typeof START_TESTACTION
  | typeof UPDATE_TESTACTION
  | typeof END_TESTACTION
+
+type TestExecutionContextEntityEventListener<T extends TestContextEntity> = (e: T) => void;
+
+export type TestSuiteChangeListener = TestExecutionContextEntityEventListener<TestSuiteContext>;
+export type TestCaseChangeListener = TestExecutionContextEntityEventListener<TestCaseContext>;
+export type TestStepChangeListener = TestExecutionContextEntityEventListener<TestStepContext>;
+export type TestActionChangeListener = TestExecutionContextEntityEventListener<TestActionContext>;

@@ -1,6 +1,6 @@
 import {Argv, CommandModule} from "yargs";
 import {CommandModuleProvider, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import {ifPresent, isPresent} from "@sakuli/commons";
+import {createCombinedLogConsumer, createFileLogConsumer, ifPresent, isPresent} from "@sakuli/commons";
 import Youch from "youch";
 import forTerminal from "youch-terminal";
 import chalk from "chalk";
@@ -29,19 +29,10 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: any) {
-            const logStream = createWriteStream('sakuli.log', {flags: 'a'});
-            sakuli.testExecutionContext.logger.onEvent(e => {
-                try {
-                    logStream.write(`[${e.time}] ${e.level} ${e.message}`);
-                    logStream.write(os.EOL);
-                    e.data.forEach(d => {
-                        logStream.write(`${JSON.stringify(d, null, 2)}`);
-                        logStream.write(os.EOL);
-                    });
-                } catch (e) {
-                    // ignore
-                }
-            });
+            const logConsumer = createCombinedLogConsumer(
+                createFileLogConsumer({path: 'sakuli.log'})
+            );
+            const cleanLogConsumer = logConsumer(sakuli.testExecutionContext.logger);
             const rendering = testExecutionContextRenderer(sakuli.testExecutionContext);
             const testExecutionContext = await sakuli.run(runOptions);
             await rendering;
@@ -59,7 +50,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
             } catch (e) {
                 await renderError(e);
             } finally {
-                logStream.close();
+                cleanLogConsumer();
                 process.exit(testExecutionContext.resultState)
             }
         }
