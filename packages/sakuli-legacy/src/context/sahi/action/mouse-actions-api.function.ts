@@ -113,17 +113,18 @@ export function mouseActionApi(
             accessorUtil.fetchElement(eSource),
             accessorUtil.fetchElement(eTarget)
         ]);
-        /*
         return webDriver.actions({bridge: true})
             .dragAndDrop(src, target).perform();
 
-         */
+        /*
         return webDriver.actions({bridge: true})
-            .move({origin: src})
+            .move({origin: src, x: 1, y: 1})
             .press()
-            .move({origin: target})
+            .move({origin: target, x: 1, y: 1})
             .release()
             .perform()
+
+         */
     }
 
     async function _dragDropXY(q: SahiElementQueryOrWebElement, x: number, y: number, $isRelative: boolean = false): Promise<void> {
@@ -133,7 +134,7 @@ export function mouseActionApi(
             const pi = await positionalInfo(e);
             location = {x: x + pi.location.x, y: y + pi.location.y};
         }
-
+        ctx.logger.info(`Drag to: ${JSON.stringify(location)}`);
         return webDriver.actions({bridge: true}).dragAndDrop(e, location).perform();
     }
 

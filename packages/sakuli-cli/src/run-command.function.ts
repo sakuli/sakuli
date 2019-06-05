@@ -4,9 +4,7 @@ import {createCombinedLogConsumer, createFileLogConsumer, ifPresent, isPresent} 
 import Youch from "youch";
 import forTerminal from "youch-terminal";
 import chalk from "chalk";
-import {createWriteStream} from "fs";
 import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
-import * as os from "os";
 
 async function renderError(e: Error) {
     const youch = (new Youch(e, {}));

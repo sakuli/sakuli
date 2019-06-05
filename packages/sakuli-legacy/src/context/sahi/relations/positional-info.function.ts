@@ -7,13 +7,10 @@ export interface PositionalInfo {
 }
 
 export async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
-    const [location, size] = await Promise.all([
-        origin.getLocation(),
-        origin.getSize(),
-    ]);
+    const rect = await origin.getRect();
     return ({
-        location,
-        size,
-        origin,
-    })
+        location: {x: rect.x, y: rect.y},
+        size: {width: rect.width, height: rect.height},
+        origin
+    });
 }
