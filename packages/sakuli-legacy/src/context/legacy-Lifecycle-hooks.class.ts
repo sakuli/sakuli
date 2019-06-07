@@ -12,6 +12,7 @@ import {LegacyProjectProperties} from "../loader/legacy-project-properties.class
 import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
+import {Button} from "./common/button.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -92,6 +93,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             context: ctx,
             TestCase: createTestCaseClass(ctx, project, this.currentTest),
             Application: createApplicationClass(ctx),
+            Button,
             Key,
             Environment: createEnvironmentClass(ctx, project),
             Region: createRegionClass(ctx),
