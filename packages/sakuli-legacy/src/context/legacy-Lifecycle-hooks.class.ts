@@ -12,6 +12,7 @@ import {LegacyProjectProperties} from "../loader/legacy-project-properties.class
 import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
+import {createThenableRegionClass} from "./common/thenable-sakuli-region.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -94,7 +95,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Application: createApplicationClass(ctx),
             Key,
             Environment: createEnvironmentClass(ctx, project),
-            Region: createRegionClass(ctx),
+            Region: createThenableRegionClass(ctx),
             Logger: createLoggerClass(ctx),
             console: console,
             $includeFolder: '',
