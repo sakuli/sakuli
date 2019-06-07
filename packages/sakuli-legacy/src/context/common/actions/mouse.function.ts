@@ -1,6 +1,7 @@
-import {centerOf, mouse, Region as NutRegion, straightTo} from "@nut-tree/nut-js";
+import {Button as NutButton, centerOf, mouse, Region as NutRegion, straightTo} from "@nut-tree/nut-js";
 import {ScreenApi} from "./screen.function";
 import {Region} from "../region.interface";
+import {Button} from "../button.class";
 
 const toNutRegion = async (region: Region): Promise<NutRegion> => {
     return new NutRegion(
@@ -21,6 +22,12 @@ export const MouseApi = {
     },
     async rightClick() {
         await mouse.rightClick()
+    },
+    async pressButton(btn: Button) {
+        await mouse.pressButton(btn as NutButton);
+    },
+    async releaseButton(btn: Button) {
+        await mouse.releaseButton(btn as NutButton);
     },
     async dragAndDrop(region: Region) {
         await mouse.drag(
