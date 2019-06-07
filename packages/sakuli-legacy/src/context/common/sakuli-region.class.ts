@@ -88,12 +88,14 @@ export function createRegionClass(ctx: TestExecutionContext) {
         }
 
         public async mouseDown(mouseButton: Button): Promise<Region> {
-            ctx.logger.info("Mouse down, NOP");
+            ctx.logger.info("Mouse down");
+            await MouseApi.pressButton(mouseButton);
             return this;
         }
 
         public async mouseUp(mouseButton: Button): Promise<Region> {
-            ctx.logger.info("Mouse up, NOP");
+            ctx.logger.info(`Mouse up`);
+            await MouseApi.releaseButton(mouseButton);
             return this;
         }
 
