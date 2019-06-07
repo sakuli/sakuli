@@ -11,22 +11,7 @@ import {distanceBetween} from "../helper/distance-between.function";
 import {getSiblingIndex} from "../helper/get-sibling-index.function";
 import {getParent} from "../helper/get-parent.function";
 import {parentApi} from "./parent-api.function";
-
-
-interface PositionalInfo {
-    location: ILocation,
-    size: ISize,
-    origin: WebElement
-}
-
-export async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
-    const rect = await origin.getRect();
-    return ({
-        location: {x: rect.x, y: rect.y},
-        size: {width: rect.width, height: rect.height},
-        origin
-    });
-}
+import {PositionalInfo, positionalInfo} from "./positional-info.function";
 
 export type RelationApi = ReturnType<typeof relationsApi>;
 
