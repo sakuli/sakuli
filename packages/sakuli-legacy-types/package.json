@@ -1,0 +1,38 @@
+{
+	"name": "@sakuli/legacy-types",
+	"version": "2.0.0",
+	"description": "provide typings for Sakuli Legacy api (@sakuli/legacy)",
+	"keywords": [
+		"typings",
+		"sakuli",
+		"e2e",
+		"ui",
+		"testing",
+		"legacy"
+	],
+	"scripts": {
+		"build": "ts-node -P tsconfig.json src/build-dts-file"
+	},
+	"contributors": [
+		"Tim Keiner <tim.keiner@consol.de>",
+		"Simon Hofmann <simon.hofmann@consol.de>",
+		"Sven Hettwer <sven.hettwer@consol.de"
+	],
+	"homepage": "https://github.com/sakuli/sakuli#readme",
+	"license": "Apache-2.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/sakuli/sakuli.git"
+	},
+	"bugs": {
+		"url": "https://github.com/sakuli/sakuli/issues"
+	},
+	"devDependencies": {
+		"@sakuli/legacy": "2.0.0",
+		"@types/node": "^12.0.5",
+		"dts-dom": "^3.3.0",
+		"flatted": "^2.0.0",
+		"ts-node": "8.2.0",
+		"typescript": "^3.4.3"
+	}
+}
