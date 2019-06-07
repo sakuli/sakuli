@@ -9,10 +9,11 @@ import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {dirname, join, parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {createRegionClass} from "./common/sakuli-region.class";
 import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
 import {createThenableRegionClass} from "./common/thenable-sakuli-region.class";
+import {createThenableEnvironmentClass} from "./common/thenable-environment.class";
+import {createThenableApplicationClass} from "./common/thenable-application.class";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -92,9 +93,9 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             driver,
             context: ctx,
             TestCase: createTestCaseClass(ctx, project, this.currentTest),
-            Application: createApplicationClass(ctx),
+            Application: createThenableApplicationClass(ctx),
             Key,
-            Environment: createEnvironmentClass(ctx, project),
+            Environment: createThenableEnvironmentClass(ctx, project),
             Region: createThenableRegionClass(ctx),
             Logger: createLoggerClass(ctx),
             console: console,

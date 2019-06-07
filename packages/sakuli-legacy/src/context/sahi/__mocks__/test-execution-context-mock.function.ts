@@ -9,7 +9,8 @@ export function createTestExecutionContextMock() {
         getCurrentTestAction: jest.fn(),
         logger: mockPartial<SimpleLogger>({
             info: jest.fn(),
-            log: jest.fn()
+            log: jest.fn(),
+            warn: jest.fn()
         })
     });
 }
