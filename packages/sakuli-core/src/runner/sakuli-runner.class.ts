@@ -106,7 +106,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
             .lifecycleHooks
             .filter(hook => 'requestContext' in hook)
             .map(hook => hook.requestContext!(testExecutionContext, project)));
-        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
+        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {...global});
     }
 
     async readFileContent(testFile: TestFile, project: Project, context: TestExecutionContext): Promise<string> {

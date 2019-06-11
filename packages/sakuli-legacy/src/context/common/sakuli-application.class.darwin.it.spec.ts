@@ -2,11 +2,20 @@ import {TestExecutionContext} from "@sakuli/core";
 import {SimpleLogger} from "@sakuli/commons";
 import {createApplicationClass} from "./sakuli-application.class";
 
+const prepareContext = (ctx: TestExecutionContext) => {
+    ctx.startExecution();
+    ctx.startTestSuite();
+    ctx.startTestCase();
+    ctx.startTestStep();
+};
+
 describe("Application", () => {
     it("should open calculator", async () => {
         // GIVEN
         const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-        const ApplicationImpl = createApplicationClass(new TestExecutionContext(new SimpleLogger()));
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const ApplicationImpl = createApplicationClass(ctx);
+        prepareContext(ctx);
         const SUT = new ApplicationImpl(application);
 
         // WHEN
@@ -19,7 +28,9 @@ describe("Application", () => {
     it("should open calculator with a startup delay", async () => {
         // GIVEN
         const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-        const ApplicationImpl = createApplicationClass(new TestExecutionContext(new SimpleLogger()));
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const ApplicationImpl = createApplicationClass(ctx);
+        prepareContext(ctx);
         const SUT = new ApplicationImpl(application);
         const startupDelay = 3;
         SUT.setSleepTime(startupDelay);
@@ -37,7 +48,9 @@ describe("Application", () => {
     it("should return correct application name", async () => {
         // GIVEN
         const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-        const ApplicationImpl = createApplicationClass(new TestExecutionContext(new SimpleLogger()));
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const ApplicationImpl = createApplicationClass(ctx);
+        prepareContext(ctx);
         const SUT = new ApplicationImpl(application);
 
         // WHEN
