@@ -1,4 +1,4 @@
-import {Project, TestExecutionLifecycleHooks} from "@sakuli/core";
+import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {rollup} from "rollup";
 import {isAbsolute, join} from "path";
@@ -6,6 +6,7 @@ import {isAbsolute, join} from "path";
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
+    private imports: string[] = [];
     async readFileContent(file: TestFile, project: Project): Promise<string> {
         const filePath =  isAbsolute(project.rootDir)
             ? join(project.rootDir, file.path)
@@ -20,11 +21,12 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
             file: 'bundle-rollup.js',
         });
         const [rollupOutput] = output;
+        this.imports = rollupOutput.imports;
         return Promise.resolve(rollupOutput.code);
     }
 
-    async useRollup(file: TestFile) {
-
+    requestContext(testExecutionContext: TestExecutionContext, project: Project): Promise<Record<string, any>> {
+        return Promise.resolve(this.imports.reduce((ctx, mod) => ({...ctx, [mod]: require(mod)}), {}));
     }
 
 }

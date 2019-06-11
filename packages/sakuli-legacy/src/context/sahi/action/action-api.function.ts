@@ -59,7 +59,11 @@ export function actionApi(
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
-                ctx.logger.info(`Finish action ${name} after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`);
+                const log =[`Finish action ${name}`];
+                if(ctx.getCurrentTestAction()) {
+                    log.push(`after ${(new Date().getTime() - ctx.getCurrentTestAction()!.startDate!.getTime()) / 1000}s`);
+                }
+                ctx.logger.info(log.join(' '));
                 ctx.endTestAction();
             }
             return res;
@@ -75,9 +79,11 @@ export function actionApi(
             }
         }));
         return await webDriver.executeAsyncScript(`
-            const __done__ = arguments[arguments.length - 1];
-            ${source}
-            __done__();
+            var __done__ = arguments[arguments.length - 1];
+            var result = (function(arguments) {          
+                ${source}
+            })(arguments)
+            __done__(result);
         `, ...args);
     }
 
@@ -185,7 +191,7 @@ export function actionApi(
         _click: runAsAction('click', _click),
         _setSelected: runAsAction('setSelected', _setSelected),
         _dragDrop: runAsAction('dragDrop', _dragDrop),
-        _dragDropXY: runAsAction('dragDrop', _dragDropXY),
+        _dragDropXY: runAsAction('dragDropXY', _dragDropXY),
 
         _setValue: runAsAction('setValue', _setValue),
         _keyPress: runAsAction('keyPress', _keyPress),

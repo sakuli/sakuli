@@ -1,4 +1,3 @@
-import {describe} from "selenium-webdriver/testing";
 import {ENCRYPTION_KEY_VARIABLE} from "./secrets.function";
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {SimpleLogger} from "@sakuli/commons";
@@ -8,12 +7,19 @@ import {mockPartial} from "sneer";
 const mockProject = mockPartial<Project>({
     get: (param: string) => (param === "foo") ? "bar" : null,
 });
-
+const prepareContext = (ctx: TestExecutionContext) => {
+    ctx.startExecution();
+    ctx.startTestSuite();
+    ctx.startTestCase();
+    ctx.startTestStep();
+};
 
 describe("Similarity ", () => {
     it("should have a default value of 0.99", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -25,7 +31,9 @@ describe("Similarity ", () => {
 
     it("should not update for value <= 0", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -38,7 +46,9 @@ describe("Similarity ", () => {
 
     it("should not update for value == 0", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -51,7 +61,9 @@ describe("Similarity ", () => {
 
     it("should not update for values > 1", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -64,7 +76,9 @@ describe("Similarity ", () => {
 
     it("should reset to its default value", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -80,7 +94,9 @@ describe("Similarity ", () => {
 describe("sleep", () => {
     it("should pause execution for a given delay in seconds", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const pauseInSeconds = 1;
         const expectedPauseInMilliseconds = 1000;
@@ -96,7 +112,9 @@ describe("sleep", () => {
 
     it("should pause execution for a given delay in ms", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const expectedPause = 200;
         const start = Date.now();
@@ -113,7 +131,9 @@ describe("sleep", () => {
 describe("getEnv", () => {
     it("should return an existing variables value", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const variableKey = "sakuliEnvVar";
         const variableValue = "Hi from Sakuli!";
@@ -128,7 +148,9 @@ describe("getEnv", () => {
 
     it("should return undefined for unknown variables", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const variableKey = "unknownVar";
 
@@ -143,7 +165,9 @@ describe("getEnv", () => {
 describe("getProperty", () => {
     it("should return an existing variables value", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const variableKey = "foo";
         const variableValue = "bar";
@@ -157,7 +181,9 @@ describe("getProperty", () => {
 
     it("should return undefined for unknown variables", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const variableKey = "unknownVar";
 
@@ -168,11 +194,14 @@ describe("getProperty", () => {
         expect(result).toBeNull();
     });
 });
+
 describe("type", () => {
     it("should throw when no encryption key is set via env var", async () => {
         // GIVEN
         jest.setTimeout(10_000);
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
@@ -185,7 +214,9 @@ describe("type", () => {
     it("should type via keyboard", async () => {
         // GIVEN
         jest.setTimeout(10_000);
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
 
         // WHEN
@@ -197,7 +228,9 @@ describe("type", () => {
     it("should decrypt and type via keyboard", async () => {
         // GIVEN
         jest.setTimeout(10_000);
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         process.env[ENCRYPTION_KEY_VARIABLE] = "C9HikSYQW/K+ZvRphxEuSw==";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
@@ -211,7 +244,9 @@ describe("type", () => {
     it("should throw when key with invalid length is provided", async () => {
         // GIVEN
         jest.setTimeout(10_000);
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
         process.env[ENCRYPTION_KEY_VARIABLE] = "foo";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";

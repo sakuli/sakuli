@@ -94,7 +94,8 @@ describe('SakuliRunner', () => {
         const expectedContext = expect.objectContaining({
             ctx1: 'ctx1',
             ctx2: 'ctx2',
-            common: 'overridden'
+            common: 'overridden',
+            ...global
         });
         expect(scriptExecutor.execute).toHaveBeenNthCalledWith(1, 'done(); // test 1', expectedContext, expect.anything());
         expect(scriptExecutor.execute).toHaveBeenNthCalledWith(2, 'done(); // test 2', expectedContext, expect.anything());
