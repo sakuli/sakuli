@@ -61,7 +61,7 @@ export function actionApi(
             } finally {
                 const log =[`Finish action ${name}`];
                 if(ctx.getCurrentTestAction()) {
-                    log.push(`after ${new Date().getDate() - ctx.getCurrentTestAction()!.startDate!.getDate()}`);
+                    log.push(`after ${(new Date().getTime() - ctx.getCurrentTestAction()!.startDate!.getTime()) / 1000}s`);
                 }
                 ctx.logger.info(log.join(' '));
                 ctx.endTestAction();

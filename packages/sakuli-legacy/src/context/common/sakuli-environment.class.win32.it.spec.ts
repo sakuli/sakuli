@@ -6,6 +6,12 @@ import {mockPartial} from "sneer";
 const mockProject = mockPartial<Project>({
     get: jest.fn(() => "foo"),
 });
+const prepareContext = (ctx: TestExecutionContext) => {
+    ctx.startExecution();
+    ctx.startTestSuite();
+    ctx.startTestCase();
+    ctx.startTestStep();
+};
 
 describe("Environment", () => {
     it("should return true for isWindows", () => {
@@ -58,7 +64,9 @@ describe("Environment", () => {
 
     it("should contain 'Windows'", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(new TestExecutionContext(new SimpleLogger()), mockProject);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
         const SUT = new EnvironmentImpl();
 
         // WHEN
