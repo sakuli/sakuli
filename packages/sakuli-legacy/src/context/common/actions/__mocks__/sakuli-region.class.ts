@@ -1,6 +1,6 @@
 import {Region} from "../../region.interface";
 import {Key} from "../../key.class";
-import {Button} from "../../button.class";
+import {MouseButton} from "../../button.class";
 
 export class SakuliRegion implements Region {
     constructor(private _left: number, private _top: number, private _width: number, private _height: number) {
@@ -83,7 +83,7 @@ export class SakuliRegion implements Region {
         return this;
     }
 
-    async mouseDown(mouseButton: Button): Promise<Region> {
+    async mouseDown(mouseButton: MouseButton): Promise<Region> {
         return this;
     }
 
@@ -91,7 +91,7 @@ export class SakuliRegion implements Region {
         return this;
     }
 
-    async mouseUp(mouseButton: Button): Promise<Region> {
+    async mouseUp(mouseButton: MouseButton): Promise<Region> {
         return this;
     }
 

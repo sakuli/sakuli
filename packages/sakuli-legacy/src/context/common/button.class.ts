@@ -1,7 +1,7 @@
-import {Button as NutButton} from "@nut-tree/nut-js/dist/lib/button.enum";
+import {Button} from "@nut-tree/nut-js/dist/lib/button.enum";
 
-export class Button {
-    static readonly LEFT = NutButton.LEFT;
-    static readonly MIDDLE = NutButton.MIDDLE;
-    static readonly RIGHT = NutButton.RIGHT;
+export class MouseButton {
+    static readonly LEFT = Button.LEFT;
+    static readonly MIDDLE = Button.MIDDLE;
+    static readonly RIGHT = Button.RIGHT;
 }

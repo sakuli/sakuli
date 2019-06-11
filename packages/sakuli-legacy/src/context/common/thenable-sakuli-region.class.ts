@@ -1,7 +1,7 @@
 import {Region} from "./region.interface";
 import {createRegionClass} from "./sakuli-region.class";
 import {TestExecutionContext} from "@sakuli/core";
-import {Button} from "./button.class";
+import {MouseButton} from "./button.class";
 import {Key} from "./key.class";
 
 export type ThenableRegion = ReturnType<typeof createThenableRegionClass>;
@@ -11,9 +11,9 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
     return class ThenableRegion implements PromiseLike<Region> {
 
         constructor(
-            public _left?: number, 
-            public _top?: number, 
-            public _width?: number, 
+            public _left?: number,
+            public _top?: number,
+            public _width?: number,
             public _height?: number,
             readonly _region?: Promise<Region>
         ) {
@@ -28,7 +28,7 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
              */
             return this._region!;
         }
-        
+
         createReturn(then: (r: Region) => Promise<Region>): ThenableRegion {
             return new ThenableRegion(
                 this._left,
@@ -115,7 +115,7 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
             return this.createReturn(r => r.left(range));
         }
 
-        mouseDown(mouseButton: Button): ThenableRegion {
+        mouseDown(mouseButton: MouseButton): ThenableRegion {
             return this.createReturn(r => r.mouseDown(mouseButton));
         }
 
@@ -123,7 +123,7 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
             return this.createReturn(r => r.mouseMove());
         }
 
-        mouseUp(mouseButton: Button): ThenableRegion {
+        mouseUp(mouseButton: MouseButton): ThenableRegion {
             return this.createReturn(r => r.mouseUp(mouseButton));
         }
 

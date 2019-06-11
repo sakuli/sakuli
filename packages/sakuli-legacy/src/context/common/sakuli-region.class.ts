@@ -1,4 +1,4 @@
-import {Button} from "./button.class";
+import {MouseButton} from "./button.class";
 import {Key} from "./key.class";
 import {MouseApi} from "./actions/mouse.function";
 import {KeyboardApi} from "./actions/keyboard.function";
@@ -100,7 +100,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
             })();
         }
 
-        public async mouseDown(mouseButton: Button): Promise<Region> {
+        public async mouseDown(mouseButton: MouseButton): Promise<Region> {
             return runAsAction(ctx, "mouseDown", async () => {
                 ctx.logger.debug("Mouse down");
                 await MouseApi.pressButton(mouseButton);
@@ -108,7 +108,7 @@ export function createRegionClass(ctx: TestExecutionContext) {
             })();
         }
 
-        public async mouseUp(mouseButton: Button): Promise<Region> {
+        public async mouseUp(mouseButton: MouseButton): Promise<Region> {
             return runAsAction(ctx, "mouseUp", async () => {
                 ctx.logger.debug("Mouse up");
                 await MouseApi.releaseButton(mouseButton);

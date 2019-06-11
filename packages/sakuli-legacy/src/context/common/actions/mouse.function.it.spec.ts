@@ -2,7 +2,7 @@ import {mouse, Point, Button as NutButton} from "@nut-tree/nut-js";
 import {MouseApi} from "./mouse.function";
 import {SakuliRegion} from "./__mocks__/sakuli-region.class";
 import {Mouse} from "@nut-tree/nut-js/dist/lib/mouse.class";
-import {Button} from "../button.class";
+import {MouseButton} from "../button.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -43,10 +43,10 @@ describe("MouseApi", () => {
     });
 
     it.each([
-        [Button.LEFT, NutButton.LEFT],
-        [Button.MIDDLE, NutButton.MIDDLE],
-        [Button.RIGHT, NutButton.RIGHT]
-    ] as Array<[Button, NutButton]>)("should press and release", async (actual: Button, expected: NutButton) => {
+        [MouseButton.LEFT, NutButton.LEFT],
+        [MouseButton.MIDDLE, NutButton.MIDDLE],
+        [MouseButton.RIGHT, NutButton.RIGHT]
+    ] as Array<[MouseButton, NutButton]>)("should press and release", async (actual: MouseButton, expected: NutButton) => {
         // GIVEN
         mouse.pressButton = jest.fn();
         mouse.releaseButton = jest.fn();

@@ -1,4 +1,4 @@
-import {Button} from "./button.class";
+import {MouseButton} from "./button.class";
 import {Key} from "./key.class";
 
 export interface Region {
@@ -16,9 +16,9 @@ export interface Region {
 
     mouseMove(): Promise<Region>;
 
-    mouseDown(mouseButton: Button): Promise<Region>;
+    mouseDown(mouseButton: MouseButton): Promise<Region>;
 
-    mouseUp(mouseButton: Button): Promise<Region>;
+    mouseUp(mouseButton: MouseButton): Promise<Region>;
 
     dragAndDropTo(targetRegion: Region): Promise<Region>;
 
