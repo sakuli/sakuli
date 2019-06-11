@@ -1,4 +1,4 @@
-import {Button} from "./button.class";
+import {MouseButton} from "./button.class";
 import {Key} from "./key.class";
 import {MouseApi} from "./actions/mouse.function";
 import {KeyboardApi} from "./actions/keyboard.function";
@@ -100,16 +100,18 @@ export function createRegionClass(ctx: TestExecutionContext) {
             })();
         }
 
-        public async mouseDown(mouseButton: Button): Promise<Region> {
+        public async mouseDown(mouseButton: MouseButton): Promise<Region> {
             return runAsAction(ctx, "mouseDown", async () => {
-                ctx.logger.debug("Mouse down, NOP");
+                ctx.logger.debug("Mouse down");
+                await MouseApi.pressButton(mouseButton);
                 return this;
             })();
         }
 
-        public async mouseUp(mouseButton: Button): Promise<Region> {
+        public async mouseUp(mouseButton: MouseButton): Promise<Region> {
             return runAsAction(ctx, "mouseUp", async () => {
-                ctx.logger.debug("Mouse up, NOP");
+                ctx.logger.debug("Mouse up");
+                await MouseApi.releaseButton(mouseButton);
                 return this;
             })();
         }
@@ -357,16 +359,12 @@ export function createRegionClass(ctx: TestExecutionContext) {
         }
 
         public async center() {
-            return runAsAction(ctx, "center", async () => {
-                await this.moveTo();
-            })();
+            await this.moveTo();
         }
 
         public async moveTo(dest?: Region) {
-            return runAsAction(ctx, "moveTo", async () => {
-                const target = dest ? dest : this;
-                await MouseApi.move(target);
-            })();
+            const target = dest ? dest : this;
+            await MouseApi.move(target);
         }
 
         public toString(): string {

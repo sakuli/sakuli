@@ -2,15 +2,14 @@ import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case.class";
 import {Key} from "./common/key.class";
-import {createEnvironmentClass} from "./common/sakuli-environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {dirname, join, parse, sep} from "path";
 import {createLoggerClass} from "./common/logger.class";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
+import {MouseButton} from "./common/button.class";
 import {createThenableRegionClass} from "./common/thenable-sakuli-region.class";
 import {createThenableEnvironmentClass} from "./common/thenable-environment.class";
 import {createThenableApplicationClass} from "./common/thenable-application.class";
@@ -95,6 +94,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             TestCase: createTestCaseClass(ctx, project, this.currentTest),
             Application: createThenableApplicationClass(ctx),
             Key,
+            MouseButton,
             Environment: createThenableEnvironmentClass(ctx, project),
             Region: createThenableRegionClass(ctx),
             Logger: createLoggerClass(ctx),
