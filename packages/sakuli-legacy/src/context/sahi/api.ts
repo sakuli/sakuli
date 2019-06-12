@@ -1,11 +1,12 @@
 import {ThenableWebDriver} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
-import {AccessorApi, accessorApi, AccessorIdentifierAttributes, AccessorUtil} from "./accessor";
+import {accessorApi, AccessorIdentifierAttributes, AccessorUtil} from "./accessor";
 import {SahiRelation} from "./relations/sahi-relation.interface";
 import {RelationApi, relationsApi, RelationsResolver} from "./relations";
 import {SahiElementQueryOrWebElement} from "./sahi-element.interface";
 import {ActionApiFunction, actionApi} from "./action";
 import {fetchApi, FetchApi} from "./fetch/fetch-api.function";
+import {AccessorApi} from "./accessor/accessor-api.interface";
 
 //type SahiElement = WebElement;
 type pr_i_AB = [number, number];

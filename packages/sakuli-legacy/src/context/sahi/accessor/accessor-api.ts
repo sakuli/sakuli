@@ -3,12 +3,12 @@ import {By} from "selenium-webdriver";
 import {AccessorFunction, AccessorIdentifier} from "../api";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {isAccessorIdentifierAttributesWithClassName} from "./accessor-model.interface";
+import {AccessorApi} from "./accessor-api.interface";
 
-export type AccessorApi = ReturnType<typeof accessorApi>;
 export type DefaultAccessors = Pick<AccessorApi, Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">>
 export type AccessorFunctions = Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">;
 
-export function accessorApi() {
+export function accessorApi(): AccessorApi {
 
     function createAccessorFunction(css: string): AccessorFunction {
         return (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
