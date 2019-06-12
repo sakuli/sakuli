@@ -8,6 +8,7 @@
     "test": "jest",
     "build": "tsc",
     "typedoc": "typedoc --out ../../docs/api/sakuli-legacy --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
+    "typedoc:json": "typedoc --json docs.json --excludeExternals --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
     "prepublishOnly": "npm run build"

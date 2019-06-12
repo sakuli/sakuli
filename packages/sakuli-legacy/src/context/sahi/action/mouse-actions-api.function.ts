@@ -6,38 +6,20 @@ import {stripIndents} from "common-tags";
 import {positionalInfo} from "../relations/positional-info.function";
 import {runActionsWithComboKeys} from "./run-actions-with-combo.keys.function";
 import 'selenium-webdriver/lib/input'
+import {MouseActionApi} from "./mouse-action-api.interface";
 
 export function mouseActionApi(
     webDriver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
-) {
+): MouseActionApi {
 
-    const toElement = (origin:WebElement) => ({origin, x:0,y:0});
+    const toElement = (origin: WebElement) => ({origin, x: 0, y: 0});
 
-    async function _xy() {
+    function _xy(): never {
         throw Error('Not yet implemented due to api incompability');
     }
 
-    /**
-     * _click simulates a user's click on the given element.
-     *
-     * @example
-     * <code>
-     * _click(_button("Click Me"));
-     * _click(_button("Click Me"), "CTRL"); // clicks with CTRL key pressed
-     * _click(_button("Click Me"), "CTRL|SHIFT"); // clicks with CTRL and SHIFT keys pressed
-     *
-     * // With _xy
-     * _click(_xy(_button("Click Me"),4,5)); // Click at coordinates 4,5 pixels inside the button
-     * </code>
-     *
-     * @param query query to the Element to click on
-     * @param combo Any combo key: can be "CTRL", "SHIFT", "ALT" or "META";
-     Can also be two or more keys together like "CTRL|SHIFT"
-     This argument is applicable only for Browser mode
-     * @private
-     */
     async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         return runActionsWithComboKeys(
@@ -82,7 +64,7 @@ export function mouseActionApi(
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
             e, combo,
-            a => a.move({origin: e, x:1, y:1}).move(toElement(e))
+            a => a.move({origin: e, x: 1, y: 1}).move(toElement(e))
         ).perform();
     }
 
