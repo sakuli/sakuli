@@ -1,5 +1,6 @@
 
 (async () => {
+    driver
     const testCase: TestCase = new TestCase();
     const env = new Environment();
     try {

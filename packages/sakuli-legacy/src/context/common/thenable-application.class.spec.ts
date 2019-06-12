@@ -8,7 +8,8 @@ import {Environment} from "./environment.interface";
 import {Application} from "./application.interface";
 import {createThenableApplicationClass} from "./thenable-application.class";
 
-const defer = Promise.resolve.bind(Promise);
+type Resolve<T> = ((v:T)=> Promise<T>);
+const defer:Resolve<any> = Promise.resolve.bind(Promise);
 describe('ThenableApplication', () => {
 
     let ctx: TestExecutionContext;

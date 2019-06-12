@@ -36,7 +36,6 @@ export function mouseActionApi(
      * @param combo Any combo key: can be "CTRL", "SHIFT", "ALT" or "META";
      Can also be two or more keys together like "CTRL|SHIFT"
      This argument is applicable only for Browser mode
-     * @private
      */
     async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
@@ -178,6 +177,9 @@ export function mouseActionApi(
     }
 
     return ({
+        /**
+         * LOL
+         */
         _xy,
         _click,
         _rightClick,
