@@ -1,17 +1,18 @@
 import {Key, ThenableWebDriver} from "selenium-webdriver";
-import {AccessorUtil} from "../accessor";
+import {AccessorUtil} from "../../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../../sahi-element.interface";
 import {stripIndents} from "common-tags";
-import {CharInfo, charInfoToKey} from "./char-info.interface";
-import {NativeEventDispatcher} from "./native-event-dispatcher.class";
-import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
+import {CharInfo, charInfoToKey} from "./../char-info.interface";
+import {NativeEventDispatcher} from "./../native-event-dispatcher.class";
+import {getSeleniumKeysFromComboString} from "./../sahi-selenium-key-map.const";
+import {KeyboardActionsApi} from "./keyboard-actions.interface";
 
 export function keyboardActionApi(
     webDriver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
-) {
+): KeyboardActionsApi {
 
 
     async function _setValue(query: SahiElementQueryOrWebElement, value: string): Promise<void> {

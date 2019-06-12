@@ -1,9 +1,9 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
+import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../../__mocks__";
 import {By, ThenableWebDriver} from "selenium-webdriver";
 import {keyboardActionApi} from "./keyboard-actions.function";
-import {AccessorUtil} from "../accessor";
-import {RelationsResolver} from "../relations";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import {AccessorUtil} from "../../accessor";
+import {RelationsResolver} from "../../relations";
+import {getTestBrowserList} from "../../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('KeyboardActions', () => {
@@ -92,7 +92,7 @@ describe('KeyboardActions', () => {
             }, value);
             const inputElement = await driver.findElement(inputLocator);
             return expect(inputElement.getAttribute('value')).resolves.toBe(value)
-        })
+        });
 
         it('should replace existing value in textbox in _setValue', async () => {
             const {_setValue} = createApi(driver);

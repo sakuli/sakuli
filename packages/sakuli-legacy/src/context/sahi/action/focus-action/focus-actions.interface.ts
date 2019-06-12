@@ -1,9 +1,9 @@
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
+import {SahiElementQueryOrWebElement} from "../../sahi-element.interface";
 
 /**
  * Combines methods to bring either focus or blur to webelements elements
  */
-export interface FocusActions {
+export interface FocusActionApi {
 
     /**
      *
@@ -23,4 +23,6 @@ export interface FocusActions {
      *
      */
     _blur(query: SahiElementQueryOrWebElement): Promise<void>
+    _removeFocus(query: SahiElementQueryOrWebElement): Promise<void>
+
 }

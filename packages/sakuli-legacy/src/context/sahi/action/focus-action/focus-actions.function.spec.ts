@@ -1,9 +1,9 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
+import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../../__mocks__";
 import {By, ThenableWebDriver} from "selenium-webdriver";
-import {AccessorUtil} from "../accessor";
-import {RelationsResolver} from "../relations";
+import {AccessorUtil} from "../../accessor";
+import {RelationsResolver} from "../../relations";
 import {focusActionApi} from "./focus-actions.function";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import {getTestBrowserList} from "../../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('focus-api', () => {

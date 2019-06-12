@@ -1,5 +1,4 @@
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {WebElement} from "selenium-webdriver";
+import {SahiElementQueryOrWebElement} from "../../sahi-element.interface";
 
 export interface MouseActionApi {
     /**

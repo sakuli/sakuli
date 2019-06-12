@@ -1,12 +1,14 @@
 import {Button, By, ILocation, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {stripIndents} from "common-tags";
-import {positionalInfo} from "../relations/positional-info.function";
-import {runActionsWithComboKeys} from "./run-actions-with-combo.keys.function";
+
+
 import 'selenium-webdriver/lib/input'
 import {MouseActionApi} from "./mouse-action-api.interface";
+import {SahiElementQueryOrWebElement} from "../../sahi-element.interface";
+import {runActionsWithComboKeys} from "../run-actions-with-combo.keys.function";
+import {AccessorUtil} from "../../accessor";
+import {positionalInfo} from "../../relations/positional-info.function";
 
 export function mouseActionApi(
     webDriver: ThenableWebDriver,
