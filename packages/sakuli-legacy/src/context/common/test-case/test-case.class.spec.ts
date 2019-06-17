@@ -12,7 +12,7 @@ beforeEach(() => {
     jest.resetAllMocks();
 });
 
-jest.mock("./actions/screen.function");
+jest.mock("../actions/screen.function");
 ScreenApi.takeScreenshot = jest.fn();
 
 describe("TestCase", () => {
