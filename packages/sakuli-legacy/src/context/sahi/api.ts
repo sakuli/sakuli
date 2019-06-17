@@ -5,7 +5,7 @@ import {SahiRelation} from "./relations/sahi-relation.interface";
 import {RelationApi, relationsApi, RelationsResolver} from "./relations";
 import {SahiElementQueryOrWebElement} from "./sahi-element.interface";
 import {ActionApiFunction, actionApi} from "./action";
-import {fetchApi, FetchApi} from "./fetch/fetch-api.function";
+import {fetchApi, FetchApi} from "./fetch";
 import {AccessorApi} from "./accessor/accessor-api.interface";
 
 //type SahiElement = WebElement;
