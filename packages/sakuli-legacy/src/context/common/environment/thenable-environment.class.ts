@@ -1,14 +1,16 @@
 import {Project, TestExecutionContext} from "@sakuli/core";
 import {Environment} from "./environment.interface";
 import {createEnvironmentClass} from "./sakuli-environment.class";
-import {createThenableRegionClass, ThenableRegion} from "./thenable-sakuli-region.class";
-import {Key} from "./key.class";
+import {createThenableRegionClass} from "../region";
+import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
+import {ThenableEnvironment} from "./thenable-environment.interface";
+import {Type} from "@sakuli/commons";
 
-export function createThenableEnvironmentClass(ctx: TestExecutionContext, project: Project) {
+export function createThenableEnvironmentClass(ctx: TestExecutionContext, project: Project): Type<ThenableEnvironment> {
     const Environment = createEnvironmentClass(ctx, project);
     const ThenableRegionClass = createThenableRegionClass(ctx);
-    return class ThenableEnvironment implements PromiseLike<Environment> {
+    return class ThenableSakuliEnvironment {
 
         constructor(
             readonly env: Promise<Environment> = Promise.resolve(new Environment())
@@ -18,8 +20,8 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
             return this.env.then(e => e.cleanClipboard());
         }
 
-        copyIntoClipboard(): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.copyIntoClipboard()));
+        copyIntoClipboard(): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.copyIntoClipboard()));
         }
 
         decryptSecret(secret: string): Promise<string> {
@@ -68,36 +70,36 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
             return this.env.then(e => e.isWindows());
         }
 
-        keyDown(...keys: Key[]): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.keyDown(...keys)));
+        keyDown(...keys: Key[]): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.keyDown(...keys)));
         }
 
-        keyUp(...keys: Key[]): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.keyUp(...keys)));
+        keyUp(...keys: Key[]): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.keyUp(...keys)));
         }
 
-        mouseWheelDown(steps: number): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.mouseWheelDown(steps)));
+        mouseWheelDown(steps: number): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.mouseWheelDown(steps)));
         }
 
-        mouseWheelUp(steps: number): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.mouseWheelUp(steps)));
+        mouseWheelUp(steps: number): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.mouseWheelUp(steps)));
         }
 
-        paste(text: string): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.paste(text)));
+        paste(text: string): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.paste(text)));
         }
 
-        pasteAndDecrypt(text: string): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.pasteAndDecrypt(text)));
+        pasteAndDecrypt(text: string): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.pasteAndDecrypt(text)));
         }
 
-        pasteClipboard(): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.pasteClipboard()));
+        pasteClipboard(): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.pasteClipboard()));
         }
 
-        pasteMasked(text: string): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.pasteMasked(text)));
+        pasteMasked(text: string): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.pasteMasked(text)));
         }
 
         resetSimilarity(): Promise<void> {
@@ -108,20 +110,20 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
             return this.env.then(e => e.runCommand(command, optThrowException));
         }
 
-        setClipboard(text: string): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.setClipboard(text)));
+        setClipboard(text: string): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.setClipboard(text)));
         }
 
         setSimilarity(similarity: number): Promise<void> {
             return this.env.then(e => e.setSimilarity(similarity));
         }
 
-        sleep(s: number): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.sleep(s)));
+        sleep(s: number): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.sleep(s)));
         }
 
-        sleepMs(ms: number): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.sleepMs(ms)));
+        sleepMs(ms: number): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.sleepMs(ms)));
         }
 
         takeScreenshot(filename: string): Promise<string> {
@@ -139,20 +141,20 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
             );
         }
 
-        type(text: string, ...optModifiers: Key[]): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.type(text, ...optModifiers)));
+        type(text: string, ...optModifiers: Key[]): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.type(text, ...optModifiers)));
         }
 
-        typeAndDecrypt(text: string, ...optModifiers: Key[]): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.typeAndDecrypt(text, ...optModifiers)));
+        typeAndDecrypt(text: string, ...optModifiers: Key[]): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.typeAndDecrypt(text, ...optModifiers)));
         }
 
-        typeMasked(text: string, ...optModifiers: Key[]): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.typeMasked(text, ...optModifiers)));
+        typeMasked(text: string, ...optModifiers: Key[]): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.typeMasked(text, ...optModifiers)));
         }
 
-        write(text: string): ThenableEnvironment {
-            return new ThenableEnvironment(this.env.then(e => e.write(text)));
+        write(text: string): ThenableSakuliEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.write(text)));
         }
 
     }

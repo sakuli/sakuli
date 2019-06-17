@@ -1,13 +1,14 @@
-import {createThenableRegionClass, ThenableRegion} from "./thenable-sakuli-region.class";
-import {createTestExecutionContextMock} from "../sahi/__mocks__";
+import {createThenableRegionClass, ThenableRegion} from "../region";
+import {createTestExecutionContextMock} from "../../sahi/__mocks__";
 import {TestExecutionContext} from "@sakuli/core";
 import {Region} from "./region.interface";
 import {mockPartial} from "sneer";
+import {Type} from "@sakuli/commons";
 
 describe('ThenableRegion', () => {
 
     let ctx: TestExecutionContext;
-    let ThenableRegion: ThenableRegion;
+    let ThenableRegion: Type<ThenableRegion>;
     let regionMock: Region;
 
     beforeEach(() => {

@@ -1,5 +1,5 @@
-import {MouseButton} from "./button.class";
-import {Key} from "./key.class";
+import {MouseButton} from "../button.class";
+import {Key} from "../key.class";
 
 export interface Region {
     find(imageName: string): Promise<Region>;

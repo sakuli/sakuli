@@ -1,4 +1,4 @@
-import {ENCRYPTION_KEY_VARIABLE} from "./secrets.function";
+import {ENCRYPTION_KEY_VARIABLE} from "../secrets.function";
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {SimpleLogger} from "@sakuli/commons";
 import {Project, TestExecutionContext} from "@sakuli/core";

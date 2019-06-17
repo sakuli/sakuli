@@ -1,18 +1,17 @@
-import {Key} from "./key.class";
+import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
-import {decryptSecret} from "./secrets.function";
-import {ClipboardApi} from "./actions/clipboard.function";
-import {KeyboardApi} from "./actions/keyboard.function";
+import {decryptSecret} from "../secrets.function";
+import {ClipboardApi} from "../actions/clipboard.function";
+import {KeyboardApi} from "../actions/keyboard.function";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {ScreenApi} from "./actions/screen.function";
-import {MouseApi} from "./actions/mouse.function";
+import {ScreenApi} from "../actions/screen.function";
+import {MouseApi} from "../actions/mouse.function";
 
-import nutConfig from "./nut-global-config.class";
-import {execute} from "./actions/command.function";
+import nutConfig from "../nut-global-config.class";
+import {execute} from "../actions/command.function";
 import {Environment} from "./environment.interface";
-import {Region} from "./region.interface";
-import {createRegionClass} from "./sakuli-region.class";
-import {runAsAction} from "./actions/action.function";
+import {Region, createRegionClass} from "../region";
+import {runAsAction} from "../actions/action.function";
 
 export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {
     return class SakuliEnvironment implements Environment {

@@ -1,14 +1,15 @@
 import {Region} from "./region.interface";
 import {createRegionClass} from "./sakuli-region.class";
 import {TestExecutionContext} from "@sakuli/core";
-import {MouseButton} from "./button.class";
-import {Key} from "./key.class";
+import {Key} from "../key.class";
+import {MouseButton} from "../button.class";
+import {ThenableRegion} from "./thenable-region.interface";
+import {Type} from "@sakuli/commons";
 
-export type ThenableRegion = ReturnType<typeof createThenableRegionClass>;
-export function createThenableRegionClass(ctx: TestExecutionContext) {
+
+export function createThenableRegionClass(ctx: TestExecutionContext): Type<ThenableRegion> {
     const SakuliRegion = createRegionClass(ctx);
-
-    return class ThenableRegion implements PromiseLike<Region> {
+    return class ThenableSakuliRegion implements ThenableRegion {
 
         constructor(
             public _left?: number,
@@ -30,7 +31,7 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
         }
 
         createReturn(then: (r: Region) => Promise<Region>): ThenableRegion {
-            return new ThenableRegion(
+            return new ThenableSakuliRegion(
                 this._left,
                 this._top,
                 this._width,
@@ -192,11 +193,10 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
         }
 
         then<TResult1 = Region, TResult2 = any>(onfulfilled?: ((value: Region) => (PromiseLike<TResult1> | TResult1)) | undefined | null, onrejected?: ((reason: any) => (PromiseLike<TResult2> | TResult2)) | undefined | null): PromiseLike<TResult1 | TResult2> {
-            const r =  this.region.then(
+            return this.region.then(
                 onfulfilled,
                 onrejected
             );
-            return r;
         }
 
         type(text: string, ...optModifiers: Key[]): ThenableRegion {
@@ -218,6 +218,5 @@ export function createThenableRegionClass(ctx: TestExecutionContext) {
         write(text: string): ThenableRegion {
             return this.createReturn(r => r.write(text));
         }
-
     }
 }

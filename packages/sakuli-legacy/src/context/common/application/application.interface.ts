@@ -1,4 +1,4 @@
-import {Region} from "./region.interface";
+import {Region} from "../region";
 
 export interface Application {
     open(): Promise<Application>;

@@ -1,9 +1,10 @@
 import {cwd} from "process";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import nutConfig from "./nut-global-config.class";
-import {ScreenApi} from "./actions/screen.function";
+import nutConfig from "../nut-global-config.class";
+import {ScreenApi} from "../actions/screen.function";
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {isAbsolute, join} from "path";
+import {TestCase} from "./test-case.interface";
 
 type TestMetaData = {
     suiteName: string,
@@ -33,9 +34,9 @@ const takeErrorScreenShot = (ctx: TestExecutionContext, currentTestFolder: Maybe
 };
 
 export function createTestCaseClass(ctx: TestExecutionContext, project: Project, currentTestFolder: Maybe<string>) {
-    return class TestCase {
+    return class SakuliTestCase implements TestCase {
         constructor(
-            readonly caseId?: string,
+            readonly caseId: string = 'Testcase',
             readonly warningTime: number = 0,
             readonly criticalTime: number = 0,
             public _imagePaths: string[] = []

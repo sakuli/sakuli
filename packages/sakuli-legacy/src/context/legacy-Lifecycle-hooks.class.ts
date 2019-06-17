@@ -1,18 +1,19 @@
 import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
-import {createTestCaseClass} from "./common/test-case.class";
+import {createTestCaseClass} from "./common/test-case";
 import {Key} from "./common/key.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {dirname, join, parse, sep} from "path";
-import {createLoggerClass} from "./common/logger.class";
+import {createLoggerObject} from "./common/logger";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {promises as fs} from "fs";
 import {MouseButton} from "./common/button.class";
-import {createThenableRegionClass} from "./common/thenable-sakuli-region.class";
-import {createThenableEnvironmentClass} from "./common/thenable-environment.class";
-import {createThenableApplicationClass} from "./common/thenable-application.class";
+import {createThenableApplicationClass} from "./common/application";
+import {createThenableEnvironmentClass} from "./common/environment";
+import {createThenableRegionClass} from "./common/region";
+import {LegacyApi} from "./legacy-api.interface";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -84,7 +85,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         );
     }
 
-    async requestContext(ctx: TestExecutionContext, project: Project) {
+    async requestContext(ctx: TestExecutionContext, project: Project): Promise<LegacyApi> {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
@@ -97,7 +98,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             MouseButton,
             Environment: createThenableEnvironmentClass(ctx, project),
             Region: createThenableRegionClass(ctx),
-            Logger: createLoggerClass(ctx),
+            Logger: createLoggerObject(ctx),
             console: console,
             $includeFolder: '',
             ...sahi,

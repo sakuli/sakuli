@@ -1,10 +1,10 @@
-import {ScreenApi} from "./actions/screen.function";
 import {Application} from "./application.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {Region} from "./region.interface";
-import {createRegionClass} from "./sakuli-region.class";
 import {ChildProcess, exec, spawn} from "child_process";
-import {runAsAction} from "./actions/action.function";
+import {runAsAction} from "../actions/action.function";
+import {createRegionClass, Region} from "../region";
+import {ScreenApi} from "../actions/screen.function";
+import {Type} from "@sakuli/commons";
 
 const killProcess = (pid: number) => {
     if (process.platform === "win32") {
@@ -14,7 +14,8 @@ const killProcess = (pid: number) => {
     }
 };
 
-export function createApplicationClass(ctx: TestExecutionContext) {
+export function createApplicationClass(ctx: TestExecutionContext): Type<Application> {
+    const RegionImpl = createRegionClass(ctx);
     return class SakuliApplication implements Application {
         public sleepTime = 0;
         public process?: ChildProcess;
@@ -109,7 +110,6 @@ export function createApplicationClass(ctx: TestExecutionContext) {
         public async getRegion(): Promise<Region> {
             return runAsAction(ctx, "getRegion", async () => {
                 ctx.logger.debug(`Determining region for main window of ${this.name}`);
-                const RegionImpl = createRegionClass(ctx);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }
@@ -117,7 +117,6 @@ export function createApplicationClass(ctx: TestExecutionContext) {
         public async getRegionForWindow(windowNumber: number): Promise<Region> {
             return runAsAction(ctx, "getRegionForWindow", async () => {
                 ctx.logger.debug(`Determining region for window #${windowNumber} of ${this.name}`);
-                const RegionImpl = createRegionClass(ctx);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }

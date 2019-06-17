@@ -3,10 +3,10 @@ import {Project, TestExecutionContext} from "@sakuli/core";
 import {mockPartial} from "sneer";
 import {createTestCaseClass} from "./test-case.class";
 
-import nutConfig from "./nut-global-config.class";
+import nutConfig from "../nut-global-config.class";
 import {SimpleLogger} from "@sakuli/commons";
 import {join} from "path";
-import {ScreenApi} from "./actions/screen.function";
+import {ScreenApi} from "../actions/screen.function";
 
 beforeEach(() => {
     jest.resetAllMocks();

@@ -1,15 +1,15 @@
-import {MouseButton} from "./button.class";
-import {Key} from "./key.class";
-import {MouseApi} from "./actions/mouse.function";
-import {KeyboardApi} from "./actions/keyboard.function";
-import {ScreenApi} from "./actions/screen.function";
+import {MouseButton} from "../button.class";
+import {Key} from "../key.class";
+import {MouseApi} from "../actions/mouse.function";
+import {KeyboardApi} from "../actions/keyboard.function";
+import {ScreenApi} from "../actions/screen.function";
 import {TestExecutionContext} from "@sakuli/core";
 
-import nutConfig from "./nut-global-config.class";
+import nutConfig from "../nut-global-config.class";
 import {existsSync} from "fs";
 import {join} from "path";
 import {Region} from "./region.interface";
-import {runAsAction} from "./actions/action.function";
+import {runAsAction} from "../actions/action.function";
 
 const determineResourcePath = (imageName: string) => {
     for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {

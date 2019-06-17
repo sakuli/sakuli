@@ -1,15 +1,15 @@
-import {createThenableRegionClass, ThenableRegion} from "./thenable-sakuli-region.class";
-import {createTestExecutionContextMock} from "../sahi/__mocks__";
+import {createTestExecutionContextMock} from "../../sahi/__mocks__";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {Region} from "./region.interface";
+import {createThenableRegionClass, ThenableRegion, Region} from "../region";
 import {mockPartial} from "sneer";
 import {createThenableEnvironmentClass} from "./thenable-environment.class";
 import {Environment} from "./environment.interface";
+import {Type} from "@sakuli/commons";
 
 describe('ThenableEnvironment', () => {
 
     let ctx: TestExecutionContext;
-    let ThenableRegion: ThenableRegion;
+    let ThenableRegion: Type<ThenableRegion>;
     let ThenableEnvironment: ReturnType<typeof createThenableEnvironmentClass>;
     let envMock: Environment;
     let regionMock: Region;
@@ -31,7 +31,7 @@ describe('ThenableEnvironment', () => {
         const r = new ThenableEnvironment(Promise.resolve(envMock));
         await r
             .getRegionFromFocusedWindow()
-            .find('test')
+            .find('test');
 
         expect(envMock.getRegionFromFocusedWindow).toHaveBeenCalled();
         expect(regionMock.find).toHaveBeenCalledWith('test');

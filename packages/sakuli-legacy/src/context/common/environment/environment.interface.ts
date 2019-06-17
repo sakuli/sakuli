@@ -1,6 +1,6 @@
-import {Key} from "./key.class";
+import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
-import {Region} from "./region.interface";
+import {Region} from "../region";
 
 export interface Environment {
     getSimilarity(): number;

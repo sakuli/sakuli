@@ -1,6 +1,6 @@
-import {Region} from "../../region.interface";
 import {Key} from "../../key.class";
 import {MouseButton} from "../../button.class";
+import {Region} from "../../region";
 
 export class SakuliRegion implements Region {
     constructor(private _left: number, private _top: number, private _width: number, private _height: number) {

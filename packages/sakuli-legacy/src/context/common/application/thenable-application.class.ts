@@ -1,33 +1,35 @@
 import {createApplicationClass} from "./sakuli-application.class";
 import {TestExecutionContext} from "@sakuli/core";
 import {Application} from "./application.interface";
-import {createThenableRegionClass, ThenableRegion} from "./thenable-sakuli-region.class";
+import {createThenableRegionClass} from "../region";
+import {ThenableApplication} from "./thenable-application.interface";
+import {Type} from "@sakuli/commons";
 
-export function createThenableApplicationClass(ctx: TestExecutionContext) {
+export function createThenableApplicationClass(ctx: TestExecutionContext): Type<ThenableApplication> {
     const Application = createApplicationClass(ctx);
     const ThenableRegion = createThenableRegionClass(ctx);
-    return class ThenableApplicationClass implements PromiseLike<Application>{
+    return class ThenableSakuliApplication {
         constructor(
             readonly name: string,
             readonly application: Promise<Application> = Promise.resolve(new Application(name))
         ) {}
 
-        close(optSilent?: boolean): ThenableApplicationClass {
-            return new ThenableApplicationClass(
+        close(optSilent?: boolean): ThenableSakuliApplication {
+            return new ThenableSakuliApplication(
                 this.name,
                 this.application.then(a => a.close(optSilent))
             );
         }
 
-        focus(): ThenableApplicationClass {
-            return new ThenableApplicationClass(
+        focus(): ThenableSakuliApplication {
+            return new ThenableSakuliApplication(
                 this.name,
                 this.application.then(a => a.focus())
             );
         }
 
-        focusWindow(windowNumber: number): ThenableApplicationClass {
-            return new ThenableApplicationClass(
+        focusWindow(windowNumber: number): ThenableSakuliApplication {
+            return new ThenableSakuliApplication(
                 this.name,
                 this.application.then(a => a.focusWindow(windowNumber))
             );
@@ -39,34 +41,34 @@ export function createThenableApplicationClass(ctx: TestExecutionContext) {
 
         getRegion() {
             return new ThenableRegion(
-                0,0,0,0,
+                0, 0, 0, 0,
                 this.application.then(app => app.getRegion())
             );
         }
 
         getRegionForWindow(windowNumber: number) {
             return new ThenableRegion(
-                0,0,0,0,
+                0, 0, 0, 0,
                 this.application.then(app => app.getRegionForWindow(windowNumber))
             );
         }
 
-        kill(optSilent?: boolean): ThenableApplicationClass {
-            return new ThenableApplicationClass(
+        kill(optSilent?: boolean): ThenableSakuliApplication {
+            return new ThenableSakuliApplication(
                 this.name,
                 this.application.then(app => app.kill(optSilent))
             )
         }
 
-        open(): ThenableApplicationClass {
-            return new ThenableApplicationClass(
+        open(): ThenableSakuliApplication {
+            return new ThenableSakuliApplication(
                 this.name,
                 this.application.then(app => app.open())
             )
         }
 
-        setSleepTime(seconds: number): ThenableApplicationClass {
-            return new ThenableApplicationClass(
+        setSleepTime(seconds: number): ThenableSakuliApplication {
+            return new ThenableSakuliApplication(
                 this.name,
                 this.application.then(app => app.setSleepTime(seconds))
             )
