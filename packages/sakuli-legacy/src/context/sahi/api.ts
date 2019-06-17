@@ -2,23 +2,14 @@ import {ThenableWebDriver} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {accessorApi, AccessorIdentifierAttributes, AccessorUtil} from "./accessor";
 import {SahiRelation} from "./relations/sahi-relation.interface";
-import {RelationApi, relationsApi, RelationsResolver} from "./relations";
+import {relationsApi, RelationsResolver} from "./relations";
 import {SahiElementQueryOrWebElement} from "./sahi-element.interface";
-import {ActionApiFunction, actionApi} from "./action";
-import {fetchApi, FetchApi} from "./fetch";
-import {AccessorApi} from "./accessor/accessor-api.interface";
-
-//type SahiElement = WebElement;
-type pr_i_AB = [number, number];
+import {actionApi} from "./action";
+import {fetchApi} from "./fetch";
+import {SahiApi} from "./sahi-api.interface";
 
 export type AccessorIdentifier = number | string | AccessorIdentifierAttributes | RegExp;
 export type AccessorFunction = (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => SahiElementQueryOrWebElement;
-
-export type SahiApi = ActionApiFunction
-    & AccessorApi
-    & RelationApi
-    & FetchApi
-    & {_dynamicInclude: () => Promise<void>};
 
 export function sahiApi(
     driver: ThenableWebDriver,
