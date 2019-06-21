@@ -1,4 +1,3 @@
-import './winston-workaround';
 import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
