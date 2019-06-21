@@ -1,7 +1,7 @@
-import {TestCase as TTestCase} from "@sakuli/legacy/dist/context/legacy-dsl.interface";
-import {ThenableWebDriver} from "selenium-webdriver";
+import {LegacyApi} from '@sakuli/legacy'
+
+declare const api: LegacyApi;
 
 declare global {
-    const driver: ThenableWebDriver;
-
+    const _getText: typeof api._getText
 }
