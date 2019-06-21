@@ -26,7 +26,7 @@ describe('Project', () => {
             }
         })
     });
-    it('should utilize tempalted values', () => {
+    it('should utilize templated values', () => {
         expect(projectUnderTest.get('forwarder.target')).toBe('sakuli')
     });
 
