@@ -18,7 +18,6 @@ export const template = (t: string) => {
     const dynamicParts: string[] = [];
     let lastIndex = 0;
     for(let m of matches) {
-        console.log(m);
         staticParts.push(t.substring(lastIndex, m.index));
         lastIndex = m.index + m.fullMatch.length;
         dynamicParts.push(m.match);
