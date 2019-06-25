@@ -2,11 +2,11 @@ import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
-import {CliArgsSource, ifPresent, Maybe} from "@sakuli/commons";
+import {CliArgsSource, ifPresent, Maybe, SimpleLogger} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
-import {SimpleLogger} from "@sakuli/commons";
+import {connectForwarderToTestExecutionContext} from "./forwarder/connect-forwarder-to-test-execution-context.function";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -57,17 +57,25 @@ export class SakuliClass {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         let project: Project = new Project(opts.path || process.cwd());
         await project.installPropertySource(new CliArgsSource(process.argv));
-        for(let loader of this.loader) {
+        for (let loader of this.loader) {
             project = (await loader.load(project)) || project;
         }
-
+        const forwarderTearDown = await Promise.all(this.forwarder
+            .map(forwarder => connectForwarderToTestExecutionContext(
+                forwarder,
+                this.testExecutionContext,
+                project
+            )));
         const runner = new SakuliRunner(
             this.lifecycleHooks,
             this.testExecutionContext
         );
         await runner.execute(project);
 
-        await Promise.all(this.forwarder.map(f => f.forward(this.testExecutionContext, project)));
+        await Promise.all(forwarderTearDown
+            .map(teardown => teardown())
+        );
+
         return this.testExecutionContext;
     }
 

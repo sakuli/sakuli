@@ -12,8 +12,7 @@ describe('SakuliRunner', () => {
 
     let tempDir: string;
     beforeEach(async () => tempDir = await fs.mkdtemp(`${tmpdir()}${sep}`));
-    afterEach(async () => fs.unlink(tempDir).catch(_ => {
-    }));
+    afterEach(async () => fs.unlink(tempDir).catch(() => {}));
 
     const createContextProviderMock = (): jest.Mocked<TestExecutionLifecycleHooks> => ({
         onProject: jest.fn(),
@@ -81,7 +80,6 @@ describe('SakuliRunner', () => {
 
     it('should tearDown all providers for each test', async done => {
         await sakuliRunner.execute(projectWithThreeTestFiles);
-
         expect(lifecycleHooks1.afterExecution).toHaveBeenCalledTimes(1);
         expect(lifecycleHooks2.afterExecution).toHaveBeenCalledTimes(1);
         done();
