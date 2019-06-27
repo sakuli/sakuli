@@ -14,6 +14,7 @@ import {createThenableApplicationClass} from "./common/application";
 import {createThenableEnvironmentClass} from "./common/environment";
 import {createThenableRegionClass} from "./common/region";
 import {LegacyApi} from "./legacy-api.interface";
+import {applyBrowserOptions, SeleniumProperties} from "./selenium-config";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
