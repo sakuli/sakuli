@@ -3,6 +3,7 @@ import {TestSuiteContext} from "./test-suite-context.class";
 import {TestCaseContext} from "./test-case-context.class";
 import {TestStepContext} from "./test-step-context.class";
 import {TestActionContext} from "./test-action-context.class";
+import {FinishedMeasurable} from "./measureable.interface";
 
 export const START_EXECUTION = 'START_EXECUTION';
 export const END_EXECUTION = 'END_EXECUTION';
@@ -38,6 +39,10 @@ export type TestExecutionContextEventTypes =
 type TestExecutionContextEntityEventListener<T extends TestContextEntity> = (e: T) => void;
 
 export type TestSuiteChangeListener = TestExecutionContextEntityEventListener<TestSuiteContext>;
+export type TestSuiteEndListener = TestExecutionContextEntityEventListener<TestSuiteContext & FinishedMeasurable>;
 export type TestCaseChangeListener = TestExecutionContextEntityEventListener<TestCaseContext>;
+export type TestCaseEndListener = TestExecutionContextEntityEventListener<TestCaseContext & FinishedMeasurable>;
 export type TestStepChangeListener = TestExecutionContextEntityEventListener<TestStepContext>;
+export type TestStepEndListener = TestExecutionContextEntityEventListener<TestStepContext & FinishedMeasurable>;
 export type TestActionChangeListener = TestExecutionContextEntityEventListener<TestActionContext>;
+export type TestActionEndListener = TestExecutionContextEntityEventListener<TestActionContext & FinishedMeasurable>;

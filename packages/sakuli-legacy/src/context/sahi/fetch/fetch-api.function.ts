@@ -7,14 +7,13 @@ import {isChildOf} from "../helper/is-child-of.function";
 import {Vector2} from "../relations/vector2.type";
 import {isEqual} from "../helper/is-equal.function";
 import {multipleElementApi} from "./multiple-element-api.function";
-
-export type FetchApi = ReturnType<typeof fetchApi>;
+import {FetchApi} from "./fetch-api.interface";
 
 export function fetchApi(
     driver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
-) {
+): FetchApi {
 
     async function _getValue(query: SahiElementQueryOrWebElement) {
         const e = await accessorUtil.fetchElement(query);
@@ -128,7 +127,7 @@ export function fetchApi(
     }
 
     async function _getSelectionText() {
-        return driver.executeAsyncScript(stripIndent`            
+        return driver.executeAsyncScript<string>(stripIndent`            
             var done = arguments[arguments.length -1];
             let text = '';
             if (window.getSelection) {

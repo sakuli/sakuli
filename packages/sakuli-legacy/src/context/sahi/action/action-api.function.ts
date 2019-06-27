@@ -1,17 +1,13 @@
 import {AccessorUtil} from "../accessor";
-import {isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString} from "../sahi-element.interface";
 import {TestExecutionContext} from "@sakuli/core";
-import {error, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {stripIndents} from "common-tags";
-import {mouseActionApi} from "./mouse-actions-api.function";
-import {keyboardActionApi} from "./keyboard-actions.function";
-import {focusActionApi} from "./focus-actions.function";
+import {error, ThenableWebDriver} from "selenium-webdriver";
 import {alertActionApi} from "./alert-action.function";
-import {INJECT_SAKULI_HOOK} from "./inject.const";
-import {timeout} from "./poll-action.function";
+import {focusActionApi} from "./focus-action";
+import {mouseActionApi} from "./mouse-action";
+import {keyboardActionApi} from "./keyboard-action/keyboard-actions.function";
+import {ActionApi} from "./action-api.interface";
+import {commonActionsApi} from "./common-action";
 import StaleElementReferenceError = error.StaleElementReferenceError;
-
-type SahiExpression = (...locators: SahiElementQueryOrWebElement[]) => Promise<boolean>;
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -19,7 +15,7 @@ export function actionApi(
     webDriver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
-) {
+): ActionApi {
 
     function withRetries<T extends (...args: any[]) => Promise<any>>(
         retries: number,
@@ -59,8 +55,8 @@ export function actionApi(
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
-                const log =[`Finish action ${name}`];
-                if(ctx.getCurrentTestAction()) {
+                const log = [`Finish action ${name}`];
+                if (ctx.getCurrentTestAction()) {
                     log.push(`after ${(new Date().getTime() - ctx.getCurrentTestAction()!.startDate!.getTime()) / 1000}s`);
                 }
                 ctx.logger.info(log.join(' '));
@@ -70,88 +66,13 @@ export function actionApi(
         }) as T;
     }
 
-    async function _eval(source: string, ..._args: any[]) {
-        const args = await Promise.all(_args.map(arg => {
-            if (isSahiElementQuery(arg)) {
-                return accessorUtil.fetchElement(arg);
-            } else {
-                return Promise.resolve(arg)
-            }
-        }));
-        return await webDriver.executeAsyncScript(`
-            var __done__ = arguments[arguments.length - 1];
-            var result = (function(arguments) {          
-                ${source}
-            })(arguments)
-            __done__(result);
-        `, ...args);
-    }
-
-    async function _highlight(query: SahiElementQueryOrWebElement | WebElement, timeoutMs: number = 2000): Promise<void> {
-        const element = isSahiElementQuery(query)
-            ? await accessorUtil.fetchElement(query)
-            : query;
-        await element.getId();
-        const oldBorder = await webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[0].style.border;
-            arguments[0].style.border = '2px solid red'
-            return oldBorder;
-        `, element);
-        await _wait(timeoutMs);
-        await webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[1];
-            arguments[0].style.border = oldBorder
-        `, element, oldBorder);
-    }
-
-    async function _wait(millis: number, expression?: SahiExpression): Promise<void> {
-        if (!expression) {
-            return new Promise<void>((res) => {
-                setTimeout(() => res(), millis);
-            });
-        }
-        await timeout(200, millis, expression);
-    }
-
-    async function _navigateTo(target: string, forceReload: boolean = false, credentials?: { user: string, password: string }): Promise<any> {
-        const url = new URL(target);
-        if (credentials) {
-            url.username = credentials.user;
-            url.password = credentials.password;
-        }
-        await webDriver.manage().window().maximize();
-        await webDriver.get(url.href);
-        if (forceReload) {
-            await webDriver.navigate().refresh()
-        }
-        try {
-            await webDriver.executeScript(INJECT_SAKULI_HOOK);
-        } catch (e) {
-            // ignore
-        }
-    }
-
-    async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {
-        const e = await accessorUtil.fetchElement(query);
-        const tagName = await e.getTagName();
-        if (tagName.toLocaleLowerCase() !== 'iframe') {
-            if (isSahiElementQuery(query)) {
-                throw Error(`Query ${sahiQueryToString(query)} must find an iframe; got ${tagName} instead`);
-            } else {
-                throw Error(`WebElement must be an iframe; got ${tagName} instead`);
-            }
-        }
-        const defaultWindowHandle = await webDriver.getWindowHandle();
-        await webDriver.switchTo().frame(e);
-        await webDriver.executeScript(`            
-            document.body.innerHTML = arguments[0];
-        `, content);
-        await webDriver.switchTo().window(defaultWindowHandle);
-    }
-
     const {
-        _authenticate
-    } = alertActionApi(webDriver, accessorUtil, ctx);
+        _eval,
+        _highlight,
+        _navigateTo,
+        _rteWrite,
+        _wait
+    } = commonActionsApi(webDriver, accessorUtil, ctx);
 
     const {
         _blur,
@@ -208,7 +129,5 @@ export function actionApi(
         _navigateTo: runAsAction('navigateTo', _navigateTo),
         _rteWrite: runAsAction('rteWrite', _rteWrite),
         _eval: runAsAction('eval', _eval),
-
-        _authenticate: runAsAction('authenticate', _authenticate)
     })
 }

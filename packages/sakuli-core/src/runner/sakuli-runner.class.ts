@@ -18,7 +18,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     }
 
     /**
-     * Tears up all context providers, merges their results of getContext and pass this result to the testFile Executor
+     * Tears up all lifecycle-hooks, merges their results of getContext and pass this result to the testFile Executor
      * Tears down all service providers after execution of each testFile
      *
      * @param project The Project Structure found by a Project loader
