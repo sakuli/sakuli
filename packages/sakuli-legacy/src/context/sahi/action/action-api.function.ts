@@ -1,7 +1,6 @@
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
 import {error, ThenableWebDriver} from "selenium-webdriver";
-import {alertActionApi} from "./alert-action.function";
 import {focusActionApi} from "./focus-action";
 import {mouseActionApi} from "./mouse-action";
 import {keyboardActionApi} from "./keyboard-action/keyboard-actions.function";
