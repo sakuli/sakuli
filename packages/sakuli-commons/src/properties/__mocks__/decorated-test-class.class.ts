@@ -1,4 +1,5 @@
-import {Property} from "../decorator/properties.decorator";
+import {ListProperty, NumberProperty, Property} from "../decorator";
+import {Maybe} from "../../maybe";
 
 export class DecoratedTestClass {
     @Property('my.property.path')
@@ -8,8 +9,17 @@ export class DecoratedTestClass {
     @Property('property.alt')
     property2: string = '';
 
-    simpleProperty: string = ''
+    simpleProperty: string = '';
 
     @Property('never.read.this.prop')
-    neverMapped: string = 'default'
+    neverMapped: string = 'default';
+
+    @NumberProperty('read.as.number')
+    readAsNumber: number = 0;
+
+    @ListProperty('my.little.list')
+    myLittleList: Maybe<string[]>;
+
+    @ListProperty('my.real.list')
+    myRealList: Maybe<string[]>;
 }

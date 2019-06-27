@@ -13,6 +13,7 @@ import {MouseButton} from "./common/button.class";
 import {createThenableRegionClass} from "./common/thenable-sakuli-region.class";
 import {createThenableEnvironmentClass} from "./common/thenable-environment.class";
 import {createThenableApplicationClass} from "./common/thenable-application.class";
+import {applyBrowserOptions, SeleniumProperties} from "./selenium-config";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -39,13 +40,31 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     async onProject(project: Project) {
         //const props: LegacyProjectProperties = project.
         const properties = project.objectFactory(LegacyProjectProperties);
+        const seleniumProperties = project.objectFactory(SeleniumProperties);
         const browser: keyof typeof Capabilities = properties.testsuiteBrowser;
         const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
         const caps = capsProducer();
-        this.driver = this.builder
+
+        this.builder
             .forBrowser(browser)
-            .withCapabilities(caps)
-            .build();
+            .withCapabilities(caps);
+        ifPresent(seleniumProperties.alertBehaviour, prop => {
+            this.builder.setAlertBehavior(prop);
+        });
+        ifPresent(seleniumProperties.loggingPrefs, prop => {
+            this.builder.setLoggingPrefs(prop)
+        });
+        ifPresent(seleniumProperties.proxy, prop => {
+            this.builder.setProxy(prop)
+        });
+        ifPresent(seleniumProperties.httpAgent, prop => {
+            this.builder.usingHttpAgent(prop)
+        });
+        ifPresent(seleniumProperties.server, prop => {
+            this.builder.usingServer(prop);
+        });
+        applyBrowserOptions(browser, project, this.builder);
+        this.driver = this.builder.build();
     }
 
     async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
@@ -58,13 +77,13 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     async afterExecution(project: Project, testExecutionContext: TestExecutionContext) {
         testExecutionContext.endTestSuite();
-        ifPresent(this.driver, async driver => {
+        await ifPresent(this.driver, async driver => {
             try {
                 await driver.quit()
             } catch (e) {
                 console.warn(`Webdriver doesn't quit reliably`, e);
             }
-        });
+        }, () => Promise.resolve());
     }
 
     private currentFile: string = '';
