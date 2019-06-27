@@ -50,7 +50,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
-        const id = project.rootDir.split(sep).pop();
+        const properties = project.objectFactory(LegacyProjectProperties);
+        const id = properties.testsuiteId
+            ? properties.testsuiteId
+            : project.rootDir.split(sep).pop();
         testExecutionContext.startTestSuite({id})
     }
 

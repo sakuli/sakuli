@@ -26,11 +26,11 @@ import {
     START_TESTCASE,
     START_TESTSTEP,
     START_TESTSUITE,
-    TestActionChangeListener,
-    TestCaseChangeListener,
+    TestActionChangeListener, TestActionEndListener,
+    TestCaseChangeListener, TestCaseEndListener,
     TestExecutionContextEventTypes,
-    TestStepChangeListener,
-    TestSuiteChangeListener,
+    TestStepChangeListener, TestStepEndListener,
+    TestSuiteChangeListener, TestSuiteEndListener,
     UPDATE_TESTACTION,
     UPDATE_TESTCASE,
     UPDATE_TESTSTEP,
@@ -60,16 +60,16 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
     on(e: typeof END_EXECUTION, cb: (e: TestExecutionContext) => void): this;
     on(e: typeof START_TESTSUITE, cb: TestSuiteChangeListener): this;
     on(e: typeof UPDATE_TESTSUITE, cb: TestSuiteChangeListener): this;
-    on(e: typeof END_TESTSUITE, cb: TestSuiteChangeListener): this;
+    on(e: typeof END_TESTSUITE, cb: TestSuiteEndListener): this;
     on(e: typeof START_TESTCASE, cb: TestCaseChangeListener): this;
     on(e: typeof UPDATE_TESTCASE, cb: TestCaseChangeListener): this;
-    on(e: typeof END_TESTCASE, cb: TestCaseChangeListener): this;
+    on(e: typeof END_TESTCASE, cb: TestCaseEndListener): this;
     on(e: typeof START_TESTSTEP, cb: TestStepChangeListener): this;
     on(e: typeof UPDATE_TESTSTEP, cb: TestStepChangeListener): this;
-    on(e: typeof END_TESTSTEP, cb: TestStepChangeListener): this;
+    on(e: typeof END_TESTSTEP, cb: TestStepEndListener): this;
     on(e: typeof START_TESTACTION, cb: TestActionChangeListener): this;
     on(e: typeof UPDATE_TESTACTION, cb: TestActionChangeListener): this;
-    on(e: typeof END_TESTACTION, cb: TestActionChangeListener): this;
+    on(e: typeof END_TESTACTION, cb: TestActionEndListener): this;
     on(e: 'change', cb: (e: TestExecutionContext) => void): this;
     on(type: TestExecutionContextEventTypes | 'change', listener: (...args: any[]) => void): this {
         super.on(type, listener);
@@ -158,12 +158,11 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
             this.getCurrentTestSuite(),
             Error('There is no current Testsuite to update. Please ensure that you already called TestExecutionContext::startTestSuite()')
         );
-        const updatedTestSuite = this.testSuites[this.testSuites.length - 1] = Object.assign(
+        return this.testSuites[this.testSuites.length - 1] = Object.assign(
             (new TestSuiteContext),
             current,
             testSuite
         );
-        return updatedTestSuite;
     }
 
     endTestSuite() {
