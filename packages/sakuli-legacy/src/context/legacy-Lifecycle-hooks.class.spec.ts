@@ -7,7 +7,7 @@ import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import Mock = jest.Mock;
 import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
 
-describe(LegacyLifecycleHooks.name, () => {
+describe("LegacyLifecycleHooks", () => {
 
     const driver: ThenableWebDriver = mockPartial<ThenableWebDriver>({
         quit: jest.fn()
@@ -24,6 +24,10 @@ describe(LegacyLifecycleHooks.name, () => {
     const builder: Builder = mockPartial<Builder>({
         forBrowser: jest.fn(() => builder),
         withCapabilities: jest.fn(() => builder),
+        setChromeOptions: jest.fn(() => builder),
+        setSafari: jest.fn(() => builder),
+        setIeOptions: jest.fn(() => builder),
+        setFirefoxOptions: jest.fn(() => builder),
         build: jest.fn(() => driver)
     });
 
