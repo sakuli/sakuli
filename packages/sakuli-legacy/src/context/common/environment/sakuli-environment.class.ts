@@ -67,7 +67,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async getRegionFromFocusedWindow(): Promise<Region> {
             return runAsAction(ctx, "getRegionFromFocusedWindow", async () => {
                 ctx.logger.warn(`Unable to determine region of focused window, falling back to screen`);
-                const RegionImpl = createRegionClass(ctx);
+                const RegionImpl = createRegionClass(ctx, project);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }

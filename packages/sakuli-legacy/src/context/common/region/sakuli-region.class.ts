@@ -3,13 +3,14 @@ import {Key} from "../key.class";
 import {MouseApi} from "../actions/mouse.function";
 import {KeyboardApi} from "../actions/keyboard.function";
 import {ScreenApi} from "../actions/screen.function";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 
 import nutConfig from "../nut-global-config.class";
 import {existsSync} from "fs";
 import {join} from "path";
 import {Region} from "./region.interface";
 import {runAsAction} from "../actions/action.function";
+import {getEncryptionKey} from "../secrets.function";
 
 const determineResourcePath = (imageName: string) => {
     for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {
@@ -21,7 +22,7 @@ const determineResourcePath = (imageName: string) => {
     throw new Error(`Failed to locate ${imageName} in directories [${nutConfig.imagePaths}]`);
 };
 
-export function createRegionClass(ctx: TestExecutionContext) {
+export function createRegionClass(ctx: TestExecutionContext, project: Project) {
     return class SakuliRegion implements Region {
         constructor(public _left?: number, public _top?: number, public _width?: number, public _height?: number) {
         }
@@ -160,7 +161,8 @@ export function createRegionClass(ctx: TestExecutionContext) {
         public async pasteAndDecrypt(text: string): Promise<Region> {
             return runAsAction(ctx, "pasteAndDecrypt", async () => {
                 ctx.logger.debug(`Pasting encrypted text '${text}' via native clipboard`);
-                await KeyboardApi.pasteAndDecrypt(text);
+                const key = getEncryptionKey(project);
+                await KeyboardApi.pasteAndDecrypt(key, text);
                 return this;
             })();
         }
@@ -184,7 +186,8 @@ export function createRegionClass(ctx: TestExecutionContext) {
         public async typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Region> {
             return runAsAction(ctx, "typeAndDecrypt", async () => {
                 ctx.logger.debug(`Typing encrypted text '${text}' via native keyboard`);
-                await KeyboardApi.typeAndDecrypt(text, ...optModifiers);
+                const key = getEncryptionKey(project);
+                await KeyboardApi.typeAndDecrypt(key, text, ...optModifiers);
                 return this;
             })();
         }
