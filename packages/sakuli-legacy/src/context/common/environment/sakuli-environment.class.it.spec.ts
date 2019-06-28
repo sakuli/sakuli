@@ -1,4 +1,4 @@
-import {ENCRYPTION_KEY_VARIABLE} from "../secrets.function";
+import {MASTERKEY_ENV_KEY} from "../secrets.function";
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {SimpleLogger} from "@sakuli/commons";
 import {Project, TestExecutionContext} from "@sakuli/core";
@@ -208,7 +208,7 @@ describe("type", () => {
         // WHEN
 
         // THEN
-        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`'${ENCRYPTION_KEY_VARIABLE}' is empty. Missing master key for secrets.`);
+        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`'${MASTERKEY_ENV_KEY}' is empty. Missing master key for secrets.`);
     });
 
     it("should type via keyboard", async () => {
@@ -232,7 +232,7 @@ describe("type", () => {
         const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
         prepareContext(ctx);
         const SUT = new EnvironmentImpl();
-        process.env[ENCRYPTION_KEY_VARIABLE] = "C9HikSYQW/K+ZvRphxEuSw==";
+        process.env[MASTERKEY_ENV_KEY] = "C9HikSYQW/K+ZvRphxEuSw==";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
         // WHEN
@@ -248,7 +248,7 @@ describe("type", () => {
         const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
         prepareContext(ctx);
         const SUT = new EnvironmentImpl();
-        process.env[ENCRYPTION_KEY_VARIABLE] = "foo";
+        process.env[MASTERKEY_ENV_KEY] = "foo";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
         // WHEN
