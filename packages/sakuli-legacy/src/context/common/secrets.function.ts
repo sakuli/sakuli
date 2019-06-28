@@ -7,9 +7,9 @@ export const MASTERKEY_CLI_KEY = "masterkey";
 export const MASTERKEY_PROPERTY_KEY = "sakuli.encryption.key";
 
 export const getEncryptionKey = (project: Project) => {
-    const key = project.get(MASTERKEY_ENV_KEY);
+    const key = project.get(MASTERKEY_CLI_KEY) || project.get(MASTERKEY_PROPERTY_KEY) || project.get(MASTERKEY_ENV_KEY);
     if (!key) {
-        throw new Error(`'${MASTERKEY_ENV_KEY}' is empty. Missing master key for secrets.`);
+        throw new Error(`Masterkey could not be found in one of '--masterkey' CLI option, 'sakuli.encryption.key' property or '${MASTERKEY_ENV_KEY}' env var. Missing master key for secrets.`);
     }
     return key;
 };
