@@ -7,16 +7,18 @@ import {ENCRYPTION_KEY_VARIABLE} from "../context/common/secrets.function";
 export const encryptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
         command: 'encrypt [secret]',
-        describe: `Encrypts a secret using $${ENCRYPTION_KEY_VARIABLE}`,
+        describe: `Encrypts a secret via provided masterkey`,
         builder(argv: Argv) {
             return argv.positional('secret', {
                 describe: 'The secret to encrypt'
+            }).option('masterkey', {
+                describe: 'The masterkey used for encryption'
             }).demandOption('secret');
         },
         async handler(opts: any) {
-            const key = process.env[ENCRYPTION_KEY_VARIABLE];
+            const key = opts.masterkey || process.env[ENCRYPTION_KEY_VARIABLE];
             if (!key) {
-                console.log(chalk`{red.bold Missing master key.} Please export a master key to $${ENCRYPTION_KEY_VARIABLE}`);
+                console.log(chalk`{red.bold Missing master key.} Please export a master key to $${ENCRYPTION_KEY_VARIABLE} or provide it via --masterkey option`);
                 process.exit(-1)
             }
             try {
