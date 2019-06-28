@@ -1,4 +1,4 @@
-import {MASTERKEY_ENV_KEY} from "../secrets.function";
+import {MASTERKEY_CLI_KEY, MASTERKEY_ENV_KEY, MASTERKEY_PROPERTY_KEY} from "../secrets.function";
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {SimpleLogger} from "@sakuli/commons";
 import {Project, TestExecutionContext} from "@sakuli/core";
@@ -196,7 +196,30 @@ describe("getProperty", () => {
 });
 
 describe("type", () => {
-    it("should throw when no encryption key is set via env var", async () => {
+    it.each([
+        [MASTERKEY_ENV_KEY],
+        [MASTERKEY_CLI_KEY],
+        [MASTERKEY_PROPERTY_KEY],
+    ])("should decrypt using key from %s", async (source: string) => {
+        // GIVEN
+        jest.setTimeout(10_000);
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const mockProject = mockPartial<Project>({
+            get: (param: string) => (param === source) ? "C9HikSYQW/K+ZvRphxEuSw==" : null,
+        });
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
+        const SUT = new EnvironmentImpl();
+        const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
+
+        // WHEN
+        const result = await SUT.decryptSecret(input);
+        console.log(result);
+
+        // THEN
+    });
+
+    it("should throw when no encryption key is set", async () => {
         // GIVEN
         jest.setTimeout(10_000);
         const ctx = new TestExecutionContext(new SimpleLogger());
@@ -229,10 +252,12 @@ describe("type", () => {
         // GIVEN
         jest.setTimeout(10_000);
         const ctx = new TestExecutionContext(new SimpleLogger());
+        const mockProject = mockPartial<Project>({
+            get: (param: string) => (param === MASTERKEY_ENV_KEY) ? "C9HikSYQW/K+ZvRphxEuSw==" : null,
+        });
         const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
         prepareContext(ctx);
         const SUT = new EnvironmentImpl();
-        process.env[MASTERKEY_ENV_KEY] = "C9HikSYQW/K+ZvRphxEuSw==";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
         // WHEN
@@ -245,10 +270,12 @@ describe("type", () => {
         // GIVEN
         jest.setTimeout(10_000);
         const ctx = new TestExecutionContext(new SimpleLogger());
+        const mockProject = mockPartial<Project>({
+            get: (param: string) => (param === MASTERKEY_ENV_KEY) ? "foo" : null,
+        });
         const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
         prepareContext(ctx);
         const SUT = new EnvironmentImpl();
-        process.env[MASTERKEY_ENV_KEY] = "foo";
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
         // WHEN
