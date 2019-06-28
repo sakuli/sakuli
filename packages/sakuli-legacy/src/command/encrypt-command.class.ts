@@ -2,7 +2,7 @@ import {CommandModuleProvider} from "@sakuli/core";
 import chalk from "chalk";
 import {Argv, CommandModule} from "yargs";
 import {secret} from "@nut-tree/secrets";
-import {ENCRYPTION_KEY_VARIABLE} from "../context/common/secrets.function";
+import {MASTERKEY_ENV_KEY} from "../context/common/secrets.function";
 
 export const encryptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
@@ -16,9 +16,9 @@ export const encryptCommand: CommandModuleProvider = (): CommandModule => {
             }).demandOption('secret');
         },
         async handler(opts: any) {
-            const key = opts.masterkey || process.env[ENCRYPTION_KEY_VARIABLE];
+            const key = opts.masterkey || process.env[MASTERKEY_ENV_KEY];
             if (!key) {
-                console.log(chalk`{red.bold Missing master key.} Please export a master key to $${ENCRYPTION_KEY_VARIABLE} or provide it via --masterkey option`);
+                console.log(chalk`{red.bold Missing master key.} Please export a master key to $${MASTERKEY_ENV_KEY} or provide it via --masterkey option`);
                 process.exit(-1)
             }
             try {

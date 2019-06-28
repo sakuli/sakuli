@@ -1,12 +1,14 @@
 import {secret} from "@nut-tree/secrets";
 import {EncryptionError} from "./exceptions/encryptionerror.class";
 
-export const ENCRYPTION_KEY_VARIABLE = "SAKULI_ENCRYPTION_KEY";
+export const MASTERKEY_ENV_KEY = "SAKULI_ENCRYPTION_KEY";
+export const MASTERKEY_CLI_KEY = "masterkey";
+export const MASTERKEY_PROPERTY_KEY = "sakuli.encryption.key";
 
 const getKeyFromEnvironment = () => {
-    const key = process.env[ENCRYPTION_KEY_VARIABLE];
+    const key = process.env[MASTERKEY_ENV_KEY];
     if (!key) {
-        throw new Error(`'${ENCRYPTION_KEY_VARIABLE}' is empty. Missing master key for secrets.`);
+        throw new Error(`'${MASTERKEY_ENV_KEY}' is empty. Missing master key for secrets.`);
     }
     return key;
 };
