@@ -249,7 +249,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public getEnv(key: string): string | null {
             return runAsAction(ctx, "getEnv", () => {
                 ctx.logger.debug(`Accessing environment variable '${key}'`);
-                return process.env[key] || null;
+                return project.get(key);
             })();
         }
 

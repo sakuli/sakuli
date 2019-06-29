@@ -1,13 +1,19 @@
 import {MASTERKEY_CLI_KEY, MASTERKEY_ENV_KEY, MASTERKEY_PROPERTY_KEY} from "../secrets.function";
 import {createEnvironmentClass} from "./sakuli-environment.class";
-import {SimpleLogger} from "@sakuli/commons";
+import {PropertyMap, SimpleLogger} from "@sakuli/commons";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {mockPartial} from "sneer";
 import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
-const mockProject = mockPartial<Project>({
-    get: (param: string) => (param === "foo") ? "bar" : null,
-});
+async function createMockProject(keyProperties: Map<string, string> = new Map()) {
+    const p = new Project("");
+    await p.installPropertySource({
+        createPropertyMap(): Promise<PropertyMap> {
+            return Promise.resolve(keyProperties);
+        }
+    });
+    return p;
+}
+
 
 describe("Similarity ", () => {
     const ctx = new TestExecutionContext(new SimpleLogger());
@@ -18,7 +24,7 @@ describe("Similarity ", () => {
 
     it("should have a default value of 0.99", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -30,7 +36,7 @@ describe("Similarity ", () => {
 
     it("should not update for value <= 0", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -43,7 +49,7 @@ describe("Similarity ", () => {
 
     it("should not update for value == 0", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -56,7 +62,7 @@ describe("Similarity ", () => {
 
     it("should not update for values > 1", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -69,7 +75,7 @@ describe("Similarity ", () => {
 
     it("should reset to its default value", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const expectedResult = 0.99;
 
@@ -92,7 +98,7 @@ describe("sleep", () => {
 
     it("should pause execution for a given delay in seconds", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const pauseInSeconds = 1;
         const expectedPauseInMilliseconds = 1000;
@@ -108,7 +114,7 @@ describe("sleep", () => {
 
     it("should pause execution for a given delay in ms", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const expectedPause = 200;
         const start = Date.now();
@@ -132,10 +138,13 @@ describe("getEnv", () => {
 
     it("should return an existing variables value", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
-        const SUT = new EnvironmentImpl();
         const variableKey = "sakuliEnvVar";
         const variableValue = "Hi from Sakuli!";
+        const envProperties = new Map([
+            [variableKey, variableValue],
+        ]);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject(envProperties));
+        const SUT = new EnvironmentImpl();
         process.env[variableKey] = variableValue;
 
         // WHEN
@@ -147,7 +156,7 @@ describe("getEnv", () => {
 
     it("should return undefined for unknown variables", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const variableKey = "unknownVar";
 
@@ -169,10 +178,13 @@ describe("getProperty", () => {
 
     it("should return an existing variables value", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
-        const SUT = new EnvironmentImpl();
         const variableKey = "foo";
         const variableValue = "bar";
+        const properties = new Map([
+            [variableKey, variableValue],
+        ]);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject(properties));
+        const SUT = new EnvironmentImpl();
 
         // WHEN
         const result = await SUT.getProperty(variableKey);
@@ -181,9 +193,9 @@ describe("getProperty", () => {
         expect(result).toBe(variableValue);
     });
 
-    it("should return undefined for unknown variables", async () => {
+    it("should return null for unknown variables", async () => {
         // GIVEN
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
         const variableKey = "unknownVar";
 
@@ -204,30 +216,34 @@ describe("type", () => {
     });
 
     it.each([
-        [MASTERKEY_ENV_KEY],
         [MASTERKEY_CLI_KEY],
         [MASTERKEY_PROPERTY_KEY],
+        [MASTERKEY_ENV_KEY],
     ])("should decrypt using key from %s", async (source: string) => {
         // GIVEN
         jest.setTimeout(10_000);
-        const mockProject = mockPartial<Project>({
-            get: (param: string) => (param === source) ? "C9HikSYQW/K+ZvRphxEuSw==" : null,
-        });
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const keyProperties = new Map([
+            [source, "C9HikSYQW/K+ZvRphxEuSw=="],
+        ]);
+        const p = await createMockProject(keyProperties);
+        const EnvironmentImpl = createEnvironmentClass(ctx, p);
         const SUT = new EnvironmentImpl();
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
+        const expected = "Can you keep a secret?";
 
         // WHEN
         const result = await SUT.decryptSecret(input);
-        console.log(result);
 
         // THEN
+        expect(result).toEqual(expected);
     });
 
     it("should throw when no encryption key is set", async () => {
         // GIVEN
         jest.setTimeout(10_000);
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const keyProperties = new Map<string, string>();
+        const p = await createMockProject(keyProperties);
+        const EnvironmentImpl = createEnvironmentClass(ctx, p);
         const SUT = new EnvironmentImpl();
         const input = "LAe8iDYgAcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
         const expected = "Masterkey could not be found in one of '--masterkey' CLI option, 'sakuli.encryption.key' property or 'SAKULI_ENCRYPTION_KEY' env var. Missing master key for secrets.";
@@ -241,7 +257,7 @@ describe("type", () => {
     it("should type via keyboard", async () => {
         // GIVEN
         jest.setTimeout(10_000);
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const EnvironmentImpl = createEnvironmentClass(ctx, await createMockProject());
         const SUT = new EnvironmentImpl();
 
         // WHEN
@@ -250,13 +266,18 @@ describe("type", () => {
         await expect(SUT.type("Hello from Sakuli!")).resolves.not.toThrow();
     });
 
-    it("should decrypt and type via keyboard", async () => {
+    it.each([
+        [MASTERKEY_CLI_KEY],
+        [MASTERKEY_PROPERTY_KEY],
+        [MASTERKEY_ENV_KEY],
+    ])("should decrypt key from %s and type via keyboard", async (source: string) => {
         // GIVEN
         jest.setTimeout(10_000);
-        const mockProject = mockPartial<Project>({
-            get: (param: string) => (param === MASTERKEY_ENV_KEY) ? "C9HikSYQW/K+ZvRphxEuSw==" : null,
-        });
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const keyProperties = new Map([
+            [source, "C9HikSYQW/K+ZvRphxEuSw=="],
+        ]);
+        const p = await createMockProject(keyProperties);
+        const EnvironmentImpl = createEnvironmentClass(ctx, p);
         const SUT = new EnvironmentImpl();
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
@@ -266,13 +287,18 @@ describe("type", () => {
         await expect(SUT.typeAndDecrypt(input)).resolves.not.toThrow();
     });
 
-    it("should throw when key with invalid length is provided", async () => {
+    it.each([
+        [MASTERKEY_CLI_KEY],
+        [MASTERKEY_PROPERTY_KEY],
+        [MASTERKEY_ENV_KEY],
+    ])("should throw when key with invalid length is provided from %s", async (source: string) => {
         // GIVEN
         jest.setTimeout(10_000);
-        const mockProject = mockPartial<Project>({
-            get: (param: string) => (param === MASTERKEY_ENV_KEY) ? "foo" : null,
-        });
-        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        const keyProperties = new Map([
+            [source, "foo"],
+        ]);
+        const p = await createMockProject(keyProperties);
+        const EnvironmentImpl = createEnvironmentClass(ctx, p);
         const SUT = new EnvironmentImpl();
         const input = "LAe8iDYgcIu/TUFaRSeJibKRE7L0gV2Bd8QC976qRqgSQ+cvPoXG/dU+6aS5+tXC";
 
