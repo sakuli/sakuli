@@ -1,13 +1,26 @@
 import {secret} from "@nut-tree/secrets";
 import {EncryptionError} from "./exceptions/encryptionerror.class";
 import {Project} from "@sakuli/core";
+import {Maybe, Property} from "@sakuli/commons";
 
 export const MASTERKEY_ENV_KEY = "SAKULI_ENCRYPTION_KEY";
 export const MASTERKEY_CLI_KEY = "masterkey";
 export const MASTERKEY_PROPERTY_KEY = "sakuli.encryption.key";
 
+class MasterKeyProps {
+    @Property(MASTERKEY_ENV_KEY)
+    environmentKey: Maybe<string>;
+
+    @Property(MASTERKEY_CLI_KEY)
+    cliKey: Maybe<string>;
+
+    @Property(MASTERKEY_PROPERTY_KEY)
+    propsKey: Maybe<string>
+}
+
 export const getEncryptionKey = (project: Project) => {
-    const key = project.get(MASTERKEY_CLI_KEY) || project.get(MASTERKEY_PROPERTY_KEY) || project.get(MASTERKEY_ENV_KEY);
+    const keyProps = project.objectFactory(MasterKeyProps);
+    const key = keyProps.cliKey || keyProps.propsKey || keyProps.environmentKey;
     if (!key) {
         throw new Error(`Masterkey could not be found in one of '--masterkey' CLI option, 'sakuli.encryption.key' property or '${MASTERKEY_ENV_KEY}' env var. Missing master key for secrets.`);
     }
