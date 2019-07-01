@@ -10,12 +10,14 @@ export type AccessorFunctions = Exclude<keyof AccessorApi, "_activeElement" | "_
 
 export function accessorApi(): AccessorApi {
 
-    function createAccessorFunction(css: string): AccessorFunction {
+    function createAccessorFunction(...css: string[]): AccessorFunction {
         return (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-            let extendedLocator = By.css(css);
-            if(isAccessorIdentifierAttributesWithClassName(identifier)) {
-                extendedLocator = By.css(`${css}.${identifier.className.split(" ").join(".")}`)
-            }
+            let extendedLocator = isAccessorIdentifierAttributesWithClassName(identifier)
+                ? By.css(css
+                    .map(css => `${css}.${identifier.className.split(" ").join(".")}`)
+                    .join(', ')
+                )
+                : By.css(css.join(', '));
             return ({
                 locator: extendedLocator,
                 identifier,
@@ -61,7 +63,7 @@ export function accessorApi(): AccessorApi {
             })
         },
         _password: createAccessorFunction('input[type="password"]'),
-        _textbox: createAccessorFunction('input[type="text"]'),
+        _textbox: createAccessorFunction('input[type="text"]', 'input:not([type])'),
         _hidden: createAccessorFunction('input[type="hidden"]'),
         _datebox: createAccessorFunction('input[type="date"]'),
         _datetimebox: createAccessorFunction('input[type="datetime"]'),

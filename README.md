@@ -1,7 +1,6 @@
 # Sakuli2
 
 [![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=master)](https://travis-ci.com/sakuli/sakuli) 
-[![Greenkeeper badge](https://badges.greenkeeper.io/sakuli/sakuli.svg)](https://greenkeeper.io/)
 [![Coverage Status](https://coveralls.io/repos/github/sakuli/sakuli/badge.svg?branch=master)](https://coveralls.io/github/sakuli/sakuli?branch=master)
 [![SonarCloud Alert Status](https://sonarcloud.io/api/project_badges/measure?project=sakuli:sakuli&metric=alert_status)](https://sonarcloud.io/organizations/sakuli/projects)
 

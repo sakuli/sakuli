@@ -1,21 +1,24 @@
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {SimpleLogger} from "@sakuli/commons";
 import {createApplicationClass} from "./sakuli-application.class";
-
-const prepareContext = (ctx: TestExecutionContext) => {
-    ctx.startExecution();
-    ctx.startTestSuite();
-    ctx.startTestCase();
-    ctx.startTestStep();
-};
+import {Application} from "./application.interface";
+import {mockPartial} from "sneer";
+import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
 describe("Application", () => {
+
+    const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
+    const mockProject = mockPartial<Project>({});
+    let ctx: TestExecutionContext;
+
+    beforeEach(() => {
+        ctx = new TestExecutionContext(new SimpleLogger());
+        prepareContext(ctx);
+    });
+
     it("should open calculator", async () => {
         // GIVEN
-        const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-        const ctx = new TestExecutionContext(new SimpleLogger());
-        const ApplicationImpl = createApplicationClass(ctx);
-        prepareContext(ctx);
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
         const SUT = new ApplicationImpl(application);
 
         // WHEN
@@ -27,10 +30,7 @@ describe("Application", () => {
 
     it("should open calculator with a startup delay", async () => {
         // GIVEN
-        const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-        const ctx = new TestExecutionContext(new SimpleLogger());
-        const ApplicationImpl = createApplicationClass(ctx);
-        prepareContext(ctx);
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
         const SUT = new ApplicationImpl(application);
         const startupDelay = 3;
         SUT.setSleepTime(startupDelay);
@@ -47,10 +47,7 @@ describe("Application", () => {
 
     it("should return correct application name", async () => {
         // GIVEN
-        const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-        const ctx = new TestExecutionContext(new SimpleLogger());
-        const ApplicationImpl = createApplicationClass(ctx);
-        prepareContext(ctx);
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
         const SUT = new ApplicationImpl(application);
 
         // WHEN
