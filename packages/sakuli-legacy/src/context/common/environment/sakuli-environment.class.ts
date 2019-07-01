@@ -1,6 +1,6 @@
 import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
-import {decryptSecret} from "../secrets.function";
+import {decrypt, getEncryptionKey} from "../secrets.function";
 import {ClipboardApi} from "../actions/clipboard.function";
 import {KeyboardApi} from "../actions/keyboard.function";
 import {Project, TestExecutionContext} from "@sakuli/core";
@@ -67,7 +67,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async getRegionFromFocusedWindow(): Promise<Region> {
             return runAsAction(ctx, "getRegionFromFocusedWindow", async () => {
                 ctx.logger.warn(`Unable to determine region of focused window, falling back to screen`);
-                const RegionImpl = createRegionClass(ctx);
+                const RegionImpl = createRegionClass(ctx, project);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }
@@ -128,7 +128,8 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async pasteAndDecrypt(text: string): Promise<Environment> {
             return runAsAction(ctx, "pasteAndDecrypt", async () => {
                 ctx.logger.debug(`Pasting encrypted text '${text}' via native clipboard`);
-                await KeyboardApi.pasteAndDecrypt(text);
+                const key = getEncryptionKey(project);
+                await KeyboardApi.pasteAndDecrypt(key, text);
                 return this;
             })();
         }
@@ -152,7 +153,8 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Environment> {
             return runAsAction(ctx, "typeAndDecrypt", async () => {
                 ctx.logger.debug(`Typing encrypted text ${text}`);
-                await KeyboardApi.typeAndDecrypt(text, ...optModifiers);
+                const key = getEncryptionKey(project);
+                await KeyboardApi.typeAndDecrypt(key, text, ...optModifiers);
                 return this;
             })();
         }
@@ -160,7 +162,8 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public decryptSecret(secret: string): Promise<string> {
             return runAsAction(ctx, "decryptSecret", async () => {
                 ctx.logger.debug(`Decrypting secret '${secret}'`);
-                return await decryptSecret(secret);
+                const key = getEncryptionKey(project);
+                return await decrypt(key, secret);
             })();
         }
 
@@ -246,7 +249,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public getEnv(key: string): string | null {
             return runAsAction(ctx, "getEnv", () => {
                 ctx.logger.debug(`Accessing environment variable '${key}'`);
-                return process.env[key] || null;
+                return project.get(key);
             })();
         }
 

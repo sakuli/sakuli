@@ -1,5 +1,5 @@
 import {Application} from "./application.interface";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {ChildProcess, exec, spawn} from "child_process";
 import {runAsAction} from "../actions/action.function";
 import {createRegionClass, Region} from "../region";
@@ -14,8 +14,8 @@ const killProcess = (pid: number) => {
     }
 };
 
-export function createApplicationClass(ctx: TestExecutionContext): Type<Application> {
-    const RegionImpl = createRegionClass(ctx);
+export function createApplicationClass(ctx: TestExecutionContext, project: Project): Type<Application> {
+    const RegionImpl = createRegionClass(ctx, project);
     return class SakuliApplication implements Application {
         public sleepTime = 0;
         public process?: ChildProcess;
