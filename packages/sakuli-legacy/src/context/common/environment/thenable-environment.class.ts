@@ -9,7 +9,7 @@ import {Type} from "@sakuli/commons";
 
 export function createThenableEnvironmentClass(ctx: TestExecutionContext, project: Project): Type<ThenableEnvironment> {
     const Environment = createEnvironmentClass(ctx, project);
-    const ThenableRegionClass = createThenableRegionClass(ctx);
+    const ThenableRegionClass = createThenableRegionClass(ctx, project);
     return class ThenableSakuliEnvironment {
 
         constructor(

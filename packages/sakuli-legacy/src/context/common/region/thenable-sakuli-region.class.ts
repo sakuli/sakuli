@@ -5,10 +5,11 @@ import {Key} from "../key.class";
 import {MouseButton} from "../button.class";
 import {ThenableRegion} from "./thenable-region.interface";
 import {Type} from "@sakuli/commons";
+import {Project} from "@sakuli/core";
 
 
-export function createThenableRegionClass(ctx: TestExecutionContext): Type<ThenableRegion> {
-    const SakuliRegion = createRegionClass(ctx);
+export function createThenableRegionClass(ctx: TestExecutionContext, project: Project): Type<ThenableRegion> {
+    const SakuliRegion = createRegionClass(ctx, project);
     return class ThenableSakuliRegion implements ThenableRegion {
 
         constructor(

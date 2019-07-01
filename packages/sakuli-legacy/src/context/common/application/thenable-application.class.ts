@@ -1,13 +1,13 @@
 import {createApplicationClass} from "./sakuli-application.class";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {Application} from "./application.interface";
 import {createThenableRegionClass} from "../region";
 import {ThenableApplication} from "./thenable-application.interface";
 import {Type} from "@sakuli/commons";
 
-export function createThenableApplicationClass(ctx: TestExecutionContext): Type<ThenableApplication> {
-    const Application = createApplicationClass(ctx);
-    const ThenableRegion = createThenableRegionClass(ctx);
+export function createThenableApplicationClass(ctx: TestExecutionContext, project: Project): Type<ThenableApplication> {
+    const Application = createApplicationClass(ctx, project);
+    const ThenableRegion = createThenableRegionClass(ctx, project);
     return class ThenableSakuliApplication {
         constructor(
             readonly name: string,

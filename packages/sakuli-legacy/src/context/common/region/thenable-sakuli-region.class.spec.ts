@@ -1,19 +1,20 @@
 import {createThenableRegionClass, ThenableRegion} from "../region";
 import {createTestExecutionContextMock} from "../../sahi/__mocks__";
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {Region} from "./region.interface";
 import {mockPartial} from "sneer";
 import {Type} from "@sakuli/commons";
 
 describe('ThenableRegion', () => {
 
+    const projectMock = mockPartial<Project>({});
     let ctx: TestExecutionContext;
     let ThenableRegion: Type<ThenableRegion>;
     let regionMock: Region;
 
     beforeEach(() => {
         ctx = createTestExecutionContextMock();
-        ThenableRegion = createThenableRegionClass(ctx);
+        ThenableRegion = createThenableRegionClass(ctx, projectMock);
         regionMock = mockPartial<Region>({
             find: jest.fn(() => Promise.resolve(regionMock)),
             mouseMove: jest.fn(() => Promise.resolve(regionMock)),
