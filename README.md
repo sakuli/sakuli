@@ -38,7 +38,7 @@ Use the full power of typescript, nodejs and their corresponding ecosystems.
 
 # Installation
 
-Please refer to our [Sakuli website](https://sakuli.io) and the [Getting Started](https://sakuli.io/docs/getting-started/)  guide for installation instructions.
+Please refer to the [Sakuli website](https://sakuli.io) and the [Getting Started](https://sakuli.io/docs/getting-started/)  guide for installation instructions.
 
 # Development
 
