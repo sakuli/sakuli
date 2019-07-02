@@ -38,31 +38,7 @@ Use the full power of typescript, nodejs and their corresponding ecosystems.
 
 # Installation
 
-Running 
-
-```bash
-npm i @sakuli/cli
-```
-
-or
-
-```bash
-yarn add @sakuli/cli
-```
-
-will install Sakuli and its required dependencies.
-
-
-One of Sakulis core components, [nut.js](https://github.com/nut-tree/nut-js) requires OpenCV.
-The installation process comes with a pre-built version of OpenCV for the respective target platform (via [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs)).
-It's not required to manually build OpenCV, but the installation process has some 3rd-party dependencies.
-
-Please make sure to also install all required peer dependencies:
- 
-- [opencv4nodejs](https://github.com/justadudewhohacks/opencv4nodejs#how-to-install)
-- [robotjs](http://robotjs.io/docs/building)
-
-The installation process is an open issue and will be enhanced in the near future, so using Sakuli becomes even more enjoyable!
+Please refer to our [Sakuli website](https://sakuli.io) and the [Getting Started](https://sakuli.io/docs/getting-started/)  guide for installation instructions.
 
 # Development
 
