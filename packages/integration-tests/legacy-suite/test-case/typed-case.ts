@@ -1,8 +1,6 @@
 
 (async () => {
-    driver
-    const testCase: TestCase = new TestCase();
-    const env = new Environment();
+    const testCase: TestCase = new TestCase("My Typescript based test");
     try {
         await _navigateTo("https://sakuli.io");                                  // 1
         testCase.endOfStep("TS Open Landing Page",5);             // 2

@@ -3,6 +3,10 @@ import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
 import {ThenableRegion} from "../region";
 
+export interface NewableThenableEnvironment {
+    new(): ThenableEnvironment;
+}
+
 export interface ThenableEnvironment extends PromiseLike<Environment> {
     readonly env: Promise<Environment>;
 

@@ -108,7 +108,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project,
             return project.rootDir;
         }
 
-        async throwExecption(message: string, screenshot: boolean) {
+        async throwException(message: string, screenshot: boolean) {
             if (screenshot) {
                 const screenShotOutputPath = await takeErrorScreenShot(ctx, currentTestFolder);
                 const screenShotMessage = screenshot ? ` Screenshot saved to '${screenShotOutputPath}'` : "";

@@ -10,8 +10,10 @@
 		"testing",
 		"legacy"
 	],
+	"typings": "./out/index",
 	"scripts": {
-		"build": "ts-node -P tsconfig.json src/build-dts-file"
+		"build": "ts-node -P tsconfig.json src/build-dts-file",
+		"typedoc": "typedoc --mode \"modules\" --includeDeclarations --excludeNotExported --entryPoint \"__global\" --out dist/docs out/"
 	},
 	"contributors": [
 		"Tim Keiner <tim.keiner@consol.de>",
@@ -33,9 +35,11 @@
 		"dts-dom": "^3.3.0",
 		"flatted": "^2.0.0",
 		"ts-node": "8.2.0",
-		"typescript": "^3.4.3"
-	},
-	"dependencies": {
+		"typescript": "^3.4.3",
 		"typedoc": "^0.14.2"
+	},
+	"peerDependencies": {
+		"@sakuli/legacy": "2.0.1",
+		"@sakuli/rollup-hooks": "2.0.1"
 	}
 }

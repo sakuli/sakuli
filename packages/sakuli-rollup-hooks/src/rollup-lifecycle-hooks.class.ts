@@ -18,7 +18,8 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
             plugins.push(rollupTsPlugin(<any>{
                 tsconfigOverride: {
                     compilerOptions: {
-                        module: 'ESNext'
+                        module: 'ESNext',
+                        target: 'ES2017'
                     }
                 }
             }));
@@ -35,7 +36,6 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
         });
         const [rollupOutput] = output;
         this.imports = rollupOutput.imports;
-        console.log(rollupOutput.code);
         return Promise.resolve(rollupOutput.code);
     }
 
