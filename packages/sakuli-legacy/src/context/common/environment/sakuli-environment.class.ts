@@ -73,14 +73,29 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async getClipboard(): Promise<string> {
-            return runAsAction(ctx, "getClipboard", async () => {
+            return runAsAction(ctx, "getClipboard", () => {
                 ctx.logger.debug(`Accessing clipboard`);
-                return await ClipboardApi.getClipboard();
+                return ClipboardApi.getClipboard();
+            })();
+        }
+
+        public async getClipboardMasked(): Promise<string> {
+            return runAsAction(ctx, "getClipboardMasked", () => {
+                ctx.logger.debug(`Getting clipboard content`);
+                return ClipboardApi.getClipboard();
             })();
         }
 
         public async setClipboard(text: string): Promise<Environment> {
             return runAsAction(ctx, "setClipboard", async () => {
+                ctx.logger.debug(`Setting clipboard content`);
+                await ClipboardApi.setClipboard(text);
+                return this;
+            })();
+        }
+
+        public async setClipboardMasked(text: string): Promise<Environment> {
+            return runAsAction(ctx, "setClipboardMasked", async () => {
                 ctx.logger.debug(`Setting clipboard content`);
                 await ClipboardApi.setClipboard(text);
                 return this;
@@ -253,9 +268,23 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             })();
         }
 
+        public getEnvMasked(key: string): string | null {
+            return runAsAction(ctx, "getEnvMasked", () => {
+                ctx.logger.debug(`Accessing environment variable`);
+                return project.get(key);
+            })();
+        }
+
         public getProperty(key: string): string | null {
             return runAsAction(ctx, "getProperty", () => {
                 ctx.logger.debug(`Accessing property ${key}`);
+                return project.get(key);
+            })();
+        }
+
+        public getPropertyMasked(key: string): string | null {
+            return runAsAction(ctx, "getPropertyMasked", () => {
+                ctx.logger.debug(`Accessing property`);
                 return project.get(key);
             })();
         }
