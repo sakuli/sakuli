@@ -23,39 +23,39 @@ export const connectForwarderToTestExecutionContext = async (
     project: Project
 ): Promise<(() => Promise<void>)> => {
     const forwardings: Promise<any>[] = [];
-    if(forwarder.setup) {
+    if (forwarder.setup) {
         await forwarder.setup(project, ctx.logger);
     }
     ctx.on("END_TESTSUITE", suite => {
-        if(forwarder.forwardSuiteResult) {
-            forwardings.push(forwarder.forwardSuiteResult(suite, project));
+        if (forwarder.forwardSuiteResult) {
+            forwardings.push(forwarder.forwardSuiteResult(suite, ctx));
         }
     });
     ctx.on("END_TESTCASE", testCase => {
-        if(forwarder.forwardCaseResult) {
-            forwardings.push(forwarder.forwardCaseResult(testCase, project));
+        if (forwarder.forwardCaseResult) {
+            forwardings.push(forwarder.forwardCaseResult(testCase, ctx));
         }
     });
     ctx.on("END_TESTSTEP", step => {
-        if(forwarder.forwardStepResult) {
-            forwardings.push(forwarder.forwardStepResult(step, project));
+        if (forwarder.forwardStepResult) {
+            forwardings.push(forwarder.forwardStepResult(step, ctx));
         }
     });
 
     ctx.on("END_TESTACTION", action => {
-        if(forwarder.forwardActionResult) {
-            forwardings.push(forwarder.forwardActionResult(action, project));
+        if (forwarder.forwardActionResult) {
+            forwardings.push(forwarder.forwardActionResult(action, ctx));
         }
     });
 
     ctx.on("END_EXECUTION", ctx => {
-        if(forwarder.forward) {
-            forwardings.push(forwarder.forward(ctx, project));
+        if (forwarder.forward) {
+            forwardings.push(forwarder.forward(ctx));
         }
     });
     return async () => {
         await Promise.all(forwardings);
-        if(forwarder.tearDown) {
+        if (forwarder.tearDown) {
             return forwarder.tearDown();
         } else {
             return Promise.resolve();
