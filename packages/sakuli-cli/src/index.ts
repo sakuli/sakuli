@@ -1,4 +1,4 @@
-#!/usr/bin/env node --no-warnings
+#!/usr/bin/env node
 
 import * as figlet from "figlet";
 
@@ -47,6 +47,10 @@ import {cli} from "./cli-utils/command-line.class";
         .option('postHook', {
             describe: `Program which will be executed after a suite run (can be added multiple times)`,
             type: "array"
+        })
+        .option('masterkey', {
+            describe: `Masterkey used to decrypt secrets during runtime`,
+            type: "string"
         })
         .demandCommand(1, 1, 'Sakuli expects exactly one command');
 

@@ -1,4 +1,4 @@
-import {TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext} from "@sakuli/core";
 import {mockPartial} from "sneer";
 import {Application} from "./application.interface";
 import {createThenableApplicationClass} from "./thenable-application.class";
@@ -9,6 +9,7 @@ import {Type} from "@sakuli/commons";
 const defer = <T>(v: T) => Promise.resolve(v);
 describe('ThenableApplication', () => {
 
+    const projectMock = mockPartial<Project>({});
     let ctx: TestExecutionContext;
     let ThenableRegion: Type<ThenableRegion>;
     let ThenableApplication: ReturnType<typeof createThenableApplicationClass>;
@@ -17,11 +18,11 @@ describe('ThenableApplication', () => {
 
     beforeEach(() => {
         ctx = createTestExecutionContextMock();
-        ThenableRegion = createThenableRegionClass(ctx);
+        ThenableRegion = createThenableRegionClass(ctx, projectMock);
         regionMock = mockPartial<Region>({
             find: jest.fn(() => defer(regionMock))
         });
-        ThenableApplication = createThenableApplicationClass(ctx);
+        ThenableApplication = createThenableApplicationClass(ctx, projectMock);
         appMock = mockPartial<Application>({
             open: jest.fn(() => defer(appMock)),
             getRegion: jest.fn(() => defer(regionMock))
@@ -38,5 +39,4 @@ describe('ThenableApplication', () => {
         expect(appMock.getRegion).toHaveBeenCalled();
         expect(regionMock.find).toHaveBeenCalledWith('test');
     });
-
 });

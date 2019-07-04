@@ -9,8 +9,8 @@ export const KeyboardApi = {
         await keyboard.pressKey(...pasteShortcut() as NutKey[]);
         await keyboard.releaseKey(...pasteShortcut() as NutKey[]);
     },
-    async pasteAndDecrypt(text: string) {
-        return withEncryption(text, async (decrypted) => {
+    async pasteAndDecrypt(key: string, text: string) {
+        return withEncryption(key, text, async (decrypted) => {
             await this.paste(decrypted);
         });
     },
@@ -19,8 +19,8 @@ export const KeyboardApi = {
         await keyboard.type(text);
         await keyboard.releaseKey(...optModifiers as NutKey[]);
     },
-    async typeAndDecrypt(text: string, ...optModifiers: Key[]) {
-        return withEncryption(text, async (decrypted) => {
+    async typeAndDecrypt(key: string, text: string, ...optModifiers: Key[]) {
+        return withEncryption(key, text, async (decrypted) => {
             await this.type(decrypted, ...optModifiers);
         });
     },

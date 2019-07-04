@@ -2,7 +2,7 @@ import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
-import {CliArgsSource, ifPresent, Maybe, SimpleLogger} from "@sakuli/commons";
+import {CliArgsSource, EnvironmentSource, ifPresent, Maybe, SimpleLogger} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
@@ -57,6 +57,7 @@ export class SakuliClass {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         let project: Project = new Project(opts.path || process.cwd());
         await project.installPropertySource(new CliArgsSource(process.argv));
+        await project.installPropertySource(new EnvironmentSource());
         for (let loader of this.loader) {
             project = (await loader.load(project)) || project;
         }

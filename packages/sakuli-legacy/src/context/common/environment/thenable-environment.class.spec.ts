@@ -8,6 +8,7 @@ import {Type} from "@sakuli/commons";
 
 describe('ThenableEnvironment', () => {
 
+    let projectMock: Project;
     let ctx: TestExecutionContext;
     let ThenableRegion: Type<ThenableRegion>;
     let ThenableEnvironment: ReturnType<typeof createThenableEnvironmentClass>;
@@ -16,7 +17,8 @@ describe('ThenableEnvironment', () => {
 
     beforeEach(() => {
         ctx = createTestExecutionContextMock();
-        ThenableRegion = createThenableRegionClass(ctx);
+        projectMock = mockPartial<Project>({});
+        ThenableRegion = createThenableRegionClass(ctx, projectMock);
         regionMock = mockPartial<Region>({
             find: jest.fn(() => Promise.resolve(regionMock))
         });
