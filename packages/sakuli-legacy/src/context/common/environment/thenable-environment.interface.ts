@@ -14,11 +14,17 @@ export interface ThenableEnvironment extends PromiseLike<Environment> {
 
     getClipboard(): Promise<string>;
 
+    getClipboardMasked(): Promise<string>;
+
     getEnv(key: string): Promise<string | null>;
+
+    getEnvMasked(key: string): Promise<string | null>;
 
     getOsIdentifier(): Promise<string>;
 
     getProperty(key: string): Promise<string | null>;
+
+    getPropertyMasked(key: string): Promise<string | null>;
 
     getRegionFromFocusedWindow(): ThenableRegion;
 
@@ -51,6 +57,8 @@ export interface ThenableEnvironment extends PromiseLike<Environment> {
     runCommand(command: string, optThrowException: boolean): Promise<CommandLineResult>;
 
     setClipboard(text: string): ThenableEnvironment;
+
+    setClipboardMasked(text: string): ThenableEnvironment;
 
     setSimilarity(similarity: number): Promise<void>;
 
