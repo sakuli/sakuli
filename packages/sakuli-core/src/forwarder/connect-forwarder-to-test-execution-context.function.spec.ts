@@ -29,7 +29,7 @@ describe('connectForwarderToTestExecutionContext', () => {
             teardown = await connectForwarderToTestExecutionContext(forwarder, ctx, project);
 
             ctx.startExecution();
-            ctx.startTestSuite({id:'suite1'});
+            ctx.startTestSuite({id: 'suite1'});
             ctx.startTestCase({id: 'case1'});
             ctx.startTestStep({});
             ctx.updateCurrentTestStep({id: 'step1'});
@@ -48,30 +48,30 @@ describe('connectForwarderToTestExecutionContext', () => {
         it('should call forwardSuiteResult', () => {
             expect(forwarder.forwardSuiteResult).toHaveBeenCalledWith(
                 expect.objectContaining({id: 'suite1'}),
-                project
+                ctx
             );
         });
 
         it('should call forwardCaseResult', () => {
             expect(forwarder.forwardCaseResult).toHaveBeenCalledWith(
                 expect.objectContaining({id: 'case1'}),
-                project
+                ctx
             );
         });
 
         it('should call forwardStepResult', () => {
             expect(forwarder.forwardStepResult).toHaveBeenCalledWith(
                 expect.objectContaining({id: 'step1'}),
-                project
+                ctx
             );
             expect(forwarder.forwardStepResult).toHaveBeenCalledWith(
                 expect.objectContaining({id: 'step2'}),
-                project
+                ctx
             );
         });
 
         it('should call forward', () => {
-            expect(forwarder.forward).toHaveBeenCalledWith(ctx, project);
+            expect(forwarder.forward).toHaveBeenCalledWith(ctx);
         });
 
         it('should call teardown when returned teardown function is invoked', async () => {
@@ -79,7 +79,5 @@ describe('connectForwarderToTestExecutionContext', () => {
             await teardown();
             expect(forwarder.tearDown).toHaveBeenCalledTimes(1);
         });
-
     })
-
 });
