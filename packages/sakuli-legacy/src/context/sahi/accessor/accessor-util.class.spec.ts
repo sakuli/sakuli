@@ -163,5 +163,41 @@ describe('AccessorUtil', () => {
             });
             return expect(div).toBeDefined();
         });
+
+        it('should find an element by RegExp syntax', async () => {
+            await driver.get(mockHtml(`
+                <div>
+                  <span id="m-1">Maintenance</span>
+                  <span>Maintenance</span>
+                  <span>Maintenance</span>
+                </div>
+            `));
+
+            const span = await accessorUtil.fetchElement({
+                locator: By.css('span'),
+                identifier: "/aintenance/",
+                relations: []
+            });
+
+            await expect(span.getAttribute('id')).resolves.toEqual('m-1')
+        });
+
+        it('should find an element by RegExp + array accessor syntax', async () => {
+            await driver.get(mockHtml(`
+                <div>
+                  <span>Maintenance</span>
+                  <span id="m-2">Maintenance</span>
+                  <span>Maintenance</span>
+                </div>
+            `));
+
+            const span = await accessorUtil.fetchElement({
+                locator: By.css('span'),
+                identifier: "/aintenance/[1]",
+                relations: []
+            });
+
+            await expect(span.getAttribute('id')).resolves.toEqual('m-2')
+        });
     });
 });

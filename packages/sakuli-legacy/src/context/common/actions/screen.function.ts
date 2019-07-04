@@ -2,7 +2,7 @@ import {Region as NutRegion, screen} from "@nut-tree/nut-js";
 import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {parse} from "path";
 import {cwd} from "process";
-import {Region} from "../region.interface";
+import {Region} from "../region";
 
 const getCoordinates = async (region: Region) => {
     return ({

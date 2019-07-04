@@ -1,28 +1,42 @@
 import {secret} from "@nut-tree/secrets";
 import {EncryptionError} from "./exceptions/encryptionerror.class";
+import {Project} from "@sakuli/core";
+import {Maybe, Property} from "@sakuli/commons";
 
-export const ENCRYPTION_KEY_VARIABLE = "SAKULI_ENCRYPTION_KEY";
+export const MASTERKEY_ENV_KEY = "SAKULI_ENCRYPTION_KEY";
+export const MASTERKEY_CLI_KEY = "masterkey";
+export const MASTERKEY_PROPERTY_KEY = "sakuli.encryption.key";
 
-const getKeyFromEnvironment = () => {
-    const key = process.env[ENCRYPTION_KEY_VARIABLE];
+class MasterKeyProps {
+    @Property(MASTERKEY_ENV_KEY)
+    environmentKey: Maybe<string>;
+
+    @Property(MASTERKEY_CLI_KEY)
+    cliKey: Maybe<string>;
+
+    @Property(MASTERKEY_PROPERTY_KEY)
+    propsKey: Maybe<string>
+}
+
+export const getEncryptionKey = (project: Project) => {
+    const keyProps = project.objectFactory(MasterKeyProps);
+    const key = keyProps.cliKey || keyProps.propsKey || keyProps.environmentKey;
     if (!key) {
-        throw new Error(`'${ENCRYPTION_KEY_VARIABLE}' is empty. Missing master key for secrets.`);
+        throw new Error(`Masterkey could not be found in one of '--masterkey' CLI option, 'sakuli.encryption.key' property or '${MASTERKEY_ENV_KEY}' env var. Missing master key for secrets.`);
     }
     return key;
 };
 
-export async function decryptSecret(encryptedInput: string): Promise<string> {
+export async function decrypt(key: string, encryptedInput: string): Promise<string> {
     try {
-        const key = getKeyFromEnvironment();
         return secret.decrypt(encryptedInput, key);
     } catch (e) {
         throw new EncryptionError(e.message);
     }
 }
 
-export async function withEncryption<T>(encryptedInput: string, action: (input: string) => Promise<T>): Promise<T> {
+export async function withEncryption<T>(key: string, encryptedInput: string, action: (input: string) => Promise<T>): Promise<T> {
     try {
-        const key = getKeyFromEnvironment();
         const decrypted = await secret.decrypt(encryptedInput, key);
         return action(decrypted);
     } catch (e) {

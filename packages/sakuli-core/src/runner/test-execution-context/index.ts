@@ -9,3 +9,4 @@ export * from './test-context-entity.class';
 export * from './test-execution-context.class';
 export * from './test-step-context.class';
 export * from './test-suite-context.class';
+export * from './test-execution-context.events';

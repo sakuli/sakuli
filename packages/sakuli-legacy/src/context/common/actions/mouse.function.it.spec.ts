@@ -1,7 +1,8 @@
-import {mouse, Point} from "@nut-tree/nut-js";
+import {mouse, Point, Button as NutButton} from "@nut-tree/nut-js";
 import {MouseApi} from "./mouse.function";
 import {SakuliRegion} from "./__mocks__/sakuli-region.class";
 import {Mouse} from "@nut-tree/nut-js/dist/lib/mouse.class";
+import {MouseButton} from "../button.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -39,6 +40,26 @@ describe("MouseApi", () => {
 
         // THEN
         expect(mouse.rightClick).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+        [MouseButton.LEFT, NutButton.LEFT],
+        [MouseButton.MIDDLE, NutButton.MIDDLE],
+        [MouseButton.RIGHT, NutButton.RIGHT]
+    ] as Array<[MouseButton, NutButton]>)("should press and release", async (actual: MouseButton, expected: NutButton) => {
+        // GIVEN
+        mouse.pressButton = jest.fn();
+        mouse.releaseButton = jest.fn();
+
+        // WHEN
+        await MouseApi.pressButton(actual);
+        await MouseApi.releaseButton(actual);
+
+        // THEN
+        expect(mouse.pressButton).toHaveBeenCalledTimes(1);
+        expect(mouse.pressButton).toHaveBeenCalledWith(expected);
+        expect(mouse.releaseButton).toHaveBeenCalledTimes(1);
+        expect(mouse.releaseButton).toHaveBeenCalledWith(expected);
     });
 
     it("should call mouse once on scrollUp", async () => {
