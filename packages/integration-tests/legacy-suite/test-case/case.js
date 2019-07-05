@@ -1,23 +1,4 @@
 (async () => {
-    const testCase = new TestCase();
-    try {
-        await _navigateTo("https://try.gogs.io/");
-        testCase.endOfStep("Open Gogs Landing Page", 5, 10);
-        //await _click(_link("Sign In"));
-// await _click(_textbox("user_name"));
-        await _setValue(_textbox("user_name"), "gogs");
-        await _setValue(_password("password"), "gogs");
-        await _click(_submit("Sign In"));
-        testCase.endOfStep("Login", 5, 10);
-    } catch (e) {
-        await testCase.handleException(e);
-    } finally {
-        await testCase.saveResult();
-    }
-})().then(done);
-
-/*
-(async () => {
     const testCase = new TestCase("Case 1");
     const env = new Environment();
     const mills = 200;
@@ -43,4 +24,3 @@
         await testCase.saveResult();
     }
 })().then(done);
-*/
