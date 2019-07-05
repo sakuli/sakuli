@@ -14,7 +14,7 @@ import {createThenableApplicationClass} from "./common/application";
 import {createThenableEnvironmentClass} from "./common/environment";
 import {createThenableRegionClass} from "./common/region";
 import {LegacyApi} from "./legacy-api.interface";
-import {applyBrowserOptions, SeleniumProperties} from "./selenium-config";
+import {createDriverFromProject} from "./selenium-config/create-driver-from-project.function";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -39,33 +39,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     async onProject(project: Project) {
-        //const props: LegacyProjectProperties = project.
-        const properties = project.objectFactory(LegacyProjectProperties);
-        const seleniumProperties = project.objectFactory(SeleniumProperties);
-        const browser: keyof typeof Capabilities = properties.testsuiteBrowser;
-        const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
-        const caps = capsProducer();
-
-        this.builder
-            .forBrowser(browser)
-            .withCapabilities(caps);
-        ifPresent(seleniumProperties.alertBehaviour, prop => {
-            this.builder.setAlertBehavior(prop);
-        });
-        ifPresent(seleniumProperties.loggingPrefs, prop => {
-            this.builder.setLoggingPrefs(prop)
-        });
-        ifPresent(seleniumProperties.proxy, prop => {
-            this.builder.setProxy(prop)
-        });
-        ifPresent(seleniumProperties.httpAgent, prop => {
-            this.builder.usingHttpAgent(prop)
-        });
-        ifPresent(seleniumProperties.server, prop => {
-            this.builder.usingServer(prop);
-        });
-        applyBrowserOptions(browser, project, this.builder);
-        this.driver = this.builder.build();
+        this.driver = createDriverFromProject(project, new Builder());
     }
 
     async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
