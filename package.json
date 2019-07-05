@@ -27,7 +27,7 @@
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
     "bootstrap": "lerna bootstrap",
-    "lerna:publish": "lerna publish from-git --yes ",
+    "lerna:publish": "lerna publish from-package --yes ",
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
