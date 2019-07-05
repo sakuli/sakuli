@@ -1,4 +1,4 @@
-import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
+import {Builder, ThenableWebDriver} from 'selenium-webdriver';
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {createTestCaseClass} from "./common/test-case";
 import {Key} from "./common/key.class";
@@ -18,16 +18,6 @@ import {createDriverFromProject} from "./selenium-config/create-driver-from-proj
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
-    capabilityMap: { [key: string]: () => Capabilities } = {
-        'chrome': () => Capabilities.chrome(),
-        'firefox': () => Capabilities.firefox(),
-        'edge': () => Capabilities.edge(),
-        'safari': () => Capabilities.safari(),
-        'ie': () => Capabilities.ie(),
-        'phantomjs': () => Capabilities.phantomjs(),
-        'htmlunit': () => Capabilities.htmlunit(),
-        'htmlunitwithjs': () => Capabilities.htmlunitwithjs(),
-    };
     driver: Maybe<ThenableWebDriver> = null;
 
     currentTest: Maybe<string> = null;
@@ -39,7 +29,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     async onProject(project: Project) {
-        this.driver = createDriverFromProject(project, new Builder());
+        this.driver = createDriverFromProject(project, this.builder);
     }
 
     async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
