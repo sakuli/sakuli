@@ -1,7 +1,10 @@
 import 'reflect-metadata';
 import {Type} from "../../type.interface";
+import {ifPresent, Maybe} from "../../maybe";
 
 const PropertyDecoratorMetadata = Symbol('PropertyDecoratorMetadata');
+
+type ReadMap<T, R = T> = (i: T) => R;
 
 export interface PropertyDecoratorDefinition {
     /**
@@ -26,18 +29,68 @@ export interface PropertyDecoratorDefinition {
      *
      */
     property: string;
+
+    reader: ReadMap<any>
 }
 
-export function Property(path: string) {
+const identity = <T>(x:T) => x;
+
+export function Property(path: string, reader: ReadMap<any> = identity) {
     return ({constructor}: any, property: string) => {
         const propertiesInClass = getPropertyDecoratorDefinitions(constructor);
         Reflect.defineMetadata(PropertyDecoratorMetadata, [
             ...propertiesInClass,
-            {path, property}
+            {path, property, reader}
         ], constructor)
     }
 }
 
+const onlyValue = <T>(reader: ReadMap<T>) => (v: Maybe<T>) => ifPresent(v, reader, () => v);
+
+/**
+ * Converts value to Boolean if present
+ * @param path
+ * @constructor
+ */
+export const BooleanProperty = (path: string) => Property(path, onlyValue(Boolean));
+
+/**
+ * Converts value to Number if present
+ * @param path
+ * @constructor
+ */
+export const NumberProperty = (path: string) => Property(path, onlyValue(Number));
+
+/**
+ * Converts value to String if present
+ * @param path
+ * @constructor
+ */
+export const StringProperty = (path: string) => Property(path, onlyValue(String));
+
+export interface ListPropertyOptions {
+    delimiter: string,
+    mapper: ReadMap<string, any>
+}
+
+
+
+/**
+ * Assuming a string string data (all inputs are converted to string).
+ *
+ * @param path
+ * @param delimiter - default: ,
+ * @param mapper - trims each string value
+ * @constructor
+ */
+export const ListProperty = (path: string, {
+    delimiter = ',',
+    mapper = (s: string) => s.trim()
+}: Partial<ListPropertyOptions> = {}) => Property(path, onlyValue(v => {
+    return Array.isArray(v) ? v.map(mapper) : String(v).split(delimiter).map(mapper)
+}));
+
 export function getPropertyDecoratorDefinitions(type: Type<any>): PropertyDecoratorDefinition[] {
     return Reflect.getMetadata(PropertyDecoratorMetadata, type) || [];
 }
+

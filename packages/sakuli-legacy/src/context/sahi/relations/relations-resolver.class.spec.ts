@@ -13,7 +13,7 @@ const webElementToQuery = (elements: WebElement[]) => {
     });
 };
 
-jest.setTimeout(15_000);
+jest.setTimeout(25_000);
 describe('RelationResolver', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         const testExecutionContext = mockPartial<TestExecutionContext>({});

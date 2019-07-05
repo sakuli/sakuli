@@ -10,7 +10,11 @@ const MOCKED_FILES: Record<string, string> = {
     'props2.properties': stripIndents`
         property.bar=overridden
         property.baz=bazval
-        `
+        `,
+    'props3.properties': stripIndents`
+        foo.bar.a=1
+        foo.bar.b=2
+    `
 };
 
 jest.mock('fs', () => ({
@@ -21,19 +25,39 @@ describe(JavaPropertiesFileSource.name, () => {
 
     let propertyFileSource: JavaPropertiesFileSource;
     let map: PropertyMap;
-    beforeEach(async () => {
-        propertyFileSource = new JavaPropertiesFileSource([
-            'props1.properties',
-            'props2.properties'
-        ]);
-        map = await propertyFileSource.createPropertyMap();
+
+    describe('multiple files', () => {
+
+        beforeEach(async () => {
+            propertyFileSource = new JavaPropertiesFileSource([
+                'props1.properties',
+                'props2.properties'
+            ]);
+            map = await propertyFileSource.createPropertyMap();
+        });
+
+        it.each([
+            ['property.foo', 'fooval'],
+            ['property.bar', 'overridden'],
+            ['property.baz', 'bazval'],
+        ])('should find property %s with value %s', (key: string, expectedValue: string) => {
+            expect(map.get(key)).toEqual(expectedValue)
+        });
     });
 
-    it.each([
-        ['property.foo', 'fooval'],
-        ['property.bar', 'overridden'],
-        ['property.baz', 'bazval'],
-    ])('should find property %s with value %s', (key: string, expectedValue: string) => {
-        expect(map.get(key)).toEqual(expectedValue)
+    describe('complex values', () => {
+        beforeEach(async () => {
+            propertyFileSource = new JavaPropertiesFileSource([
+                'props3.properties'
+            ]);
+            map = await propertyFileSource.createPropertyMap();
+        });
+        it('should read a complex structure as object', async () => {
+            expect(map.get('foo.bar')).toEqual({
+                a: "1",
+                b: "2"
+            })
+        });
+
     });
 });

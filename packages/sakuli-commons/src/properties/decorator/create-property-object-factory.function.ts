@@ -9,13 +9,13 @@ import {getPropertyDecoratorDefinitions, PropertyDecoratorDefinition} from "./pr
  */
 export function createPropertyObjectFactory(propertyMap: PropertyMap) {
     return <T>(cls: Type<T>): T => {
-        if(cls.prototype.constructor.length) {
+        if (cls.prototype.constructor.length) {
             throw Error(`The constructor of ${cls.name} must have 0 mandatory parameters but it has ${cls.prototype.constructor.length}`)
         }
         const propertyDefinitions = getPropertyDecoratorDefinitions(cls);
         const dataObject = propertyDefinitions.reduce((agg: object, def: PropertyDecoratorDefinition) => {
-            if(propertyMap.has(def.path)) {
-                return {...agg, [def.property]: propertyMap.get(def.path)};
+            if (propertyMap.has(def.path)) {
+                return {...agg, [def.property]: def.reader(propertyMap.get(def.path))};
             } else {
                 return agg;
             }
