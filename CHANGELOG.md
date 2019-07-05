@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2.1.0
+## v2.1.0
 - Enhancement: Provide TestExecutionContext to Forwarder [(#143)](https://github.com/sakuli/sakuli/issues/143)
 - Bugfix: Missing possibility to configure masterkey via properties or CLI [(#138)](https://github.com/sakuli/sakuli/issues/138)
 - Bugfix: _textbox ignores inputs without explicit type attribute [(#135)](https://github.com/sakuli/sakuli/issues/135)
@@ -16,7 +16,7 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Case/Step/Command Reporting [(#93)](https://github.com/sakuli/sakuli/issues/93)
 - Enhancement: Support for EL-like syntax in Property loader [(#51)](https://github.com/sakuli/sakuli/issues/51)
 
-## 2.0.1
+## v2.0.1
 
 - Bugfix: _setValue doesnt delete previous values from element [(#82)](https://github.com/sakuli/sakuli/issues/82)
 - Enhancement: Provide default node globals for tests execution [(#86)](https://github.com/sakuli/sakuli/issues/86)
@@ -29,6 +29,6 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Improved CLI output [(#64)](https://github.com/sakuli/sakuli/issues/64)
 - Enhancement: Fluent async API [(#42)](https://github.com/sakuli/sakuli/issues/42)
 
-## 2.0.0
+## v2.0.0
 
 - Initial version
