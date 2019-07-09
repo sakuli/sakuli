@@ -129,4 +129,27 @@ describe("getTimestamp", () => {
         // THEN
         expect(result).toBe("2019-07-09T18:01:15")
     });
+
+    it("should output an ISO string for UTC", () => {
+        // GIVEN
+        const timestamp = 1562688075714;
+
+        // WHEN
+        const result = getTimestamp(timestamp);
+
+        // THEN
+        expect(result).toBe("2019-07-09T16:01:15")
+    });
+
+    it("should output current UTC by default", () => {
+        // GIVEN
+        const timestamp = 1562688075714;
+        Date.now = jest.fn(() => timestamp);
+
+        // WHEN
+        const result = getTimestamp();
+
+        // THEN
+        expect(result).toBe("2019-07-09T16:01:15")
+    });
 });

@@ -25,7 +25,7 @@ const getTimezoneOffset = (): number => {
  * @param when Timestamp in milliseconds
  * @param offset Timezone offset in milliseconds
  */
-export const getTimestamp = (when: number = Date.now(), offset: number): string => {
+export const getTimestamp = (when: number = Date.now(), offset: number = 0): string => {
     const timestamp = new Date(when - offset).toISOString();
     const sliceIndex = timestamp.indexOf('.');
     return (sliceIndex > -1) ? timestamp.slice(0, sliceIndex) : timestamp;
