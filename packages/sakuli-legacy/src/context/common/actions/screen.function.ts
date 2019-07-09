@@ -13,6 +13,24 @@ const getCoordinates = async (region: Region) => {
     })
 };
 
+/**
+ * getTimezoneOffset returns the timezone offset to UTC in milliseconds
+ */
+const getTimezoneOffset = (): number => {
+    return new Date().getTimezoneOffset() * 60_000;
+};
+
+/**
+ * getTimestamp returns the local time in format YYYY-MM-ddTHH:mm:ss
+ * @param when Timestamp in milliseconds
+ * @param offset Timezone offset in milliseconds
+ */
+export const getTimestamp = (when: number = Date.now(), offset: number): string => {
+    const timestamp = new Date(when - offset).toISOString();
+    const sliceIndex = timestamp.indexOf('.');
+    return (sliceIndex > -1) ? timestamp.slice(0, sliceIndex) : timestamp;
+};
+
 export type SearchResult = {left: number, top: number, width: number, height: number};
 
 export const ScreenApi = {
@@ -80,6 +98,6 @@ export const ScreenApi = {
     async takeScreenshotWithTimestamp(filename: string): Promise<string> {
         const pathParts = parse(filename);
         const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
-        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${new Date().toISOString()}_`, "");
+        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${getTimestamp(Date.now(), getTimezoneOffset())}_`, "");
     }
 };
