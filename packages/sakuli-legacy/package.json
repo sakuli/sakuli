@@ -11,7 +11,7 @@
     "typedoc:json": "typedoc --json docs.json --excludeExternals --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "lerna bootstrap && npm run build && npm test"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test"
   },
   "keywords": [
     "sakuli",
