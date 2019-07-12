@@ -44,7 +44,7 @@ export interface Forwarder {
      * @param entity: Current TestActionContext to forward
      * @param ctx: Current TestExecutionContext
      */
-    forwardActionResult(entity: TestActionContext & FinishedMeasurable, ctx: TestExecutionContext): Promise<void>
+    forwardActionResult?(entity: TestActionContext & FinishedMeasurable, ctx: TestExecutionContext): Promise<void>
 
     /**
      * Is called after the test execution has finished. This is useful to send additional information or teardown
@@ -53,7 +53,7 @@ export interface Forwarder {
      * If you dont want to forward intermediate results everything should be implemented in this method
      * @param ctx: Current TestExecutionContext
      */
-    forward?(ctx: TestExecutionContext): Promise<any>
+    forward(ctx: TestExecutionContext): Promise<any>
 
     /**
      * Is called right after the promise returned from forward method is resolved
