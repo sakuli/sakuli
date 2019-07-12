@@ -40,7 +40,7 @@ before_deploy:
 deploy:
   - provider: script
     skip_cleanup: false
-    script: npm run lerna:publish-next
+    script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish-next
     on:
       branch: develop
   - provider: script
