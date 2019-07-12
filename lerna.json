@@ -12,7 +12,10 @@
       ]
     },
     "version": {
-      "allowBranch": "release/*"
+      "allowBranch": [
+        "release/*",
+        "develop"
+      ]
     }
   }
 }
