@@ -17,8 +17,11 @@ addons:
 before_install:
   - sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
   - docker pull selenium/standalone-chrome-debug
+  - docker pull selenium/standalone-firefox-debug
   - docker pull s1hofmann/nut-ci
   - docker run -it -d --name nut-ci --user $(id -u):$(id -g) -v ${PWD}:${PWD}:rw s1hofmann/nut-ci:latest bash
+  - docker run -d -p 4444:4444 selenium/standalone-firefox-debug
+  - docker run -d -p 4445:4444 selenium/standalone-chrome-debug
   - npm i -g lerna gh-pages
 
 install: true
@@ -26,7 +29,7 @@ install: true
 script:
   - travis_wait npm ci
   - lerna run build > /dev/null 2>&1
-  - npm test -- --runInBand --ci --bail
+  - FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm test -- --runInBand --ci --bail
   - sonar-scanner
   - docker exec nut-ci bash -c "bash $PWD/.build/build.sh ${PWD} lts/dubnium"
   - lerna run typedoc
@@ -35,14 +38,19 @@ before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 
 deploy:
+  - provider: script
+    skip_cleanup: false
+    script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish-next
+    on:
+      branch: develop
+  - provider: script
+    skip_cleanup: false
+    script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish
+    on:
+      tags: true
   - provider: pages
     repo: sakuli/apidocs
     local_dir: ./docs
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
     keep_history: true
-  - provider: script
-    skip_cleanup: false
-    script: npm run lerna:publish
-    on:
-      tags: true

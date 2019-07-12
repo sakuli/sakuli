@@ -7,7 +7,7 @@ import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import Mock = jest.Mock;
 import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
 
-describe(LegacyLifecycleHooks.name, () => {
+describe("LegacyLifecycleHooks", () => {
 
     const driver: ThenableWebDriver = mockPartial<ThenableWebDriver>({
         quit: jest.fn()
@@ -18,12 +18,16 @@ describe(LegacyLifecycleHooks.name, () => {
         endTestSuite: jest.fn(),
         startTestSuite: jest.fn(),
         getCurrentTestCase: jest.fn(),
-        updateCurrentTestCase: jest.fn()
+        updateCurrentTestCase: jest.fn(),
     });
 
     const builder: Builder = mockPartial<Builder>({
         forBrowser: jest.fn(() => builder),
         withCapabilities: jest.fn(() => builder),
+        setChromeOptions: jest.fn(() => builder),
+        setSafari: jest.fn(() => builder),
+        setIeOptions: jest.fn(() => builder),
+        setFirefoxOptions: jest.fn(() => builder),
         build: jest.fn(() => driver)
     });
 
@@ -63,7 +67,7 @@ describe(LegacyLifecycleHooks.name, () => {
     });
 
     describe('Lifecycle', () => {
-        it('should set suite id by file name', async () => {
+        it('should set case id by file name', async () => {
             const file: TestFile = {
                 path: 'my-suite/my-case/case1.js',
             };
@@ -71,6 +75,15 @@ describe(LegacyLifecycleHooks.name, () => {
             await lcp.afterRunFile(file, minimumProject, testExecutionContext);
             expect(testExecutionContext.updateCurrentTestCase).toHaveBeenCalledWith(
                 expect.objectContaining({id: 'case1'})
+            )
+        });
+
+        it('should set suite id by property', async () => {
+            legacyProps.testsuiteId = 'from-property';
+            (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+            await lcp.beforeExecution(minimumProject, testExecutionContext);
+            expect(testExecutionContext.startTestSuite).toHaveBeenCalledWith(
+                expect.objectContaining({id: 'from-property'})
             )
         });
     })

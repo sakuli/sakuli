@@ -1,4 +1,3 @@
-import {WebElement} from "selenium-webdriver";
 import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 
 /**

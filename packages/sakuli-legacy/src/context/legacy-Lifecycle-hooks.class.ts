@@ -1,30 +1,23 @@
-import {Builder, Capabilities, ThenableWebDriver} from 'selenium-webdriver';
+import {Builder, ThenableWebDriver} from 'selenium-webdriver';
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
-import {createTestCaseClass} from "./common/test-case.class";
+import {createTestCaseClass} from "./common/test-case";
 import {Key} from "./common/key.class";
-import {createEnvironmentClass} from "./common/sakuli-environment.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {dirname, join, parse, sep} from "path";
-import {createLoggerClass} from "./common/logger.class";
+import {createLoggerObject} from "./common/logger";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {createRegionClass} from "./common/sakuli-region.class";
-import {createApplicationClass} from "./common/sakuli-application.class";
 import {promises as fs} from "fs";
+import {MouseButton} from "./common/button.class";
+import {createThenableApplicationClass} from "./common/application";
+import {createThenableEnvironmentClass} from "./common/environment";
+import {createThenableRegionClass} from "./common/region";
+import {LegacyApi} from "./legacy-api.interface";
+import {createDriverFromProject} from "./selenium-config/create-driver-from-project.function";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
-    capabilityMap: { [key: string]: () => Capabilities } = {
-        'chrome': () => Capabilities.chrome(),
-        'firefox': () => Capabilities.firefox(),
-        'edge': () => Capabilities.edge(),
-        'safari': () => Capabilities.safari(),
-        'ie': () => Capabilities.ie(),
-        'phantomjs': () => Capabilities.phantomjs(),
-        'htmlunit': () => Capabilities.htmlunit(),
-        'htmlunitwithjs': () => Capabilities.htmlunitwithjs(),
-    };
     driver: Maybe<ThenableWebDriver> = null;
 
     currentTest: Maybe<string> = null;
@@ -36,31 +29,26 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     async onProject(project: Project) {
-        //const props: LegacyProjectProperties = project.
-        const properties = project.objectFactory(LegacyProjectProperties);
-        const browser: keyof typeof Capabilities = properties.testsuiteBrowser;
-        const capsProducer = throwIfAbsent(this.capabilityMap[browser], Error(`${browser} is not a valid browser`));
-        const caps = capsProducer();
-        this.driver = this.builder
-            .forBrowser(browser)
-            .withCapabilities(caps)
-            .build();
+        this.driver = createDriverFromProject(project, this.builder);
     }
 
     async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
-        const id = project.rootDir.split(sep).pop();
+        const properties = project.objectFactory(LegacyProjectProperties);
+        const id = properties.testsuiteId
+            ? properties.testsuiteId
+            : project.rootDir.split(sep).pop();
         testExecutionContext.startTestSuite({id})
     }
 
     async afterExecution(project: Project, testExecutionContext: TestExecutionContext) {
         testExecutionContext.endTestSuite();
-        ifPresent(this.driver, async driver => {
+        await ifPresent(this.driver, async driver => {
             try {
                 await driver.quit()
             } catch (e) {
                 console.warn(`Webdriver doesn't quit reliably`, e);
             }
-        });
+        }, () => Promise.resolve());
     }
 
     private currentFile: string = '';
@@ -83,7 +71,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         );
     }
 
-    async requestContext(ctx: TestExecutionContext, project: Project) {
+    async requestContext(ctx: TestExecutionContext, project: Project): Promise<LegacyApi> {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
@@ -91,11 +79,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             driver,
             context: ctx,
             TestCase: createTestCaseClass(ctx, project, this.currentTest),
-            Application: createApplicationClass(ctx),
+            Application: createThenableApplicationClass(ctx, project),
             Key,
-            Environment: createEnvironmentClass(ctx, project),
-            Region: createRegionClass(ctx),
-            Logger: createLoggerClass(ctx),
+            MouseButton,
+            Environment: createThenableEnvironmentClass(ctx, project),
+            Region: createThenableRegionClass(ctx, project),
+            Logger: createLoggerObject(ctx),
             console: console,
             $includeFolder: '',
             ...sahi,

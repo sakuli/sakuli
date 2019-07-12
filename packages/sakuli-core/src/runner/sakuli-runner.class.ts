@@ -6,6 +6,7 @@ import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {TestExecutionContext} from "./test-execution-context";
 import {TestFile} from "../loader/model/test-file.interface";
+import {ifPresent} from "@sakuli/commons";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
 
@@ -17,7 +18,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     }
 
     /**
-     * Tears up all context providers, merges their results of getContext and pass this result to the testFile Executor
+     * Tears up all lifecycle-hooks, merges their results of getContext and pass this result to the testFile Executor
      * Tears down all service providers after execution of each testFile
      *
      * @param project The Project Structure found by a Project loader
@@ -26,7 +27,18 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
         process.on('unhandledRejection', error => {
-
+            console.log(error);
+            if (error instanceof Error) {
+                ifPresent(this.testExecutionContext.getCurrentTestCase(), () => {
+                    this.testExecutionContext.updateCurrentTestCase({error});
+                });
+            }
+        });
+        process.on('uncaughtException', error => {
+            console.log(error);
+            ifPresent(this.testExecutionContext.getCurrentTestCase(), () => {
+                this.testExecutionContext.updateCurrentTestCase({error});
+            });
         });
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
@@ -94,7 +106,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
             .lifecycleHooks
             .filter(hook => 'requestContext' in hook)
             .map(hook => hook.requestContext!(testExecutionContext, project)));
-        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
+        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {...global});
     }
 
     async readFileContent(testFile: TestFile, project: Project, context: TestExecutionContext): Promise<string> {
