@@ -1,5 +1,5 @@
 os: linux
-dist: Trusty
+dist: xenial
 
 language: node_js
 node_js:
@@ -38,6 +38,8 @@ before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 
 deploy:
+  - edge:
+      branch: v1.8.47
   - provider: script
     skip_cleanup: false
     script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish-next
