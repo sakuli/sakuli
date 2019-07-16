@@ -1,5 +1,5 @@
 os: linux
-dist: xenial
+dist: Trusty
 
 language: node_js
 node_js:

@@ -1,5 +1,5 @@
 module.exports = {
-    "mode": "file",
+    "mode": "modules",
     exclude: [
         '**/dist/**',
         '**/node_modules/**',
