@@ -7,10 +7,11 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "typedoc": "typedoc --out ../../docs/api/sakuli-commons --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
+    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-commons src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test",
+    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-commons/docs.json --out ../../docs/sakuli-commons src/"
   },
   "keywords": [
     "sakuli",
@@ -33,6 +34,7 @@
     "sneer": "^1.0.1",
     "ts-jest": "^24.0.2",
     "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^2.0.9",
     "typescript": "^3.4.3",
     "yargs": "^13.2.2"
   },
