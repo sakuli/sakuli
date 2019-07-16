@@ -54,3 +54,6 @@ deploy:
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
     keep_history: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master|feature/57/apidocs)$
