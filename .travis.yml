@@ -51,11 +51,11 @@ deploy:
     on:
       tags: true
   - provider: pages
-    repo: sakuli/apidocs
+    repo: sakuli/apidoc
     local_dir: ./docs
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
-    verbose: true
+    keep_history: true
     on:
       all_branches: true
       condition: $TRAVIS_BRANCH =~ ^(master|feature/57/apidocs)$
