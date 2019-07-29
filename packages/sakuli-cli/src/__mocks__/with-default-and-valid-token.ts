@@ -1,0 +1,2 @@
+export default jest.fn();
+export const pluginToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzYWt1bGkuaW8iLCJzdWIiOiJzYWt1bGlfcGx1Z2luIiwiY2F0ZWdvcnkiOjF9.J_7FVPNJlohfodFHLkbNVtgrgAdzCljL7nDfLF2AlXbFlTaoq_31qgOXo0xuBL4XMMlU3zTQVMnpbiStE1pXig";
