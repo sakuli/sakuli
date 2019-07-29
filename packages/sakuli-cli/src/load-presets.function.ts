@@ -1,8 +1,8 @@
 import {SakuliPresetProvider} from "@sakuli/core";
 import {isPresent} from "@sakuli/commons";
-import {PluginValidator} from "@sakuli/plugin-validator";
+const {PluginValidator} = require(`@sakuli/plugin-validator-${process.platform}`);
 
-const LICENSE_KEY = 'SAKULI_LICENSE_KEY';
+export const LICENSE_KEY = 'SAKULI_LICENSE_KEY';
 
 const hasDefaultExport = (module: any) => {
     return (module.default && typeof module.default === 'function');
