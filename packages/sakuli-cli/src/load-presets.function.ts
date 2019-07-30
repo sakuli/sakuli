@@ -1,6 +1,6 @@
+import {PluginValidator} from "@sakuli/plugin-validator";
 import {SakuliPresetProvider} from "@sakuli/core";
 import {isPresent} from "@sakuli/commons";
-const {PluginValidator} = require(`@sakuli/plugin-validator-${process.platform}`);
 
 export const LICENSE_KEY = 'SAKULI_LICENSE_KEY';
 
