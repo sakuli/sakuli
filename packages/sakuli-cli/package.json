@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "typings": "dist",
   "scripts": {
-    "install": "node ./install.js",
     "test": "jest",
     "build": "tsc",
     "typedoc": "typedoc --out ../../docs/api/sakuli-cli --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* --includeDeclarations src/",
@@ -29,6 +28,7 @@
     "@sakuli/commons": "^2.1.0",
     "@sakuli/core": "^2.1.0",
     "@sakuli/legacy": "^2.1.0",
+    "@sakuli/plugin-validator": "^1.0.0",
     "ansi-escapes": "^4.1.0",
     "chalk": "^2.4.1",
     "date-fns": "^1.30.1",
