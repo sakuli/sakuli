@@ -1,6 +1,7 @@
 import {PluginValidator} from "@sakuli/plugin-validator";
 import {SakuliPresetProvider} from "@sakuli/core";
 import {isPresent} from "@sakuli/commons";
+import chalk from "chalk";
 
 export const LICENSE_KEY = 'SAKULI_LICENSE_KEY';
 
@@ -23,11 +24,11 @@ export async function loadPresets(presetModuleNames: string[] = []): Promise<Sak
     }
     return potentialPresetModules.map(([name, module]) => {
         if (hasDefaultExport(module)) {
-            const validator = new PluginValidator();
+            const validator = new PluginValidator(name);
             try {
                 validator.verifyPlugin(module, getUserToken());
             } catch (e) {
-                console.warn(`Failed to enable plugin ${name}. Reason: ${e}`);
+                console.warn(chalk`{red Failed to enable plugin ${name}. Reason: ${e}}`);
                 return null;
             }
             return module.default as SakuliPresetProvider
