@@ -42,7 +42,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project,
             public _imagePaths: string[] = []
         ) {
             ctx.logger.info(`Start Testcase ${caseId}`);
-            ctx.startTestCase({id: caseId});
+            ctx.startTestCase({id: caseId, warningTime: warningTime, criticalTime: criticalTime});
             ctx.startTestStep({});
             nutConfig.imagePaths = [cwd()];
             const testFolder = throwIfAbsent(currentTestFolder, new Error("No testcase folder provided"));
