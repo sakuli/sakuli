@@ -65,6 +65,9 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) => new P
         })
         .on("END_TESTCASE", s => l(renderEntityOnEnd(s, 'Testcase', 2)))
         .on("END_TESTSUITE", s => l(renderEntityOnEnd(s, 'Testsuite')))
-        .on("END_EXECUTION", _ => l(`End execution`));
+        .on("END_EXECUTION", _ => {
+            l(`End execution`)
+            res();
+        });
 
 });
