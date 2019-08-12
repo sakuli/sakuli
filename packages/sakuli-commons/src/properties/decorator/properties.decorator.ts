@@ -33,7 +33,11 @@ export interface PropertyDecoratorDefinition {
     reader: ReadMap<any>
 }
 
-const identity = <T>(x:T) => x;
+const BooleanPropertyReader = (v: any) => {
+    return !(["false", "null", "0", "", false, 0, undefined, null].includes(v));
+};
+
+const identity = <T>(x: T) => x;
 
 export function Property(path: string, reader: ReadMap<any> = identity) {
     return ({constructor}: any, property: string) => {
@@ -52,7 +56,7 @@ const onlyValue = <T>(reader: ReadMap<T>) => (v: Maybe<T>) => ifPresent(v, reade
  * @param path
  * @constructor
  */
-export const BooleanProperty = (path: string) => Property(path, onlyValue(Boolean));
+export const BooleanProperty = (path: string) => Property(path, BooleanPropertyReader);
 
 /**
  * Converts value to Number if present
@@ -72,7 +76,6 @@ export interface ListPropertyOptions {
     delimiter: string,
     mapper: ReadMap<string, any>
 }
-
 
 
 /**
