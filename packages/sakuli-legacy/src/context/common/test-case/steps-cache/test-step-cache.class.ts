@@ -37,9 +37,13 @@ export class TestStepCache {
     async read(): Promise<Partial<TestStepContext>[]> {
         if (await this.exists()) {
             const fileContent = await fs.readFile(this.cacheFile);
-            return fileContent.toString().trim()
-                .split(EOL)
-                .map(line => this.marshaller.unMarshall(line));
+            const trimmedFileContent = fileContent.toString().trim();
+            if (trimmedFileContent) {
+                return trimmedFileContent.split(EOL)
+                    .map(line => this.marshaller.unMarshall(line));
+            } else {
+                return [];
+            }
         } else {
             return []
         }
