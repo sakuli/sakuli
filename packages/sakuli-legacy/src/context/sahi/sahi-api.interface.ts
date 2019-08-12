@@ -5,6 +5,12 @@ import {FetchApi} from "./fetch";
 
 export interface SahiApi extends ActionApi, AccessorApi, RelationApi, FetchApi {
 
+    /**
+     * A relic from Sakuli v1, that was used load
+     *
+     * @deprecated
+     *
+     */
     _dynamicInclude(): Promise<void>;
 
 }
