@@ -44,7 +44,7 @@ describe("TestCase", () => {
             // WHEN
 
             // THEN
-            expect(() => new SUT("testId")).toThrowError("No testcase folder provided");
+            expect(() => new SUT("testId", 0, 0)).toThrowError("No testcase folder provided");
         });
 
         it("should use the CWD and the testcase folder for image search by default", () => {
@@ -53,7 +53,7 @@ describe("TestCase", () => {
             const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
 
             // WHEN
-            new SUT("testId");
+            new SUT("testId", 0, 0);
 
             // THEN
             expect(nutConfig.imagePaths.length).toBe(2);
