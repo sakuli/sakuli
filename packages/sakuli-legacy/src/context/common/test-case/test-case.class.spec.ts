@@ -4,9 +4,12 @@ import {mockPartial} from "sneer";
 import {createTestCaseClass} from "./test-case.class";
 
 import nutConfig from "../nut-global-config.class";
-import {SimpleLogger} from "@sakuli/commons";
+import {SimpleLogger, Type} from "@sakuli/commons";
 import {join} from "path";
 import {ScreenApi} from "../actions/screen.function";
+import {TestCase} from "./test-case.interface";
+import {TestStepCache} from "./steps-cache/test-step-cache.class";
+import {TestStep} from "./__mocks__/test-step.function";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -37,6 +40,27 @@ describe("TestCase", () => {
 
     const project: Project = mockPartial<Project>({});
 
+    describe("initialisation", () => {
+        it('should pass constructor params to testExecutionContext', () => {
+            // GIVEN
+            const testFolder = "testCaseFolder";
+            const testCaseId = 'testCase';
+            const warningTime = 100;
+            const criticalTime = 200;
+            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
+
+            // WHEN
+            new SUT(testCaseId, warningTime, criticalTime);
+
+            // THEN
+            expect(testExecutionContext.startTestCase).toBeCalledWith({
+                id: testCaseId,
+                warningTime,
+                criticalTime
+            });
+        })
+    });
+
     describe("image path", () => {
         it("should throw on missing testcasefolder", () => {
             // GIVEN
@@ -44,7 +68,7 @@ describe("TestCase", () => {
             // WHEN
 
             // THEN
-            expect(() => new SUT("testId")).toThrowError("No testcase folder provided");
+            expect(() => new SUT("testId", 0, 0)).toThrowError("No testcase folder provided");
         });
 
         it("should use the CWD and the testcase folder for image search by default", () => {
@@ -53,7 +77,7 @@ describe("TestCase", () => {
             const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
 
             // WHEN
-            new SUT("testId");
+            new SUT("testId", 0, 0);
 
             // THEN
             expect(nutConfig.imagePaths.length).toBe(2);
@@ -121,14 +145,14 @@ describe("TestCase", () => {
     });
 
     describe("saveResult", () => {
-        it("should stop and start a teststep", () => {
+        it("should stop and start a teststep", async () => {
             // GIVEN
             const testFolder = "testCaseFolder";
             const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
             const tc = new SUT("testId", 0, 0);
 
             // WHEN
-            tc.saveResult();
+            await tc.saveResult();
 
             // THEN
             expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
@@ -148,10 +172,77 @@ describe("TestCase", () => {
             await tc.handleException(testError);
 
             // THEN
-            expect(testExecutionContext.updateCurrentTestCase).toBeCalledTimes(1);
-            expect(testExecutionContext.updateCurrentTestCase).toBeCalledWith({
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
                 error: testError
             });
         })
     });
+
+    describe('caching', () => {
+        let SUT: Type<TestCase>;
+        const cacheData = {
+            exists: true,
+            steps: [
+                TestStep('step-1', 100, 200),
+                TestStep('step-2', 100, 200),
+                TestStep('step-3', 100, 200),
+            ]
+        };
+        let cacheMock: TestStepCache;
+        let tc: TestCase;
+        beforeEach(() => {
+            const testFolder = "testCaseFolder";
+            cacheMock = mockPartial<TestStepCache>({
+                exists: jest.fn().mockResolvedValue(cacheData.exists),
+                read: jest.fn().mockResolvedValue(cacheData.steps),
+                write: jest.fn().mockResolvedValue(void 0)
+            });
+            SUT = createTestCaseClass(testExecutionContext, project, testFolder, cacheMock);
+            tc = new SUT();
+        });
+
+        it('should update last step from cache', async () => {
+            (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
+                getChildren: () => [
+                    TestStep('step-1', 100, 200),
+                    TestStep('', 0, 0),
+                ]
+            });
+            await tc.handleException(Error('Dummy'));
+            expect(testExecutionContext.updateCurrentTestStep).toHaveBeenCalledWith(expect.objectContaining({
+                kind: 'step',
+                id: 'step-2',
+                warningTime: 100,
+                criticalTime: 200
+            }));
+        });
+
+        it('should write the cache on successful testcase', async () => {
+            const steps = [
+                TestStep('step-1', 100, 200),
+                TestStep('step-2', 100, 200),
+            ];
+
+            (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
+                getChildren: () => steps
+            });
+            await tc.saveResult();
+            expect(cacheMock.write).toHaveBeenCalledWith(steps);
+        });
+
+        it('should not write the cache on error testcase', async () => {
+            const steps = [
+                TestStep('step-1', 100, 200),
+                TestStep('step-2', 100, 200),
+            ];
+
+            (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
+                error: Error('Dummy error'),
+                getChildren: () => steps
+            });
+            await tc.saveResult();
+            expect(cacheMock.write).not.toHaveBeenCalled();
+        });
+    })
 });
