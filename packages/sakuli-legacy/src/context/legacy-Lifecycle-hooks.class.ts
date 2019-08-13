@@ -21,6 +21,9 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     driver: Maybe<ThenableWebDriver> = null;
 
+    /**
+     * Path to the current Testsuite. Might be used in `requestContext`
+     */
     currentTest: Maybe<string> = null;
 
     constructor(
@@ -76,7 +79,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
-        const stepsCache = new TestStepCache(project.rootDir)
+        const currentTestFolder = throwIfAbsent(this.currentTest, Error('Could not initialise LegacyDslContext because no testfolder was found / provided'))
+        const stepsCache = new TestStepCache(currentTestFolder);
         return Promise.resolve({
             driver,
             context: ctx,
