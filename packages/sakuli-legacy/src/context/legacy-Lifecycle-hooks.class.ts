@@ -15,6 +15,7 @@ import {createThenableEnvironmentClass} from "./common/environment";
 import {createThenableRegionClass} from "./common/region";
 import {LegacyApi} from "./legacy-api.interface";
 import {createDriverFromProject} from "./selenium-config/create-driver-from-project.function";
+import { TestStepCache } from './common/test-case/steps-cache/test-step-cache.class';
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -75,10 +76,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
+        const stepsCache = new TestStepCache(project.rootDir)
         return Promise.resolve({
             driver,
             context: ctx,
-            TestCase: createTestCaseClass(ctx, project, this.currentTest),
+            TestCase: createTestCaseClass(ctx, project, this.currentTest, stepsCache),
             Application: createThenableApplicationClass(ctx, project),
             Key,
             MouseButton,
