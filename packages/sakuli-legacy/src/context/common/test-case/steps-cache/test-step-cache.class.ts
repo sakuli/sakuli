@@ -7,13 +7,13 @@ import {TestStepContextCacheMarshaller} from "./test-step-context-cache-marshall
 export class TestStepCache {
 
     constructor(
-        private readonly cacheLocation: string = tmpdir(),
+        private readonly cacheLocation: string = join(process.cwd()),
         private readonly marshaller: TestStepContextCacheMarshaller = new TestStepContextCacheMarshaller()
     ) {
     }
 
     get cacheFile() {
-        return join(this.cacheLocation, 'steps.cache');
+        return join(this.cacheLocation, '.steps.cache');
     }
 
     async write(steps: TestStepContext[]) {
