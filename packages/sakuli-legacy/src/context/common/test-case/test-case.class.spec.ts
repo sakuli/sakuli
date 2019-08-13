@@ -40,6 +40,27 @@ describe("TestCase", () => {
 
     const project: Project = mockPartial<Project>({});
 
+    describe("initialisation", () => {
+        it('should pass constructor params to testExecutionContext', () => {
+            // GIVEN
+            const testFolder = "testCaseFolder";
+            const testCaseId = 'testCase';
+            const warningTime = 100;
+            const criticalTime = 200;
+            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
+
+            // WHEN
+            new SUT(testCaseId, warningTime, criticalTime);
+
+            // THEN
+            expect(testExecutionContext.startTestCase).toBeCalledWith({
+                id: testCaseId,
+                warningTime,
+                criticalTime
+            });
+        })
+    })
+
     describe("image path", () => {
         it("should throw on missing testcasefolder", () => {
             // GIVEN
