@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Bugfix: TestExecutionContextRenderer blocks execution [(#174)](https://github.com/sakuli/sakuli/issues/174)
 - Bugfix: Last Step is not reported when an error is thrown before `.endOfStep(...)` [(#178)](https://github.com/sakuli/sakuli/issues/178)
 - Bugfix: BooleanProperties are not processed correctly [(#180)](https://github.com/sakuli/sakuli/issues/180)
+- Bugfix: Warning and critical thresholds have no effect on TestCase [(#182)](https://github.com/sakuli/sakuli/issues/182)
 
 ## v2.1.0
 - Enhancement: Provide TestExecutionContext to Forwarder [(#143)](https://github.com/sakuli/sakuli/issues/143)
