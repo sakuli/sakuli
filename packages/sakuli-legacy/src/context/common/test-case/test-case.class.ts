@@ -67,7 +67,7 @@ export function createTestCaseClass(ctx: TestExecutionContext,
             ctx.logger.info(`Error: ${e.message}`);
             const screenShotPath = await takeErrorScreenShot(ctx, currentTestFolder);
             ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-            ctx.updateCurrentTestCase({
+            ctx.updateCurrentTestStep({
                 error: e,
                 screenshot: screenShotPath
             });

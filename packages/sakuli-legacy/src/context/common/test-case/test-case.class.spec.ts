@@ -59,7 +59,7 @@ describe("TestCase", () => {
                 criticalTime
             });
         })
-    })
+    });
 
     describe("image path", () => {
         it("should throw on missing testcasefolder", () => {
@@ -172,8 +172,8 @@ describe("TestCase", () => {
             await tc.handleException(testError);
 
             // THEN
-            expect(testExecutionContext.updateCurrentTestCase).toBeCalledTimes(1);
-            expect(testExecutionContext.updateCurrentTestCase).toBeCalledWith({
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
                 error: testError
             });
         })
