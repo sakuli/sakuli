@@ -54,7 +54,13 @@ export const connectForwarderToTestExecutionContext = async (
         }
     });
     return async () => {
-        await Promise.all(forwardings);
+        for (const forwarding of forwardings) {
+            try {
+                await forwarding;
+            } catch (e) {
+                ctx.logger.debug(`There were errors during forwarding`);
+            }
+        }
         if (forwarder.tearDown) {
             return forwarder.tearDown();
         } else {
