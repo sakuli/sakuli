@@ -1,8 +1,9 @@
 import {Application, DeclarationReflection} from 'typedoc';
 import {join} from "path";
 import {renderDeclaration} from "./template.function";
-import {writeFileSync} from "fs";
+import {writeFileSync, mkdirSync} from "fs";
 
+const outDir = 'dist';
 const projectDir = join(__dirname, '..', '..', 'sakuli-legacy');
 const srcDir = join(projectDir, 'src');
 const app = new Application({
@@ -23,7 +24,8 @@ if (projection) {
         }
     });
     const dtsFileContent = renderDeclaration(reflections);
-    writeFileSync(join('out', 'index.d.ts'), dtsFileContent);
+    mkdirSync(outDir, {recursive: true});
+    writeFileSync(join(outDir, 'index.d.ts'), dtsFileContent, {flag: 'w'});
 
 } else {
 

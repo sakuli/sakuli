@@ -1,6 +1,6 @@
 {
 	"name": "@sakuli/legacy-types",
-	"version": "2.0.1",
+	"version": "2.1.1",
 	"description": "provide typings for Sakuli Legacy api (@sakuli/legacy)",
 	"keywords": [
 		"typings",
@@ -10,7 +10,7 @@
 		"testing",
 		"legacy"
 	],
-	"typings": "./out/index",
+	"typings": "./dist/index",
 	"scripts": {
 		"build": "ts-node -P tsconfig.json src/build-dts-file",
 		"typedoc": "typedoc --mode \"modules\" --includeDeclarations --excludeNotExported --entryPoint \"__global\" --out dist/docs out/"

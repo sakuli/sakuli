@@ -22,6 +22,7 @@
   "dependencies": {
     "@sakuli/cli": "^2.1.1",
     "@sakuli/legacy": "^2.1.1",
+    "@sakuli/legacy-types": "^2.1.1",
     "chromedriver": "^76.0.0",
     "concurrently": "^4.1.0",
     "execa": "^1.0.0",
