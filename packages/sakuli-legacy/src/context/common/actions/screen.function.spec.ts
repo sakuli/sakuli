@@ -115,38 +115,6 @@ describe("takeScreenshot*", () => {
         expect(screen.capture).toBeCalledTimes(1);
         expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, screenShotPath, expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_/), "");
     });
-
-    it("should reject on non-existent screenshot file for takeScreenshot", async () => {
-        // GIVEN
-        const screenShotPath = join("test", "path", "to");
-        const screenShotFileName = "screenshot";
-        const screenShotFileExt = ".png";
-        const resultingFilename = "filename";
-        screen.capture = jest.fn(() => Promise.resolve(resultingFilename));
-
-        // WHEN
-
-        // THEN
-        await expect(ScreenApi.takeScreenshot(`${join(screenShotPath, screenShotFileName)}${screenShotFileExt}`))
-            .rejects
-            .toBe(`Failed to write screenshot file '${resultingFilename}'`);
-    });
-
-    it("should reject on non-existent screenshot file for takeScreenshotWithTimestamp", async () => {
-        // GIVEN
-        const screenShotPath = join("test", "path", "to");
-        const screenShotFileName = "screenshot";
-        const screenShotFileExt = ".png";
-        const resultingFilename = "filename";
-        screen.capture = jest.fn(() => Promise.resolve(resultingFilename));
-
-        // WHEN
-
-        // THEN
-        await expect(ScreenApi.takeScreenshotWithTimestamp(`${join(screenShotPath, screenShotFileName)}${screenShotFileExt}`))
-            .rejects
-            .toBe(`Failed to write screenshot file '${resultingFilename}'`);
-    });
 });
 
 describe("getTimestamp", () => {
