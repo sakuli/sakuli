@@ -1,5 +1,5 @@
 import {Property} from "@sakuli/commons";
-import {Capabilities} from "selenium-webdriver";
+import {Browsers} from "../context/selenium-config/create-driver-from-project.function";
 
 export class LegacyProjectProperties {
     /**
@@ -79,7 +79,7 @@ export class LegacyProjectProperties {
      */
     @Property('browser')
     @Property('testsuite.browser')
-    testsuiteBrowser: keyof typeof Capabilities = "firefox";
+    testsuiteBrowser: Browsers = "firefox";
 
     /**
      *######################################################################################

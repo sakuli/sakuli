@@ -12,7 +12,9 @@ export interface Environment {
     sleepMs(ms: number): Promise<Environment>;
     getRegionFromFocusedWindow(): Promise<Region>;
     getClipboard(): Promise<string>;
+    getClipboardMasked(): Promise<string>;
     setClipboard(text: string): Promise<Environment>;
+    setClipboardMasked(text: string): Promise<Environment>;
     pasteClipboard(): Promise<Environment>;
     copyIntoClipboard(): Promise<Environment>;
     cleanClipboard(): Promise<void>;
@@ -34,5 +36,7 @@ export interface Environment {
     getOsIdentifier(): string;
     runCommand(command: string, optThrowException: boolean): Promise<CommandLineResult>;
     getEnv(key: string): string | null;
+    getEnvMasked(key: string): string | null;
     getProperty(key: string): string | null;
+    getPropertyMasked(key: string): string | null;
 }

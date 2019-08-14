@@ -1,39 +1,19 @@
 import {cwd} from "process";
-import {Project, TestExecutionContext} from "@sakuli/core";
+import {Project, TestExecutionContext, TestStepContext} from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
-import {ScreenApi} from "../actions/screen.function";
 import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {isAbsolute, join} from "path";
 import {TestCase} from "./test-case.interface";
+import {TestStepCache} from "./steps-cache/test-step-cache.class";
+import {takeErrorScreenShot} from "./take-error-screen-shot.function";
+import {existsSync} from "fs";
 
-type TestMetaData = {
-    suiteName: string,
-    caseName: string
-};
+export function createTestCaseClass(ctx: TestExecutionContext,
+                                    project: Project,
+                                    currentTestFolder: Maybe<string>,
+                                    testStepCache = new TestStepCache()
+) {
 
-const getTestMetaData = (ctx: TestExecutionContext): TestMetaData => {
-    const suiteName = ifPresent(ctx.getCurrentTestSuite(), suite => ifPresent(suite.id, id => id, () => "UNKNOWN_TESTSUITE"), () => "UNKNOWN_TESTSUITE");
-    let caseName = ifPresent(ctx.getCurrentTestCase(), testCase => testCase.id, () => null);
-    caseName = ifPresent(caseName, () => caseName, () => {
-        return ifPresent(ctx.getCurrentTestSuite(), ts => `testcase_${ts.testCases.length}`, () => "testcase_1");
-    });
-
-    return ({
-        suiteName,
-        caseName: caseName || "testcase_1"
-    });
-};
-
-const takeErrorScreenShot = (ctx: TestExecutionContext, currentTestFolder: Maybe<string>) => {
-    const {suiteName, caseName} = getTestMetaData(ctx);
-    const errorString = `error_${suiteName}_${caseName}`;
-    const screenShotPath = ifPresent(currentTestFolder,
-        (testFolder) => join(testFolder, errorString),
-        () => join(cwd(), errorString));
-    return ScreenApi.takeScreenshotWithTimestamp(screenShotPath);
-};
-
-export function createTestCaseClass(ctx: TestExecutionContext, project: Project, currentTestFolder: Maybe<string>) {
     return class SakuliTestCase implements TestCase {
         constructor(
             readonly caseId: string = 'Testcase',
@@ -42,7 +22,7 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project,
             public _imagePaths: string[] = []
         ) {
             ctx.logger.info(`Start Testcase ${caseId}`);
-            ctx.startTestCase({id: caseId});
+            ctx.startTestCase({id: caseId, warningTime, criticalTime});
             ctx.startTestStep({});
             nutConfig.imagePaths = [cwd()];
             const testFolder = throwIfAbsent(currentTestFolder, new Error("No testcase folder provided"));
@@ -62,6 +42,9 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project,
             }
         }
 
+        /**
+         * @inheritDoc
+         */
         endOfStep(
             stepName: string,
             warning: number = 0,
@@ -77,41 +60,86 @@ export function createTestCaseClass(ctx: TestExecutionContext, project: Project,
             ctx.startTestStep();
         }
 
+
+        /**
+         * @inheritDoc
+         */
         async handleException<E extends Error>(e: E) {
             ctx.logger.info(`Error: ${e.message}`);
             const screenShotPath = await takeErrorScreenShot(ctx, currentTestFolder);
-            ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-            ctx.updateCurrentTestCase({
-                error: e,
-                screenshot: screenShotPath
-            });
+            if (existsSync(screenShotPath)) {
+                ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
+                ctx.updateCurrentTestStep({
+                    error: e,
+                    screenshot: screenShotPath
+                });
+            } else {
+                ctx.updateCurrentTestStep({
+                    error: e,
+                });
+            }
+            await ifPresent(ctx.getCurrentTestCase(), async ctc => {
+                const cachedSteps = await testStepCache.read();
+                const currentSteps = ctc.getChildren();
+                if (currentSteps.length <= cachedSteps.length) {
+                    const stepToUpdate = cachedSteps[currentSteps.length - 1];
+                    ctx.updateCurrentTestStep(stepToUpdate);
+                }
+            }, () => Promise.resolve());
         }
 
+
+        /**
+         * @inheritDoc
+         */
         getLastUrl(): string {
             throw Error('Not Implemented');
         }
 
-        saveResult(forward: boolean = false) {
+
+        /**
+         * @inheritDoc
+         */
+        async saveResult(forward: boolean = false) {
             ctx.endTestStep();
             ctx.endTestCase();
+            await ifPresent(ctx.getCurrentTestCase(), async ctc => {
+                await ifPresent(ctx.getCurrentTestStep(), async cts => {
+                    if (!cts.error) {
+                        await testStepCache.write(ctc.getChildren() as TestStepContext[]);
+                    }
+                });
+            }, () => Promise.resolve())
         }
 
+        /**
+         * @inheritDoc
+         */
         getID() {
             return this.caseId;
         }
 
+        /**
+         * @inheritDoc
+         */
         getTestCaseFolderPath() {
             return throwIfAbsent(currentTestFolder, new Error("No test path configured."));
         }
 
+        /**
+         * @inheritDoc
+         */
         getTestSuiteFolderPath() {
             return project.rootDir;
         }
 
+        /**
+         * @inheritDoc
+         */
         async throwException(message: string, screenshot: boolean) {
             if (screenshot) {
                 const screenShotOutputPath = await takeErrorScreenShot(ctx, currentTestFolder);
-                const screenShotMessage = screenshot ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
+                const screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
                 throw Error(`${message}${screenShotMessage}`);
             }
             throw Error(message);

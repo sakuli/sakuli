@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/cli",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -10,7 +10,7 @@
     "typedoc": "typedoc --out ../../docs/api/sakuli-cli --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* --includeDeclarations src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test"
   },
   "keywords": [
     "sakuli",
@@ -25,28 +25,29 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@sakuli/commons": "^2.0.1",
-    "@sakuli/core": "^2.0.1",
-    "@sakuli/legacy": "^2.0.1",
-    "ansi-escapes": "^4.1.0",
-    "chalk": "^2.4.1",
-    "date-fns": "^1.30.1",
-    "figlet": "^1.2.1",
-    "yargonaut": "^1.1.4",
-    "yargs": "^12.0.5",
-    "youch": "^2.0.10",
-    "youch-terminal": "^1.0.0"
+    "@sakuli/commons": "^2.1.1",
+    "@sakuli/core": "^2.1.1",
+    "@sakuli/legacy": "^2.1.1",
+    "@sakuli/plugin-validator": "1.0.2",
+    "ansi-escapes": "4.2.1",
+    "chalk": "2.4.2",
+    "date-fns": "1.30.1",
+    "figlet": "1.2.3",
+    "yargonaut": "1.1.4",
+    "yargs": "12.0.5",
+    "youch": "2.0.10",
+    "youch-terminal": "1.0.0"
   },
   "devDependencies": {
-    "@types/figlet": "^1.2.0",
-    "@types/jest": "^24.0.13",
-    "@types/node": "^11.13.5",
+    "@types/figlet": "1.2.0",
+    "@types/jest": "24.0.16",
+    "@types/node": "11.13.18",
     "@types/yargs": "^12.0.12",
-    "jest": "^24.7.1",
-    "sneer": "^1.0.1",
-    "ts-jest": "^24.0.2",
-    "typedoc": "^0.14.2",
-    "typescript": "^3.4.3"
+    "jest": "24.7.1",
+    "sneer": "1.0.1",
+    "ts-jest": "24.0.2",
+    "typedoc": "0.15.0",
+    "typescript": "3.5.3"
   },
   "bin": {
     "sakuli": "./dist/index.js"

@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/commons",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -10,7 +10,7 @@
     "typedoc": "typedoc --out ../../docs/api/sakuli-commons --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test"
   },
   "keywords": [
     "sakuli",

@@ -11,9 +11,8 @@ function* getMatches(regEx: RegExp, testling: string) {
     }
 }
 
-export const template = (t: string) => {
-    const regEx = /\$\{([^}}]*)\}/gm;
-    const matches = getMatches(regEx, t);
+export const template = (t: string, interpolation = /\$\{([^}}]*)\}/gm) => {
+    const matches = getMatches(interpolation, t);
     const staticParts: string[] = [];
     const dynamicParts: string[] = [];
     let lastIndex = 0;

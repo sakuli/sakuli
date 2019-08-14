@@ -32,8 +32,16 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
             return this.env.then(e => e.getClipboard());
         }
 
+        getClipboardMasked(): Promise<string> {
+            return this.env.then(e => e.getClipboardMasked());
+        }
+
         getEnv(key: string): Promise<string | null> {
             return this.env.then(e => e.getEnv(key))
+        }
+
+        getEnvMasked(key: string): Promise<string | null> {
+            return this.env.then(e => e.getEnvMasked(key))
         }
 
         getOsIdentifier(): Promise<string> {
@@ -42,6 +50,10 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
 
         getProperty(key: string): Promise<string | null> {
             return this.env.then(e => e.getProperty(key))
+        }
+
+        getPropertyMasked(key: string): Promise<string | null> {
+            return this.env.then(e => e.getPropertyMasked(key))
         }
 
         getRegionFromFocusedWindow() {
@@ -112,6 +124,10 @@ export function createThenableEnvironmentClass(ctx: TestExecutionContext, projec
 
         setClipboard(text: string): ThenableSakuliEnvironment {
             return new ThenableSakuliEnvironment(this.env.then(e => e.setClipboard(text)));
+        }
+
+        setClipboardMasked(text: string): ThenableEnvironment {
+            return new ThenableSakuliEnvironment(this.env.then(e => e.setClipboardMasked(text)));
         }
 
         setSimilarity(similarity: number): Promise<void> {
