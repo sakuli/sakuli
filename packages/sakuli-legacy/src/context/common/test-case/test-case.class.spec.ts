@@ -27,6 +27,7 @@ describe("TestCase", () => {
         endTestCase: jest.fn(),
         startTestSuite: jest.fn(),
         getCurrentTestCase: jest.fn(),
+        getCurrentTestStep: jest.fn(),
         updateCurrentTestCase: jest.fn(),
         updateCurrentTestStep: jest.fn(),
         startExecution: jest.fn(),
@@ -224,6 +225,9 @@ describe("TestCase", () => {
                 TestStep('step-2', 100, 200),
             ];
 
+            (<jest.Mock>testExecutionContext.getCurrentTestStep).mockReturnValue({
+                error: undefined
+            });
             (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
                 getChildren: () => steps
             });
@@ -237,8 +241,10 @@ describe("TestCase", () => {
                 TestStep('step-2', 100, 200),
             ];
 
-            (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
+            (<jest.Mock>testExecutionContext.getCurrentTestStep).mockReturnValue({
                 error: Error('Dummy error'),
+            });
+            (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
                 getChildren: () => steps
             });
             await tc.saveResult();
