@@ -6,6 +6,7 @@ import {isAbsolute, join} from "path";
 import {TestCase} from "./test-case.interface";
 import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {takeErrorScreenShot} from "./take-error-screen-shot.function";
+import {existsSync} from "fs";
 
 export function createTestCaseClass(ctx: TestExecutionContext,
                                     project: Project,
@@ -66,11 +67,17 @@ export function createTestCaseClass(ctx: TestExecutionContext,
         async handleException<E extends Error>(e: E) {
             ctx.logger.info(`Error: ${e.message}`);
             const screenShotPath = await takeErrorScreenShot(ctx, currentTestFolder);
-            ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-            ctx.updateCurrentTestStep({
-                error: e,
-                screenshot: screenShotPath
-            });
+            if (existsSync(screenShotPath)) {
+                ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
+                ctx.updateCurrentTestStep({
+                    error: e,
+                    screenshot: screenShotPath
+                });
+            } else {
+                ctx.updateCurrentTestStep({
+                    error: e,
+                });
+            }
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
                 const cachedSteps = await testStepCache.read();
                 const currentSteps = ctc.getChildren();
@@ -132,7 +139,7 @@ export function createTestCaseClass(ctx: TestExecutionContext,
         async throwException(message: string, screenshot: boolean) {
             if (screenshot) {
                 const screenShotOutputPath = await takeErrorScreenShot(ctx, currentTestFolder);
-                const screenShotMessage = screenshot ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
+                const screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
                 throw Error(`${message}${screenShotMessage}`);
             }
             throw Error(message);

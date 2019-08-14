@@ -98,7 +98,7 @@ describe("takeScreenshot*", () => {
 
         // THEN
         expect(screen.capture).toBeCalledTimes(1);
-        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, cwd(), expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}_/), "");
+        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, cwd(), expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_/), "");
     });
 
     it("should call `screen.capture` with timestamp and custom path", async () => {
@@ -113,7 +113,7 @@ describe("takeScreenshot*", () => {
 
         // THEN
         expect(screen.capture).toBeCalledTimes(1);
-        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, screenShotPath, expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}_/), "");
+        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, screenShotPath, expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_/), "");
     });
 });
 
@@ -127,7 +127,8 @@ describe("getTimestamp", () => {
         const result = getTimestamp(timestamp, offset);
 
         // THEN
-        expect(result).toBe("2019-07-09T18:01:15")
+        expect(result).not.toContain(":");
+        expect(result).toBe("2019-07-09T18-01-15")
     });
 
     it("should output an ISO string for UTC", () => {
@@ -138,7 +139,8 @@ describe("getTimestamp", () => {
         const result = getTimestamp(timestamp);
 
         // THEN
-        expect(result).toBe("2019-07-09T16:01:15")
+        expect(result).not.toContain(":");
+        expect(result).toBe("2019-07-09T16-01-15")
     });
 
     it("should output current UTC by default", () => {
@@ -150,6 +152,7 @@ describe("getTimestamp", () => {
         const result = getTimestamp();
 
         // THEN
-        expect(result).toBe("2019-07-09T16:01:15")
+        expect(result).not.toContain(":");
+        expect(result).toBe("2019-07-09T16-01-15")
     });
 });
