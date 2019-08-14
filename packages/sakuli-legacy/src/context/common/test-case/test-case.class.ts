@@ -97,9 +97,11 @@ export function createTestCaseClass(ctx: TestExecutionContext,
             ctx.endTestStep();
             ctx.endTestCase();
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
-                if(!ctc.error) {
-                    await testStepCache.write(ctc.getChildren() as TestStepContext[]);
-                }
+                await ifPresent(ctx.getCurrentTestStep(), async cts => {
+                    if (!cts.error) {
+                        await testStepCache.write(ctc.getChildren() as TestStepContext[]);
+                    }
+                });
             }, () => Promise.resolve())
         }
 
