@@ -28,10 +28,11 @@ const getTimezoneOffset = (): number => {
 export const getTimestamp = (when: number = Date.now(), offset: number = 0): string => {
     const timestamp = new Date(when - offset).toISOString();
     const sliceIndex = timestamp.indexOf('.');
-    return (sliceIndex > -1) ? timestamp.slice(0, sliceIndex) : timestamp;
+    const timestampString = (sliceIndex > -1) ? timestamp.slice(0, sliceIndex) : timestamp;
+    return timestampString.split(":").join("-");
 };
 
-export type SearchResult = {left: number, top: number, width: number, height: number};
+export type SearchResult = { left: number, top: number, width: number, height: number };
 
 export const ScreenApi = {
     async find(filename: string, path: string, confidence: number, searchRegion: Region): Promise<SearchResult> {

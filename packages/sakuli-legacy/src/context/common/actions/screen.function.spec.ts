@@ -98,7 +98,7 @@ describe("takeScreenshot*", () => {
 
         // THEN
         expect(screen.capture).toBeCalledTimes(1);
-        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, cwd(), expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}_/), "");
+        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, cwd(), expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_/), "");
     });
 
     it("should call `screen.capture` with timestamp and custom path", async () => {
@@ -113,7 +113,39 @@ describe("takeScreenshot*", () => {
 
         // THEN
         expect(screen.capture).toBeCalledTimes(1);
-        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, screenShotPath, expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}_/), "");
+        expect(screen.capture).toBeCalledWith(screenShotFileName, FileType.PNG, screenShotPath, expect.stringMatching(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_/), "");
+    });
+
+    it("should reject on non-existent screenshot file for takeScreenshot", async () => {
+        // GIVEN
+        const screenShotPath = join("test", "path", "to");
+        const screenShotFileName = "screenshot";
+        const screenShotFileExt = ".png";
+        const resultingFilename = "filename";
+        screen.capture = jest.fn(() => Promise.resolve(resultingFilename));
+
+        // WHEN
+
+        // THEN
+        await expect(ScreenApi.takeScreenshot(`${join(screenShotPath, screenShotFileName)}${screenShotFileExt}`))
+            .rejects
+            .toBe(`Failed to write screenshot file '${resultingFilename}'`);
+    });
+
+    it("should reject on non-existent screenshot file for takeScreenshotWithTimestamp", async () => {
+        // GIVEN
+        const screenShotPath = join("test", "path", "to");
+        const screenShotFileName = "screenshot";
+        const screenShotFileExt = ".png";
+        const resultingFilename = "filename";
+        screen.capture = jest.fn(() => Promise.resolve(resultingFilename));
+
+        // WHEN
+
+        // THEN
+        await expect(ScreenApi.takeScreenshotWithTimestamp(`${join(screenShotPath, screenShotFileName)}${screenShotFileExt}`))
+            .rejects
+            .toBe(`Failed to write screenshot file '${resultingFilename}'`);
     });
 });
 
@@ -127,7 +159,8 @@ describe("getTimestamp", () => {
         const result = getTimestamp(timestamp, offset);
 
         // THEN
-        expect(result).toBe("2019-07-09T18:01:15")
+        expect(result).not.toContain(":");
+        expect(result).toBe("2019-07-09T18-01-15")
     });
 
     it("should output an ISO string for UTC", () => {
@@ -138,7 +171,8 @@ describe("getTimestamp", () => {
         const result = getTimestamp(timestamp);
 
         // THEN
-        expect(result).toBe("2019-07-09T16:01:15")
+        expect(result).not.toContain(":");
+        expect(result).toBe("2019-07-09T16-01-15")
     });
 
     it("should output current UTC by default", () => {
@@ -150,6 +184,7 @@ describe("getTimestamp", () => {
         const result = getTimestamp();
 
         // THEN
-        expect(result).toBe("2019-07-09T16:01:15")
+        expect(result).not.toContain(":");
+        expect(result).toBe("2019-07-09T16-01-15")
     });
 });
