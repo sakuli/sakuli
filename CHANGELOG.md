@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.2
+- Bugfix: Error screenshots on Windows not working [(#183)](https://github.com/sakuli/sakuli/issues/183)
+- Bugfix: TeststepsCache should check for errors in current step [(#184)](https://github.com/sakuli/sakuli/issues/184)
+
 ## v2.1.1
 - Enhancement: Publish API docs [(#57)](https://github.com/sakuli/sakuli/issues/57)
 - Enhancement: Updated Sonar config [(#102)](https://github.com/sakuli/sakuli/issues/102)
