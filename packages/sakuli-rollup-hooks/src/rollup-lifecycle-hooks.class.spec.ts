@@ -1,5 +1,5 @@
 import {RollupLifecycleHooks} from "./rollup-lifecycle-hooks.class";
-import {join} from "path";
+import {join, resolve} from "path";
 import {Project, TestExecutionContext} from "@sakuli/core";
 import {mockPartial} from "sneer";
 
@@ -7,9 +7,15 @@ describe('RollupLifecycleHooks', () => {
 
     let project: Project;
     beforeEach(() => {
+        const rootDir = join(__dirname, '..', '__mock__');
         project = mockPartial<Project>({
-            rootDir: join(__dirname, '__mock__'),
-            testFiles: []
+            rootDir,
+            testFiles: [],
+            get(key: string) {
+                return (<Record<string, string>>({
+                    "tsconfig": join(rootDir, 'tsconfig.spec.json')
+                }))[key]
+            }
         });
     });
 
@@ -40,7 +46,7 @@ describe('RollupLifecycleHooks', () => {
     it('should add typescript plugin if file extension is .ts', async () => {
         const hooks = new RollupLifecycleHooks();
         await hooks.readFileContent({
-            path: 'ts.ts'
+            path: 'ts/index.ts'
         }, project);
 
     });

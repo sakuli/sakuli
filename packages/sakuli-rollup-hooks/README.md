@@ -1,11 +1,23 @@
-# `sakuli-rollup-hooks`
+# @sakuli/rollup-hooks
 
-> TODO: description
+**TLDR;**
+
+This is a essential Part of Sakuli which handles the preprocessing of Testfiles. It is usually _not_ nesseccary for Sakuli-Endusers to have any knowledge about hte internals of this package.
 
 ## Usage
 
-```
-const sakuliRollupHooks = require('sakuli-rollup-hooks');
+This package provdies a preset that implements the following lifecycle hooks:
 
-// TODO: DEMONSTRATE API
-```
+- readFileContent
+- requestContext
+
+It is required by `@sakuli/legacy` but can also be used (and considered) as the default file transformer for any Sakuli extension.
+
+The basic task is to take a given test-file and bundle it together with it's dependencies into a single _script-string_ wrapped by an IIFE. Sakuli will than create a [Script-Object](https://nodejs.org/docs/latest-v10.x/api/vm.html#vm_new_vm_script_code_options) from this source.
+
+As the name of this package tells, [Rollup](https://rollupjs.org/guide/en/) does the heavy lifting of the bundling process. There is not much magic in this process. Some points are still interesting:
+
+- It enables Sakuli to use ES6-Modules
+- The output format is [`IIFE`](https://rollupjs.org/guide/en/#core-functionality), because this will bundle all modules together into a single string while not requiring any external moduleloader (like AMD, commonjs, etc).
+-
+- If the extension of the provided file is `.ts` or `.tsx` the plugin `rollup-plugin-typescript2` is added as a plugin

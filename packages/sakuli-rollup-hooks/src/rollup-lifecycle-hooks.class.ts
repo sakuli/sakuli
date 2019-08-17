@@ -3,6 +3,7 @@ import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
 import {Plugin, rollup} from "rollup";
 import rollupTsPlugin from 'rollup-plugin-typescript2';
 import {extname, isAbsolute, join} from "path";
+import { Maybe } from "../../sakuli-commons/dist";
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -15,13 +16,16 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
         const plugins: Plugin[] = [];
         const extName = extname(filePath);
         if(extName === '.ts' || extName === '.tsx') {
+            const tsconfig: Maybe<string> = project.get('tsconfig');
             plugins.push(rollupTsPlugin(<any>{
+                ...(tsconfig ? {tsconfig} : {}),
                 tsconfigOverride: {
                     compilerOptions: {
                         module: 'ESNext',
                         target: 'ES2017'
-                    }
-                }
+                    },
+                },
+                clean: true,
             }));
         }
         const bundle = await rollup({
@@ -30,17 +34,18 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
         });
 
         const {output} = await bundle.generate({
-            format: 'iife',
+            format: 'commonjs',
             sourcemap: true,
             file: 'bundle-rollup.js',
         });
         const [rollupOutput] = output;
         this.imports = rollupOutput.imports;
+        console.log(rollupOutput.code);
         return Promise.resolve(rollupOutput.code);
     }
 
-    requestContext(testExecutionContext: TestExecutionContext, project: Project): Promise<Record<string, any>> {
-        return Promise.resolve(this.imports.reduce((ctx, mod) => ({...ctx, [mod]: require(mod)}), {}));
+    async requestContext(testExecutionContext: TestExecutionContext, project: Project): Promise<Record<string, any>> {
+       return ({require});
     }
 
 }
