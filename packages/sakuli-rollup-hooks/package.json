@@ -51,6 +51,11 @@
   "dependencies": {
     "@sakuli/commons": "^2.1.1",
     "@sakuli/core": "^2.1.1",
+    "@types/common-tags": "^1.8.0",
+    "chalk": "^2.4.2",
+    "common-tags": "^1.8.0",
+    "execa": "^2.0.4",
+    "ora": "^3.4.0",
     "rollup": "^1.10.0",
     "rollup-plugin-node-resolve": "^4.2.3",
     "rollup-plugin-typescript": "^1.0.1"

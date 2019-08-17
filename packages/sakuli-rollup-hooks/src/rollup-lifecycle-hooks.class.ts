@@ -25,7 +25,18 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
         const extName = extname(filePath);
         if(extName === '.ts' || extName === '.tsx') {
             const tsconfig: Maybe<string> = project.get('tsconfig');
+            const tsconfigDefaults = {
+                "module": "commonjs",
+                "target": "es2017",
+                "noImplicitAny": true,
+                "sourceMap": true,
+                "lib": ["es2017"],
+                "types": [
+                    "@sakuli/legacy-types"
+                ]
+            }
             plugins.push(rollupTsPlugin(<any>{
+                tsconfigDefaults,
                 ...(tsconfig ? {tsconfig} : {}),
                 tsconfigOverride: {
                     compilerOptions: {
