@@ -1,13 +1,21 @@
-import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
-import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
+import {Project, TestExecutionContext, TestExecutionLifecycleHooks, TestFile} from "@sakuli/core";
 import {Plugin, rollup} from "rollup";
 import rollupTsPlugin from 'rollup-plugin-typescript2';
 import {extname, isAbsolute, join} from "path";
-import { Maybe } from "../../sakuli-commons/dist";
+import { Maybe, SimpleLogger, ifPresent } from "@sakuli/commons";
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
-    private imports: string[] = [];
+    logger: Maybe<SimpleLogger>;
+
+    debug(msg: string, data?: any) {
+        ifPresent(this.logger, logger => logger.debug(msg, data))
+    }
+
+    async onProject?(project: Project, testExecutionContext: TestExecutionContext): Promise<void> {
+        this.logger = testExecutionContext.logger;
+    }
+
     async readFileContent(file: TestFile, project: Project): Promise<string> {
         const filePath = isAbsolute(project.rootDir)
             ? join(project.rootDir, file.path)
@@ -28,8 +36,12 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
                 clean: true,
             }));
         }
+
         const bundle = await rollup({
             input: filePath,
+            onwarn:  message => {
+                this.debug(`[BUNDLER WARNING] ${message}`)
+            },
             plugins
         });
 
@@ -39,8 +51,7 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
             file: 'bundle-rollup.js',
         });
         const [rollupOutput] = output;
-        this.imports = rollupOutput.imports;
-        console.log(rollupOutput.code);
+        this.debug(`Bundled testcase file ${filePath} to: `, rollupOutput.code);
         return Promise.resolve(rollupOutput.code);
     }
 

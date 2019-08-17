@@ -29,20 +29,6 @@ describe('RollupLifecycleHooks', () => {
         expect(o).toContain("console.log(pi)");
         return expect(o.trim().endsWith("}())"));
     });
-
-    it('should add native node modules as globals to context', async () => {
-        const ctx = mockPartial<TestExecutionContext>({});
-        const hooks = new RollupLifecycleHooks();
-        await hooks.readFileContent({
-            path: 'with-native.js'
-        }, project);
-
-        await expect(hooks.requestContext(ctx, project)).resolves.toEqual(expect.objectContaining({
-            'http': expect.anything(),
-            'fs': expect.anything()
-        }))
-    });
-
     it('should add typescript plugin if file extension is .ts', async () => {
         const hooks = new RollupLifecycleHooks();
         await hooks.readFileContent({
@@ -50,20 +36,6 @@ describe('RollupLifecycleHooks', () => {
         }, project);
 
     });
-
-    it('should add native node modules as globals to context with typescript', async () => {
-        const ctx = mockPartial<TestExecutionContext>({});
-        const hooks = new RollupLifecycleHooks();
-        await hooks.readFileContent({
-            path: 'ts/index.ts'
-        }, project);
-
-        await expect(hooks.requestContext(ctx, project)).resolves.toEqual(expect.objectContaining({
-            'http': expect.anything(),
-            'fs': expect.anything()
-        }))
-    });
-
     it('should error when file has typescript errors', async () => {
         const hooks = new RollupLifecycleHooks();
 
