@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/rollup-hooks",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
     "rollup",
@@ -49,8 +49,8 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@sakuli/commons": "^2.1.1",
-    "@sakuli/core": "^2.1.1",
+    "@sakuli/commons": "^2.1.2",
+    "@sakuli/core": "^2.1.2",
     "@types/common-tags": "^1.8.0",
     "chalk": "^2.4.2",
     "common-tags": "^1.8.0",

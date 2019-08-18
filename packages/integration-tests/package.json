@@ -1,6 +1,6 @@
 {
   "name": "integration-tests",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Integration tests for Sakuli",
   "private": true,
   "contributors": [
@@ -20,9 +20,9 @@
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run legacy-suite"
   },
   "dependencies": {
-    "@sakuli/cli": "^2.1.1",
-    "@sakuli/legacy": "^2.1.1",
-    "@sakuli/legacy-types": "^2.1.1",
+    "@sakuli/cli": "^2.1.2",
+    "@sakuli/legacy": "^2.1.2",
+    "@sakuli/legacy-types": "^2.1.2",
     "chromedriver": "^76.0.0",
     "concurrently": "^4.1.0",
     "execa": "^1.0.0",

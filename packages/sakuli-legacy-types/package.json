@@ -1,6 +1,6 @@
 {
 	"name": "@sakuli/legacy-types",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "provide typings for Sakuli Legacy api (@sakuli/legacy)",
 	"keywords": [
 		"typings",
