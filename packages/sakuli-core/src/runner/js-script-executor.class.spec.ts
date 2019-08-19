@@ -9,7 +9,7 @@ describe("JsScriptExecutor", () => {
         const executor = new JsScriptExecutor({});
 
         await executor.execute(`
-            const x = 1 + 1;            
+            const x = 1 + 1;
         `, {});
         done();
     });
@@ -35,14 +35,14 @@ describe("JsScriptExecutor", () => {
             x: 0
         };
         const ctx = await executor.execute(`
-            x = 1 + 1            
+            x = 1 + 1
         `, context);
 
         expect(ctx.x).toBe(2);
         done();
     });
 
-    it('should allow multiple context executions', async done => {
+    it('should allow multiple context executions', async () => {
         const executor = new JsScriptExecutor({filename: 'testfile.js'});
         const context = {
             x: 1
@@ -51,10 +51,9 @@ describe("JsScriptExecutor", () => {
         expect(_ctxX2.x).toBe(2);
         const _ctxX3 = await executor.execute(`x += 1`, _ctxX2);
         expect(_ctxX3.x).toBe(3);
-        done();
     });
 
-    it('should wait until async operations are done', async done => {
+    it('should wait until async operations are done - by invoke done', async () => {
 
         const executor = new JsScriptExecutor({
             filename: 'testfile.js',
@@ -66,19 +65,60 @@ describe("JsScriptExecutor", () => {
             setTimeout
         };
         const _ctxX = await executor.execute(stripIndents`
+            async function wait(ms) {
+                return new Promise((res, rej) => {
+                    setTimeout(res, ms);
+                })
+            }
            (async () => {
-                async function wait(ms) {
-                    return new Promise((res, rej) => {
-                        setTimeout(res, ms);
-                    })
-                }            
+                await wait(5);
                 x = 5;
                 sayHello();
             })().then(done);
         `, context);
         expect(context.sayHello).toHaveBeenCalled();
         expect(_ctxX.x).toBe(5);
-        done();
     });
+
+    it('should wait until async operations are done - by handle promise result', async () => {
+        const executor = new JsScriptExecutor({
+            filename: 'test.js',
+            waitUntilDone: true
+        })
+
+        const context = {
+            mock: jest.fn(),
+        }
+
+        await executor.execute(stripIndents`
+            (async () => {
+                mock()
+            })()
+        `, context);
+
+        expect(context.mock).toHaveBeenCalled();
+    })
+
+    it('should wait until async operations are done - by handle result', async () => {
+        const executor = new JsScriptExecutor({
+            filename: 'test.js',
+            waitUntilDone: true
+        })
+
+        const context = {
+            mock: jest.fn(),
+            test: (desc: string, cb: () => Promise<void>): Promise<void> => {
+                return new Promise((res) => cb().then(res))
+            }
+        }
+
+        await executor.execute(stripIndents`
+            test('run somthing', async () => {
+                mock();
+            })
+        `, context);
+
+        expect(context.mock).toHaveBeenCalled();
+    })
 
 });
