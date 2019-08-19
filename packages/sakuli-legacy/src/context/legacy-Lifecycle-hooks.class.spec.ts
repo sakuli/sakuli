@@ -21,17 +21,7 @@ describe("LegacyLifecycleHooks", () => {
         updateCurrentTestCase: jest.fn(),
     });
 
-    const builder: Builder = mockPartial<Builder>({
-        forBrowser: jest.fn(() => builder),
-        withCapabilities: jest.fn(() => builder),
-        setChromeOptions: jest.fn(() => builder),
-        setSafari: jest.fn(() => builder),
-        setIeOptions: jest.fn(() => builder),
-        setFirefoxOptions: jest.fn(() => builder),
-        build: jest.fn(() => driver)
-    });
 
-    const lcp = new LegacyLifecycleHooks(builder);
     const legacyProps = new LegacyProjectProperties();
     legacyProps.testsuiteBrowser = 'chrome';
     const minimumProject = mockPartial<Project>({
@@ -42,6 +32,24 @@ describe("LegacyLifecycleHooks", () => {
 
         }))
     });
+
+    let builder: Builder;
+    let lcp: LegacyLifecycleHooks;
+    beforeEach(async() => {
+        builder = mockPartial<Builder>({
+            forBrowser: jest.fn(() => builder),
+            withCapabilities: jest.fn(() => builder),
+            setChromeOptions: jest.fn(() => builder),
+            setSafari: jest.fn(() => builder),
+            setIeOptions: jest.fn(() => builder),
+            setFirefoxOptions: jest.fn(() => builder),
+            build: jest.fn(() => driver)
+        });
+        lcp = new LegacyLifecycleHooks(builder);
+    })
+
+    afterEach(() => {
+    })
 
     describe('Sahi Api', () => {
 
@@ -88,5 +96,32 @@ describe("LegacyLifecycleHooks", () => {
             )
         });
     })
+
+    describe('ui-only scenario', () => {
+        const legacyProps = new LegacyProjectProperties();
+        legacyProps.uiOnly = true;
+        const uiOnlyProject = mockPartial<Project>({
+            rootDir: '',
+            testFiles: [],
+            objectFactory: jest.fn().mockReturnValue(legacyProps),
+            ...(createPropertyMapMock({}))
+        });
+        it('should prepare context for UI-Only test', async () => {
+            await lcp.onProject(uiOnlyProject);
+            expect(lcp.uiOnly).toBeTruthy();
+            expect(builder.build).toHaveBeenCalledTimes(0);
+            expect(lcp.driver).toBeNull();
+        })
+
+        it('should create a context without sahi api', async () => {
+            await lcp.onProject(uiOnlyProject);
+            lcp.currentTest = '';
+            const context = await lcp.requestContext(testExecutionContext, uiOnlyProject);
+            expect(context.driver).toBeNull();
+            expect(() => {
+                context._navigateTo('')
+            }).toThrowError(/_navigateTo/)
+        })
+    });
 
 });
