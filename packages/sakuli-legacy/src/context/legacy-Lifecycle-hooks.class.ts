@@ -15,11 +15,15 @@ import {createThenableEnvironmentClass} from "./common/environment";
 import {createThenableRegionClass} from "./common/region";
 import {LegacyApi} from "./legacy-api.interface";
 import {createDriverFromProject} from "./selenium-config/create-driver-from-project.function";
+import { TestStepCache } from './common/test-case/steps-cache/test-step-cache.class';
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     driver: Maybe<ThenableWebDriver> = null;
 
+    /**
+     * Path to the current Testsuite. Might be used in `requestContext`
+     */
     currentTest: Maybe<string> = null;
 
     constructor(
@@ -75,10 +79,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         const driver = throwIfAbsent(this.driver,
             Error('Driver could not be initialized before creating sahi-api-context'));
         const sahi = sahiApi(driver, ctx);
+        const currentTestFolder = throwIfAbsent(this.currentTest, Error('Could not initialise LegacyDslContext because no testfolder was found / provided'))
+        const stepsCache = new TestStepCache(currentTestFolder);
         return Promise.resolve({
             driver,
             context: ctx,
-            TestCase: createTestCaseClass(ctx, project, this.currentTest),
+            TestCase: createTestCaseClass(ctx, project, this.currentTest, stepsCache),
             Application: createThenableApplicationClass(ctx, project),
             Key,
             MouseButton,
