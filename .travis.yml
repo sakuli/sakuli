@@ -56,4 +56,4 @@ deploy:
     keep_history: true
     on:
       all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^(master|feature/57/apidocs)$
+      condition: $TRAVIS_BRANCH =~ ^(master)$
