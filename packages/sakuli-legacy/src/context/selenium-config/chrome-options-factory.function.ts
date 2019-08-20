@@ -6,7 +6,7 @@ export const chromeOptionsFactory = (
     properties: ChromeProperties,
 ) => {
     const opts = new ChromeOptions();
-
+    console.log(properties);
     ifPresent(properties.arguments, prop => {
         opts.addArguments(...prop)
     });
@@ -16,8 +16,11 @@ export const chromeOptionsFactory = (
     });
 
     ifPresent(properties.windowSizeHeight, height => {
-        ifPresent(properties.windowSizeWith, width => {
-            opts.windowSize({height, width});
+        ifPresent(properties.windowSizeWidth, width => {
+            opts.windowSize({
+                height,
+                width
+            });
         })
     });
 
