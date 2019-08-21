@@ -1,4 +1,4 @@
-import {BooleanProperty, ListProperty,Maybe, Property} from "@sakuli/commons";
+import {BooleanProperty, ListProperty,Maybe, Property, NumberProperty} from "@sakuli/commons";
 import {IPerfLoggingPrefs} from "selenium-webdriver/chrome";
 
 export class ChromeProperties {
@@ -28,14 +28,14 @@ export class ChromeProperties {
      * Sets the width of the chromes window on start
      * It's ignored when selenium.chrome.windowSize.height is not set
      */
-    @Property('selenium.chrome.windowSize.width')
-    windowSizeWith: Maybe<number>;
+    @NumberProperty('selenium.chrome.windowSize.width')
+    windowSizeWidth: Maybe<number>;
 
     /**
      * Sets the height of the chromes window on start
      * It's ignored when selenium.chrome.windowSize.width is not set
      */
-    @Property('selenium.chrome.windowSize.height')
+    @NumberProperty('selenium.chrome.windowSize.height')
     windowSizeHeight: Maybe<number>;
 
     /**
