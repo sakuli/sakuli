@@ -34,7 +34,7 @@ const tsConfig = {
 export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
         command: 'enable-typescript [project]',
-        describe: `Enables Typescript suppoprt for the provided project`,
+        describe: `Enables Typescript support for the provided project`,
         builder(argv: Argv) {
             return argv.positional('project', {
                 describe: 'Path to the project relative to $PWD'

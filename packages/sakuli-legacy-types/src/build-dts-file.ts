@@ -2,6 +2,7 @@ import {Application, DeclarationReflection} from 'typedoc';
 import {join} from "path";
 import {renderDeclaration} from "./template.function";
 import {writeFileSync, mkdirSync} from "fs";
+import { throwIfAbsent } from '@sakuli/commons';
 
 const outDir = 'dist';
 const projectDir = join(__dirname, '..', '..', 'sakuli-legacy');
@@ -16,8 +17,9 @@ const projection = app.convert(
 );
 
 if (projection) {
-    const api = projection.findReflectionByName('SahiApi');
+    const api = throwIfAbsent(projection.findReflectionByName('SahiApi'));
     const reflections: DeclarationReflection[] = [];
+
     api.traverse(i => {
         if (i instanceof DeclarationReflection) {
             reflections.push(i);

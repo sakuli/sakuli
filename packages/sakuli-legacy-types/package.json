@@ -32,14 +32,16 @@
 	"devDependencies": {
 		"@sakuli/legacy": "^2.1.1",
 		"@types/node": "^12.0.5",
+		"@sakuli/commons": "2.1.2",
 		"dts-dom": "^3.3.0",
 		"flatted": "^2.0.0",
 		"ts-node": "8.2.0",
-		"typescript": "^3.4.3",
-		"typedoc": "^0.14.2"
+		"typedoc": "^0.15.0",
+		"typescript": "^3.4.3"
 	},
 	"peerDependencies": {
 		"@sakuli/legacy": "2.1.1",
 		"@sakuli/rollup-hooks": "2.1.1"
-	}
+	},
+	"dependencies": {}
 }
