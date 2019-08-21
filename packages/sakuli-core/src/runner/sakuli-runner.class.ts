@@ -26,20 +26,11 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
      */
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
-        process.on('unhandledRejection', error => {
-            console.log(error);
-            if (error instanceof Error) {
-                ifPresent(this.testExecutionContext.getCurrentTestCase(), () => {
-                    this.testExecutionContext.updateCurrentTestCase({error});
-                });
-            }
-        });
-        process.on('uncaughtException', error => {
-            console.log(error);
-            ifPresent(this.testExecutionContext.getCurrentTestCase(), () => {
-                this.testExecutionContext.updateCurrentTestCase({error});
-            });
-        });
+        const handleError = (e: any) => {
+            this.testExecutionContext.error = e;
+        }
+        process.on('unhandledRejection', handleError);
+        process.on('uncaughtException', handleError);
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
         let result = {};

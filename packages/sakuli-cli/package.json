@@ -7,10 +7,11 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "typedoc": "typedoc --out ../../docs/api/sakuli-cli --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* --includeDeclarations src/",
+    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-cli src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests && npm run build && npm test",
+    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-cli/docs.json --out ../../docs/sakuli-cli src/"
   },
   "keywords": [
     "sakuli",
