@@ -23,7 +23,7 @@ export function commonActionsApi(
         }));
         return await webDriver.executeAsyncScript<T>(`
             var __done__ = arguments[arguments.length - 1];
-            var result = (function(arguments) {          
+            var result = (function(arguments) {
                 ${source}
             })(arguments)
             __done__(result);
@@ -62,7 +62,6 @@ export function commonActionsApi(
             url.username = credentials.user;
             url.password = credentials.password;
         }
-        await webDriver.manage().window().maximize();
         await webDriver.get(url.href);
         if (forceReload) {
             await webDriver.navigate().refresh()
@@ -86,7 +85,7 @@ export function commonActionsApi(
         }
         const defaultWindowHandle = await webDriver.getWindowHandle();
         await webDriver.switchTo().frame(e);
-        await webDriver.executeScript(`            
+        await webDriver.executeScript(`
             document.body.innerHTML = arguments[0];
         `, content);
         await webDriver.switchTo().window(defaultWindowHandle);

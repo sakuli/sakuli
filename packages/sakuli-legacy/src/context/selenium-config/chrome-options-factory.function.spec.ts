@@ -47,7 +47,7 @@ describe('applyChromeOptions', () => {
 
     it('should set size when width and height are set', () => {
         props.windowSizeHeight = 800;
-        props.windowSizeWith = 600;
+        props.windowSizeWidth = 600;
 
         const opts = chromeOptionsFactory(props);
 
@@ -58,7 +58,7 @@ describe('applyChromeOptions', () => {
     });
 
     it('should not not set size when only width is applied', () => {
-        props.windowSizeWith = 800;
+        props.windowSizeWidth = 800;
 
         const opts = chromeOptionsFactory(props);
 
