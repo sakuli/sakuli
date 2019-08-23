@@ -1,6 +1,5 @@
-import {CommandModuleProvider} from "@sakuli/core";
+import {CommandModuleProvider, CommandModule, Argv} from "@sakuli/core";
 import execa from 'execa';
-import {Argv, CommandModule} from "yargs";
 import { createInterface } from "readline";
 import {stripIndents} from 'common-tags'
 import { resolve, isAbsolute, join } from "path";
@@ -35,10 +34,10 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
     return ({
         command: 'enable-typescript [project]',
         describe: `Enables Typescript support for the provided project`,
-        builder(argv: Argv) {
+        builder(argv: Argv): any {
             return argv.positional('project', {
                 describe: 'Path to the project relative to $PWD'
-            }).demandOption('project');
+            }).demandOption('project') as any;
         },
         async handler(opts: Record<string, unknown> & {$0: string, _: string[]}) {
             const project = `${opts['project']}`;
