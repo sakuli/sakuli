@@ -1,13 +1,13 @@
 import {AccessorUtil} from "../accessor";
 import {TestExecutionContext} from "@sakuli/core";
-import {error, ThenableWebDriver} from "selenium-webdriver";
-import {alertActionApi} from "./alert-action.function";
+import {ThenableWebDriver} from "selenium-webdriver";
 import {focusActionApi} from "./focus-action";
 import {mouseActionApi} from "./mouse-action";
 import {keyboardActionApi} from "./keyboard-action/keyboard-actions.function";
 import {ActionApi} from "./action-api.interface";
 import {commonActionsApi} from "./common-action";
-import StaleElementReferenceError = error.StaleElementReferenceError;
+import {wrap, withRetry} from '@sakuli/commons'
+import { tryToRecover } from "./handle-action-error.function";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -16,7 +16,7 @@ export function actionApi(
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ): ActionApi {
-
+    /*
     function withRetries<T extends (...args: any[]) => Promise<any>>(
         retries: number,
         func: T,
@@ -30,6 +30,21 @@ export function actionApi(
                     if (e instanceof StaleElementReferenceError) {
                         --retries;
                         ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
+                    }
+                    if(e instanceof MoveTargetOutOfBoundsError) {
+                        for(let arg in args) {
+                            if(isSahiElementQuery(arg)) {
+                                try {
+                                    const e = await accessorUtil.fetchElement(arg);
+                                    console.log('Element found')
+                                    await webDriver.executeScript(`arguments[0].scrollIntoView(false);`, e);
+                                    console.log('script executed')
+                                    return await withRetries(retries, () => func(...args));
+                                } catch(e) {
+
+                                }
+                            }
+                        }
                     } else {
                         throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
                     }
@@ -38,20 +53,19 @@ export function actionApi(
             throw Error(`Failed on an action after ${initialTries} attempts.`)
         }) as T;
     }
+    */
 
     function runAsAction<T extends (...args: any[]) => Promise<any>>(
         name: string,
         fn: T
     ): T {
         return (async (...args: any[]) => {
-            ctx.startTestAction({
-                id: name,
-            });
-            ctx.logger.info(`Start action ${name}`);
+            ctx.startTestAction({id: name});
+            ctx.logger.debug(`Start action ${name}`);
             let res: any;
             try {
                 // TODO Make retries configurable
-                res = await withRetries(5, fn)(...args);
+                res = await wrap(fn, withRetry(5,tryToRecover(webDriver, accessorUtil)))(...args);
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
