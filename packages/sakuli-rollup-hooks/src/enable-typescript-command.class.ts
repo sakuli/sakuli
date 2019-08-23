@@ -36,7 +36,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
         describe: `Enables Typescript support for the provided project`,
         builder(argv: Argv): any {
             return argv.positional('project', {
-                describe: 'Path to the project relative to $PWD'
+                describe: 'Path to the project, can be absolute or relative to $PWD'
             }).demandOption('project') as any;
         },
         async handler(opts: Record<string, unknown> & {$0: string, _: string[]}) {
@@ -48,10 +48,10 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
                   - Install ${chalk.green("@sakuli/legacy-types")}
                   - Create ${chalk.green('tsconfig.json')} in ${chalk.gray(baseDir)}
 
-                Would you like to proceed [${chalk.green('Y')}/${chalk.red('n')}]:
+                Would you like to proceed [${chalk.green('Y')}/${chalk.red('n')}]: ${chalk.gray('default: Y')}
 
             `);
-            if(answer.toUpperCase() === 'Y') {
+            if(answer.toUpperCase() !== 'n') {
                 const install = ora('Running npm i install @sakuli/legacy-types')
                 const createFile = ora('Creating tsconfig.json')
                 try {
