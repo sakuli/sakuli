@@ -2,7 +2,7 @@
 
 **TLDR;**
 
-This is a essential Part of Sakuli which handles the preprocessing of Testfiles. It is usually _not_ nesseccary for Sakuli-Endusers to have any knowledge about hte internals of this package.
+This is a essential Part of Sakuli which handles the preprocessing of Testfiles. It is usually _not_ nesseccary for Sakuli-Endusers to have any knowledge about the internals of this package.
 
 ## Usage
 
