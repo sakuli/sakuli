@@ -6,6 +6,7 @@ import { resolve, isAbsolute, join } from "path";
 import {promises as fs} from 'fs';
 import chalk from 'chalk'
 import ora from 'ora';
+import { defaultTsConfig } from "./default-ts-config.const";
 
 const userInput = async (question: string): Promise<string> => {
     const rl = createInterface(process.stdin,process.stdout);
@@ -15,19 +16,6 @@ const userInput = async (question: string): Promise<string> => {
             rl.close();
         });
     })
-}
-
-const tsConfig = {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es2017",
-        "noImplicitAny": true,
-        "sourceMap": true,
-        "lib": ["es2017"],
-        "types": [
-            "@sakuli/legacy-types"
-        ]
-    }
 }
 
 export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule => {
@@ -61,7 +49,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
                     createFile.start();
                     await fs.writeFile(
                         join(baseDir, 'tsconfig.json'),
-                        JSON.stringify(tsConfig, null, 2),
+                        JSON.stringify(defaultTsConfig, null, 2),
                         {flag: 'w'}
                         );
                     createFile.succeed();

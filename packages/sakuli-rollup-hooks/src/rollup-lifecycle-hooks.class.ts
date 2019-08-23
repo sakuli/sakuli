@@ -3,6 +3,7 @@ import {Plugin, rollup} from "rollup";
 import rollupTsPlugin from 'rollup-plugin-typescript2';
 import {extname, isAbsolute, join} from "path";
 import { Maybe, SimpleLogger, ifPresent } from "@sakuli/commons";
+import { defaultTsConfig } from "./default-ts-config.const";
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -24,19 +25,11 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
         const plugins: Plugin[] = [];
         const extName = extname(filePath);
         if(extName === '.ts' || extName === '.tsx') {
+            // THe provided files to TS-Config if not provided the plugin will look for tsconfig.json
             const tsconfig: Maybe<string> = project.get('tsconfig');
-            const tsconfigDefaults = {
-                "module": "commonjs",
-                "target": "es2017",
-                "noImplicitAny": true,
-                "sourceMap": true,
-                "lib": ["es2017"],
-                "types": [
-                    "@sakuli/legacy-types"
-                ]
-            }
+
             plugins.push(rollupTsPlugin(<any>{
-                tsconfigDefaults,
+                defaultTsConfig,
                 ...(tsconfig ? {tsconfig} : {}),
                 tsconfigOverride: {
                     compilerOptions: {
@@ -62,7 +55,7 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
             file: 'bundle-rollup.js',
         });
         const [rollupOutput] = output;
-        this.debug(`Bundled testcase file ${filePath} to: `, rollupOutput.code);
+        //this.debug(`Bundled testcase file ${filePath} to: `, rollupOutput.code);
         return Promise.resolve(rollupOutput.code);
     }
 

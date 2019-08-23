@@ -31,10 +31,15 @@ describe('RollupLifecycleHooks', () => {
     });
     it('should add typescript plugin if file extension is .ts', async () => {
         const hooks = new RollupLifecycleHooks();
-        await hooks.readFileContent({
+
+        const output = await hooks.readFileContent({
             path: 'ts/index.ts'
         }, project);
 
+        // require packages from node_modules or node_native
+        expect(output).toContain(`require('fs')`);
+        // include code from 'local'
+        expect(output).toContain(`const server = `);
     });
     it('should error when file has typescript errors', async () => {
         const hooks = new RollupLifecycleHooks();
