@@ -106,7 +106,11 @@ export function createTestCaseClass(ctx: TestExecutionContext,
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
                 await ifPresent(ctx.getCurrentTestStep(), async cts => {
                     if (!cts.error) {
-                        await testStepCache.write(ctc.getChildren() as TestStepContext[]);
+                        try {
+                            await testStepCache.write(ctc.getChildren() as TestStepContext[]);
+                        } catch (e) {
+                            ctx.logger.warn("Failed to update steps cache. Reason:", e);
+                        }
                     }
                 });
             }, () => Promise.resolve())
