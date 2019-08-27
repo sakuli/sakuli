@@ -3,7 +3,8 @@ import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {ParentApi, parentApi} from "./parent-api.function";
+import {parentApi} from "./parent-api.function";
+import {ParentApi} from './parent-api.interface';
 import {isEqual} from "../helper/is-equal.function";
 import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
