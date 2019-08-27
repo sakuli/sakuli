@@ -22,7 +22,7 @@ describe('ThenableEnvironment', () => {
         regionMock = mockPartial<Region>({
             find: jest.fn(() => Promise.resolve(regionMock))
         });
-        ThenableEnvironment = createThenableEnvironmentClass(ctx, mockPartial<Project>({}));
+        ThenableEnvironment = createThenableEnvironmentClass(ctx, projectMock);
         envMock = mockPartial<Environment>({
             getRegionFromFocusedWindow: jest.fn(() => Promise.resolve(regionMock))
 
