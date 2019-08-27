@@ -123,12 +123,10 @@ export class LegacyProjectProperties {
     sakuliHighlightSeconds: number = 1.1;
 
     /**
-     *## Sikuli Action Delays
-     *
-     *set the default type and click delay in seconds;
+     * Type delay - specifies the amount of time in ms to wait between keypresses
      */
-    @Property('sikuli.typeDelay')
-    sikuliTypeDelay: number = 0;
+    @Property('sakuli.typeDelay')
+    typeDelay: number = 300;
 
     /**
 
