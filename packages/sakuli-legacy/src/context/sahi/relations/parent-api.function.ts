@@ -4,15 +4,13 @@ import {TestExecutionContext} from "@sakuli/core";
 import {isSahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {getParent} from "../helper/get-parent.function";
 import {isPresent} from "@sakuli/commons";
-import {stripIndent} from "common-tags";
-
-export type ParentApi = ReturnType<typeof parentApi>;
+import {ParentApi} from './parent-api.interface'
 
 export function parentApi(
     driver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
-) {
+): ParentApi {
 
     async function _parentNode(query: SahiElementQueryOrWebElement | WebElement, tagName: string, occurrence: number = 1): Promise<SahiElementQueryOrWebElement> {
         const e = isSahiElementQuery(query)

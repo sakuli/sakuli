@@ -1,4 +1,4 @@
-import {Property} from "@sakuli/commons";
+import {Property, BooleanProperty} from "@sakuli/commons";
 import {Browsers} from "../context/selenium-config/create-driver-from-project.function";
 
 export class LegacyProjectProperties {
@@ -45,6 +45,10 @@ export class LegacyProjectProperties {
     @Property('browser')
     @Property('testsuite.browser')
     testsuiteBrowser: Browsers = "firefox";
+
+    @BooleanProperty('ui-only')
+    @BooleanProperty('testsuite.uiOnly')
+    uiOnly: boolean = false;
 
     /**
      */
