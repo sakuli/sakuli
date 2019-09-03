@@ -2,7 +2,7 @@ import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
 import {decrypt, getEncryptionKey} from "../secrets.function";
 import {ClipboardApi} from "../actions/clipboard.function";
-import {KeyboardApi} from "../actions/keyboard.function";
+import {createKeyboardApi} from "../actions/keyboard.function";
 import {Project, TestExecutionContext} from "@sakuli/core";
 import {ScreenApi} from "../actions/screen.function";
 import {MouseApi} from "../actions/mouse.function";
@@ -10,10 +10,14 @@ import {MouseApi} from "../actions/mouse.function";
 import nutConfig from "../nut-global-config.class";
 import {execute} from "../actions/command.function";
 import {Environment} from "./environment.interface";
-import {Region, createRegionClass} from "../region";
+import {createRegionClass, Region} from "../region";
 import {runAsAction} from "../actions/action.function";
+import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
 
 export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {
+    const props = project.objectFactory(LegacyProjectProperties);
+    const keyboardApi = createKeyboardApi(props);
+
     return class SakuliEnvironment implements Environment {
         constructor() {
         }
@@ -127,7 +131,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async paste(text: string): Promise<Environment> {
             return runAsAction(ctx, "paste", async () => {
                 ctx.logger.debug(`Pasting '${text}' via native clipboard`);
-                await KeyboardApi.paste(text);
+                await keyboardApi.paste(text);
                 return this;
             })();
         }
@@ -135,7 +139,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async pasteMasked(text: string): Promise<Environment> {
             return runAsAction(ctx, "pasteMasked", async () => {
                 ctx.logger.debug(`Pasting '****' via native clipboard`);
-                await KeyboardApi.paste(text);
+                await keyboardApi.paste(text);
                 return this;
             })();
         }
@@ -144,7 +148,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             return runAsAction(ctx, "pasteAndDecrypt", async () => {
                 ctx.logger.debug(`Pasting encrypted text '${text}' via native clipboard`);
                 const key = getEncryptionKey(project);
-                await KeyboardApi.pasteAndDecrypt(key, text);
+                await keyboardApi.pasteAndDecrypt(key, text);
                 return this;
             })();
         }
@@ -152,7 +156,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async type(text: string, ...optModifiers: Key[]): Promise<Environment> {
             return runAsAction(ctx, "type", async () => {
                 ctx.logger.debug(`Typing text '${text}' via keyboard`);
-                await KeyboardApi.type(text, ...optModifiers);
+                await keyboardApi.type(text, ...optModifiers);
                 return this;
             })();
         }
@@ -160,7 +164,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async typeMasked(text: string, ...optModifiers: Key[]): Promise<Environment> {
             return runAsAction(ctx, "typeMasked", async () => {
                 ctx.logger.debug(`Typing text '****' via keyboard`);
-                await KeyboardApi.type(text, ...optModifiers);
+                await keyboardApi.type(text, ...optModifiers);
                 return this;
             })();
         }
@@ -169,7 +173,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             return runAsAction(ctx, "typeAndDecrypt", async () => {
                 ctx.logger.debug(`Typing encrypted text ${text}`);
                 const key = getEncryptionKey(project);
-                await KeyboardApi.typeAndDecrypt(key, text, ...optModifiers);
+                await keyboardApi.typeAndDecrypt(key, text, ...optModifiers);
                 return this;
             })();
         }
@@ -185,7 +189,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async keyDown(...keys: Key[]): Promise<Environment> {
             return runAsAction(ctx, "keyDown", async () => {
                 ctx.logger.debug(`Pressing keys: ${keys}`);
-                await KeyboardApi.pressKey(...keys);
+                await keyboardApi.pressKey(...keys);
                 return this;
             })();
         }
@@ -193,7 +197,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async keyUp(...keys: Key[]): Promise<Environment> {
             return runAsAction(ctx, "keyUp", async () => {
                 ctx.logger.debug(`Releasing keys: ${keys}`);
-                await KeyboardApi.releaseKey(...keys);
+                await keyboardApi.releaseKey(...keys);
                 return this;
             })();
         }
@@ -201,7 +205,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async write(text: string): Promise<Environment> {
             return runAsAction(ctx, "write", async () => {
                 ctx.logger.debug(`Writing: ${text} via keyboard`);
-                await KeyboardApi.type(text);
+                await keyboardApi.type(text);
                 return this;
             })();
         }

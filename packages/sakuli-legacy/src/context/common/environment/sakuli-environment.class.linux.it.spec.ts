@@ -1,12 +1,9 @@
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {Project, TestExecutionContext} from "@sakuli/core";
 import {SimpleLogger} from "@sakuli/commons";
-import {mockPartial} from "sneer";
 import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
-const mockProject = mockPartial<Project>({
-    get: jest.fn(() => "foo"),
-});
+const mockProject = new Project(".");
 
 describe("Environment", () => {
     it("should return false for isWindows", () => {
