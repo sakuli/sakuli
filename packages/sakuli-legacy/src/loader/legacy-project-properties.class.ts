@@ -68,10 +68,10 @@ export class LegacyProjectProperties {
     sakuliHighlightSeconds: number = 0.2;
 
     /**
-     * Sakuli type delay when typing on the keyboard in ms
+     * Type delay - specifies the amount of time in ms to wait between keypresses
      */
     @Property('sakuli.typeDelay')
-    typeDelay: number = 0;
+    typeDelay: number = 300;
 
     /**
      * Sakuli click delay when clicking mouse buttons in ms

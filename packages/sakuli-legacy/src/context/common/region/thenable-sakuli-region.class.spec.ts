@@ -7,7 +7,7 @@ import {Type} from "@sakuli/commons";
 
 describe('ThenableRegion', () => {
 
-    const projectMock = mockPartial<Project>({});
+    const projectMock = new Project(".");
     let ctx: TestExecutionContext;
     let ThenableRegion: Type<ThenableRegion>;
     let regionMock: Region;
@@ -33,6 +33,4 @@ describe('ThenableRegion', () => {
         expect(region.mouseMove).toHaveBeenCalled();
         expect(region.click).toHaveBeenCalled();
     });
-
-
 });
