@@ -42,7 +42,8 @@ describe('Sakuli', () => {
 
         it('should create a Project', async () => {
             const sakuli = new SakuliClass([]);
-            await sakuli.run('dummy/path');
+            const project = await sakuli.initializeProject('dummy/path');
+            await sakuli.run(project);
             expect(Project).toHaveBeenCalledWith('dummy/path');
             expect(installPropertySourceMock).toHaveBeenCalledWith(expect.any(CliArgsSource));
         });
@@ -51,7 +52,7 @@ describe('Sakuli', () => {
             mockFs({
                 'project-dir': {
                     'test1.js': stripIndent`
-                    Sakuli().testExecutionContext.startTestSuite({id: 'My Suite'});                    
+                    Sakuli().testExecutionContext.startTestSuite({id: 'My Suite'});
                     Sakuli().testExecutionContext.endTestSuite();
                     done();
                 `
@@ -73,7 +74,7 @@ describe('Sakuli', () => {
                     reg.registerProjectLoader(loaderMock)
                 })
             ]);
-            const tec = await sakuli.run('project-dir');
+            const tec = await sakuli.run(project);
             expect(loaderMock.load).toHaveBeenCalled();
             expect(tec).toBeDefined();
         });

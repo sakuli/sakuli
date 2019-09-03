@@ -53,7 +53,7 @@ export class SakuliClass {
         return this.presetRegistry.commandModules.map(cmp => cmp(this));
     }
 
-    async run(_opts: string | SakuliRunOptions): Promise<TestExecutionContext> {
+    async initializeProject(_opts: string | SakuliRunOptions): Promise<Project> {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         let project: Project = new Project(opts.path || process.cwd());
         await project.installPropertySource(new CliArgsSource(process.argv));
@@ -61,6 +61,10 @@ export class SakuliClass {
         for (let loader of this.loader) {
             project = (await loader.load(project)) || project;
         }
+        return project;
+    }
+
+    async run(project: Project): Promise<TestExecutionContext> {
         const forwarderTearDown = await Promise.all(this.forwarder
             .map(forwarder => connectForwarderToTestExecutionContext(
                 forwarder,
