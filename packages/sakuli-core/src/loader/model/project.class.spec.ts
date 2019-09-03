@@ -1,7 +1,13 @@
 import {Project} from "./project.class";
-import {PropertyMap} from "@sakuli/commons";
+import {PropertyMap, Property, Maybe} from "@sakuli/commons";
 
 describe('Project', () => {
+
+    class TestProperties {
+        @Property('testsuite.id') testSuiteId: Maybe<string>
+        @Property('forwarder.target') forwarderTarget: Maybe<string>
+        @Property('cascaded') cascaded: Maybe<string>
+    }
 
     let staticSakuliProperties = new Map([
         ['testsuite.id', 'sakuli'],
@@ -35,7 +41,14 @@ describe('Project', () => {
     });
 
     it('should cascade values from installed sources', () => {
-        expect(projectUnderTest.get('cascaded')).toBe('casc-1')
+        expect(projectUnderTest.get('cascaded')).toBe('casc-2')
     });
+
+    it('should create a valid object from objectFactory', () => {
+        const testProps = projectUnderTest.objectFactory(TestProperties);
+        expect(testProps.forwarderTarget).toBe('sakuli');
+        expect(testProps.testSuiteId).toBe('sakuli');
+        expect(testProps.cascaded).toBe('casc-2');
+    })
 
 });

@@ -1,9 +1,11 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import {createCombinedLogConsumer, createFileLogConsumer, ifPresent, isPresent} from "@sakuli/commons";
+import {CommandModuleProvider, SakuliInstance, TestExecutionContext, SakuliCoreProperties} from "@sakuli/core";
+import {ifPresent, isPresent, Maybe, invokeIfPresent, ensure} from "@sakuli/commons";
 import chalk from "chalk";
 import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
-import { EOL } from "os";
+import { createLogConsumer } from "./create-log-consumer.function";
+import { join } from "path";
+import { ensurePath } from "./ensure-path.function";
 
 async function renderError(e: Error) {
     console.error(chalk.red(e.toString()));
@@ -27,13 +29,25 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: any) {
-            const logConsumer = createCombinedLogConsumer(
-                createFileLogConsumer({path: 'sakuli.log'})
-            );
-            const cleanLogConsumer = logConsumer(sakuli.testExecutionContext.logger);
+
             const rendering = testExecutionContextRenderer(sakuli.testExecutionContext);
+            let cleanLogConsumer: Maybe<()=>void>;
             try {
-                await sakuli.run(runOptions);
+                const project = await sakuli.initializeProject(runOptions);
+                const coreProps = project.objectFactory(SakuliCoreProperties)
+
+                console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`)
+                
+                const logPath = ensure<string>(coreProps.sakuliLogFolder, '')
+                await ensurePath(logPath);
+                const logFile = join(logPath, 'sakuli.log');
+                console.log(chalk`Writing logs to: {bold.gray ${logFile}}`);
+                cleanLogConsumer = createLogConsumer(
+                    sakuli.testExecutionContext.logger,
+                    logFile
+                )
+
+                await sakuli.run(project);
                 await rendering;
                 await ifPresent(sakuli.testExecutionContext.error, async error => {
                     console.log(chalk`Error during Execution: \n`);
@@ -48,7 +62,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
             } catch (e) {
                 await renderError(e);
             } finally {
-                cleanLogConsumer();
+                invokeIfPresent(cleanLogConsumer);
                 process.exit(sakuli.testExecutionContext.resultState)
             }
         }
