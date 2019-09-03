@@ -7,6 +7,14 @@ function findQuery(args: any[]): Maybe<SahiElementQuery> {
     return args.find(isSahiElementQuery);
 }
 
+/**
+ * This function will get an Error and the original function that thrown this error
+ *
+ * If this function returns without any throwing any other error (or rethrow the passed error) the error can be assumed as "recovered"
+ *
+ * @param driver
+ * @param accessorUtil
+ */
 export function tryToRecover(
     driver: ThenableWebDriver,
     accessorUtil: AccessorUtil
@@ -16,29 +24,23 @@ export function tryToRecover(
             return; // No bail the action will retry when retries left
         }
         if(e instanceof error.MoveTargetOutOfBoundsError) {
-            console.log('Recover from MoveTargetOutOfBoundsError:');
             await ifPresent(findQuery(args), async q => {
-                console.log('fetch query', sahiQueryToString(q));
                 const e = await accessorUtil.fetchElement(q);
-                console.log('found', e);
                 await driver.executeScript(`arguments[0].scrollIntoView(true)`, e);
-                console.log('scrolled');
                 await original(...args)
                     .then(
-                    () => console.log('it actually worked out :)'),
-                     e => {
-                        console.log('recover 1');
+                    () => Promise.resolve(),
+                    e => {
                         return driver.executeScript(`arguments[0].scrollIntoView(false)`, e).then(() => original(...args))
                     });
 
             }, () => {
-                console.log('No query in args');
                 return Promise.resolve()
             })
             return;
         }
 
-        throw Error(`An irrecoverable, non StaleElementReferenceError is thrown during retrying;  \n${e}`)
+        throw e;
     }
 
 }

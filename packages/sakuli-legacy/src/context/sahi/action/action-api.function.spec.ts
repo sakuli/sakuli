@@ -14,7 +14,6 @@ describe('action-api', () => {
         let env: TestEnvironment;
         let driver: ThenableWebDriver;
         beforeAll(async () => {
-            console.log(browser);
             env = createTestEnv(browser, local);
             await env.start();
             driver = (await env.getEnv()).driver;
@@ -50,8 +49,11 @@ describe('action-api', () => {
                 await driver.get(mockHtml(`
                     <div style="display: block; width: 100%; height: 150vh; background: red"></div>
                     <button id="btn">Click Me</button>
+                    <div id="out"></div>
                     <script>
-                    
+                        document.getElementById('btn').addEventListener('click', function() {
+                            document.getElementById('out').innerText = 'clicked';
+                        })
                     </script>
                 `))
                 //await expect(driver.findElement(By.css('#btn')).click()).resolves.toBeNull();
@@ -60,10 +62,8 @@ describe('action-api', () => {
                     identifier: 0,
                     relations: []
                 })).resolves.toBeUndefined();
-
-                if(browser === 'firefox') {
-                    await new Promise(res => setTimeout(res, 15000));
-                }
+                const out = await driver.findElement(By.id('out'));
+                await expect(out.getText()).resolves.toEqual('clicked');
             })
         })
 
