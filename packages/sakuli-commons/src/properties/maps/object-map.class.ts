@@ -1,5 +1,5 @@
-import {PropertyMap} from "./model";
-import {createLens} from "./sources/create-lens.function";
+import {PropertyMap} from "../model";
+import {createLens} from "../sources/create-lens.function";
 
 export class ObjectMap implements PropertyMap {
 

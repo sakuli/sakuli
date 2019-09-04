@@ -1,12 +1,11 @@
 import {TestFile} from "./test-file.interface";
-import {CascadingPropertyMap, PropertyMap, PropertySource, Type} from "@sakuli/commons";
-import {createPropertyObjectFactory} from "@sakuli/commons/dist/properties/decorator/create-property-object-factory.function";
-import {TemplatedPropertyMap} from "@sakuli/commons/dist/properties/sources/templated-property-source.class";
+import {createPropertyObjectFactory, TemplatedPropertyMap, CascadingPropertyMap, PropertyMap, PropertySource, Type} from "@sakuli/commons";
 
 export class Project implements PropertyMap {
     private cascadingMap = new CascadingPropertyMap();
     private propertyMap = new TemplatedPropertyMap(this.cascadingMap);
     private _testFiles: TestFile[] = [];
+    private _installedMaps: number = 0;
     get testFiles(): TestFile[] {
         return this._testFiles;
     }
@@ -22,6 +21,7 @@ export class Project implements PropertyMap {
 
     async installPropertySource(source: PropertySource) {
         await this.cascadingMap.installSource(source);
+        this._installedMaps++;
     }
 
     get(key: string) {
@@ -34,6 +34,10 @@ export class Project implements PropertyMap {
 
     objectFactory<T>(type: Type<T>): T {
         return createPropertyObjectFactory(this)(type);
+    }
+
+    get installedMaps () {
+        return this._installedMaps;
     }
 
 }

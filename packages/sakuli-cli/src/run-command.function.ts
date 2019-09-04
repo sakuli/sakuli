@@ -1,11 +1,10 @@
 import {Argv, CommandModule} from "yargs";
 import {CommandModuleProvider, SakuliInstance, TestExecutionContext, SakuliCoreProperties} from "@sakuli/core";
-import {ifPresent, isPresent, Maybe, invokeIfPresent, ensure} from "@sakuli/commons";
+import {ifPresent, isPresent, Maybe, invokeIfPresent, ensure, ensurePath} from "@sakuli/commons";
 import chalk from "chalk";
 import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
 import { createLogConsumer } from "./create-log-consumer.function";
 import { join } from "path";
-import { ensurePath } from "./ensure-path.function";
 
 async function renderError(e: Error) {
     console.error(chalk.red(e.toString()));
@@ -37,7 +36,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 const coreProps = project.objectFactory(SakuliCoreProperties)
 
                 console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`)
-                
+
                 const logPath = ensure<string>(coreProps.sakuliLogFolder, '')
                 await ensurePath(logPath);
                 const logFile = join(logPath, 'sakuli.log');

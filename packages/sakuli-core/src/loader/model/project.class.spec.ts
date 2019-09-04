@@ -33,6 +33,7 @@ describe('Project', () => {
         })
     });
     it('should utilize templated values', () => {
+
         expect(projectUnderTest.get('forwarder.target')).toBe('sakuli')
     });
 
@@ -40,15 +41,16 @@ describe('Project', () => {
         expect(projectUnderTest.get('testsuite.id')).toBe('sakuli')
     });
 
-    it('should cascade values from installed sources', () => {
-        expect(projectUnderTest.get('cascaded')).toBe('casc-2')
-    });
 
     it('should create a valid object from objectFactory', () => {
         const testProps = projectUnderTest.objectFactory(TestProperties);
         expect(testProps.forwarderTarget).toBe('sakuli');
         expect(testProps.testSuiteId).toBe('sakuli');
         expect(testProps.cascaded).toBe('casc-2');
+
     })
+    it('should cascade values from installed sources', () => {
+        expect(projectUnderTest.get('cascaded')).toBe('casc-2')
+    });
 
 });

@@ -12,7 +12,7 @@ export class TemplatedPropertyMap implements PropertyMap {
             const value = this.baseMap.get(key);
             if(typeof value === 'string') {
                 const tpl = template(value);
-                return tpl(tplVar => this.baseMap.get(tplVar));
+                return tpl(tplVar => this.get(tplVar));
             }
             return value;
         } else {
