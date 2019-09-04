@@ -16,9 +16,7 @@ export function createTestCaseClass(ctx: TestExecutionContext,
 ) {
 
     const legacyProps = project.objectFactory(LegacyProjectProperties);
-    const core = project.objectFactory(SakuliCoreProperties);
-    console.log(legacyProps);
-    console.log(core);
+
     const screenShotDestPath = ensure(legacyProps.screenshotDir, currentTestFolder);
     return class SakuliTestCase implements TestCase {
         constructor(
