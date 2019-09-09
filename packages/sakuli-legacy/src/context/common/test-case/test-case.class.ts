@@ -1,12 +1,13 @@
 import {cwd} from "process";
-import {Project, TestExecutionContext, TestStepContext} from "@sakuli/core";
+import {Project, TestExecutionContext, TestStepContext, SakuliCoreProperties} from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
-import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {ifPresent, Maybe, throwIfAbsent, ensure} from "@sakuli/commons";
 import {isAbsolute, join} from "path";
 import {TestCase} from "./test-case.interface";
 import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {takeErrorScreenShot} from "./take-error-screen-shot.function";
 import {existsSync} from "fs";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 export function createTestCaseClass(ctx: TestExecutionContext,
                                     project: Project,
@@ -14,6 +15,9 @@ export function createTestCaseClass(ctx: TestExecutionContext,
                                     testStepCache = new TestStepCache()
 ) {
 
+    const legacyProps = project.objectFactory(LegacyProjectProperties);
+
+    const screenShotDestPath = ensure(legacyProps.screenshotDir, currentTestFolder);
     return class SakuliTestCase implements TestCase {
         constructor(
             readonly caseId: string = 'Testcase',
@@ -65,8 +69,7 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          * @inheritDoc
          */
         async handleException<E extends Error>(e: E) {
-            ctx.logger.info(`Error: ${e.message}`);
-            const screenShotPath = await takeErrorScreenShot(ctx, currentTestFolder);
+            const screenShotPath = await takeErrorScreenShot( ctx, screenShotDestPath);
             if (existsSync(screenShotPath)) {
                 ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
                 ctx.updateCurrentTestStep({
@@ -142,7 +145,7 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          */
         async throwException(message: string, screenshot: boolean) {
             if (screenshot) {
-                const screenShotOutputPath = await takeErrorScreenShot(ctx, currentTestFolder);
+                const screenShotOutputPath = await takeErrorScreenShot(ctx, screenShotDestPath);
                 const screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
                 throw Error(`${message}${screenShotMessage}`);
             }
