@@ -86,29 +86,9 @@ export class LegacyProjectProperties {
     sakuliEncryptionKey: string = "";
 
     /**
-     *logging level for all other **Java classes and libraries**
-     */
-    @Property('log.level')
-    logLevel: string = "INFO";
-
-    /**
-     * Deletes all files that are older than the defined days in the folder `sakuli.log.folder`
-     *
-     * DEFAULT: 14 days
-     */
-    @Property('sakuli.log.maxAge')
-    sakuliLogMaxAge: number = 14;
-
-    /**
-     * log file folder
-     */
-    @Property('sakuli.log.folder')
-    sakuliLogFolder: string = "${sakuli.testsuite.folder}/_logs";
-
-    /**
      * Enable / disable screenshots on error
      */
-    @Property('sakuli.screenshot.onError')
+    @BooleanProperty('sakuli.screenshot.onError')
     errorScreenshot: boolean = true;
 
     /**
@@ -116,4 +96,5 @@ export class LegacyProjectProperties {
      */
     @Property('sakuli.screenshot.dir')
     screenshotDir: string = "${sakuli.log.folder}/_screenshots";
+
 }

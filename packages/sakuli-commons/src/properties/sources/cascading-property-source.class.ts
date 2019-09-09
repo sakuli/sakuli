@@ -9,7 +9,8 @@ export class CascadingPropertyMap implements PropertyMap {
     }
 
     get(key: string): string | null {
-        return ifPresent(this.propertyMaps.reverse().find(m => m.has(key)),
+        
+        return ifPresent([...this.propertyMaps].reverse().find(m => m.has(key)),
             map => map.get(key),
             () => null
         )
