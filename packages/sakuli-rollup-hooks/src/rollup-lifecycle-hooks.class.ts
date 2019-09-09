@@ -3,7 +3,7 @@ import {Plugin, rollup} from "rollup";
 import rollupTsPlugin from 'rollup-plugin-typescript2';
 import {extname, isAbsolute, join} from "path";
 import { Maybe, SimpleLogger, ifPresent } from "@sakuli/commons";
-import { defaultTsConfig } from "./default-ts-config.const";
+import { defaultTsConfig } from "./ts-support/default-ts-config.const";
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 

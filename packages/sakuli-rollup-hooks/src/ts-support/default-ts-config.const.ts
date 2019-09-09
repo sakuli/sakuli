@@ -7,7 +7,6 @@ export const defaultTsConfig = {
         "sourceMap": true,
         "lib": ["es2017"],
         "types": [
-            "@sakuli/legacy-types"
         ]
     }
 }

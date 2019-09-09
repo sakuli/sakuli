@@ -5,8 +5,11 @@ import {stripIndents} from 'common-tags'
 import { resolve, isAbsolute, join } from "path";
 import {promises as fs} from 'fs';
 import chalk from 'chalk'
-import ora from 'ora';
+import ora, { Ora } from 'ora';
 import { defaultTsConfig } from "./default-ts-config.const";
+import { getInstalledPresets } from "./get-installed-presets.function";
+import packageTypingMapping from "./package-typing-mapping.const";
+import { EOL } from "os";
 
 const userInput = async (question: string): Promise<string> => {
     const rl = createInterface(process.stdin,process.stdout);
@@ -30,31 +33,42 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
         async handler(opts: Record<string, unknown> & {$0: string, _: string[]}) {
             const project = `${opts['project']}`;
             const baseDir = isAbsolute(project) ? project : resolve(process.cwd(), project);
+            const presets = await getInstalledPresets(baseDir);
+            const typingPackages = presets
+                .filter(preset => packageTypingMapping.has(preset))
+                .map(preset => packageTypingMapping.get(preset)!)
             const answer = await userInput(stripIndents`
                 This command will install and configure all relevant packages to use ${chalk.bold.blueBright('Typescript')} in your project:
-
-                  - Install ${chalk.green("@sakuli/legacy-types")}
+                ${typingPackages.map(pkg => `  - Install ${chalk.green(pkg)}`).join(EOL)}
                   - Create ${chalk.green('tsconfig.json')} in ${chalk.gray(baseDir)}
 
                 Would you like to proceed [${chalk.green('Y')}/${chalk.red('n')}]: ${chalk.gray('default: Y')}
 
             `);
             if(answer.toUpperCase() !== 'n') {
-                const install = ora('Running npm i install @sakuli/legacy-types')
+                const installs: [string, Ora][] = typingPackages.map(pkg => [pkg, ora(`Running npm i install ${pkg}`)]);
                 const createFile = ora('Creating tsconfig.json')
+                for(let [pkg, install] of installs) {
+                    try {
+                        install.start();
+                        await execa('npm', ['i', pkg]);
+                        install.succeed()
+                    } catch(e) {
+                        install.fail(e);
+                    }
+                }
                 try {
-                    install.start();
-                    await execa('npm', ['i', '@sakuli/legacy-types']);
-                    install.succeed()
                     createFile.start();
+                    const cfg = {...defaultTsConfig};
+                    (cfg.compilerOptions.types as string[]).push(...typingPackages);
                     await fs.writeFile(
                         join(baseDir, 'tsconfig.json'),
-                        JSON.stringify(defaultTsConfig, null, 2),
+                        JSON.stringify(cfg, null, 2),
                         {flag: 'w'}
                         );
                     createFile.succeed();
                 } catch(e) {
-                    install.fail();
+
                     createFile.fail();
                     console.error(chalk.red(e));
                     process.exit(1);
