@@ -2,7 +2,7 @@ import { StringProperty, BooleanProperty, Maybe } from "@sakuli/commons";
 
 export class SakuliCoreProperties {
     /**
-     * For @see SimpleLogger
+     * For usage see SimpleLogger
      */
     @StringProperty('log.level')
     logLevel: string = "INFO";
