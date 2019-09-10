@@ -44,7 +44,7 @@ export interface AccessorApi {
     /**
      * Fetches an element of `TagName` with `clsName` in it's [`classList`](https://developer.mozilla.org/de/docs/Web/API/Element/classList) attribute
      *
-     * Similar to CSS-Selector: `tagName.clsName`
+     * Based on CSS selector: `tagName.clsName`
      *
      * @example
      *
@@ -92,7 +92,7 @@ export interface AccessorApi {
     /**
      * Fetches a password field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="password"]`
+     * Based on CSS selector: `input[type="password"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -114,7 +114,7 @@ export interface AccessorApi {
      /**
      * Fetches a text input field (or a without any type attribute because this is considered as text input by the browsers) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="text"], input:not([type])`
+     * Based on CSS selector: `input[type="text"], input:not([type])`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -138,7 +138,7 @@ export interface AccessorApi {
      /**
      * Fetches a hidden field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="hidden"]`
+     * Based on CSS selector: `input[type="hidden"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -160,7 +160,7 @@ export interface AccessorApi {
      /**
      * Fetches a date field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="date"]`
+     * Based on CSS selector: `input[type="date"]`
      *
      * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date)
      *
@@ -184,7 +184,7 @@ export interface AccessorApi {
     /**
      * Fetches a datetime field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="datetime"]`
+     * Based on CSS selector: `input[type="datetime"]`
      *
      * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime)
      *
@@ -208,7 +208,7 @@ export interface AccessorApi {
     /**
      * Fetches a datetime-local field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="datetime-local"]`
+     * Based on CSS selector: `input[type="datetime-local"]`
      *
      * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local)
      *
@@ -232,7 +232,7 @@ export interface AccessorApi {
     /**
      * Fetches a email field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="email"]`
+     * Based on CSS selector: `input[type="email"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -254,7 +254,7 @@ export interface AccessorApi {
     /**
      * Fetches a month field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="month"]`
+     * Based on CSS selector: `input[type="month"]`
      *
      * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/month)
      *
@@ -278,7 +278,7 @@ export interface AccessorApi {
     /**
      * Fetches a number field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="number"]`
+     * Based on CSS selector: `input[type="number"]`
      *
      * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date)
      *
@@ -301,7 +301,7 @@ export interface AccessorApi {
     /**
      * Fetches a range field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="range"]`
+     * Based on CSS selector: `input[type="range"]`
      *
      *
      * @example
@@ -323,7 +323,7 @@ export interface AccessorApi {
     /**
      * Fetches a search field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="search"]`
+     * Based on CSS selector: `input[type="search"]`
      *
      *
      * @example
@@ -345,7 +345,7 @@ export interface AccessorApi {
     /**
      * Fetches a tel field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="number"]`
+     * Based on CSS selector: `input[type="number"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -366,7 +366,7 @@ export interface AccessorApi {
     /**
      * Fetches a number field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="time"]`
+     * Based on CSS selector: `input[type="time"]`
      *
      * * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date)
      *
@@ -389,7 +389,7 @@ export interface AccessorApi {
     /**
      * Fetches a url field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="url"]`
+     * Based on CSS selector: `input[type="url"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -410,7 +410,7 @@ export interface AccessorApi {
     /**
      * Fetches a week field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="week"]`
+     * Based on CSS selector: `input[type="week"]`
      *
      * If you want to set a value on this element please consider the [supported formats](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/week)
      *
@@ -433,7 +433,7 @@ export interface AccessorApi {
     /**
      * Fetches a textarea by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `textarea`
+     * Based on CSS selector: `textarea`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -454,7 +454,7 @@ export interface AccessorApi {
     /**
      * Fetches a button by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `button`
+     * Based on CSS selector: `button`
      *
      * @example
      * Assuming the following HTML-snippet
@@ -475,7 +475,7 @@ export interface AccessorApi {
     /**
      * Fetches a checkbox field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="checkbox"]`
+     * Based on CSS selector: `input[type="checkbox"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -500,7 +500,7 @@ export interface AccessorApi {
      /**
      * Fetches a radio field by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="radio"]`
+     * Based on CSS selector: `input[type="radio"]`
      *
      * @example
      * Assuming the following HTML-snippet:
@@ -534,7 +534,7 @@ export interface AccessorApi {
     /**
      * Fetches a submit button by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="submit"], button[type="submit"]`
+     * Based on CSS selector: `input[type="submit"], button[type="submit"]`
      *
      * @example
      *
@@ -561,7 +561,7 @@ export interface AccessorApi {
     /**
      * Fetches a reset button by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="reset"]`
+     * Based on CSS selector: `input[type="reset"]`
      *
      * @example
      *
@@ -590,7 +590,7 @@ export interface AccessorApi {
      /**
      * Fetches a image button by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `input[type="image"]`
+     * Based on CSS selector: `input[type="image"]`
      *
      * @example
      *
@@ -617,7 +617,7 @@ export interface AccessorApi {
      /**
      * Fetches a select element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `select`
+     * Based on CSS selector: `select`
      *
      * @example
      * Assuming the following HTML-snippet
@@ -642,7 +642,7 @@ export interface AccessorApi {
     /**
      * Fetches an option element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
      *
-     * Similar to CSS-selector: `select`
+     * Based on CSS selector: `select`
      *
      * @example
      * Assuming the following HTML-snippet
@@ -665,69 +665,709 @@ export interface AccessorApi {
      */
     _option(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
 
-    
+    /**
+     * Fetches a file input by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `input[type="file"]`
+     *
+     * @param identifier
+     * @param relations
+     */
     _file(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a table element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `table`
+     *
+     * @param identifier
+     * @param relations
+     */
     _table(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a table-row element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `tr`
+     *
+     * @param identifier
+     * @param relations
+     */
     _row(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a table-data element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `td`
+     *
+     * @param identifier
+     * @param relations
+     */
     _cell(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a table-header element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `th`
+     *
+     * @param identifier
+     * @param relations
+     */
     _tableHeader(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a anchor / link element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `a`
+     *
+     * @example
+     *
+     * Assuming the following HTML-snippet:
+     *
+     * ```html
+     * <nav>
+     *     <a href="/home">Home</a>
+     *     <a href="/home">About</a>
+     * </nav>
+     * ```
+     *
+     * Following the "_About_" link with [`_click`]{@link MouseActionApi._click}
+     *
+     * ```typescript
+     * await _click(_link('About'))
+     * ```
+     *
+     * @param identifier
+     * @param relations
+     */
     _link(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches an image by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `img`
+     *
+     * @example
+     *  Assuming the following HTML-snippet:
+     * ```html
+     * <img src="funny-cat.gif" title="" />
+     * ```
+     *
+     * @param identifier
+     * @param relations
+     */
     _image(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a label element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `label`
+     *
+     * @param identifier
+     * @param relations
+     */
     _label(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a list-item element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `li`
+     *
+     * @example
+     *
+     * Assuming the following HTML-snippet:
+     *
+     * ```html
+     * <ul>
+     *     <li>Pizza</li>
+     *     <li>Burger</li>
+     *     <li lang="de">Bratwurst</li>
+     * </ul>
+     * ```
+     *
+     * ```typescript
+     * const lang = await _getAttribute(_listItem('Bratwurst'), 'lang'); // -> 'de'
+     * ```
+     *
+     * @param identifier
+     * @param relations
+     */
     _listItem(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches an unordered list element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `ul`
+     *
+     * @param identifier
+     * @param relations
+     */
     _list(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a div element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `div`
+     * @param identifier
+     * @param relations
+     */
     _div(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a span element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `span`
+     * @param identifier
+     * @param relations
+     */
     _span(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a fieldset element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `fieldset`
+     *
+     * @param identifier
+     * @param relations
+     */
     _fieldset(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a heading element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `h1`
+     * @param identifier
+     * @param relations
+     */
     _heading1(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a heading element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `h2`
+     * @param identifier
+     * @param relations
+     */
     _heading2(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a heading element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `h3`
+     * @param identifier
+     * @param relations
+     */
     _heading3(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a heading element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `h4`
+     * @param identifier
+     * @param relations
+     */
     _heading4(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a heading element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `h5`
+     * @param identifier
+     * @param relations
+     */
     _heading5(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a heading element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `h6`
+     * @param identifier
+     * @param relations
+     */
     _heading6(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a area element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `area`
+     *
+     * @param identifier
+     * @param relations
+     */
     _area(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a map element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `map`
+     *
+     * @param identifier
+     * @param relations
+     */
     _map(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a paragraph element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `p`
+     *
+     * @param identifier
+     * @param relations
+     */
     _paragraph(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a italic element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `i`
+     *
+     * @param identifier
+     * @param relations
+     */
     _italic(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches an emphasis element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `em`
+     *
+     * @param identifier
+     * @param relations
+     */
     _emphasis(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a bold element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `b`
+     *
+     * @param identifier
+     * @param relations
+     */
     _bold(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a strong element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `strong`
+     *
+     * @param identifier
+     * @param relations
+     */
     _strong(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a preformat element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `pre`
+     *
+     * @param identifier
+     * @param relations
+     */
     _preformatted(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a code element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `code`
+     *
+     * @param identifier
+     * @param relations
+     */
     _code(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a blockqoute element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `blockqoute`
+     *
+     * @param identifier
+     * @param relations
+     */
     _blockquote(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a canvas element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `canvas`
+     *
+     * @param identifier
+     * @param relations
+     */
     _canvas(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a area element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `area`
+     *
+     * @param identifier
+     * @param relations
+     */
     _abbr(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a horizontal-ruler element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `hr`
+     *
+     * @param identifier
+     * @param relations
+     */
     _hr(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a iframe element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `iframe`
+     *
+     * @example
+     * Accessing a Iframe:
+     * ``
+     *
+     * ```html
+     * <!-- embeded.html -->
+     * <button>Button in a frame</button>
+     *
+     * <!-- page.html -->
+     * <iframe src="embeded.html" />
+     * ```
+     *
+     * Sakuli can also access contents from an Iframe using the [WebDriver-instance](https://sakuli.io/docs/100_writing-tests/000_web-testing/#webdriver-instance)
+     *
+     * ```typescript
+     * await _navigateTo('page.html'); // 1.
+     * const iFrame = await _fetch(_iframe(0)); // 2.
+     * await driver.switchTo().frame(iFrame); // 3.
+     * await _click(_button('Button in a frame')); // 4.
+     * await driver.switchTo().defaultContent();
+     * ```
+     *
+     * 1. Assuming that Sakuli is navigated to page that contains an iframe
+     * 2. Fetch an instance of seleniums [WebElement](https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/index_exports_WebElement.html) using [`_fetch`]{@link FetchApi._fetch}
+     * 3. Using seleniums [`switchTo().frame()`](https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_TargetLocator.html#frame) to change the context to the iframe
+     * 4. Now elements within the iframe page are accessible
+     * 5. Switching back to the "main-frame"
+     *
+     * @param identifier
+     * @param relations
+     */
     _iframe(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a iframe element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `iframe`
+     *
+     * @deprecated
+     * This accessor was [used in Sahi](https://sahipro.com/docs/sahi-apis/rte-apis.html#_rte) to access rich-text-editors that were based on iframes. Nowadays the most rich-text / WYSIWYG editors are implemented using HTML and JavaScript within the page were they are displayed.
+     *
+     *
+     * @param identifier
+     * @param relations
+     */
     _rte(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a frame element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `frame`
+     *
+     * @deprecated
+     * Frames are even deprecated in HTML itself. Anyway some legacy pages are still using this technology. To access elements in a frame, the same method as described for [_iframe]{@link AccessorApi._iframe} can be used.
+     *
+     * @param identifier
+     * @param relations
+     */
     _frame(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a object element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `object`
+     *
+     * @param identifier
+     * @param relations
+     */
     _object(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a embed element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `embed`
+     *
+     * @param identifier
+     * @param relations
+     */
     _embed(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a definition-list element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `dl`
+     *
+     * @param identifier
+     * @param relations
+     */
     _dList(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a definition-term element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `dt`
+     *
+     * @param identifier
+     * @param relations
+     */
     _dTerm(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a definition-description element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `dd`
+     *
+     * @param identifier
+     * @param relations
+     */
     _dDesc(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a font element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `font`
+     *
+     * @param identifier
+     * @param relations
+     */
     _font(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a rect element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `rect`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_rect(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a text-span element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `tspan`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_tspan(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a circle element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `circle`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_circle(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a ellipse element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `ellipse`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_ellipse(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a line element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `line`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_line(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a polygon element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `polygon`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_polygon(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a polyline element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `polyline`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_polyline(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a path element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `path`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_path(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a text element (from a svg-image) by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `text`
+     *
+     * @param identifier
+     * @param relations
+     */
     _svg_text(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+    /**
+     * Fetches a article element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `article`
+     *
+     * @param identifier
+     * @param relations
+     */
     _article(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a aside element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `aside`
+     *
+     * @param identifier
+     * @param relations
+     */
     _aside(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a details element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `details`
+     *
+     * @param identifier
+     * @param relations
+     */
     _details(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a figcaption element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `figcaption`
+     *
+     * @param identifier
+     * @param relations
+     */
     _figcaption(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a figure element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `figure`
+     *
+     * @param identifier
+     * @param relations
+     */
     _figure(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a footer element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `footer`
+     *
+     * @param identifier
+     * @param relations
+     */
     _footer(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a header element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `header`
+     *
+     * @param identifier
+     * @param relations
+     */
     _header(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a main element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `main`
+     *
+     * @param identifier
+     * @param relations
+     */
     _main(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a mark element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `mark`
+     *
+     * @param identifier
+     * @param relations
+     */
     _mark(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a nav element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `nav`
+     *
+     * @param identifier
+     * @param relations
+     */
     _nav(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a section element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `section`
+     *
+     * @param identifier
+     * @param relations
+     */
     _section(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a summary element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `summary`
+     *
+     * @param identifier
+     * @param relations
+     */
     _summary(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a time element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `time`
+     *
+     * @param identifier
+     * @param relations
+     */
     _time(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
+
+     /**
+     * Fetches a video element by an [identifier]{@link AccessorIdentifier} - restricted by the [relations]{@link RelationApi}
+     *
+     * Based on CSS selector: `video`
+     *
+     * @param identifier
+     * @param relations
+     */
     _video(identifier: AccessorIdentifier, ...relations: SahiRelation[]): SahiElementQueryOrWebElement;
 }
