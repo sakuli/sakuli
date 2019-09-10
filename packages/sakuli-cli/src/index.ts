@@ -59,6 +59,4 @@ import {cli} from "./cli-utils/command-line.class";
     });
 
     yargsParser.parse();
-
-
 })();

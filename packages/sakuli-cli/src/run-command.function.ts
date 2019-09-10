@@ -1,14 +1,15 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, SakuliInstance, TestExecutionContext, SakuliCoreProperties} from "@sakuli/core";
-import {ifPresent, isPresent, Maybe, invokeIfPresent, ensure, ensurePath} from "@sakuli/commons";
+import {CommandModuleProvider, SakuliCoreProperties, SakuliInstance, TestExecutionContext} from "@sakuli/core";
+import {ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe} from "@sakuli/commons";
 import chalk from "chalk";
 import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
-import { createLogConsumer } from "./create-log-consumer.function";
-import { join } from "path";
+import {createLogConsumer} from "./create-log-consumer.function";
+import {join} from "path";
+import {LogLevel} from "@sakuli/commons/dist/logger/log-level.class";
 
 async function renderError(e: Error) {
     console.error(chalk.red(e.toString()));
-    if(e.stack) {
+    if (e.stack) {
         console.error(chalk.gray(e.stack.replace(e.toString(), '').trim()));
     }
 }
@@ -30,21 +31,22 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         async handler(runOptions: any) {
 
             const rendering = testExecutionContextRenderer(sakuli.testExecutionContext);
-            let cleanLogConsumer: Maybe<()=>void>;
+            let cleanLogConsumer: Maybe<() => void>;
             try {
                 const project = await sakuli.initializeProject(runOptions);
-                const coreProps = project.objectFactory(SakuliCoreProperties)
+                const coreProps = project.objectFactory(SakuliCoreProperties);
 
-                console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`)
+                console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`);
 
-                const logPath = ensure<string>(coreProps.sakuliLogFolder, '')
+                sakuli.testExecutionContext.logger.logLevel = LogLevel[coreProps.logLevel.toUpperCase() as keyof typeof LogLevel] || LogLevel.INFO;
+                const logPath = ensure<string>(coreProps.sakuliLogFolder, '');
                 await ensurePath(logPath);
                 const logFile = join(logPath, 'sakuli.log');
                 console.log(chalk`Writing logs to: {bold.gray ${logFile}}`);
                 cleanLogConsumer = createLogConsumer(
                     sakuli.testExecutionContext.logger,
                     logFile
-                )
+                );
 
                 await sakuli.run(project);
                 await rendering;
