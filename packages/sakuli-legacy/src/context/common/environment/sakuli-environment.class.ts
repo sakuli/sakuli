@@ -20,6 +20,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
 
     return class SakuliEnvironment implements Environment {
         constructor() {
+            this.setSimilarity(props.sakuliEnvironmentSimilarityDefault);
         }
 
         public getSimilarity(): number {
@@ -36,8 +37,8 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         }
 
         public resetSimilarity() {
-            ctx.logger.debug(`Resetting similarity to default value`);
-            nutConfig.resetConfidence();
+            ctx.logger.debug(`Resetting similarity to default value ${props.sakuliEnvironmentSimilarityDefault}`);
+            nutConfig.confidence = props.sakuliEnvironmentSimilarityDefault;
         }
 
         public async takeScreenshot(filename: string): Promise<string> {
