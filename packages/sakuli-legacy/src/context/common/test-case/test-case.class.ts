@@ -73,7 +73,6 @@ export function createTestCaseClass(ctx: TestExecutionContext,
                 error: e,
             });
             if (legacyProps.errorScreenshot) {
-                ctx.logger.debug(`screenShotDest: ${screenShotDestPath}`);
                 const screenShotPath = await takeErrorScreenShot(ctx, screenShotDestPath);
                 if (existsSync(screenShotPath)) {
                     ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
