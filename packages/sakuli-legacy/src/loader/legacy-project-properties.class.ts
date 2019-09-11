@@ -1,19 +1,19 @@
-import {Property, BooleanProperty} from "@sakuli/commons";
+import {BooleanProperty, NumberProperty, StringProperty} from "@sakuli/commons";
 import {Browsers} from "../context/selenium-config/create-driver-from-project.function";
 
 export class LegacyProjectProperties {
     /**
      *
      */
-    @Property('testsuite.id')
+    @StringProperty('testsuite.id')
     testsuiteId: string = "";
 
     /**
      * Descriptive name for the current test suite
      * DEFAULT: value of 'testsuite.id'
      */
-    @Property('testsuite.name')
-    testsuiteName: string = "";
+    @StringProperty('testsuite.name')
+    testsuiteName: string = "${testsuite.id}";
 
     /**
      * The warning runtime threshold (seconds) estimates the execution time of the complete
@@ -22,7 +22,7 @@ export class LegacyProjectProperties {
      * If the threshold is set to 0, the execution time will never exceed, so the state will be always OK!
      * DEFAULT:0
      */
-    @Property('testsuite.warningTime')
+    @NumberProperty('testsuite.warningTime')
     testsuiteWarningTime: number = 0;
 
     /**
@@ -32,7 +32,7 @@ export class LegacyProjectProperties {
      * If the threshold is set to 0, the execution time will never exceed, so the state will be always OK!
      * DEFAULT:0
      */
-    @Property('testsuite.criticalTime')
+    @NumberProperty('testsuite.criticalTime')
     testsuiteCriticalTime: number = 0;
 
     /**
@@ -42,8 +42,8 @@ export class LegacyProjectProperties {
      *
      * DEFAULT: firefox
      */
-    @Property('browser')
-    @Property('testsuite.browser')
+    @StringProperty('browser')
+    @StringProperty('testsuite.browser')
     testsuiteBrowser: Browsers = "firefox";
 
     @BooleanProperty('ui-only')
@@ -52,37 +52,37 @@ export class LegacyProjectProperties {
 
     /**
      */
-    @Property('sakuli.environment.similarity.default')
+    @NumberProperty('sakuli.environment.similarity.default')
     sakuliEnvironmentSimilarityDefault: number = 0.99;
 
     /**
      * DEFAULT: false
      */
-    @Property('sakuli.autoHighlight')
+    @BooleanProperty('sakuli.autoHighlight')
     sakuliAutoHighlight: boolean = false;
 
     /**
      * Auto highlight duration (float)
      */
-    @Property('sakuli.highlight.seconds')
+    @NumberProperty('sakuli.highlight.seconds')
     sakuliHighlightSeconds: number = 0.2;
 
     /**
      * Type delay - specifies the amount of time in ms to wait between keypresses
      */
-    @Property('sakuli.typeDelay')
+    @NumberProperty('sakuli.typeDelay')
     typeDelay: number = 300;
 
     /**
      * Sakuli click delay when clicking mouse buttons in ms
      */
-    @Property('sakuli.clickDelay')
+    @NumberProperty('sakuli.clickDelay')
     sikuliClickDelay: number = 0.2;
 
     /**
      * Overwrite this property or us the environment var `SAKULI_ENCRYPTION_KEY` as master key for en- and decryption
      */
-    @Property('sakuli.encryption.key')
+    @StringProperty('sakuli.encryption.key')
     sakuliEncryptionKey: string = "";
 
     /**
@@ -94,7 +94,7 @@ export class LegacyProjectProperties {
     /**
      * folder for screenshot files (if activated)
      */
-    @Property('sakuli.screenshot.dir')
+    @StringProperty('sakuli.screenshot.dir')
     screenshotDir: string = "${sakuli.log.folder}/_screenshots";
 
 }
