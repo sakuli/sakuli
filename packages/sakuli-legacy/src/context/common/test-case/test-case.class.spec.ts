@@ -10,6 +10,7 @@ import {ScreenApi} from "../actions/screen.function";
 import {TestCase} from "./test-case.interface";
 import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {TestStep} from "./__mocks__/test-step.function";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -20,26 +21,32 @@ ScreenApi.takeScreenshot = jest.fn();
 
 describe("TestCase", () => {
 
-    const testExecutionContext = mockPartial<TestExecutionContext>({
-        startTestStep: jest.fn(),
-        endTestStep: jest.fn(),
-        startTestCase: jest.fn(),
-        endTestCase: jest.fn(),
-        startTestSuite: jest.fn(),
-        getCurrentTestCase: jest.fn(),
-        getCurrentTestStep: jest.fn(),
-        updateCurrentTestCase: jest.fn(),
-        updateCurrentTestStep: jest.fn(),
-        startExecution: jest.fn(),
-        endExecution: jest.fn(),
-        getCurrentTestAction: jest.fn(),
-        getCurrentTestSuite: jest.fn(),
-        logger: mockPartial<SimpleLogger>({
-            info: jest.fn()
-        })
-    });
+    let testExecutionContext: TestExecutionContext;
+    let project: Project;
+    beforeEach(() => {
+        testExecutionContext = mockPartial<TestExecutionContext>({
+            startTestStep: jest.fn(),
+            endTestStep: jest.fn(),
+            startTestCase: jest.fn(),
+            endTestCase: jest.fn(),
+            startTestSuite: jest.fn(),
+            getCurrentTestCase: jest.fn(),
+            getCurrentTestStep: jest.fn(),
+            updateCurrentTestCase: jest.fn(),
+            updateCurrentTestStep: jest.fn(),
+            startExecution: jest.fn(),
+            endExecution: jest.fn(),
+            getCurrentTestAction: jest.fn(),
+            getCurrentTestSuite: jest.fn(),
+            logger: mockPartial<SimpleLogger>({
+                info: jest.fn()
+            })
+        });
 
-    const project: Project = mockPartial<Project>({});
+        project = mockPartial<Project>({
+            objectFactory: jest.fn().mockReturnValue(new LegacyProjectProperties())
+        });
+    })
 
     describe("initialisation", () => {
         it('should pass constructor params to testExecutionContext', () => {

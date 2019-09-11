@@ -2,7 +2,8 @@ import {Project, ProjectLoader} from '@sakuli/core'
 import {join} from 'path';
 import {readdirSync, readFileSync,} from 'fs';
 import {parseSahiTestsuiteDefiniton} from './parse-sahi-testsuite-definition.function';
-import {ifPresent, JavaPropertiesFileSource, throwIfAbsent} from '@sakuli/commons';
+import {ifPresent, JavaPropertiesFileSource, throwIfAbsent, DecoratedClassDefaultsSource} from '@sakuli/commons';
+import { LegacyProjectProperties } from './legacy-project-properties.class';
 
 export class LegacyLoader implements ProjectLoader {
 
@@ -27,6 +28,7 @@ export class LegacyLoader implements ProjectLoader {
         const path = project.rootDir;
         const rootDirContents = readdirSync(project.rootDir);
         await this.readProperties(project);
+        await project.installPropertySource(new DecoratedClassDefaultsSource(LegacyProjectProperties))
         const testsuiteSuiteFile = rootDirContents.find(dir => dir === 'testsuite.suite');
         const testSuiteFiles = ifPresent(testsuiteSuiteFile,
             file => parseSahiTestsuiteDefiniton(readFileSync(join(path, file)).toString()),

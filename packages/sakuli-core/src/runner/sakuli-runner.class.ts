@@ -6,7 +6,6 @@ import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {TestExecutionContext} from "./test-execution-context";
 import {TestFile} from "../loader/model/test-file.interface";
-import {ifPresent} from "@sakuli/commons";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
 

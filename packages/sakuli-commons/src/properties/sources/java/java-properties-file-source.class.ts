@@ -1,6 +1,6 @@
 import {createPropertyReader} from "./create-properties-reader.function";
 import {PropertyMap, PropertySource} from "../../model";
-import {ObjectMap} from "../../object-map.class";
+import {ObjectMap} from "../../maps/object-map.class";
 
 export class JavaPropertiesFileSource implements PropertySource {
 
