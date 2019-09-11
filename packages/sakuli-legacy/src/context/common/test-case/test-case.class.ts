@@ -1,13 +1,13 @@
 import {cwd} from "process";
-import {Project, TestExecutionContext, TestStepContext, SakuliCoreProperties} from "@sakuli/core";
+import {Project, TestExecutionContext, TestStepContext} from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
-import {ifPresent, Maybe, throwIfAbsent, ensure} from "@sakuli/commons";
+import {ensure, ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {isAbsolute, join} from "path";
 import {TestCase} from "./test-case.interface";
 import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {takeErrorScreenShot} from "./take-error-screen-shot.function";
 import {existsSync} from "fs";
-import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
 
 export function createTestCaseClass(ctx: TestExecutionContext,
                                     project: Project,
@@ -69,17 +69,18 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          * @inheritDoc
          */
         async handleException<E extends Error>(e: E) {
-            const screenShotPath = await takeErrorScreenShot( ctx, screenShotDestPath);
-            if (existsSync(screenShotPath)) {
-                ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-                ctx.updateCurrentTestStep({
-                    error: e,
-                    screenshot: screenShotPath
-                });
-            } else {
-                ctx.updateCurrentTestStep({
-                    error: e,
-                });
+            ctx.updateCurrentTestStep({
+                error: e,
+            });
+            if (legacyProps.errorScreenshot) {
+                ctx.logger.debug(`screenShotDest: ${screenShotDestPath}`);
+                const screenShotPath = await takeErrorScreenShot(ctx, screenShotDestPath);
+                if (existsSync(screenShotPath)) {
+                    ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
+                    ctx.updateCurrentTestStep({
+                        screenshot: screenShotPath
+                    });
+                }
             }
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
                 const cachedSteps = await testStepCache.read();
