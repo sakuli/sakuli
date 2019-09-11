@@ -37,8 +37,11 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 const coreProps = project.objectFactory(SakuliCoreProperties);
 
                 console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`);
-
-                sakuli.testExecutionContext.logger.logLevel = LogLevel[coreProps.logLevel.toUpperCase() as keyof typeof LogLevel] || LogLevel.INFO;
+                const logLevel = LogLevel[coreProps.logLevel.toUpperCase() as keyof typeof LogLevel];
+                sakuli.testExecutionContext.logger.logLevel = ifPresent(logLevel,
+                    () => logLevel,
+                    () => LogLevel.INFO
+                );
                 const logPath = ensure<string>(coreProps.sakuliLogFolder, '');
                 await ensurePath(logPath);
                 const logFile = join(logPath, 'sakuli.log');
