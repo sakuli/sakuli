@@ -7,10 +7,11 @@ import {cwd} from "process";
 
 export const takeErrorScreenShot = async (ctx: TestExecutionContext, screenShotDestinationFolder: Maybe<string>) => {
     const {suiteName, caseName} = getTestMetaData(ctx);
-    const errorString = `error_${suiteName}_${caseName}`;
+    const folderName = `${suiteName}_${caseName}`;
+    const errorString = `error_${folderName}`;
     const screenShotPath = ifPresent(screenShotDestinationFolder,
-        (testFolder) => join(testFolder, errorString),
-        () => join(cwd(), errorString));
+        (testFolder) => join(testFolder, folderName),
+        () => join(cwd(), folderName));
     await ensurePath(screenShotPath);
-    return ScreenApi.takeScreenshotWithTimestamp(screenShotPath);
+    return ScreenApi.takeScreenshotWithTimestamp(join(screenShotPath, errorString));
 };
