@@ -39,10 +39,10 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
                         const resourcePath = determineResourcePath(imageName);
                         ctx.logger.debug(`Loading '${imageName}' from path '${resourcePath}'`);
                         const result = await ScreenApi.find(imageName, resourcePath, nutConfig.confidence, this);
-                        ctx.logger.debug(`Located at: (${result.left},${result.top},${result.width},${result.height})`);
+                        ctx.logger.info(`Located at: (${result.left},${result.top},${result.width},${result.height})`);
                         resolve(new SakuliRegion(result.left, result.top, result.width, result.height));
                     } catch (e) {
-                        ctx.logger.debug(`Failed to locate ${imageName}. Reason: ${e}`);
+                        ctx.logger.error(`Failed to locate ${imageName}. Reason: ${e}`);
                         reject(e);
                     }
                 });
@@ -61,9 +61,10 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
                         const resourcePath = determineResourcePath(imageName);
                         ctx.logger.debug(`Loading '${imageName}' from path '${resourcePath}'`);
                         const result = await ScreenApi.waitForImage(imageName, resourcePath, nutConfig.confidence, optWaitSeconds * 1000, this);
+                        ctx.logger.info(`Image exists in region`);
                         resolve(new SakuliRegion(result.left, result.top, result.width, result.height));
                     } catch (e) {
-                        ctx.logger.error(e);
+                        ctx.logger.error(`Failed to detect image in region. Reason: ${e}`);
                         reject(e);
                     }
                 });

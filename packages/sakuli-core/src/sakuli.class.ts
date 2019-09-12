@@ -70,12 +70,12 @@ export class SakuliClass {
             'sakuli.testsuite.folder': project.rootDir
         }));
         await project.installPropertySource(new DecoratedClassDefaultsSource(SakuliCoreProperties));
-        await project.installPropertySource(new CliArgsSource(process.argv));
-        await project.installPropertySource(new EnvironmentSource());
 
         for (let loader of this.loader) {
             project = (await loader.load(project)) || project;
         }
+        await project.installPropertySource(new EnvironmentSource());
+        await project.installPropertySource(new CliArgsSource(process.argv));
         return project;
     }
 
