@@ -73,12 +73,16 @@ export function createTestCaseClass(ctx: TestExecutionContext,
                 error: e,
             });
             if (legacyProps.errorScreenshot) {
-                const screenShotPath = await takeErrorScreenShot(ctx, screenShotDestPath);
-                if (existsSync(screenShotPath)) {
-                    ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-                    ctx.updateCurrentTestStep({
-                        screenshot: screenShotPath
-                    });
+                try {
+                    const screenShotPath = await takeErrorScreenShot(ctx, screenShotDestPath);
+                    if (existsSync(screenShotPath)) {
+                        ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
+                        ctx.updateCurrentTestStep({
+                            screenshot: screenShotPath
+                        });
+                    }
+                } catch (e) {
+                    ctx.logger.warn(`Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`);
                 }
             }
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
@@ -145,8 +149,13 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          */
         async throwException(message: string, screenshot: boolean) {
             if (screenshot) {
-                const screenShotOutputPath = await takeErrorScreenShot(ctx, screenShotDestPath);
-                const screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
+                let screenShotMessage = "";
+                try {
+                    const screenShotOutputPath = await takeErrorScreenShot(ctx, screenShotDestPath);
+                    screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
+                } catch (e) {
+                    ctx.logger.warn(`Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`);
+                }
                 throw Error(`${message}${screenShotMessage}`);
             }
             throw Error(message);
