@@ -1,5 +1,5 @@
 import {TestExecutionContext} from "@sakuli/core";
-import {ifPresent, Maybe, ensurePath} from "@sakuli/commons";
+import {ensurePath, ifPresent, Maybe} from "@sakuli/commons";
 import {getTestMetaData} from "./get-test-meta-data.function";
 import {join} from "path";
 import {ScreenApi} from "../actions/screen.function";
@@ -12,6 +12,7 @@ export const takeErrorScreenShot = async (ctx: TestExecutionContext, screenShotD
     const screenShotPath = ifPresent(screenShotDestinationFolder,
         (testFolder) => join(testFolder, folderName),
         () => join(cwd(), folderName));
+    ctx.logger.debug(`Checking whether output folder ${screenShotPath} exists. Trying to create if not.`);
     await ensurePath(screenShotPath);
     return ScreenApi.takeScreenshotWithTimestamp(join(screenShotPath, errorString));
 };
