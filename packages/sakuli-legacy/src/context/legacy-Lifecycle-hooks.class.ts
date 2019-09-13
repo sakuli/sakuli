@@ -37,7 +37,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     async onProject(project: Project) {
         const properties = project.objectFactory(LegacyProjectProperties);
-        this.uiOnly = properties.uiOnly;
+        this.uiOnly = properties.isUiOnly();
         if (!this.uiOnly) {
             this.driver = createDriverFromProject(project, this.builder);
         }
