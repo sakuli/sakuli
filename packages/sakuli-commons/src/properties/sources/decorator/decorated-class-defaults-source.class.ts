@@ -1,6 +1,7 @@
 import { PropertySource, PropertyMap } from "../../model";
 import { Type } from "../../../type.interface";
 import { getPropertyDecoratorDefinitions } from "../../decorator";
+import {isPresent} from "../../../maybe";
 
 export class DecoratedClassDefaultsSource<T> implements PropertySource {
 
@@ -22,10 +23,10 @@ export class DecoratedClassDefaultsSource<T> implements PropertySource {
                 return instance[def.property as keyof T];
             }
             return;
-        }
+        };
         const has = (key: string) => {
-            return !!get(key);
-        }
+            return isPresent(get(key));
+        };
         return ({get, has});
 
     }

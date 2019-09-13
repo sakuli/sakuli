@@ -1,5 +1,5 @@
 import {PropertyMap, PropertySource} from "../model";
-import {ifPresent} from "../../maybe";
+import {ifPresent, isPresent} from "../../maybe";
 
 export class CascadingPropertyMap implements PropertyMap {
     private propertyMaps: PropertyMap[] = [];
@@ -9,7 +9,7 @@ export class CascadingPropertyMap implements PropertyMap {
     }
 
     get(key: string): string | null {
-        
+
         return ifPresent([...this.propertyMaps].reverse().find(m => m.has(key)),
             map => map.get(key),
             () => null
@@ -17,6 +17,6 @@ export class CascadingPropertyMap implements PropertyMap {
     }
 
     has(key: string): boolean {
-        return this.get(key) != null;
+        return isPresent(this.get(key));
     }
 }
