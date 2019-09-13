@@ -1,11 +1,13 @@
-import { NoopSahiApi } from "./noop-sahi-api.const";
+import {NoopSahiApi} from "./noop-sahi-api.const";
+import {SahiApi} from "./sahi/sahi-api.interface";
 
 describe('NoopSahiApi', () => {
-
-    it('should throw an error containing the name of the method', () => {
+    it.each([
+            ...Object.keys(NoopSahiApi)
+        ]
+    )('should throw an error containing methodname %s', (key: string) => {
         expect(() => {
-            NoopSahiApi._navigateTo('')
-        }).toThrowError(/_navigateTo/);
+            (NoopSahiApi[key as keyof SahiApi] as any)();
+        }).toThrowError(new RegExp(`${key}`));
     })
-
 });
