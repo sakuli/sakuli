@@ -1,4 +1,4 @@
-import {BooleanProperty, NumberProperty, StringProperty} from "@sakuli/commons";
+import {BooleanProperty, NumberProperty, StringProperty, Maybe} from "@sakuli/commons";
 import {Browsers} from "../context/selenium-config/create-driver-from-project.function";
 
 export class LegacyProjectProperties {
@@ -37,14 +37,38 @@ export class LegacyProjectProperties {
 
     /**
      * Defines the browser in witch the test suite should be executed
-     * values are corresponding to the file
-     * /userdata/config/browser_types.
+     * This option is usually defined via commandline and will override [testsuiteBrowser]{@link LegacyProjectProperties.testsuiteBrowser}
      *
-     * DEFAULT: firefox
+     * To access the actual set browser within Sakuli use [getBrowser()]{@link LegacyProjectProperties.getBrowser}
+     *
+     * Possible values are defined in [Browsers]{@link Browsers} type
+     *
      */
     @StringProperty('browser')
+    browser: Maybe<Browsers>;
+
+    /**
+     * Defines the browser in witch the test suite should be executed
+     * This option is usually defined in `sakuli.properties` or `testsuite.properties` file and can be overridden by [browser]{@link LegacyProjectProperties.browser}
+     *
+     * To access the actual set browser within Sakuli use [getBrowser()]{@link LegacyProjectProperties.getBrowser}
+     *
+     * Possible values are defined in [Browsers]{@link Browsers} type
+     *
+     */
     @StringProperty('testsuite.browser')
-    testsuiteBrowser: Browsers = "firefox";
+    testsuiteBrowser: Maybe<Browsers>;
+
+    /**
+     * Will return the browser to use with Sakuli based on configuration. It will return value of
+     * - [`browser`]{@link LegacyProjectProperties.browser} property if set
+     * - otherwise [`testsuite.browser`]{@link LegacyProjectProperties.testsuiteBrowser} if set
+     * - other `"firefox"`
+     * @returns Browsers - a valid browser string that can be used by selenium
+     */
+    getBrowser(): Browsers {
+        return this.browser || this.testsuiteBrowser || 'firefox'
+    }
 
     @BooleanProperty('ui-only')
     @BooleanProperty('testsuite.uiOnly')

@@ -33,7 +33,7 @@ export const createDriverFromProject = (
     const properties = project.objectFactory(LegacyProjectProperties);
     const seleniumProperties = project.objectFactory(SeleniumProperties);
 
-    const browser: Browsers = properties.testsuiteBrowser;
+    const browser: Browsers = properties.getBrowser();
     const capsProducer = throwIfAbsent(capabilityMap[browser], Error(`${browser} is not a valid browser`));
     const caps = capsProducer();
 
