@@ -1,5 +1,5 @@
-import {LegacyLifecycleHooks} from "./legacy-Lifecycle-hooks.class";
-import {Builder, Capabilities, ThenableWebDriver} from "selenium-webdriver";
+import {LegacyLifecycleHooks} from "./legacy-lifecycle-hooks.class";
+import {Builder, Capabilities, ThenableWebDriver, Options, Window} from "selenium-webdriver";
 import {mockPartial} from "sneer";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {Project, TestExecutionContext} from "@sakuli/core";
@@ -9,33 +9,48 @@ import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
 
 describe("LegacyLifecycleHooks", () => {
 
-    const driver: ThenableWebDriver = mockPartial<ThenableWebDriver>({
-        quit: jest.fn()
-    });
-
-    const testExecutionContext: TestExecutionContext = mockPartial<TestExecutionContext>({
-        startTestCase: jest.fn(),
-        endTestSuite: jest.fn(),
-        startTestSuite: jest.fn(),
-        getCurrentTestCase: jest.fn(),
-        updateCurrentTestCase: jest.fn(),
-    });
-
-
-    const legacyProps = new LegacyProjectProperties();
-    legacyProps.testsuiteBrowser = 'chrome';
-    const minimumProject = mockPartial<Project>({
-        rootDir: '',
-        testFiles: [],
-        objectFactory: jest.fn().mockReturnValue(legacyProps),
-        ...(createPropertyMapMock({
-
-        }))
-    });
-
     let builder: Builder;
     let lcp: LegacyLifecycleHooks;
+    let window: Window;
+    let options: Options;
+    let driver: ThenableWebDriver;
+    let minimumProject: Project;
+    let testExecutionContext: TestExecutionContext;
+    let legacyProps: LegacyProjectProperties;
     beforeEach(async() => {
+        window = mockPartial<Window>({
+            maximize: jest.fn()
+        })
+
+        options = mockPartial<Options>({
+            window: jest.fn().mockReturnValue(window)
+        });
+        driver = mockPartial<ThenableWebDriver>({
+            quit: jest.fn(),
+            manage: jest.fn().mockReturnValue(options)
+
+        });
+
+        testExecutionContext = mockPartial<TestExecutionContext>({
+            startTestCase: jest.fn(),
+            endTestSuite: jest.fn(),
+            startTestSuite: jest.fn(),
+            getCurrentTestCase: jest.fn(),
+            updateCurrentTestCase: jest.fn(),
+        });
+
+
+        legacyProps = new LegacyProjectProperties();
+        legacyProps.testsuiteBrowser = 'chrome';
+        minimumProject = mockPartial<Project>({
+            rootDir: '',
+            testFiles: [],
+            objectFactory: jest.fn().mockReturnValue(legacyProps),
+            ...(createPropertyMapMock({
+
+            }))
+        });
+
         builder = mockPartial<Builder>({
             forBrowser: jest.fn(() => builder),
             withCapabilities: jest.fn(() => builder),
@@ -56,8 +71,13 @@ describe("LegacyLifecycleHooks", () => {
         it('should init webdriver with builder', async () => {
             await lcp.onProject(minimumProject);
             expect(builder.forBrowser).toHaveBeenCalledWith('chrome');
-            return expect(builder.withCapabilities).toHaveBeenCalledWith(Capabilities.chrome());
+            await expect(builder.withCapabilities).toHaveBeenCalledWith(Capabilities.chrome());
         });
+
+        it('should maximize browser after init', async () => {
+            await lcp.onProject(minimumProject);
+            expect(window.maximize).toHaveBeenCalled();
+        })
 
         it('should publish sahi function into context', async () => {
             await lcp.onProject(minimumProject);

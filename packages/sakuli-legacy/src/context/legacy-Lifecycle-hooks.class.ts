@@ -40,6 +40,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         this.uiOnly = properties.uiOnly;
         if (!this.uiOnly) {
             this.driver = createDriverFromProject(project, this.builder);
+            this.driver.manage().window().maximize();
         }
     }
 
