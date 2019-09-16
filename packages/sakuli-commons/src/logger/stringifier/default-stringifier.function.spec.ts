@@ -2,6 +2,8 @@ import {LogLevel} from "../log-level.class";
 import {defaultStringifier} from "./default-stringifier.function";
 import {EOL} from "os";
 import {inspect} from "util";
+import { LogEvent } from "../log-event.interface";
+import { stripIndents } from "common-tags";
 
 describe("default-stringifier", () => {
     it("should stringify log events", () => {
@@ -27,4 +29,19 @@ describe("default-stringifier", () => {
         // THEN
         expect(result).toContain(`${LogLevel[level]}: ${message}${EOL}${dataString}`);
     });
+
+    it('should stringify log data for primitives without inspect', () => {
+        const log: LogEvent = {
+            level: LogLevel.DEBUG,
+            message: 'Test',
+            time: new Date(),
+            data: ["Simple String", 30, false, {foo: 'bar'}]
+        }
+
+        expect(defaultStringifier(log)).toContain(stripIndents`${LogLevel[LogLevel.DEBUG]}: Test
+        Simple String
+        30
+        false
+        { foo: 'bar' }`)
+    })
 });

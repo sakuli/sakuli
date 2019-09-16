@@ -43,6 +43,7 @@ describe("TestCase", () => {
             logger: mockPartial<SimpleLogger>({
                 info: jest.fn(),
                 debug: jest.fn(),
+                error: jest.fn(),
             })
         });
 
@@ -172,6 +173,28 @@ describe("TestCase", () => {
     });
 
     describe("handleException", () => {
+
+        it('should log error message', async () => {
+            // GIVEN
+            const testFolder = "testCaseFolder";
+            const legacyProps = new LegacyProjectProperties();
+            legacyProps.errorScreenshot = false;
+            project = mockPartial<Project>({
+                objectFactory: jest.fn().mockReturnValue(legacyProps)
+            });
+            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
+            const tc = new SUT("testId", 0, 0);
+            const testError = new Error("testError");
+
+            // WHEN
+            await tc.handleException(testError);
+
+            expect(testExecutionContext.logger.error).toHaveBeenCalledWith(
+                expect.stringContaining(testError.message),
+                testError.stack
+            )
+        })
+
         it("should skip screenshots when disabled via props", async () => {
             // GIVEN
             const testFolder = "testCaseFolder";
