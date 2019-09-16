@@ -69,6 +69,7 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          * @inheritDoc
          */
         async handleException<E extends Error>(e: E) {
+            ctx.logger.error(`Error in testcase ${this.caseId}: ${e.message}`, e.stack);
             ctx.updateCurrentTestStep({
                 error: e,
             });
