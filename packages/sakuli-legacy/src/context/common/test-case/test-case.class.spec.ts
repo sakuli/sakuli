@@ -12,7 +12,6 @@ import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {TestStep} from "./__mocks__/test-step.function";
 import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
 import {tmpdir} from "os";
-import { exportNamedDeclaration } from "@babel/types";
 
 beforeEach(() => {
     jest.resetAllMocks();
