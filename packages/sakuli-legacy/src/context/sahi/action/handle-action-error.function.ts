@@ -26,12 +26,12 @@ export function tryToRecover(
         if(e instanceof error.MoveTargetOutOfBoundsError) {
             await ifPresent(findQuery(args), async q => {
                 const e = await accessorUtil.fetchElement(q);
-                await driver.executeScript(`arguments[0].scrollIntoView(true)`, e);
+                await driver.executeScript(`arguments[0].scrollIntoView(false)`, e);
                 await original(...args)
                     .then(
                     () => Promise.resolve(),
                     e => {
-                        return driver.executeScript(`arguments[0].scrollIntoView(false)`, e).then(() => original(...args))
+                        return driver.executeScript(`arguments[0].scrollIntoView(true)`, e).then(() => original(...args))
                     });
 
             }, () => {
@@ -40,7 +40,7 @@ export function tryToRecover(
             return;
         }
 
-        throw e;
+        throw e; // bail by throwing the original error
     }
 
 }

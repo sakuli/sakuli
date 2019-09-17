@@ -65,7 +65,7 @@ export function actionApi(
             let res: any;
             try {
                 // TODO Make retries configurable
-                res = await wrap(fn, withRetry(5,tryToRecover(webDriver, accessorUtil)))(...args);
+                res = await wrap(fn, withRetry(5, tryToRecover(webDriver, accessorUtil)))(...args);
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {
