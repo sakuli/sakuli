@@ -1,4 +1,5 @@
-import {PropertySource, PropertyMap} from "../../model";
+import {PropertyMap, PropertySource} from "../../model";
+import {isPresent} from "../../../maybe";
 
 export class EnvironmentSource implements PropertySource {
 
@@ -10,7 +11,7 @@ export class EnvironmentSource implements PropertySource {
         };
 
         const has = (key: string) => {
-            return get(key) != null;
+            return isPresent(get(key));
         };
         return {get, has};
     }

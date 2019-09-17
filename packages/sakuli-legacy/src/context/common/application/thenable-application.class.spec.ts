@@ -9,7 +9,7 @@ import {Type} from "@sakuli/commons";
 const defer = <T>(v: T) => Promise.resolve(v);
 describe('ThenableApplication', () => {
 
-    const projectMock = mockPartial<Project>({});
+    const projectMock = new Project(".");
     let ctx: TestExecutionContext;
     let ThenableRegion: Type<ThenableRegion>;
     let ThenableApplication: ReturnType<typeof createThenableApplicationClass>;

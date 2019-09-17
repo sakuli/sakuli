@@ -1,11 +1,14 @@
-import {PropertyMap} from "../model";
-import {TemplatedPropertyMap} from "./templated-property-source.class";
+import {PropertyMap} from "./model";
+import {TemplatedPropertyMap} from "./maps/templated-property-map.class";
 
 describe('TemplatedPropertyMap', () => {
 
     const _values: Record<string, string> = {
         "basedir": 'some/path',
-        "workingdir": "${basedir}/work"
+        "workingdir": "${basedir}/work",
+        "logdir": "${workingdir}/logs",
+        "errorlogdir": "${logdir}/errors",
+
     };
     const staticPropMap: PropertyMap = {
         get: (key: string) => {
@@ -27,6 +30,13 @@ describe('TemplatedPropertyMap', () => {
 
     it('should render templated values', () => {
         expect(mapUnderTest.get('workingdir')).toBe('some/path/work');
+    });
 
+    it('should render nested templated values', () => {
+        expect(mapUnderTest.get('logdir')).toBe('some/path/work/logs')
+    });
+
+    it('should render deeply nested templated values', () => {
+        expect(mapUnderTest.get('errorlogdir')).toBe('some/path/work/logs/errors')
     });
 });

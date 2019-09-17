@@ -9,8 +9,6 @@ export interface LegacyApi extends SahiApi, CommonApi {
      * Instance of [ThenableWebDriver](https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/index_exports_ThenableWebDriver.html).
      * Can execute any native method of webdriver. It's not recommended to use it in a testcase.
      *
-     * @
-     *
      */
     driver: ThenableWebDriver,
 

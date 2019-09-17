@@ -1,6 +1,6 @@
 import {LogConsumerAdapter} from "../log-consumer-adapter.interface";
 import {SimpleLogger} from "../simple-logger.class";
-import {defaultStringifier} from "../stringifier/default-stringifier.function";
+import {defaultStringifier} from "../stringifier";
 import {createWriteStream} from "fs";
 import {createWriteStreamConsumer} from "./create-write-stream-consumer.function";
 

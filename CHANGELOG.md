@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.3
+- Bugfix: Sakuli Errors are not forwarded to log-file [(#232)](https://github.com/sakuli/sakuli/issues/232)
+- Bugfix: Data object are not logged properly [(#230)](https://github.com/sakuli/sakuli/issues/230)
+- Bugfix: Wrong log level for failing matches [(#227)](https://github.com/sakuli/sakuli/issues/227)
+- Bugfix: Enable `sakuli.environment.similarity.default` property [(#223)](https://github.com/sakuli/sakuli/issues/223)
+- Bugfix: Use subfolder for error screenshot [(#222)](https://github.com/sakuli/sakuli/issues/222)
+- Bugfix: Wrong order for property loading [(#218)](https://github.com/sakuli/sakuli/issues/218)
+- Enhancement: Configurable log and screenshot destination paths [(#205)](https://github.com/sakuli/sakuli/issues/205)
+- Enhancement: Log levels [(#201)](https://github.com/sakuli/sakuli/issues/201)
+- Enhancement: Configurable type delay [(#198)](https://github.com/sakuli/sakuli/issues/198)
+- Bugfix: TestStepCache error handling [(#196)](https://github.com/sakuli/sakuli/issues/196)
+- Bugfix: Change `yargs` from `devDependencies` to `dependencies` in `@sakuli/commons` [(#193)](https://github.com/sakuli/sakuli/issues/193)
+- Enhancement: Add Error Messages to CLI output [(#177)](https://github.com/sakuli/sakuli/issues/177)
+- Enhancement: Pure native testing without launching browser [(#171)](https://github.com/sakuli/sakuli/issues/171)
+- Bugfix: ChromeOptions are not handled properly [(#166)](https://github.com/sakuli/sakuli/issues/166)
+- Enhancement: Remove unused properties from `LegacyProjectProperties` class [(#146)](https://github.com/sakuli/sakuli/issues/146)
+
 ## v2.1.2
 - Bugfix: Error screenshots on Windows not working [(#183)](https://github.com/sakuli/sakuli/issues/183)
 - Bugfix: TeststepsCache should check for errors in current step [(#184)](https://github.com/sakuli/sakuli/issues/184)

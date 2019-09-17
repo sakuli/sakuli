@@ -1,5 +1,5 @@
 import {SakuliBootstrapOptions} from "./bootstrap-options.interface";
-import {Sakuli, SakuliClass} from "../sakuli.class";
+import {Sakuli} from "../sakuli.class";
 import {SakuliPresetProvider} from "../sakuli-preset-provider.interface";
 
 

@@ -1,5 +1,6 @@
-import {PropertyMap} from "./model";
-import {createLens} from "./sources/create-lens.function";
+import {PropertyMap} from "../model";
+import {createLens} from "../sources/create-lens.function";
+import {isPresent} from "../../maybe";
 
 export class ObjectMap implements PropertyMap {
 
@@ -20,7 +21,7 @@ export class ObjectMap implements PropertyMap {
     }
 
     has(key: string): boolean {
-        return !!this.get(key)
+        return isPresent(this.get(key));
     }
 
 }
