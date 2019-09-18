@@ -7,7 +7,7 @@ import {keyboardActionApi} from "./keyboard-action/keyboard-actions.function";
 import {ActionApi} from "./action-api.interface";
 import {commonActionsApi} from "./common-action";
 import {wrap, withRetry} from '@sakuli/commons'
-import { tryToRecover } from "./handle-action-error.function";
+import { createHandleActionErrors } from "./handle-action-error.function";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -16,44 +16,6 @@ export function actionApi(
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ): ActionApi {
-    /*
-    function withRetries<T extends (...args: any[]) => Promise<any>>(
-        retries: number,
-        func: T,
-    ): T {
-        return (async (...args: any[]) => {
-            const initialTries = retries;
-            while (retries) {
-                try {
-                    return await func(...args);
-                } catch (e) {
-                    if (e instanceof StaleElementReferenceError) {
-                        --retries;
-                        ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
-                    }
-                    if(e instanceof MoveTargetOutOfBoundsError) {
-                        for(let arg in args) {
-                            if(isSahiElementQuery(arg)) {
-                                try {
-                                    const e = await accessorUtil.fetchElement(arg);
-                                    console.log('Element found')
-                                    await webDriver.executeScript(`arguments[0].scrollIntoView(false);`, e);
-                                    console.log('script executed')
-                                    return await withRetries(retries, () => func(...args));
-                                } catch(e) {
-
-                                }
-                            }
-                        }
-                    } else {
-                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
-                    }
-                }
-            }
-            throw Error(`Failed on an action after ${initialTries} attempts.`)
-        }) as T;
-    }
-    */
 
     function runAsAction<T extends (...args: any[]) => Promise<any>>(
         name: string,
@@ -65,7 +27,7 @@ export function actionApi(
             let res: any;
             try {
                 // TODO Make retries configurable
-                res = await wrap(fn, withRetry(5, tryToRecover(webDriver, accessorUtil)))(...args);
+                res = await wrap(fn, withRetry(5, createHandleActionErrors(webDriver, accessorUtil)))(...args);
             } catch (e) {
                 throw Error(`Error in action: ${name} \n${e.message}`)
             } finally {

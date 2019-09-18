@@ -8,14 +8,24 @@ function findQuery(args: any[]): Maybe<SahiElementQuery> {
 }
 
 /**
- * This function will get an Error and the original function that thrown this error
+ * This function creates an generic error handler for sakuli actions
  *
- * If this function returns without any throwing any other error (or rethrow the passed error) the error can be assumed as "recovered"
+ * That function will get an Error and the original function that throws that error
+ *
+ * If this function returns without throwing any other error (or rethrow the passed error) the error can be assumed as "recovered"
+ *
+ * Is used to wrap around sakuli actions in combination with [withRetry]{@link withRetry}
+ *
+ * The error handler currently does the following on:
+ *
+ * - StaleElementReferenceError: ignore it
+ * - MoveTargetOutOfBoundsError: Try to scroll the element into the viewport and restart the action
+ * - Otherwise: Rethrow the original error
  *
  * @param driver
  * @param accessorUtil
  */
-export function tryToRecover(
+export function createHandleActionErrors(
     driver: ThenableWebDriver,
     accessorUtil: AccessorUtil
 ) {

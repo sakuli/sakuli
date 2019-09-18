@@ -2,7 +2,7 @@ import {withRetry} from './with-retry.function';
 
 describe('with-retry', () => {
 
-    it('should invoke hanldeError for each rejected value', async () => {
+    it('should invoke handleError for each rejected value', async () => {
         const bailOn = jest.fn();
         const original = jest.fn()
             .mockRejectedValueOnce('Error')
@@ -30,7 +30,6 @@ describe('with-retry', () => {
     })
 
     it('should bail retrying when `bailOn` fails even if retries left', async () => {
-        console.log('Bail')
         const bailOn = jest.fn()
             .mockResolvedValueOnce(undefined)
             .mockRejectedValueOnce(Error('Bail'));
