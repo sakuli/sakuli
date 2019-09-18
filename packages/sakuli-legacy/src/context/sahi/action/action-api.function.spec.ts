@@ -56,7 +56,6 @@ describe('action-api', () => {
                         })
                     </script>
                 `))
-                //await expect(driver.findElement(By.css('#btn')).click()).resolves.toBeNull();
                 await expect(api._click({
                     locator: By.css('#btn'),
                     identifier: 0,
