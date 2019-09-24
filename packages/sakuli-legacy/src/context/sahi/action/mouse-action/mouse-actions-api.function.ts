@@ -18,7 +18,7 @@ export function mouseActionApi(
 
     const toElement = (origin: WebElement) => ({origin, x: 0, y: 0});
 
-    function _xy(): never {
+    function _xy(): Promise<never> {
         throw Error('Not yet implemented due to api incompability');
     }
 

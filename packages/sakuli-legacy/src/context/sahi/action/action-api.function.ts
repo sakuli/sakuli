@@ -1,13 +1,13 @@
-import {AccessorUtil} from "../accessor";
-import {TestExecutionContext} from "@sakuli/core";
-import {ThenableWebDriver} from "selenium-webdriver";
-import {focusActionApi} from "./focus-action";
-import {mouseActionApi} from "./mouse-action";
-import {keyboardActionApi} from "./keyboard-action/keyboard-actions.function";
-import {ActionApi} from "./action-api.interface";
-import {commonActionsApi} from "./common-action";
-import {wrap, withRetry} from '@sakuli/commons'
-import { createHandleActionErrors } from "./handle-action-error.function";
+import { AccessorUtil } from "../accessor";
+import { TestExecutionContext } from "@sakuli/core";
+import { ThenableWebDriver } from "selenium-webdriver";
+import { focusActionApi } from "./focus-action";
+import { mouseActionApi } from "./mouse-action";
+import { keyboardActionApi } from "./keyboard-action/keyboard-actions.function";
+import { ActionApi } from "./action-api.interface";
+import { commonActionsApi } from "./common-action";
+import { createWithRetries } from "./utils/create-with-retries.function";
+import { createWithActionContext } from "./utils";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -17,29 +17,10 @@ export function actionApi(
     ctx: TestExecutionContext
 ): ActionApi {
 
-    function runAsAction<T extends (...args: any[]) => Promise<any>>(
-        name: string,
-        fn: T
-    ): T {
-        return (async (...args: any[]) => {
-            ctx.startTestAction({id: name});
-            ctx.logger.debug(`Start action ${name}`);
-            let res: any;
-            try {
-                // TODO Make retries configurable
-                res = await wrap(fn, withRetry(5, createHandleActionErrors(webDriver, accessorUtil)))(...args);
-            } catch (e) {
-                throw Error(`Error in action: ${name} \n${e.message}`)
-            } finally {
-                const log = [`Finish action ${name}`];
-                if (ctx.getCurrentTestAction()) {
-                    log.push(`after ${(new Date().getTime() - ctx.getCurrentTestAction()!.startDate!.getTime()) / 1000}s`);
-                }
-                ctx.logger.info(log.join(' '));
-                ctx.endTestAction();
-            }
-            return res;
-        }) as T;
+    const withRetries = createWithRetries(webDriver, accessorUtil, ctx);
+    const withActionContext = createWithActionContext(ctx);
+    const runAsAction = <ARGS extends any[], R>(name: string, fn: (...args:ARGS) => Promise<R>): ((...args: ARGS) => Promise<R>) => {
+        return withActionContext(name, withRetries(5, fn));
     }
 
     const {
