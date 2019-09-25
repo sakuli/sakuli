@@ -7,6 +7,7 @@ import {CharInfo, charInfoToKey} from "./../char-info.interface";
 import {NativeEventDispatcher} from "./../native-event-dispatcher.class";
 import {getSeleniumKeysFromComboString} from "./../sahi-selenium-key-map.const";
 import {KeyboardActionsApi} from "./keyboard-actions.interface";
+import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
 
 export function keyboardActionApi(
     webDriver: ThenableWebDriver,
@@ -17,6 +18,7 @@ export function keyboardActionApi(
 
     async function _setValue(query: SahiElementQueryOrWebElement, value: string): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
+        await scrollIntoViewIfNeeded(element);
         try {
             await element.clear();
             for (let char of value.split('')) {
@@ -29,13 +31,14 @@ export function keyboardActionApi(
                 const value = arguments[1];
                 const done = arguments[arguments.length -1];
                 e.value = value;
-                done(); 
+                done();
             `, e, value);
         }
     }
 
     async function keyEvent(query: SahiElementQueryOrWebElement, charInfo: CharInfo, combo: string, eventName: string) {
         const e = await accessorUtil.fetchElement(query);
+        await scrollIntoViewIfNeeded(e);
         const dispatcher = new NativeEventDispatcher(e);
         const keys = getSeleniumKeysFromComboString(combo);
         const value = charInfoToKey(charInfo);
@@ -71,6 +74,7 @@ export function keyboardActionApi(
 
     async function _type(query: SahiElementQueryOrWebElement, text: string) {
         const e = await accessorUtil.fetchElement(query);
+        await scrollIntoViewIfNeeded(e);
         return e.sendKeys(...text.split(''));
     }
 

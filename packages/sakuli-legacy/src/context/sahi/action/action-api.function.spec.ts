@@ -64,7 +64,30 @@ describe('action-api', () => {
                 const out = await driver.findElement(By.id('out'));
                 await expect(out.getText()).resolves.toEqual('clicked');
             })
+
+            it('should autoscroll a element in a scrollabel container to click element', async () => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(`
+                    <div style="width: 100%; border: 1px solid gray; height: 200px; overflow: auto">
+                        <button id="btn" style="margin-top: 300px">Test</button>
+                    </div>
+                    <div id="out"></div>
+                    <script>
+                        document.getElementById('btn').addEventListener('click', function() {
+                            document.getElementById('out').innerText = 'clicked';
+                        })
+                    </script>
+                `))
+                await expect(api._click({
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                })).resolves.toBeUndefined();
+                const out = await driver.findElement(By.id('out'));
+                await expect(out.getText()).resolves.toEqual('clicked');
+            })
         })
+
 
     });
 });

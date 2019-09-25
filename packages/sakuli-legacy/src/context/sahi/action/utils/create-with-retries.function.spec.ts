@@ -8,29 +8,14 @@ import { SahiElementQuery } from "../../sahi-element.interface"
 
 describe('create-with-retries', () => {
 
-    let driver: ThenableWebDriver
     let executeScript: jest.Mock;
-    let accessorUtils: AccessorUtil;
     let ctx: TestExecutionContext;
     let action: jest.Mock;
-    let fetchElement: jest.Mock;
-    let webElementMock: WebElement;
     let withRetries: <ARGS extends any[], R>(r: number, fn: (...args: ARGS) => Promise<R>) => ((...args: ARGS) => Promise<R>);
 
     beforeEach(() => {
-        webElementMock = mockPartial<WebElement>({});
-        fetchElement = jest.fn().mockReturnValue(webElementMock);
-        accessorUtils = mockPartial<AccessorUtil>({
-            fetchElement
-        })
-        executeScript = jest.fn();
-        driver = mockPartial<ThenableWebDriver>({
-            executeScript
-        })
         ctx = createTestExecutionContextMock();
         withRetries = createWithRetries(
-            driver,
-            accessorUtils,
             ctx
         );
     })
@@ -63,41 +48,6 @@ describe('create-with-retries', () => {
         const retryableAction = withRetries(3, action);
         await expect(retryableAction(1, 2)).rejects.toThrowError(/Failed on an action after 3 attempts./);
         expect(action).toHaveBeenCalledTimes(3);
-    });
-
-    it('should try to bring elements to viewport on MoveTargetOutOfBoundsError', async () => {
-        action = jest.fn()
-            .mockRejectedValueOnce(new error.MoveTargetOutOfBoundsError())
-            .mockResolvedValueOnce("Success")
-
-        const retryableAction = withRetries(3, action);
-        const query: SahiElementQuery = {
-            locator: By.css('div'),
-            identifier: 0,
-            relations: []
-        }
-        await expect(retryableAction(query)).resolves.toBe('Success');
-        expect(fetchElement).toHaveBeenCalledWith(query);
-        expect(executeScript).toHaveBeenCalledWith(expect.stringContaining("scrollIntoView(false)"), webElementMock)
-    });
-
-    it('should try to bring elements to viewport on MoveTargetOutOfBoundsError if first try does not work', async () => {
-        action = jest.fn()
-            .mockRejectedValueOnce(new error.MoveTargetOutOfBoundsError())
-            .mockRejectedValueOnce(new error.MoveTargetOutOfBoundsError())
-            .mockResolvedValueOnce("Success")
-
-        executeScript.mockResolvedValue(void 0);
-
-        const retryableAction = withRetries(3, action);
-        const query: SahiElementQuery = {
-            locator: By.css('div'),
-            identifier: 0,
-            relations: []
-        }
-        await expect(retryableAction(query)).resolves.toBe('Success');
-        expect(fetchElement).toHaveBeenCalledWith(query);
-        expect(executeScript).toHaveBeenCalledWith(expect.stringContaining("scrollIntoView(false)"), webElementMock)
     });
 
     it('should throw on error which is not StaleElementReferenceError or MoveTargetOutOfBoundsError', async () => {

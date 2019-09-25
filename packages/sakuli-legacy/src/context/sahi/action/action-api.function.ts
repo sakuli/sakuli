@@ -17,7 +17,7 @@ export function actionApi(
     ctx: TestExecutionContext
 ): ActionApi {
 
-    const withRetries = createWithRetries(webDriver, accessorUtil, ctx);
+    const withRetries = createWithRetries(ctx);
     const withActionContext = createWithActionContext(ctx);
     const runAsAction = <ARGS extends any[], R>(name: string, fn: (...args:ARGS) => Promise<R>): ((...args: ARGS) => Promise<R>) => {
         return withActionContext(name, withRetries(5, fn));

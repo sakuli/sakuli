@@ -6,6 +6,7 @@ import {timeout} from "../poll-action.function";
 import {INJECT_SAKULI_HOOK} from "../inject.const";
 import {TestExecutionContext} from "@sakuli/core";
 import {CommonActionsApi} from "./common-actions.interface";
+import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
 
 export function commonActionsApi(
     webDriver: ThenableWebDriver,
@@ -35,6 +36,7 @@ export function commonActionsApi(
             ? await accessorUtil.fetchElement(query)
             : query;
         await element.getId();
+        await scrollIntoViewIfNeeded(element);
         const oldBorder = await webDriver.executeScript(stripIndents`
             const oldBorder = arguments[0].style.border;
             arguments[0].style.border = '2px solid red'
