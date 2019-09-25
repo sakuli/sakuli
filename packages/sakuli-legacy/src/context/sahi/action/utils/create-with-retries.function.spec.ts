@@ -1,10 +1,7 @@
-import { ThenableWebDriver, error, By, WebElement } from "selenium-webdriver"
+import { error } from "selenium-webdriver"
 import { createWithRetries } from "./create-with-retries.function"
-import { mockPartial } from "sneer"
-import { AccessorUtil } from "../../accessor"
 import { createTestExecutionContextMock } from "../../__mocks__"
 import { TestExecutionContext } from "@sakuli/core"
-import { SahiElementQuery } from "../../sahi-element.interface"
 
 describe('create-with-retries', () => {
 
@@ -53,7 +50,6 @@ describe('create-with-retries', () => {
     it('should throw on error which is not StaleElementReferenceError or MoveTargetOutOfBoundsError', async () => {
         action = jest.fn()
             .mockRejectedValueOnce(Error('Some error'));
-        executeScript.mockResolvedValue(void 0);
         const retryableAction = withRetries(3, action);
         await expect(retryableAction(1, 2)).rejects.toThrowError(/Some error/);
         expect(action).toHaveBeenCalledTimes(1);
