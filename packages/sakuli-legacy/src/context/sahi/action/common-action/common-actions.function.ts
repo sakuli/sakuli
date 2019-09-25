@@ -34,19 +34,7 @@ export function commonActionsApi(
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
-        /*
-        await element.getId();
-        const oldBorder = await webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[0].style.border;
-            arguments[0].style.border = '2px solid red'
-            return oldBorder;
-        `, element);
-        await _wait(timeoutMs);
-        await webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[1];
-            arguments[0].style.border = oldBorder
-        `, element, oldBorder);
-        */
+ 
         const elementRect = await element.getRect();
         await webDriver.executeAsyncScript(stripIndents`
             var rect = arguments[0];
