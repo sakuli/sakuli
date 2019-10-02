@@ -6,7 +6,7 @@ export function assertionApi(
     testExecutionContext: TestExecutionContext
 ): AssertionApi {
 
-    async function _assert(condition: Promise<boolean>, message = "Condition evaluated to 'false'"): Promise<void> {
+    async function _assert(condition: Promise<boolean>, message: string = "Condition evaluated to 'false'"): Promise<void> {
         if(!await condition){
             testExecutionContext.logger.error(message, condition);
             throw new Error(message);
@@ -14,51 +14,51 @@ export function assertionApi(
         return Promise.resolve();
     }
 
-    async function _assertTrue(condition: Promise<boolean>, message?: String): Promise<void> {
+    async function _assertTrue(condition: Promise<boolean>, message?: string): Promise<void> {
+        return _assert(condition, message);
+    }
+
+    async function _assertFalse(condition: Promise<boolean>, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertFalse(condition: Promise<boolean>, message?: String): Promise<void> {
+    async function _assertNotTrue(condition: Promise<boolean>, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertNotTrue(condition: Promise<boolean>, message?: String): Promise<void> {
+    async function _assertContainsText(expected: string, element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertContainsText(expected: String, element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+    async function _assertNotContainsText(expected: string, element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertNotContainsText(expected: String, element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+    async function _assertEqual(expected: any, actual: any, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertEqual(expected: any, actual: any, message?: String): Promise<void> {
+    async function _assertNotEqual(expected: any, actual: any, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertNotEqual(expected: any, actual: any, message?: String): Promise<void> {
+    async function _assertEqualArrays(expected: Array<any>, actual: Array<any>, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertEqualArrays(expected: Array<any>, actual: Array<any>, message?: String): Promise<void> {
+    async function _assertExists(element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertExists(element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+    async function _assertNotExists(element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertNotExists(element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+    async function _assertNotNull(value: any, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 
-    async function _assertNotNull(value: any, message?: String): Promise<void> {
-        throw new Error("Not Implemented");
-    }
-
-    async function _assertNull(value: any, message?: String): Promise<void> {
+    async function _assertNull(value: any, message?: string): Promise<void> {
         throw new Error("Not Implemented");
     }
 

@@ -23,9 +23,27 @@ describe('assertion-api', () => {
     });
 
     test('_assert should use the exception message, if the assertion fails', async () => {
-        const expectedMessage = "The end is near!";
+
+        //GIVEN
+        const expectedMessage = 'The end is near!';
         const failingPromise = Promise.resolve(false);
+
+        //WHEN + THEN
         await expect(api._assert(failingPromise, expectedMessage)).rejects.toThrow(Error(expectedMessage));
         return expect(ctx.logger.error).toBeCalledWith(expectedMessage, failingPromise);
+    });
+
+    test('_assertTrue reuses _assert', async () => {
+
+        //GIVEN
+        const messageToPass = 'You shall pass!';
+        const promiseToPass = Promise.resolve(true);
+        const assertSpy = jest.spyOn(api, '_assert');
+
+        //WHEN
+        await api._assertTrue(promiseToPass, messageToPass);
+
+        //THEN
+        return expect(assertSpy).toHaveBeenCalledWith(promiseToPass, messageToPass);
     });
 });
