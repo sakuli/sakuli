@@ -57,7 +57,7 @@ export function sahiApi(
     const accessor = accessorApi();
     const relations = relationsApi(driver, accessorUtil, testExecutionContext);
     const fetch = fetchApi(driver, accessorUtil, testExecutionContext);
-    const assertion = assertionApi(accessorUtil);
+    const assertion = assertionApi(testExecutionContext);
     return ({
         ...action,
         ...accessor,
