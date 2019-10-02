@@ -6,7 +6,6 @@ import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {TestExecutionContext} from "./test-execution-context";
 import {TestFile} from "../loader/model/test-file.interface";
-import {ifPresent} from "@sakuli/commons";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
 
@@ -26,20 +25,11 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
      */
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
-        process.on('unhandledRejection', error => {
-            console.log(error);
-            if (error instanceof Error) {
-                ifPresent(this.testExecutionContext.getCurrentTestCase(), () => {
-                    this.testExecutionContext.updateCurrentTestCase({error});
-                });
-            }
-        });
-        process.on('uncaughtException', error => {
-            console.log(error);
-            ifPresent(this.testExecutionContext.getCurrentTestCase(), () => {
-                this.testExecutionContext.updateCurrentTestCase({error});
-            });
-        });
+        const handleError = (e: any) => {
+            this.testExecutionContext.error = e;
+        }
+        process.on('unhandledRejection', handleError);
+        process.on('uncaughtException', handleError);
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
         let result = {};

@@ -1,6 +1,6 @@
 {
   "name": "integration-tests",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Integration tests for Sakuli",
   "private": true,
   "contributors": [
@@ -16,12 +16,12 @@
   },
   "scripts": {
     "demo-page": "node index",
-    "test": "sakuli run legacy-suite --browser=firefox",
+    "test": "NODE_NO_WARNINGS=1 sakuli run legacy-suite",
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run legacy-suite"
   },
   "dependencies": {
-    "@sakuli/cli": "^2.1.2",
-    "@sakuli/legacy": "^2.1.2",
+    "@sakuli/cli": "^2.1.3",
+    "@sakuli/legacy": "^2.1.3",
     "chromedriver": "^76.0.0",
     "concurrently": "^4.1.0",
     "execa": "^1.0.0",

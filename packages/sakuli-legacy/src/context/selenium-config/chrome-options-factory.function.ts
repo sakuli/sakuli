@@ -16,8 +16,8 @@ export const chromeOptionsFactory = (
     });
 
     ifPresent(properties.windowSizeHeight, height => {
-        ifPresent(properties.windowSizeWith, width => {
-            opts.windowSize({height, width});
+        ifPresent(properties.windowSizeWidth, width => {
+            opts.windowSize({height,width});
         })
     });
 

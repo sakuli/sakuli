@@ -1,12 +1,13 @@
 import {cwd} from "process";
 import {Project, TestExecutionContext, TestStepContext} from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
-import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
+import {ensure, ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
 import {isAbsolute, join} from "path";
 import {TestCase} from "./test-case.interface";
 import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {takeErrorScreenShot} from "./take-error-screen-shot.function";
 import {existsSync} from "fs";
+import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
 
 export function createTestCaseClass(ctx: TestExecutionContext,
                                     project: Project,
@@ -14,6 +15,9 @@ export function createTestCaseClass(ctx: TestExecutionContext,
                                     testStepCache = new TestStepCache()
 ) {
 
+    const legacyProps = project.objectFactory(LegacyProjectProperties);
+
+    const screenShotDestPath = ensure(legacyProps.screenshotDir, currentTestFolder);
     return class SakuliTestCase implements TestCase {
         constructor(
             readonly caseId: string = 'Testcase',
@@ -65,18 +69,22 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          * @inheritDoc
          */
         async handleException<E extends Error>(e: E) {
-            ctx.logger.info(`Error: ${e.message}`);
-            const screenShotPath = await takeErrorScreenShot(ctx, currentTestFolder);
-            if (existsSync(screenShotPath)) {
-                ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-                ctx.updateCurrentTestStep({
-                    error: e,
-                    screenshot: screenShotPath
-                });
-            } else {
-                ctx.updateCurrentTestStep({
-                    error: e,
-                });
+            ctx.logger.error(`Error in testcase ${this.caseId}: ${e.message}`, e.stack);
+            ctx.updateCurrentTestStep({
+                error: e,
+            });
+            if (legacyProps.errorScreenshot) {
+                try {
+                    const screenShotPath = await takeErrorScreenShot(ctx, screenShotDestPath);
+                    if (existsSync(screenShotPath)) {
+                        ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
+                        ctx.updateCurrentTestStep({
+                            screenshot: screenShotPath
+                        });
+                    }
+                } catch (e) {
+                    ctx.logger.warn(`Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`);
+                }
             }
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
                 const cachedSteps = await testStepCache.read();
@@ -106,7 +114,11 @@ export function createTestCaseClass(ctx: TestExecutionContext,
             await ifPresent(ctx.getCurrentTestCase(), async ctc => {
                 await ifPresent(ctx.getCurrentTestStep(), async cts => {
                     if (!cts.error) {
-                        await testStepCache.write(ctc.getChildren() as TestStepContext[]);
+                        try {
+                            await testStepCache.write(ctc.getChildren() as TestStepContext[]);
+                        } catch (e) {
+                            ctx.logger.warn("Failed to update steps cache. Reason:", e);
+                        }
                     }
                 });
             }, () => Promise.resolve())
@@ -138,8 +150,13 @@ export function createTestCaseClass(ctx: TestExecutionContext,
          */
         async throwException(message: string, screenshot: boolean) {
             if (screenshot) {
-                const screenShotOutputPath = await takeErrorScreenShot(ctx, currentTestFolder);
-                const screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
+                let screenShotMessage = "";
+                try {
+                    const screenShotOutputPath = await takeErrorScreenShot(ctx, screenShotDestPath);
+                    screenShotMessage = (screenshot && existsSync(screenShotOutputPath)) ? ` Screenshot saved to '${screenShotOutputPath}'` : "";
+                } catch (e) {
+                    ctx.logger.warn(`Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`);
+                }
                 throw Error(`${message}${screenShotMessage}`);
             }
             throw Error(message);

@@ -1,7 +1,7 @@
 import {MouseButton} from "../button.class";
 import {Key} from "../key.class";
 import {MouseApi} from "../actions/mouse.function";
-import {KeyboardApi} from "../actions/keyboard.function";
+import {createKeyboardApi} from "../actions/keyboard.function";
 import {ScreenApi} from "../actions/screen.function";
 import {Project, TestExecutionContext} from "@sakuli/core";
 
@@ -11,6 +11,7 @@ import {join} from "path";
 import {Region} from "./region.interface";
 import {runAsAction} from "../actions/action.function";
 import {getEncryptionKey} from "../secrets.function";
+import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
 
 const determineResourcePath = (imageName: string) => {
     for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {
@@ -23,6 +24,9 @@ const determineResourcePath = (imageName: string) => {
 };
 
 export function createRegionClass(ctx: TestExecutionContext, project: Project) {
+    const props = project.objectFactory(LegacyProjectProperties);
+    const keyboardApi = createKeyboardApi(props);
+
     return class SakuliRegion implements Region {
         constructor(public _left?: number, public _top?: number, public _width?: number, public _height?: number) {
         }
@@ -35,10 +39,10 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
                         const resourcePath = determineResourcePath(imageName);
                         ctx.logger.debug(`Loading '${imageName}' from path '${resourcePath}'`);
                         const result = await ScreenApi.find(imageName, resourcePath, nutConfig.confidence, this);
-                        ctx.logger.debug(`Located at: (${result.left},${result.top},${result.width},${result.height})`);
+                        ctx.logger.info(`Located at: (${result.left},${result.top},${result.width},${result.height})`);
                         resolve(new SakuliRegion(result.left, result.top, result.width, result.height));
                     } catch (e) {
-                        ctx.logger.debug(`Failed to locate ${imageName}. Reason: ${e}`);
+                        ctx.logger.error(`Failed to locate ${imageName}. Reason: ${e}`);
                         reject(e);
                     }
                 });
@@ -57,9 +61,10 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
                         const resourcePath = determineResourcePath(imageName);
                         ctx.logger.debug(`Loading '${imageName}' from path '${resourcePath}'`);
                         const result = await ScreenApi.waitForImage(imageName, resourcePath, nutConfig.confidence, optWaitSeconds * 1000, this);
+                        ctx.logger.info(`Image exists in region`);
                         resolve(new SakuliRegion(result.left, result.top, result.width, result.height));
                     } catch (e) {
-                        ctx.logger.error(e);
+                        ctx.logger.error(`Failed to detect image in region. Reason: ${e}`);
                         reject(e);
                     }
                 });
@@ -145,7 +150,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async paste(text: string): Promise<Region> {
             return runAsAction(ctx, "paste", async () => {
                 ctx.logger.debug(`Pasting '${text}' via native clipboard`);
-                await KeyboardApi.paste(text);
+                await keyboardApi.paste(text);
                 return this;
             })();
         }
@@ -153,7 +158,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async pasteMasked(text: string): Promise<Region> {
             return runAsAction(ctx, "pasteMasked", async () => {
                 ctx.logger.debug(`Pasting '****' via native clipboard`);
-                await KeyboardApi.paste(text);
+                await keyboardApi.paste(text);
                 return this;
             })();
         }
@@ -162,7 +167,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             return runAsAction(ctx, "pasteAndDecrypt", async () => {
                 ctx.logger.debug(`Pasting encrypted text '${text}' via native clipboard`);
                 const key = getEncryptionKey(project);
-                await KeyboardApi.pasteAndDecrypt(key, text);
+                await keyboardApi.pasteAndDecrypt(key, text);
                 return this;
             })();
         }
@@ -170,7 +175,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async type(text: string, ...optModifiers: Key[]): Promise<Region> {
             return runAsAction(ctx, "type", async () => {
                 ctx.logger.debug(`Typing text '${text}' via native keyboard`);
-                await KeyboardApi.type(text, ...optModifiers);
+                await keyboardApi.type(text, ...optModifiers);
                 return this;
             })();
         }
@@ -178,7 +183,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async typeMasked(text: string, ...optModifiers: Key[]): Promise<Region> {
             return runAsAction(ctx, "typeMasked", async () => {
                 ctx.logger.debug(`Typing text '****' via native keyboard`);
-                await KeyboardApi.type(text, ...optModifiers);
+                await keyboardApi.type(text, ...optModifiers);
                 return this;
             })();
         }
@@ -187,7 +192,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             return runAsAction(ctx, "typeAndDecrypt", async () => {
                 ctx.logger.debug(`Typing encrypted text '${text}' via native keyboard`);
                 const key = getEncryptionKey(project);
-                await KeyboardApi.typeAndDecrypt(key, text, ...optModifiers);
+                await keyboardApi.typeAndDecrypt(key, text, ...optModifiers);
                 return this;
             })();
         }
@@ -195,7 +200,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async keyDown(...keys: Key[]): Promise<Region> {
             return runAsAction(ctx, "keyDown", async () => {
                 ctx.logger.debug(`Pressing keys '${keys.map(key => key).join(",")}' via native keyboard`);
-                await KeyboardApi.pressKey(...keys);
+                await keyboardApi.pressKey(...keys);
                 return this;
             })();
         }
@@ -203,7 +208,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async keyUp(...keys: Key[]): Promise<Region> {
             return runAsAction(ctx, "keyUp", async () => {
                 ctx.logger.debug(`Releasing keys '${keys.map(key => key).join(",")}' via native keyboard`);
-                await KeyboardApi.releaseKey(...keys);
+                await keyboardApi.releaseKey(...keys);
                 return this;
             })();
         }
@@ -211,7 +216,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async write(text: string): Promise<Region> {
             return runAsAction(ctx, "write", async () => {
                 ctx.logger.debug(`Writing text '${text}' via native keyboard`);
-                await KeyboardApi.type(text);
+                await keyboardApi.type(text);
                 return this;
             })();
         }
@@ -220,7 +225,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             return runAsAction(ctx, "deleteChars", async () => {
                 ctx.logger.debug(`Deleting ${amountOfChars} characters`);
                 const keys = new Array(amountOfChars).fill(Key.BACKSPACE);
-                await KeyboardApi.pressKey(keys);
+                await keyboardApi.pressKey(keys);
                 return this;
             })();
         }

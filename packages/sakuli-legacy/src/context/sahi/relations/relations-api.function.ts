@@ -12,14 +12,13 @@ import {getSiblingIndex} from "../helper/get-sibling-index.function";
 import {getParent} from "../helper/get-parent.function";
 import {parentApi} from "./parent-api.function";
 import {PositionalInfo, positionalInfo} from "./positional-info.function";
-
-export type RelationApi = ReturnType<typeof relationsApi>;
+import { RelationApi } from "./relations-api.interface";
 
 export function relationsApi(
     driver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     testExecutionContext: TestExecutionContext,
-) {
+): RelationApi {
     const NULL_QUERY = {locator: By.js(`return []`), relations: [], identifier: new RegExp('')};
 
     function webElementsToQuery(elements: WebElement[]) {
@@ -154,11 +153,17 @@ export function relationsApi(
     };
 
     const {
-        _parentNode
+        _parentNode,
+        _parentCell,
+        _parentRow,
+        _parentTable
     } = parentApi(driver, accessorUtil, testExecutionContext);
 
     return ({
         _parentNode,
+        _parentCell,
+        _parentRow,
+        _parentTable,
         _in,
         _near,
         _rightOf,
