@@ -1,6 +1,6 @@
-import {WebElement} from "selenium-webdriver";
-import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
-import {Actions} from 'selenium-webdriver/lib/input';
+import { WebElement } from "selenium-webdriver";
+import { getSeleniumKeysFromComboString } from "./sahi-selenium-key-map.const";
+import { Actions } from 'selenium-webdriver/lib/input';
 
 export function runActionsWithComboKeys(
     actions: Actions,

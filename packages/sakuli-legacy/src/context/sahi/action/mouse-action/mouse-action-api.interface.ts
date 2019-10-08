@@ -5,7 +5,7 @@ export interface MouseActionApi {
      * @deprecated
      * @throws Error - Not implemented error
      */
-    _xy(): never
+    _xy(): Promise<never>
 
     /**
      * _click simulates a user's click on the given element.
