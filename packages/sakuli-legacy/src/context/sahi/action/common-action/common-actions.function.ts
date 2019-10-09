@@ -6,6 +6,7 @@ import {timeout} from "../poll-action.function";
 import {INJECT_SAKULI_HOOK} from "../inject.const";
 import {TestExecutionContext} from "@sakuli/core";
 import {CommonActionsApi} from "./common-actions.interface";
+import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
 
 export function commonActionsApi(
     webDriver: ThenableWebDriver,
