@@ -21,7 +21,7 @@ describe('TestStepCache', () => {
             marshall: jest.fn(() => 'step;100;200'),
             unMarshall: jest.fn(() => TestStep('step', 100, 200))
         });
-        cache = new TestStepCache(tmpDir, marshallerMock)
+        cache = new TestStepCache(join(tmpDir, '.steps.cache'), marshallerMock)
     });
 
     it('should identify cache as existing when file was written', async () => {

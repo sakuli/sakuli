@@ -1,12 +1,13 @@
-import {AccessorUtil} from "../accessor";
-import {TestExecutionContext} from "@sakuli/core";
-import {error, ThenableWebDriver} from "selenium-webdriver";
-import {focusActionApi} from "./focus-action";
-import {mouseActionApi} from "./mouse-action";
-import {keyboardActionApi} from "./keyboard-action/keyboard-actions.function";
-import {ActionApi} from "./action-api.interface";
-import {commonActionsApi} from "./common-action";
-import StaleElementReferenceError = error.StaleElementReferenceError;
+import { AccessorUtil } from "../accessor";
+import { TestExecutionContext } from "@sakuli/core";
+import { ThenableWebDriver } from "selenium-webdriver";
+import { focusActionApi } from "./focus-action";
+import { mouseActionApi } from "./mouse-action";
+import { keyboardActionApi } from "./keyboard-action/keyboard-actions.function";
+import { ActionApi } from "./action-api.interface";
+import { commonActionsApi } from "./common-action";
+import { createWithRetries } from "./utils/create-with-retries.function";
+import { createWithActionContext } from "./utils";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -16,53 +17,10 @@ export function actionApi(
     ctx: TestExecutionContext
 ): ActionApi {
 
-    function withRetries<T extends (...args: any[]) => Promise<any>>(
-        retries: number,
-        func: T,
-    ): T {
-        return (async (...args: any[]) => {
-            const initialTries = retries;
-            while (retries) {
-                try {
-                    return await func(...args);
-                } catch (e) {
-                    if (e instanceof StaleElementReferenceError) {
-                        --retries;
-                        ctx.logger.info(`StaleElement: ${initialTries - retries} - ${e.stack}`)
-                    } else {
-                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
-                    }
-                }
-            }
-            throw Error(`Failed on an action after ${initialTries} attempts.`)
-        }) as T;
-    }
-
-    function runAsAction<T extends (...args: any[]) => Promise<any>>(
-        name: string,
-        fn: T
-    ): T {
-        return (async (...args: any[]) => {
-            ctx.startTestAction({
-                id: name,
-            });
-            ctx.logger.info(`Start action ${name}`);
-            let res: any;
-            try {
-                // TODO Make retries configurable
-                res = await withRetries(5, fn)(...args);
-            } catch (e) {
-                throw Error(`Error in action: ${name} \n${e.message}`)
-            } finally {
-                const log = [`Finish action ${name}`];
-                if (ctx.getCurrentTestAction()) {
-                    log.push(`after ${(new Date().getTime() - ctx.getCurrentTestAction()!.startDate!.getTime()) / 1000}s`);
-                }
-                ctx.logger.info(log.join(' '));
-                ctx.endTestAction();
-            }
-            return res;
-        }) as T;
+    const withRetries = createWithRetries(ctx);
+    const withActionContext = createWithActionContext(ctx);
+    const runAsAction = <ARGS extends any[], R>(name: string, fn: (...args:ARGS) => Promise<R>): ((...args: ARGS) => Promise<R>) => {
+        return withActionContext(name, withRetries(5, fn));
     }
 
     const {

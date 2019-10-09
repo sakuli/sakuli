@@ -42,8 +42,10 @@ Please refer to the [Sakuli website](https://sakuli.io) and the [Getting Started
 
 # Development
 
+## Workstation
 To start developing Sakuli 2 some setup on your workstation is required.
 
+* Make sure to have the active LTS version (v10) of node installed.
 * Make sure to have docker installed and started
 * Make sure to execute `docker pull selenium/standalone-chrome-debug` before you start developing.
 

@@ -56,7 +56,7 @@ describe('mouse-actions', () => {
                         <option value="v_coffee">Coffee</option>
                         <option value="v_tea">Tea</option>
                         <option id="beer" value="v_beer">Beer</option>
-                        <option id="water" value="v_water">Water</option>                
+                        <option id="water" value="v_water">Water</option>
                     </select>
                 `));
                 await _setSelected({
@@ -73,7 +73,7 @@ describe('mouse-actions', () => {
             type MouseMethods = "_click" | "_rightClick" | "_mouseOver" | "_mouseUp" | "_mouseDown";
             const htmlSnippet = (nativeEvent: string, method: string) => `
             <style>
-              #btn:hover {background: red;} 
+              #btn:hover {background: red;}
             </style>
             <button id="btn">Click Me</button>
             <div id="out"></div>
@@ -175,8 +175,8 @@ describe('mouse-actions', () => {
 
             it('should drag #a to #b', async () => {
                 const {_dragDrop} = createApi(driver);
-                await driver.get(mockHtml(`        
-                <!-- From: https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_draganddrop -->       
+                await driver.get(mockHtml(`
+                <!-- From: https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_draganddrop -->
                 <style>
                 #div1 {
                   width: 350px;
@@ -193,17 +193,17 @@ describe('mouse-actions', () => {
                 </style>
                 <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 <br>
-                <div id="drag1" draggable="true" ondragstart="drag(event)" width="336" height="69"></div>           
-                <div id="out"></div>    
+                <div id="drag1" draggable="true" ondragstart="drag(event)" width="336" height="69"></div>
+                <div id="out"></div>
                 <script>
                 function allowDrop(ev) {
                   ev.preventDefault();
                 }
-                
+
                 function drag(ev) {
                   ev.dataTransfer.setData("text", ev.target.id);
                 }
-                
+
                 function drop(ev) {
                   ev.preventDefault();
                   var data = ev.dataTransfer.getData("text");

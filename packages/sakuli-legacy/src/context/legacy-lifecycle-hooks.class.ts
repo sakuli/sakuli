@@ -5,7 +5,7 @@ import {Key} from "./common/key.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
-import {dirname, join, parse, sep} from "path";
+import {dirname, join, parse, sep, basename} from "path";
 import {createLoggerObject} from "./common/logger";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {promises as fs} from "fs";
@@ -37,9 +37,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
     async onProject(project: Project) {
         const properties = project.objectFactory(LegacyProjectProperties);
-        this.uiOnly = properties.uiOnly;
+        this.uiOnly = properties.isUiOnly();
         if (!this.uiOnly) {
             this.driver = createDriverFromProject(project, this.builder);
+            this.driver.manage().window().maximize();
         }
     }
 
@@ -85,7 +86,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     async requestContext(ctx: TestExecutionContext, project: Project): Promise<LegacyApi> {
         const sahi: SahiApi = this.driver ? sahiApi(this.driver, ctx) : NoopSahiApi;
         const currentTestFolder = throwIfAbsent(this.currentTest, Error('Could not initialize LegacyDslContext because no test folder was found / provided'))
-        const stepsCache = new TestStepCache(currentTestFolder);
+        const stepCacheFileName = basename(this.currentFile);
+        const stepsCache = new TestStepCache(join(currentTestFolder, `.${stepCacheFileName}.steps.cache`));
         return Promise.resolve({
             driver: this.driver!,
             context: ctx,

@@ -1,11 +1,12 @@
-import {PropertySource} from "../../model/property-source.interface";
-import {PropertyMap} from "../../model/property-map.interface";
+import {PropertyMap, PropertySource} from "../../model";
 import yargs from 'yargs';
 import {argvLens} from "./argv-lens.function";
+import {isPresent} from "../../../maybe";
 
 export class CliArgsSource implements PropertySource {
 
-    constructor(readonly args: string[] = process.argv) {}
+    constructor(readonly args: string[] = process.argv) {
+    }
 
     async createPropertyMap(): Promise<PropertyMap> {
         const argv = yargs(this.args).argv;
@@ -14,7 +15,7 @@ export class CliArgsSource implements PropertySource {
         };
 
         const has = (key: string) => {
-            return get(key) != null;
+            return isPresent(get(key));
         };
         return {get, has};
     }
