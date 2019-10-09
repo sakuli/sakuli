@@ -11,16 +11,17 @@ export interface MouseActionApi {
      * _click simulates a user's click on the given element.
      *
      * @example
-     * <code>
+     * <br />
+     *
+     * ```typescript
      * _click(_button("Click Me"));
      * _click(_button("Click Me"), "CTRL"); // clicks with CTRL key pressed
      * _click(_button("Click Me"), "CTRL|SHIFT"); // clicks with CTRL and SHIFT keys pressed
-     *
-     * </code>
+     * ```
      *
      * @param query - query to the Element to click on
-     * @param combo - Any combo key: can be "CTRL", "SHIFT", "ALT" or "META";
-        Can also be two or more keys together like "CTRL|SHIFT"
+     * @param combo - Optional combo key(s): can be <kbd>CTRL</kbd>, <kbd>SHIFT</kbd>, <kbd>ALT</kbd> or <kbd>META</kbd>;
+     *   Can also be two or more keys together like `"CTRL|SHIFT"`
      *
      * @return {Promise<void>} Resolves after the click is invoked, doesn't wait for further actions on the website which are possibly invoked after the click
      */
@@ -48,8 +49,8 @@ export interface MouseActionApi {
      *
      * @param query
      * @param isRight - Indicates that the right mousebutton is released
-     * @param combo - Any combo key: can be "CTRL", "SHIFT", "ALT" or "META";
-     Can also be two or more keys together like "CTRL|SHIFT"
+     * @param combo - Optional combo key(s): can be <kbd>CTRL</kbd>, <kbd>SHIFT</kbd>, <kbd>ALT</kbd> or <kbd>META</kbd>;
+     *   Can also be two or more keys together like `"CTRL|SHIFT"`
      */
     _mouseUp(query: SahiElementQueryOrWebElement, isRight?: boolean, combo?: string): Promise<void>
 
@@ -66,7 +67,8 @@ export interface MouseActionApi {
      * Invokes a mouse over on the queried element. Can be combined with a key combo.
      *
      * @param query
-     * @param combo
+     * @param combo - Optional combo key(s): can be <kbd>CTRL</kbd>, <kbd>SHIFT</kbd>, <kbd>ALT</kbd> or <kbd>META</kbd>;
+     *   Can also be two or more keys together like `"CTRL|SHIFT"`
      */
     _mouseOver(query: SahiElementQueryOrWebElement, combo?: string): Promise<void>
 
