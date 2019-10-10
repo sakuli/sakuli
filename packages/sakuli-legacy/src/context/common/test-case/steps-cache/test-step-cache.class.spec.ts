@@ -4,7 +4,6 @@ import {tmpdir} from "os";
 import {TestStepCache} from "./test-step-cache.class";
 import {mockPartial} from "sneer";
 import {TestStepContextCacheMarshaller} from "./test-step-context-cache-marshaller.class";
-import {TestStepContext} from "@sakuli/core";
 import {stripIndents} from "common-tags";
 import {TestStep} from "../__mocks__/test-step.function";
 
@@ -22,7 +21,7 @@ describe('TestStepCache', () => {
             marshall: jest.fn(() => 'step;100;200'),
             unMarshall: jest.fn(() => TestStep('step', 100, 200))
         });
-        cache = new TestStepCache(tmpDir, marshallerMock)
+        cache = new TestStepCache(join(tmpDir, '.steps.cache'), marshallerMock)
     });
 
     it('should identify cache as existing when file was written', async () => {
@@ -67,11 +66,11 @@ describe('TestStepCache', () => {
 
     it('should call unmarshaller foreach line in file', async () => {
         await fs.writeFile(cache.cacheFile, stripIndents`
-        
+
         step-1;100;200
         step-2;100;200
         step-3;100;200
-        
+
         `);
 
         const steps = await cache.read();

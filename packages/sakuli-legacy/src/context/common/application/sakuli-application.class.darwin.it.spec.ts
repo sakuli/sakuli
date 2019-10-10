@@ -2,13 +2,12 @@ import {Project, TestExecutionContext} from "@sakuli/core";
 import {SimpleLogger} from "@sakuli/commons";
 import {createApplicationClass} from "./sakuli-application.class";
 import {Application} from "./application.interface";
-import {mockPartial} from "sneer";
 import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
 describe("Application", () => {
 
     const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
-    const mockProject = mockPartial<Project>({});
+    const mockProject = new Project(".");
     let ctx: TestExecutionContext;
 
     beforeEach(() => {

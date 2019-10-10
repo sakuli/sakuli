@@ -10,36 +10,47 @@ import {ScreenApi} from "../actions/screen.function";
 import {TestCase} from "./test-case.interface";
 import {TestStepCache} from "./steps-cache/test-step-cache.class";
 import {TestStep} from "./__mocks__/test-step.function";
+import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
+import {tmpdir} from "os";
 
 beforeEach(() => {
     jest.resetAllMocks();
 });
 
 jest.mock("../actions/screen.function");
-ScreenApi.takeScreenshot = jest.fn();
+ScreenApi.takeScreenshot = jest.fn(() => Promise.resolve(__filename));
+ScreenApi.takeScreenshotWithTimestamp = jest.fn(() => Promise.resolve(__filename));
 
 describe("TestCase", () => {
 
-    const testExecutionContext = mockPartial<TestExecutionContext>({
-        startTestStep: jest.fn(),
-        endTestStep: jest.fn(),
-        startTestCase: jest.fn(),
-        endTestCase: jest.fn(),
-        startTestSuite: jest.fn(),
-        getCurrentTestCase: jest.fn(),
-        getCurrentTestStep: jest.fn(),
-        updateCurrentTestCase: jest.fn(),
-        updateCurrentTestStep: jest.fn(),
-        startExecution: jest.fn(),
-        endExecution: jest.fn(),
-        getCurrentTestAction: jest.fn(),
-        getCurrentTestSuite: jest.fn(),
-        logger: mockPartial<SimpleLogger>({
-            info: jest.fn()
-        })
-    });
+    let testExecutionContext: TestExecutionContext;
+    let project: Project;
+    beforeEach(() => {
+        testExecutionContext = mockPartial<TestExecutionContext>({
+            startTestStep: jest.fn(),
+            endTestStep: jest.fn(),
+            startTestCase: jest.fn(),
+            endTestCase: jest.fn(),
+            startTestSuite: jest.fn(),
+            getCurrentTestCase: jest.fn(),
+            getCurrentTestStep: jest.fn(),
+            updateCurrentTestCase: jest.fn(),
+            updateCurrentTestStep: jest.fn(),
+            startExecution: jest.fn(),
+            endExecution: jest.fn(),
+            getCurrentTestAction: jest.fn(),
+            getCurrentTestSuite: jest.fn(),
+            logger: mockPartial<SimpleLogger>({
+                info: jest.fn(),
+                debug: jest.fn(),
+                error: jest.fn(),
+            })
+        });
 
-    const project: Project = mockPartial<Project>({});
+        project = mockPartial<Project>({
+            objectFactory: jest.fn().mockReturnValue(new LegacyProjectProperties())
+        });
+    });
 
     describe("initialisation", () => {
         it('should pass constructor params to testExecutionContext', () => {
@@ -162,9 +173,36 @@ describe("TestCase", () => {
     });
 
     describe("handleException", () => {
-        it("should take a screenshot and update the testcase update ", async () => {
+
+        it('should log error message', async () => {
             // GIVEN
             const testFolder = "testCaseFolder";
+            const legacyProps = new LegacyProjectProperties();
+            legacyProps.errorScreenshot = false;
+            project = mockPartial<Project>({
+                objectFactory: jest.fn().mockReturnValue(legacyProps)
+            });
+            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
+            const tc = new SUT("testId", 0, 0);
+            const testError = new Error("testError");
+
+            // WHEN
+            await tc.handleException(testError);
+
+            expect(testExecutionContext.logger.error).toHaveBeenCalledWith(
+                expect.stringContaining(testError.message),
+                testError.stack
+            )
+        })
+
+        it("should skip screenshots when disabled via props", async () => {
+            // GIVEN
+            const testFolder = "testCaseFolder";
+            const legacyProps = new LegacyProjectProperties();
+            legacyProps.errorScreenshot = false;
+            project = mockPartial<Project>({
+                objectFactory: jest.fn().mockReturnValue(legacyProps)
+            });
             const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
             const tc = new SUT("testId", 0, 0);
             const testError = new Error("testError");
@@ -173,6 +211,30 @@ describe("TestCase", () => {
             await tc.handleException(testError);
 
             // THEN
+            expect(ScreenApi.takeScreenshotWithTimestamp).not.toBeCalled();
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+                error: testError
+            });
+        });
+
+        it("should take a screenshot and update the testcase", async () => {
+            // GIVEN
+            const testFolder = "testCaseFolder";
+            const legacyProps = new LegacyProjectProperties();
+            legacyProps.screenshotDir = tmpdir();
+            project = mockPartial<Project>({
+                objectFactory: jest.fn().mockReturnValue(legacyProps)
+            });
+            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
+            const tc = new SUT("testId", 0, 0);
+            const testError = new Error("testError");
+
+            // WHEN
+            await tc.handleException(testError);
+
+            // THEN
+            expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
             expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
             expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
                 error: testError

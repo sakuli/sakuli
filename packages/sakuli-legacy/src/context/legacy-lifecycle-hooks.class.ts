@@ -5,7 +5,7 @@ import {Key} from "./common/key.class";
 import {sahiApi} from "./sahi/api";
 import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
 import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
-import {dirname, join, parse, sep} from "path";
+import {dirname, join, parse, sep, basename} from "path";
 import {createLoggerObject} from "./common/logger";
 import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
 import {promises as fs} from "fs";
@@ -16,6 +16,8 @@ import {createThenableRegionClass} from "./common/region";
 import {LegacyApi} from "./legacy-api.interface";
 import {createDriverFromProject} from "./selenium-config/create-driver-from-project.function";
 import { TestStepCache } from './common/test-case/steps-cache/test-step-cache.class';
+import {NoopSahiApi} from './noop-sahi-api.const'
+import {SahiApi} from './sahi/sahi-api.interface';
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -25,6 +27,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
      * Path to the current Testsuite. Might be used in `requestContext`
      */
     currentTest: Maybe<string> = null;
+    uiOnly = false;
 
     constructor(
         readonly builder: Builder
@@ -33,7 +36,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     async onProject(project: Project) {
-        this.driver = createDriverFromProject(project, this.builder);
+        const properties = project.objectFactory(LegacyProjectProperties);
+        this.uiOnly = properties.isUiOnly();
+        if (!this.uiOnly) {
+            this.driver = createDriverFromProject(project, this.builder);
+            this.driver.manage().window().maximize();
+        }
     }
 
     async beforeExecution(project: Project, testExecutionContext: TestExecutionContext) {
@@ -76,13 +84,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
 
     async requestContext(ctx: TestExecutionContext, project: Project): Promise<LegacyApi> {
-        const driver = throwIfAbsent(this.driver,
-            Error('Driver could not be initialized before creating sahi-api-context'));
-        const sahi = sahiApi(driver, ctx);
-        const currentTestFolder = throwIfAbsent(this.currentTest, Error('Could not initialise LegacyDslContext because no testfolder was found / provided'))
-        const stepsCache = new TestStepCache(currentTestFolder);
+        const sahi: SahiApi = this.driver ? sahiApi(this.driver, ctx) : NoopSahiApi;
+        const currentTestFolder = throwIfAbsent(this.currentTest, Error('Could not initialize LegacyDslContext because no test folder was found / provided'))
+        const stepCacheFileName = basename(this.currentFile);
+        const stepsCache = new TestStepCache(join(currentTestFolder, `.${stepCacheFileName}.steps.cache`));
         return Promise.resolve({
-            driver,
+            driver: this.driver!,
             context: ctx,
             TestCase: createTestCaseClass(ctx, project, this.currentTest, stepsCache),
             Application: createThenableApplicationClass(ctx, project),
@@ -91,10 +98,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
             Environment: createThenableEnvironmentClass(ctx, project),
             Region: createThenableRegionClass(ctx, project),
             Logger: createLoggerObject(ctx),
-            console: console,
             $includeFolder: '',
             ...sahi,
-        })
+        });
+
     }
 
 }

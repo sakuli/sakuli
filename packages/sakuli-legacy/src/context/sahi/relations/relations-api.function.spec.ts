@@ -1,10 +1,12 @@
 import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
-import {RelationApi, relationsApi} from "./relations-api.function";
+import {relationsApi} from "./relations-api.function";
 import {AccessorUtil} from "../accessor";
 import {RelationsResolver} from "./relations-resolver.class";
 import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import {RelationApi} from './relations-api.interface'
+import { ParentApi } from "./parent-api.interface";
 
 jest.setTimeout(15_000);
 describe('relations-api', () => {
@@ -43,7 +45,7 @@ describe('relations-api', () => {
             await driver.get(mockHtml(`
             <div id="d1"></div>
             <div id="d2"></div>
-            <div id="d3"></div> 
+            <div id="d3"></div>
         `));
             const elements = await driver.findElements(By.css('div'));
 
@@ -109,7 +111,7 @@ describe('relations-api', () => {
 
             describe('_near', () => {
                 it('should work', async () => {
-                    const html = mockHtml(`                                
+                    const html = mockHtml(`
                     <table class="_in">
                       <tr>
                         <td>Name</td>
@@ -176,7 +178,7 @@ describe('relations-api', () => {
                         <td>55</td>
                         <td>2010/10/14</td>
                         <td>$327,900</td>
-                      </tr>                    
+                      </tr>
                       <tr>
                         <td>Donna Snider</td>
                         <td>Customer Support</td>
@@ -208,7 +210,7 @@ describe('relations-api', () => {
                 `));
             });
 
-            type PositionMethod = Exclude<keyof RelationApi, "_parentNode" | "_near" | "_in">;
+            type PositionMethod = Exclude<keyof RelationApi, keyof ParentApi | "_near" | "_in">;
             it.each(<[number, PositionMethod, number, string[]][]>[
                 [3, '_leftOf', 0, ["Rhona Davidson", "Integration Specialist", "Tokyo"]],
                 [2, '_leftOf', 1, ["Integration Specialist", "Tokyo"]],
