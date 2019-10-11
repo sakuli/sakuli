@@ -2,7 +2,7 @@ import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
 import { AssertionApi } from "./assertion-api.interface";
 import { TestExecutionContext } from "@sakuli/core";
 import { FetchApi } from "../fetch";
-import { deepStrictEqual } from "assert";
+import { deepStrictEqual, notDeepStrictEqual } from "assert";
 
 export function assertionApi(
     testExecutionContext: TestExecutionContext,
@@ -34,31 +34,37 @@ export function assertionApi(
     }
 
     async function _assertEqual(expected: any, actual: any, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        deepStrictEqual(expected, actual, message);
     }
 
     async function _assertNotEqual(expected: any, actual: any, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        notDeepStrictEqual(expected, actual, message);
     }
 
     async function _assertEqualArrays(expected: Array<any>, actual: Array<any>, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assertEqual(expected, actual, message)
     }
 
     async function _assertExists(element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assert(
+            fetchApi._exists(element),
+            message
+        )
     }
 
     async function _assertNotExists(element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assertFalse(
+            fetchApi._exists(element),
+            message
+        )
     }
 
     async function _assertNotNull(value: any, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assertNotEqual(value, null, message);
     }
 
     async function _assertNull(value: any, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assertEqual(value, null, message);
     }
 
     return({
