@@ -4,7 +4,7 @@ import {CharInfo} from "../char-info.interface";
 export interface KeyboardActionsApi {
 
     /**
-     * Sets a value on a `<input />` field.
+     * Sets a value on an `<input />` field.
      *
      * It will clear the existing value from the input before:
      *

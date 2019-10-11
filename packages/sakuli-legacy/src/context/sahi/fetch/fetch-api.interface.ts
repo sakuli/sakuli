@@ -57,6 +57,7 @@ export interface FetchApi extends MultipleElementApi {
      * </select>
      * ```
      * Accessing either to displayed text or the actual values of the options:
+     *
      * ```typescript
      * const optionTexts = await _getOptions(_select('answers')); // -> ['Yes', 'No', 'Maybe']
      * const optionValues = await _getOptions(_select('answers'), "value"); // -> ['a-yes', 'a-no', 'a-maybe']
@@ -82,6 +83,7 @@ export interface FetchApi extends MultipleElementApi {
      * </select>
      * ```
      * Accessing either to displayed text or the actual values of the options:
+     *
      * ```typescript
      * const selectedOptionText = await _getSelected(_select('answers')); // -> 'a-maybe'
      * ```
@@ -101,6 +103,7 @@ export interface FetchApi extends MultipleElementApi {
      * >Foo bar</div>
      * ```
      * Accessing the values of div attributes:
+     *
      * ```typescript
      * const dataTestId = await _getAttribute(_div(/Foo bar/), 'data-testid'); // -> "foo-element"
      * const classNames = await _getAttribute(_div(/Foo bar/), 'class'); // -> "widget primary"
@@ -118,6 +121,7 @@ export interface FetchApi extends MultipleElementApi {
      * <div>Hello</div>
      * ```
      * Determine if an element is present in the current DOM:
+     *
      * ```typescript
      * const present = await _exists(_div("Hello")); // -> true
      * const absent = await _exists(_div("World")); // -> false
@@ -141,6 +145,7 @@ export interface FetchApi extends MultipleElementApi {
      * ```
      *
      * Test the equality of two elements:
+     *
      * ```typescript
      * // _listItem("entry") will fetch the first list item
      * const equal = await _areEqual(_listItem(0), _listItem("entry")) // -> true
@@ -165,6 +170,7 @@ export interface FetchApi extends MultipleElementApi {
      * <div style="display: none">Ninja Element</div>
      * ```
      * Testing the visibility of the elements:
+     *
      * ```typescript
      * const visible = await _isVisible(_div("Hello World")) // -> true
      * const invisible = await _isVisible(_div("Ninja Element")) // -> false
@@ -190,6 +196,7 @@ export interface FetchApi extends MultipleElementApi {
      * ```
      *
      * Checks if a radio input is checked or not:
+     *
      * ```typescript
      * const checked = await _isChecked(_radio(0)); // -> true
      * const notChecked = await _isChecked(_radio(1)); // -> false
@@ -208,6 +215,8 @@ export interface FetchApi extends MultipleElementApi {
      * <input type="text" id="enabled-input" />
      * <input type="text" disabled id="disabled-input" />
      * ```
+     *
+     * Check if the inputs are enabled:
      *
      * ```typescript
      * const enabled = await _isEnabled(_textbox('enabled-input')); // -> true
@@ -234,6 +243,9 @@ export interface FetchApi extends MultipleElementApi {
      *     There are 5 pending request
      * </div>
      * ```
+     *
+     * Check if a element contains certain text:
+     *
      * ```typescript
      * const containsIpsumDolor = await _containsText(_paragraph('intro'), 'ipsum dolor') // -> true
      * const containsYpsumDolor = await _containsText(_paragraph('intro'), 'ypsum dolor') // -> false
@@ -257,6 +269,7 @@ export interface FetchApi extends MultipleElementApi {
      * ```html
      * <div id="d1" style="background-color: yellow"><i>Formatted</i> Text</div>
      * ```
+     * Check if an element contains certain HTML:
      *
      * ```typescript
      * await _containsHTML(_div(0), '<i>Formatted</i>'); // -> true
@@ -283,6 +296,7 @@ export interface FetchApi extends MultipleElementApi {
      *     <div id="child-b"></div>
      * </div>
      * ```
+     * Check if an element is the contained within another
      *
      * ```typescript
      * await _contains(_div('parent'), _div('child-b')) // -> true
@@ -309,7 +323,7 @@ export interface FetchApi extends MultipleElementApi {
      * </body>
      * </html>
      * ```
-     *
+     * Accessing the current Title of the element:
      * ```typescript
      * const title = await _title() // -> "Tested with Sakuli";
      * ```
@@ -318,16 +332,16 @@ export interface FetchApi extends MultipleElementApi {
 
     /**
     * Styles in HTML elements are calculated by the browser based on various CSS rules.
-    * _style returns the computed style that is finally applicable to the element.
+    * `_style` returns the computed style that is finally applicable to the element.
     * If the element inherits the named style from
-    * its parent, the parent will be queried for its value.  Where possible,
-    * color values will be converted to their hex representation (e.g. #00ff00
-    * instead of rgb(0, 255, 0)).
+    * its parent, the parent will be queried for its value. Where possible,
+    * color values will be converted to their hex representation (e.g. `#00ff00`
+    * instead of `rgb(0, 255, 0)`).
     *
     * Accessing style directly as an attribute will not give computed style.
-    * Always use _style instead.
+    * Always use `_style` instead.
     *
-    * _Warning:_ the value returned will be as the browser interprets it, so
+    * _Warning:_ The value returned will be as the browser interprets it, so
     * it may be tricky to form a proper assertion.
     *
     * @param query
@@ -340,8 +354,8 @@ export interface FetchApi extends MultipleElementApi {
      * the document element.
      *
      * @example
+     * Assuming a modal overlay element at x: 300 and y: 400
      * ```typescript
-     * // Assuming an modal overlay element at x: 300 and y: 400
      * const [x,y] = await _position(_div('modal')) // -> [300, 400];
      * ```
      *
@@ -350,14 +364,14 @@ export interface FetchApi extends MultipleElementApi {
     _position(query: SahiElementQueryOrWebElement): Promise<[number, number]>;
 
     /**
-     * Retrieves the selection from a user in the current document as string.
+     * Retrieves the selection from a user in the current document as a `string`.
      * This is most likely the text what will set to the clipboard if a user
-     * copies the selection
+     * copies the selection.
      */
     _getSelectionText(): Promise<string>
 
     /**
-     * Executes a the given query and returns a "native" [`WebElement`]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html} instance
+     * Executes the given query and returns a "native" [`WebElement`]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html} instance
      * when the query is successful.
      *
      * @param query
