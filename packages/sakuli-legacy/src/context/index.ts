@@ -1,4 +1,5 @@
-export {createTestCaseClass} from './common/test-case.class'
-export {Application} from './common/application.class'
+export {createTestCaseClass, TestCase} from './common/test-case'
+export {Application} from './common/application'
 export {Key} from './common/key.class'
-export {LegacyLifecycleHooks} from './legacy-context-provider.class'
+export {LegacyLifecycleHooks} from './legacy-lifecycle-hooks.class'
+export {LegacyApi} from './legacy-api.interface'

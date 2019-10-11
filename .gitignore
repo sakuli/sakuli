@@ -1,5 +1,6 @@
 .idea
 
+tsconfig.tsbuildinfo
 
 .vscode/
 # Logs
@@ -83,3 +84,5 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
+.DS_Store

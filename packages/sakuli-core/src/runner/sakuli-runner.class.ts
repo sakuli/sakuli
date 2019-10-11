@@ -6,7 +6,6 @@ import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {TestExecutionContext} from "./test-execution-context";
 import {TestFile} from "../loader/model/test-file.interface";
-import {inspect} from "util";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
 
@@ -18,7 +17,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     }
 
     /**
-     * Tears up all context providers, merges their results of getContext and pass this result to the testFile Executor
+     * Tears up all lifecycle-hooks, merges their results of getContext and pass this result to the testFile Executor
      * Tears down all service providers after execution of each testFile
      *
      * @param project The Project Structure found by a Project loader
@@ -26,18 +25,20 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
      */
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
-        process.on('unhandledRejection', error => {
-
-        });
+        const handleError = (e: any) => {
+            this.testExecutionContext.error = e;
+        }
+        process.on('unhandledRejection', handleError);
+        process.on('uncaughtException', handleError);
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
-        const context = await this.requestContext(this.testExecutionContext);
         let result = {};
         await this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
             const testFileContent = await this.readFileContent(testFile, project, this.testExecutionContext);
             try {
                 await this.beforeRunFile(testFile, project, this.testExecutionContext);
+                const context = await this.requestContext(this.testExecutionContext, project);
                 const resultCtx = await this.testFileExecutor.execute(testFileContent.toString(), context, {
                     filename: resolve(join(project.rootDir, testFile.path)),
                     waitUntilDone: true
@@ -90,12 +91,12 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
             .map(hook => hook.beforeRunFile!(file, project, testExecutionContext)));
     }
 
-    async requestContext(testExecutionContext: TestExecutionContext): Promise<any> {
+    async requestContext(testExecutionContext: TestExecutionContext, project: Project): Promise<any> {
         const contexts = await Promise.all(this
             .lifecycleHooks
             .filter(hook => 'requestContext' in hook)
-            .map(hook => hook.requestContext!(testExecutionContext)));
-        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
+            .map(hook => hook.requestContext!(testExecutionContext, project)));
+        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {...global});
     }
 
     async readFileContent(testFile: TestFile, project: Project, context: TestExecutionContext): Promise<string> {

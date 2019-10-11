@@ -1,0 +1,8 @@
+tsconfig.json
+.travis.yml
+.vscode
+.idea
+coverage
+.build
+tsconfig.tsbuildinfo
+lerna-debug.log

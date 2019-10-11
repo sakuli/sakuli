@@ -1,11 +1,12 @@
-import {ActionSequence, WebElement} from "selenium-webdriver";
-import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
+import { WebElement } from "selenium-webdriver";
+import { getSeleniumKeysFromComboString } from "./sahi-selenium-key-map.const";
+import { Actions } from 'selenium-webdriver/lib/input';
 
 export function runActionsWithComboKeys(
-    actions: ActionSequence,
+    actions: Actions,
     e: WebElement,
     combo: string = '',
-    whileKeysDown: (a: ActionSequence) => void = () => {
+    whileKeysDown: (a: Actions) => void = () => {
     }) {
     const keys = getSeleniumKeysFromComboString(combo);
     keys.forEach(k => actions.keyDown(k));

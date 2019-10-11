@@ -2,25 +2,23 @@ import {CommandModuleProvider} from "@sakuli/core";
 import chalk from "chalk";
 import {Argv, CommandModule} from "yargs";
 import {secret} from "@nut-tree/secrets";
-import {ENCRYPTION_KEY_VARIABLE} from "../context/common/secrets.function";
-
-interface SakuliEncryptOptions {
-    secret: string
-}
+import {MASTERKEY_ENV_KEY} from "../context/common/secrets.function";
 
 export const encryptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
-        command: 'encrypt <secret>',
-        describe: `Encrypts a secret using $${ENCRYPTION_KEY_VARIABLE}`,
+        command: 'encrypt [secret]',
+        describe: `Encrypts a secret via provided masterkey`,
         builder(argv: Argv) {
             return argv.positional('secret', {
                 describe: 'The secret to encrypt'
+            }).option('masterkey', {
+                describe: 'The masterkey used for encryption'
             }).demandOption('secret');
         },
-        async handler(opts: SakuliEncryptOptions) {
-            const key = process.env[ENCRYPTION_KEY_VARIABLE];
+        async handler(opts: any) {
+            const key = opts.masterkey || process.env[MASTERKEY_ENV_KEY];
             if (!key) {
-                console.log(chalk`{red.bold Missing master key.} Please export a master key to $${ENCRYPTION_KEY_VARIABLE}`);
+                console.log(chalk`{red.bold Missing master key.} Please export a master key to $${MASTERKEY_ENV_KEY} or provide it via --masterkey option`);
                 process.exit(-1)
             }
             try {

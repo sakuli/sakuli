@@ -16,7 +16,7 @@ describe('edges()', () => {
         }
     });
 
-    it.each([
+    it.each(<[keyof EdgeInfo, Vector2][]>[
         ['top', [200, 50]],
         ['topRight', [300, 50]],
         ['topLeft', [100, 50]],

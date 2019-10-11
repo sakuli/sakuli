@@ -1,16 +1,22 @@
 {
   "name": "@sakuli/rollup-hooks",
-  "version": "1.0.0",
+  "version": "2.1.3",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
     "rollup",
     "sakuli",
+    "e2e",
+    "ui",
     "testing",
-    "e2e"
+    "rollup"
   ],
-  "author": "Tim Keiner <keiner.tim@gmail.com>",
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de"
+  ],
   "homepage": "https://github.com/sakuli/sakuli#readme",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -18,31 +24,36 @@
   },
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch --coverage",
     "build": "tsc",
-    "typedoc": "typedoc --out ../../docs/api/sakuli-core --hideGenerator --mode file --excludeExternals --readme README.md --exclude *.spec.* src/",
-    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-rollup-hooks src/",
+    "test:watch": "jest --watch --coverage",
+    "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
+    "prepublishOnly": "npm run build && npm test",
+    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-rollup-hooks/docs.json --out ../../docs/sakuli-rollup-hooks src/"
   },
   "bugs": {
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "devDependencies": {
     "@types/common-tags": "^1.4.0",
-    "@types/jest": "^23.3.8",
+    "@types/jest": "^24.0.13",
     "@types/mock-fs": "^3.6.30",
-    "@types/node": "^10.12.1",
+    "@types/node": "^11.13.5",
     "@types/rollup": "^0.54.0",
-    "@types/rollup-plugin-node-resolve": "^4.0.0",
-    "jest": "^23.6.0",
+    "@types/rollup-plugin-node-resolve": "^4.1.0",
+    "jest": "^24.7.1",
     "mock-fs": "^4.8.0",
-    "rollup-plugin-typescript2": "^0.19.3",
-    "ts-jest": "^23.10.4",
-    "typedoc": "^0.13.0",
-    "typescript": "^3.1.3"
+    "rollup-plugin-typescript2": "^0.20.1",
+    "sneer": "^1.0.1",
+    "ts-jest": "^24.0.2",
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^2.0.9",
+    "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@sakuli/commons": "1.0.0",
-    "@sakuli/core": "1.0.0",
-    "rollup-plugin-node-resolve": "^4.0.1"
+    "@sakuli/commons": "^2.1.3",
+    "@sakuli/core": "^2.1.3",
+    "rollup": "^1.10.0",
+    "rollup-plugin-node-resolve": "^4.2.3"
   }
 }

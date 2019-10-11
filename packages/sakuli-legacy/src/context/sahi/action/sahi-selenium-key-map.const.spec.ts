@@ -2,7 +2,7 @@ import {getSeleniumKeysFromComboString} from "./sahi-selenium-key-map.const";
 import {Key} from 'selenium-webdriver'
 
 describe('sahiSeleniumKeyMap', () => {
-    it.each([
+    it.each(<[string, string[]][]>[
         ["", []],
         ["CTRL", [Key.CONTROL]],
         ["CTRL|META", [Key.META, Key.CONTROL]],
