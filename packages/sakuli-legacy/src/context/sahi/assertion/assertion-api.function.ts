@@ -1,17 +1,16 @@
 import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
 import { AssertionApi } from "./assertion-api.interface";
 import { TestExecutionContext } from "@sakuli/core";
+import { FetchApi } from "../fetch";
+import { deepStrictEqual } from "assert";
 
 export function assertionApi(
-    testExecutionContext: TestExecutionContext
+    testExecutionContext: TestExecutionContext,
+    fetchApi: FetchApi
 ): AssertionApi {
 
-    async function _assert(condition: Promise<boolean>, message: string = "Condition evaluated to 'false'"): Promise<void> {
-        if(!await condition){
-            testExecutionContext.logger.error(message, condition);
-            throw new Error(message);
-        }
-        return Promise.resolve();
+    async function _assert(condition: Promise<boolean>, message?: string): Promise<void> {
+        deepStrictEqual(await condition, true, message);
     }
 
     async function _assertTrue(condition: Promise<boolean>, message?: string): Promise<void> {
@@ -19,19 +18,19 @@ export function assertionApi(
     }
 
     async function _assertFalse(condition: Promise<boolean>, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assert(condition.then(c => !c), message)
     }
 
     async function _assertNotTrue(condition: Promise<boolean>, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assertFalse(condition, message);
     }
 
     async function _assertContainsText(expected: string, element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assert(fetchApi._containsText(element, expected), message);
     }
 
     async function _assertNotContainsText(expected: string, element: SahiElementQueryOrWebElement, message?: string): Promise<void> {
-        throw new Error("Not Implemented");
+        return _assertFalse(fetchApi._containsText(element, expected), message);
     }
 
     async function _assertEqual(expected: any, actual: any, message?: string): Promise<void> {
