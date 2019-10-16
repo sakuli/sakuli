@@ -42,8 +42,5 @@
     "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/{package}/docs.json --out ../../docs/{package} src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
-  },
-  "dependencies": {
-    "@sakuli/legacy": "latest"
   }
 }
