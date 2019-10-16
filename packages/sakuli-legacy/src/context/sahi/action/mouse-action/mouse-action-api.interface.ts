@@ -89,9 +89,9 @@ export interface MouseActionApi {
     /**
      * Performs a mouse down on _eSource_, than moves the mouse to the position of element _eTarget_ and releases the mouse button at this position.
      *
-     * This implementation uses Webdriver actions which maybe not always behave as expected.
+     * This implementation uses Webdriver actions which does not always behave as expected.
      *
-     * For a more reliable experience {@link ThenableRegion.dragAndDrop} is recommended.
+     * For a more reliable experience {@link ThenableRegion.dragAndDropTo} is recommended.
      *
      * @param eSource
      * @param eTarget
@@ -99,11 +99,11 @@ export interface MouseActionApi {
     _dragDrop(eSource: SahiElementQueryOrWebElement, eTarget: SahiElementQueryOrWebElement): Promise<void>
 
     /**
-     * Performs a mouse down on _eSource_, than moves the mouse to the position P(x,y) in the browsers viewport and releases the mouse button at this position.
+     * Performs a mouse down on _eSource_, than moves the mouse to the position P(x,y) in the browsers' viewport and releases the mouse button at this position.
      *
-     * This implementation uses Webdriver actions which maybe not always behave as expected.
+     * This implementation uses Webdriver actions which does not always behave as expected.
      *
-     * For a more reliable experience {@link ThenableRegion.dragAndDrop} is recommended.
+     * For a more reliable experience {@link ThenableRegion.dragAndDropTo} is recommended.
      *
      * @param q
      * @param x
@@ -114,12 +114,12 @@ export interface MouseActionApi {
 
     /**
      * Sets the options within a `<select>` element.
-     * Selection can be done by the acutal values of an option or it's zero-based element index.
+     * Selection can be done by the actual values of an option or its zero-based element index.
      *
-     * This action will invoke a click on the option element which means, that the _selected_ state is not enforced. If an option is already selected it will be unselected in this case.
+     * This action will invoke a click on the option element which means that the _selected_ state is not enforced. If an option is already selected, it will be unselected.
      *
      * @example
-     * Assume the following HTML-Snippet:
+     * Assume this HTML-snippet:
      * ```html
      * <select multiple="multiple" name="cities">
      *     <option value="muc">Munich</option>

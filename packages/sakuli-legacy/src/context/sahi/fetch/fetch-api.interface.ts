@@ -5,11 +5,11 @@ import { MultipleElementApi } from "./multiple-element-api.interface";
 export interface FetchApi extends MultipleElementApi {
 
     /**
-     * Retrieves the actual _value_ from the value attribute of an [Element or Query]{@link SahiElementQueryOrWebElement}
+     * Retrieves the actual _value_ from the value attribute of an [Element or Query]{@link SahiElementQueryOrWebElement}.
      *
      * @example
      *
-     * Given this HTML-snippet:
+     * Assume this HTML-snippet:
      * ```html
      * <input type="text" name="with-value" value="Hello World" />
      * <div id="without-value"></div>
@@ -27,16 +27,14 @@ export interface FetchApi extends MultipleElementApi {
     _getValue(query: SahiElementQueryOrWebElement): Promise<string>;
 
     /**
-     * Get the visible (i.e. not hidden by CSS) innerText of this element, including sub-elements, without any leading or trailing whitespace. It uses webdrivers `getText()` method internally
-     *
-     * @see https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#getText
+     * Gets the visible (i.e. not hidden by CSS) innerText of this element, including sub-elements, without any leading or trailing whitespace. It uses [`WebElement.getText()`]{@link  https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#getText} method internally.
      *
      * @param query
      */
     _getText(query: SahiElementQueryOrWebElement): Promise<string>;
 
     /**
-     * Just an alias for {@link FetchApi._getText}
+     * Alias for {@link FetchApi._getText}.
      *
      * @param query
      */
@@ -44,7 +42,7 @@ export interface FetchApi extends MultipleElementApi {
 
     /**
      * Finds all `option` elements within the queried element and resolves to an array with all visible texts of the options.
-     * If the parameter `value` is set to `"value"` it will resolve to an array with all option values
+     * If the parameter `value` is set to `"value"` it will resolve to an array with all option values.
      *
      * @example
      *
@@ -69,7 +67,7 @@ export interface FetchApi extends MultipleElementApi {
     _getOptions(query: SahiElementQueryOrWebElement, value?: "value"): Promise<string[]>;
 
     /**
-     * Resolves to the text content of actual selected `option` within a `select` element.
+     * Retrieves the text content of the selected `option` within the `select` element.
      *
      * @example
      *
@@ -82,7 +80,7 @@ export interface FetchApi extends MultipleElementApi {
      *     <!-- Selected attribute is also set if the user (or Sakuli) selects the option in the browser -->
      * </select>
      * ```
-     * Accessing either to displayed text or the actual values of the options:
+     * Accessing either the displayed text or the actual value of the options:
      *
      * ```typescript
      * const selectedOptionText = await _getSelected(_select('answers')); // -> 'a-maybe'
@@ -92,7 +90,7 @@ export interface FetchApi extends MultipleElementApi {
     _getSelectedText(query: SahiElementQueryOrWebElement): Promise<string>;
 
     /**
-     * Retrieves the value of an element attribute
+     * Retrieves the value of an element attribute.
      *
      * @example
      * Assume this HTML-snippet:
@@ -125,15 +123,14 @@ export interface FetchApi extends MultipleElementApi {
      * ```typescript
      * const present = await _exists(_div("Hello")); // -> true
      * const absent = await _exists(_div("World")); // -> false
-     * ``
-     *
+     * ```
      *
      * @param query
      */
     _exists(query: SahiElementQueryOrWebElement): Promise<boolean>;
 
     /**
-     * Checks if two queries resolves to the same element
+     * Checks if two queries resolves to the same element.
      *
      * @example
      * Assume this HTML-snippet:
@@ -158,10 +155,9 @@ export interface FetchApi extends MultipleElementApi {
     _areEqual(query1: SahiElementQueryOrWebElement, query2: SahiElementQueryOrWebElement): Promise<boolean>;
 
     /**
-     * Test whether this element is currently displayed.
+     * Tests if this element is currently displayed.
      * Using a timeout of maximum one second. If a longer timeout is needed, {@link ActionApi._wait} can be used.
-     *
-     * Using [WebElement.isDisplayed]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#isDisplayed}
+     * It uses [WebElement.isDisplayed]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#isDisplayed} internally.
      *
      * @example
      * Assume this HTML-snippet:
@@ -186,7 +182,7 @@ export interface FetchApi extends MultipleElementApi {
     _isVisible(query: SahiElementQueryOrWebElement): Promise<boolean>;
 
     /**
-     * Checks if the element has an attribute `checked`. This is useful for checkbox or radio inputs.
+     * Checks if the element has an attribute `checked`. This is useful for checkboxes or radio inputs.
      *
      * @example
      * Assume this HTML-snippet:
@@ -250,9 +246,9 @@ export interface FetchApi extends MultipleElementApi {
      * const containsIpsumDolor = await _containsText(_paragraph('intro'), 'ipsum dolor') // -> true
      * const containsYpsumDolor = await _containsText(_paragraph('intro'), 'ypsum dolor') // -> false
      *
-     * const containsText = await _containsText(_div(0), 'Hello World');
+     * const containsText = await _containsText(_div(0), 'Hello World'); // -> true
      *
-     * const probablyDynamicText = await _containsText(_div('pending-request'), "There are . pending requests")
+     * const probablyDynamicText = await _containsText(_div('pending-request'), "There are . pending requests"); // -> true
      * ```
      *
      * @param query
@@ -286,7 +282,7 @@ export interface FetchApi extends MultipleElementApi {
     _containsHTML(query: SahiElementQueryOrWebElement, html: string): Promise<boolean>;
 
     /**
-     * Check whether an _parent_ element contains a _child_ element.
+     * Check if a _parent_ element contains a _child_ element.
      *
      * @example
      * Assume the following HTML-snippet:
@@ -300,7 +296,7 @@ export interface FetchApi extends MultipleElementApi {
      *
      * ```typescript
      * await _contains(_div('parent'), _div('child-b')) // -> true
-     * await _contains(_div('child-a'), _div('child-b')) // -> true
+     * await _contains(_div('child-a'), _div('child-b')) // -> false
      * ```
      *
      * @param parent
@@ -309,7 +305,7 @@ export interface FetchApi extends MultipleElementApi {
     _contains(parent: SahiElementQueryOrWebElement, child: SahiElementQueryOrWebElement): Promise<boolean>
 
     /**
-     * Retrieves the current text-content of the documents [`title`]{@link https://developer.mozilla.org/de/docs/Web/HTML/Element/title} element.
+     * Retrieves the current text content of the documents [`title`]{@link https://developer.mozilla.org/de/docs/Web/HTML/Element/title} element.
      *
      * @example
      * Assuming the following document:
@@ -338,11 +334,10 @@ export interface FetchApi extends MultipleElementApi {
     * color values will be converted to their hex representation (e.g. `#00ff00`
     * instead of `rgb(0, 255, 0)`).
     *
-    * Accessing style directly as an attribute will not give computed style.
+    * Accessing the style directly as an attribute will not return a computed style.
     * Always use `_style` instead.
     *
-    * _Warning:_ The value returned will be as the browser interprets it, so
-    * it may be tricky to form a proper assertion.
+    * _Warning:_ A proper assertion will be difficult as some browser may interpret it differently.
     *
     * @param query
     * @param attr

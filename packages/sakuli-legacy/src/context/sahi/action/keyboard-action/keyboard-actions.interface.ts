@@ -9,12 +9,12 @@ export interface KeyboardActionsApi {
      * It will clear the existing value from the input before:
      *
      * - It will send each character from the _value_ string to the input with an delay of 10 ms
-     *   using [.sendKeys]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#sendKeys}
+     *   using [.sendKeys]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#sendKeys}.
      *   This ensures that components which rely on key-events (like `keyup` or `keydown`) will behave
      *   as expected on the page.
      *
-     * - When [.sendKeys]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#sendKeys} fails
-     *   for some reasons `_setValue` will try to set the value attribute of the dom element.
+     * - When [.sendKeys]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#sendKeys} fails,
+     *   `_setValue` will try to set the value attribute of the dom element.
      *
      * @example
      * Assume the following HTML-snippet:
@@ -41,7 +41,7 @@ export interface KeyboardActionsApi {
     /**
      * Invokes a single `keydown` event on the given element.
      * This is useful if you want to invoke a certain event which relies
-     * on the keydown event. In the most cases it have to be used together with {@link KeyboardActionsApi._keyUp}
+     * on the keydown event. In most cases it has to be used together with {@link KeyboardActionsApi._keyUp}
      *
      * @param query
      * @param charInfo
@@ -52,7 +52,7 @@ export interface KeyboardActionsApi {
 
     /**
      * Invokes a single `keyup` event with the given element.
-     * This is only useful when {@link KeyboardActionsApi._keyDown} is invoked previously. Some WebDriver like Firefox will not trigger any event if there was no keypress before.
+     * This is only useful when {@link KeyboardActionsApi._keyDown} is invoked previously. Some WebDrivers like Firefox will not trigger any event if there was no keypress before.
      *
      * @param query
      * @param charInfo
@@ -77,7 +77,7 @@ export interface KeyboardActionsApi {
 
     /**
      * Invokes [.sendKeys]{@link https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebElement.html#sendKeys} on the given element.
-     * It will neither type with a delay nor set the value an when method fails.
+     * It will neither type with a delay nor set the `value`-attribute when the method fails.
      *
      * @param query
      * @param text
