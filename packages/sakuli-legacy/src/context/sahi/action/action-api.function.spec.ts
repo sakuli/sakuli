@@ -1,4 +1,4 @@
-import {By, ThenableWebDriver} from "selenium-webdriver";
+import { By, ThenableWebDriver, until } from "selenium-webdriver";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 import { actionApi } from "./action-api.function";
 import { AccessorUtil } from "../accessor";
@@ -33,8 +33,8 @@ describe('action-api', () => {
 
         afterEach(async () => {
             try {
-                await driver.actions({bridge: true}).clear();
-            } catch(e) {
+                await driver.actions({ bridge: true }).clear();
+            } catch (e) {
                 console.log('Actions are not cleaned because ', e);
             }
         });
@@ -88,6 +88,39 @@ describe('action-api', () => {
             })
         })
 
+        describe('auto switch between frames', () => {
+            it('should find elements over all frames in frameset', async () => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(`
+                <frameset cols="25%, 75%">
+                    <frame src="${mockHtml(`
+                        <div id="in-frame1">Frame1</div>
+                    `)}" >
+                    <frame src="${mockHtml(`
+                        <div id="in-frame2">Frame2</div>
+                    `)}" />
+                </frameset>
+                `, {autoBody: false}));
+                await expect(api._highlight({
+                    locator: By.css('#in-frame2'),
+                    identifier: 0,
+                    relations: []
+                })).resolves.toBe(void 0);
+            })
 
+            it('should find elements in iframes', async () => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(`
+                    <iframe src="${mockHtml(`
+                        <div id="in-iframe">Frame1</div>
+                    `)}" >
+                `));
+                await expect(api._highlight({
+                    locator: By.css('#in-iframe'),
+                    identifier: 0,
+                    relations: []
+                })).resolves.toBe(void 0);
+            })
+        })
     });
 });
