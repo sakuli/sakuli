@@ -1,6 +1,6 @@
 import { appendFileSync, mkdirSync } from "fs";
 
-export const createStructureAndFillConfig = (directory: string, suiteName: string) => {
+export const createTestsuite = (directory: string, suiteName: string) => {
     const rootDir = directory + `/${suiteName}`;
     mkdirSync(rootDir, {recursive: true});
     appendFileSync(

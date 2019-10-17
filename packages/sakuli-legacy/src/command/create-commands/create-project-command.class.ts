@@ -1,5 +1,5 @@
 import {Argv} from "yargs";
-import {createStructureAndFillConfig} from "../../init-command/createStructure";
+import {createTestsuite} from "../../init-command/createStructure";
 
 export = {
     command: 'project [directory] [suiteName]',
@@ -15,7 +15,7 @@ export = {
     },
     async handler(opts: any) {
         console.log("creating project structure");
-        createStructureAndFillConfig(opts.directory, opts.suiteName);
+        createTestsuite(opts.directory, opts.suiteName);
         process.exit(0);
     }
 };
