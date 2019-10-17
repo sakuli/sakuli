@@ -2,7 +2,7 @@ import {Argv} from "yargs";
 import {createStructureAndFillConfig} from "../../init-command/createStructure";
 
 export = {
-    command: 'project [directory] [suiteName] [url]',
+    command: 'project [directory] [suiteName]',
     describe: 'Generates a default project structure',
     builder(argv: Argv) {
         return argv.positional('directory', {
@@ -11,15 +11,11 @@ export = {
             .positional('suiteName', {
                 describe: 'name of the testsuite',
                 default: 'sakuli'
-            })
-            .positional('url', {
-                describe: 'url of the test',
-                default: 'https://sakuli.io'
             });
     },
     async handler(opts: any) {
         console.log("creating project structure");
-        createStructureAndFillConfig(opts.directory, opts.suiteName, opts.url);
+        createStructureAndFillConfig(opts.directory, opts.suiteName);
         process.exit(0);
     }
 };
