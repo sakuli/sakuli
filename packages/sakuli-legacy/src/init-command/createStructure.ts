@@ -1,11 +1,12 @@
 import { appendFileSync, mkdirSync } from "fs";
+import {stripIndents} from 'common-tags';
 
 export const createTestsuite = (directory: string, suiteName: string) => {
     const rootDir = directory + `/${suiteName}`;
     mkdirSync(rootDir, {recursive: true});
     appendFileSync(
         rootDir + '/testsuite.properties',
-        `testsuite.id=${suiteName}
+        stripIndents`testsuite.id=${suiteName}
         testsuite.browser=chrome`
     );
     appendFileSync(

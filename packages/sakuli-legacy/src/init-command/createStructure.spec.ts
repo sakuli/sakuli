@@ -1,53 +1,79 @@
-import {createStructureAndFillConfig} from "./createStructure";
-import {existsSync, readdir, readFileSync, rmdirSync, unlinkSync,} from "fs";
+import { createTestsuite } from "./createStructure";
+import { cwd } from "process";
+import { existsSync, readdirSync, readFileSync, rmdirSync, unlinkSync,} from "fs";
+import { stripIndents } from 'common-tags';
 
-import {cwd} from "process";
+const CUR_DIR = cwd();
+const TEST_SUITE = "testsuite";
+const TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
 
+describe("Scheme test", () => {
+    beforeEach(() => {
+        existsSync(`${TEST_SUITE_DIR}`) && clear(`${TEST_SUITE_DIR}`);
+    });
 
-const TESTDIR = cwd();
-const SCHEMA = "/testScheme";
-const newBaseDir = `${TESTDIR}/${SCHEMA}`;
+    afterAll(() => {
+        clear(`${CUR_DIR}/${TEST_SUITE}`);
+    });
 
-describe("Schema test", () => {
-    it("should create directory and files", () => {
-        // SET UP
-        clear(newBaseDir);
-
+    it("should create files and directory in testsuite", () => {
         // GIVEN
 
         // WHEN
-        createStructureAndFillConfig(TESTDIR, SCHEMA, "url");
+        createTestsuite(CUR_DIR, TEST_SUITE);
 
         // THEN
-        readdir(newBaseDir, (err, files) => {
-            expect(err).toBeNull();
-            expect(files).toContain("testsuite.suite");
-            expect(files).toContain("testsuite.properties");
-            expect(files).toContain("case1");
-        })
+        expect(readdirSync(TEST_SUITE_DIR)).toEqual(["case1", "testsuite.properties", "testsuite.suite"]);
     });
 
-    it("should fill the files with text", () => {
-        // SET UP
-        clear(newBaseDir);
-
+    it("should create file in testcase", () => {
         // GIVEN
 
         // WHEN
-        createStructureAndFillConfig(TESTDIR, SCHEMA, "starturl");
+        createTestsuite(CUR_DIR, TEST_SUITE);
 
         // THEN
-        const contentProperties = readFileSync(`${newBaseDir}/testsuite.properties`, 'utf8');
-        expect(contentProperties).toContain("testScheme");
-
-        const contentSuite = readFileSync(`${newBaseDir}/testsuite.suite`, 'utf8');
-        expect(contentSuite).toContain("case1/check.js starturl");
+        expect(readdirSync(`${TEST_SUITE_DIR}/case1`)).toEqual(["check.js"]);
     });
 
-    afterAll(() => clear(newBaseDir))
+    it("should create testsuite.properties with config", () => {
+        // GIVEN
+
+        // WHEN
+        createTestsuite(CUR_DIR, TEST_SUITE);
+
+        // THEN
+        expect(readFileSync(`${TEST_SUITE_DIR}/testsuite.properties`, 'utf8'))
+            .toBe(
+                stripIndents`testsuite.id=${TEST_SUITE}
+                testsuite.browser=chrome`
+            );
+    });
+
+    it("should create testsuite.suite with config", () => {
+        // GIVEN
+
+        // WHEN
+        createTestsuite(CUR_DIR, TEST_SUITE);
+
+        // THEN
+        expect(readFileSync(`${TEST_SUITE_DIR}/testsuite.suite`, 'utf8'))
+            .toBe("case1/check.js https://sakuli.io");
+    });
+
+    it("should create empty check.js", () => {
+        // GIVEN
+
+        // WHEN
+        createTestsuite(CUR_DIR, TEST_SUITE);
+
+        // THEN
+        expect(readFileSync(`${TEST_SUITE_DIR}/case1/check.js`, 'utf8'))
+            .toBe("");
+    });
 });
 
-const clear = (baseDir : string) => {
+const clear = (baseDir: string) => {
     if (existsSync(baseDir)) {
         unlinkSync(baseDir + '/testsuite.suite');
         unlinkSync(baseDir + '/testsuite.properties');
