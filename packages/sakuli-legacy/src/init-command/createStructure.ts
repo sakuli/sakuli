@@ -10,7 +10,7 @@ export const createTestsuite = (directory: string, suiteName: string) => {
     );
     appendFileSync(
         rootDir + '/testsuite.suite',
-        'case1/check.js https://sakuli.io;'
+        'case1/check.js https://sakuli.io'
     );
 
     mkdirSync(rootDir + '/case1', {recursive: true});
