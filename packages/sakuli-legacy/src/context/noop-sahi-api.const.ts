@@ -458,8 +458,46 @@ const _NoopSahiApi: SahiApi = {
     _count(accessorApiMethod: "_password" | "_textbox" | "_hidden" | "_datebox" | "_datetimebox" | "_datetimelocalbox" | "_emailbox" | "_monthbox" | "_numberbox" | "_rangebox" | "_searchbox" | "_telephonebox" | "_timebox" | "_urlbox" | "_weekbox" | "_textarea" | "_button" | "_checkbox" | "_radio" | "_submit" | "_reset" | "_imageSubmitButton" | "_select" | "_option" | "_file" | "_table" | "_row" | "_cell" | "_tableHeader" | "_link" | "_image" | "_label" | "_listItem" | "_list" | "_div" | "_span" | "_fieldset" | "_heading1" | "_heading2" | "_heading3" | "_heading4" | "_heading5" | "_heading6" | "_area" | "_map" | "_paragraph" | "_italic" | "_emphasis" | "_bold" | "_strong" | "_preformatted" | "_code" | "_blockquote" | "_canvas" | "_abbr" | "_hr" | "_iframe" | "_rte" | "_frame" | "_object" | "_embed" | "_dList" | "_dTerm" | "_dDesc" | "_font" | "_svg_rect" | "_svg_tspan" | "_svg_circle" | "_svg_ellipse" | "_svg_line" | "_svg_polygon" | "_svg_polyline" | "_svg_path" | "_svg_text" | "_article" | "_aside" | "_details" | "_figcaption" | "_figure" | "_footer" | "_header" | "_main" | "_mark" | "_nav" | "_section" | "_summary" | "_time" | "_video", identifier: AccessorIdentifier, ...relations: SahiRelation[]): Promise<number> {
         throw new Error("Method not implemented.");
     },
-
-}
+    _assertTrue(condition: Promise<boolean>, message?: String): Promise<void> {
+        throw new Error("Method not Implemented");
+    },
+    _assert(condition: Promise<boolean>, message = "Condition evaluated to 'false'"): Promise<void> {
+        throw new Error("Method not Implemented");
+    },
+    _assertFalse(condition: Promise<boolean>, message?: String): Promise<void> {
+        throw new Error("Method not Implemented");
+    },
+    _assertNotTrue(condition: Promise<boolean>, message?: String): Promise<void> {
+        throw new Error("Method not Implemented");
+    },
+    _assertContainsText(expected: String, element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertNotContainsText(expected: String, element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertEqual(expected: any, actual: any, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertNotEqual(expected: any, actual: any, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertEqualArrays(expected: Array<any>, actual: Array<any>, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertExists(element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertNotExists(element: SahiElementQueryOrWebElement, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertNotNull(value: any, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    },
+    _assertNull(value: any, message?: String): Promise<void> {
+        throw new Error("Not Implemented");
+    }
+};
 
 export const NoopSahiApi = new Proxy(_NoopSahiApi, {
     get: (target: SahiApi, prop: keyof SahiApi) => {
