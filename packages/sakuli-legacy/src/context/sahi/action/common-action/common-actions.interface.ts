@@ -37,6 +37,9 @@ export interface CommonActionsApi {
     /**
      * Draws a red border around an element on the website.
      *
+     * This is useful for debugging and demonstrating reasons.
+     * Note that the timeout of this highlight will increase the actual execution time of the current step.
+     *
      * @param query The element to be highlighted
      * @param timeoutMs determine how long the highlight will last (default: `2000`)
      */
@@ -48,6 +51,11 @@ export interface CommonActionsApi {
      * @example
      *
      * ```typescript
+     *
+     * // just waiting 10 seconds until proceeding
+     * await _wait(10000);
+     *
+     *
      * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible
      * await _wait(5000, () => _isVisible(_submit('Buy Now')));
      * ```
@@ -82,8 +90,6 @@ export interface CommonActionsApi {
 
     /**
      * @deprecated
-     *
-     *
      *
      * @param query
      * @param content
