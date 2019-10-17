@@ -1,6 +1,6 @@
-import {mockPartial} from "sneer";
-import {TestExecutionContext} from "@sakuli/core";
-import {SimpleLogger} from "@sakuli/commons";
+import { mockPartial } from "sneer";
+import { TestExecutionContext } from "@sakuli/core";
+import { SimpleLogger } from "@sakuli/commons";
 
 export function createTestExecutionContextMock() {
     return mockPartial<TestExecutionContext>({
@@ -12,6 +12,7 @@ export function createTestExecutionContextMock() {
             info: jest.fn(),
             log: jest.fn(),
             warn: jest.fn(),
+            error: jest.fn(),
             debug: jest.fn()
         })
     });
