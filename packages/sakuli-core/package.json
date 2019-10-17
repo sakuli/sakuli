@@ -36,8 +36,7 @@
     "mock-fs": "^4.8.0",
     "sneer": "^1.0.1",
     "ts-jest": "^24.0.2",
-    "typedoc": "^0.14.2",
-    "typedoc-plugin-markdown": "^2.0.9",
+    "typedoc": "^0.15.0",
     "typescript": "^3.4.3"
   },
   "dependencies": {
@@ -45,7 +44,6 @@
     "class-validator": "^0.9.1",
     "common-tags": "^1.8.0",
     "date-fns": "^1.29.0",
-    "fs-extra": "^7.0.1",
     "properties-reader": "0.0.16",
     "reflect-metadata": "^0.1.12"
   }
