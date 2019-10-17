@@ -1,13 +1,13 @@
 import { createTestsuite } from "./createStructure";
-import { cwd } from "process";
 import { existsSync, readdirSync, readFileSync, rmdirSync, unlinkSync,} from "fs";
 import { stripIndents } from 'common-tags';
-
-const CUR_DIR = cwd();
-const TEST_SUITE = "testsuite";
-const TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
+import { tmpdir } from "os";
 
 describe("Scheme test", () => {
+    const TEST_SUITE = "testsuite";
+    const CUR_DIR = tmpdir();
+    const TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
+
     beforeEach(() => {
         existsSync(`${TEST_SUITE_DIR}`) && clear(`${TEST_SUITE_DIR}`);
     });
