@@ -1,7 +1,8 @@
 import { createTestsuite } from "./createStructure";
-import { existsSync, readdirSync, readFileSync, rmdirSync, unlinkSync,} from "fs";
+import { readdirSync, readFileSync } from "fs";
 import { stripIndents } from 'common-tags';
 import { tmpdir } from "os";
+import mock from "mock-fs";
 
 describe("Scheme test", () => {
     const TEST_SUITE = "testsuite";
@@ -9,11 +10,11 @@ describe("Scheme test", () => {
     const TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
 
     beforeEach(() => {
-        existsSync(`${TEST_SUITE_DIR}`) && clear(`${TEST_SUITE_DIR}`);
+        mock();
     });
 
-    afterAll(() => {
-        clear(`${CUR_DIR}/${TEST_SUITE}`);
+    afterEach(() => {
+        mock.restore();
     });
 
     it("should create files and directory in testsuite", () => {
@@ -72,13 +73,3 @@ describe("Scheme test", () => {
             .toBe("");
     });
 });
-
-const clear = (baseDir: string) => {
-    if (existsSync(baseDir)) {
-        unlinkSync(baseDir + '/testsuite.suite');
-        unlinkSync(baseDir + '/testsuite.properties');
-        unlinkSync(baseDir + '/case1/check.js');
-        rmdirSync(baseDir + '/case1');
-        rmdirSync(baseDir);
-    }
-};
