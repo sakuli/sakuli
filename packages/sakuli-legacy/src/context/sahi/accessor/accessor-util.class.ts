@@ -33,7 +33,7 @@ export class AccessorUtil {
     private timeout: number = 3_000;
 
     setTimeout(timeoutMs: number) {
-        this.timeout = this.timeout;
+        this.timeout = timeoutMs;
     }
 
     getTimeout(): number {
@@ -170,11 +170,10 @@ export class AccessorUtil {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
             const elementsAfterIdentifier = await this.resolveByIdentifier(elements, queryAfterRelation.identifier);
-            if (elementsAfterIdentifier.length) {
-                return elementsAfterIdentifier;
-            }
-            throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
-        }, waitTimeout);
+            return  elementsAfterIdentifier.length
+                ? elementsAfterIdentifier
+                : false
+        }, waitTimeout, `Cannot find Element within ${waitTimeout}ms by query:\n${sahiQueryToString(query)}`);
 
     }
 
