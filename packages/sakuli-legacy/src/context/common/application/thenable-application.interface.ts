@@ -1,6 +1,10 @@
 import {Application} from "./application.interface";
 import {ThenableRegion} from "../region";
 
+export interface NewableThenableApplication {
+    new(name: string): ThenableRegion;
+}
+
 export interface ThenableApplication extends PromiseLike<Application> {
     readonly name: string;
     readonly application: Promise<Application>;
