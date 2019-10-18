@@ -32,6 +32,14 @@ export class AccessorUtil {
 
     private timeout: number = 3_000;
 
+    setTimeout(timeoutMs: number) {
+        this.timeout = this.timeout;
+    }
+
+    getTimeout(): number {
+        return this.timeout;
+    }
+
     get logger() {
         return this.testExecutionContext.logger;
     }
