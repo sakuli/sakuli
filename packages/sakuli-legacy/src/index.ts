@@ -8,7 +8,8 @@ import rollupPreset from '@sakuli/rollup-hooks'
 import {encryptCommand} from "./command/encrypt-command.class";
 import {createCommand} from "./command/create-command.class";
 
-export {LegacyLoader, LegacyLifecycleHooks, LegacyApi};
+export * from './context';
+export {LegacyLoader, LegacyApi, LegacyLifecycleHooks};
 
 const legacyPreset: SakuliPresetProvider = (reg: SakuliPresetRegistry) => {
     reg.registerContextProvider(new LegacyLifecycleHooks(new Builder()));
