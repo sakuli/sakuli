@@ -28,7 +28,7 @@ export class JsScriptExecutor implements TestScriptExecutor {
                 ...options as RunningScriptOptions,
                 displayErrors: true
             });
-            console.log('Result',inspect(result, false, null, true));
+
             if(isPromise(result)) {
                 result.then(res);
             }
