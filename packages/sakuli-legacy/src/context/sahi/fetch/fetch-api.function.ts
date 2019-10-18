@@ -65,7 +65,7 @@ export function fetchApi(
 
     async function _isVisible(query: SahiElementQueryOrWebElement) {
         try {
-            const e = await accessorUtil.fetchElement(query, 1, 1000);
+            const e = await accessorUtil.fetchElement(query, 1000);
             return e.isDisplayed();
         } catch (e) {
             return false;
@@ -73,22 +73,22 @@ export function fetchApi(
     }
 
     async function _isChecked(query: SahiElementQueryOrWebElement) {
-        const e = await accessorUtil.fetchElement(query, 1, 1000);
+        const e = await accessorUtil.fetchElement(query, 1000);
         return e.getAttribute('checked').then(v => !!v)
     }
 
     async function _isEnabled(query: SahiElementQueryOrWebElement) {
-        const e = await accessorUtil.fetchElement(query, 1, 1000);
+        const e = await accessorUtil.fetchElement(query, 1000);
         return e.getAttribute('disabled').then(v => !v)
     }
 
     async function _containsText(query: SahiElementQueryOrWebElement, text: string) {
-        const e = await accessorUtil.fetchElement(query, 1, 1000);
+        const e = await accessorUtil.fetchElement(query, 1000);
         return e.getText().then(elementText => new RegExp(text).test(elementText))
     }
 
     async function _containsHTML(query: SahiElementQueryOrWebElement, htmlText: string) {
-        const e = await accessorUtil.fetchElement(query, 1, 1000);
+        const e = await accessorUtil.fetchElement(query, 1000);
         return e.getAttribute('innerHTML').then(elementHtml => {
             return new RegExp(html`${htmlText}`).test(html`${elementHtml}`);
         })
@@ -127,7 +127,7 @@ export function fetchApi(
     }
 
     async function _getSelectionText() {
-        return driver.executeAsyncScript<string>(stripIndent`            
+        return driver.executeAsyncScript<string>(stripIndent`
             var done = arguments[arguments.length -1];
             let text = '';
             if (window.getSelection) {

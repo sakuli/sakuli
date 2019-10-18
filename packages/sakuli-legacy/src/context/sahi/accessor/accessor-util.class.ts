@@ -30,6 +30,8 @@ export class AccessorUtil {
     ) {
     }
 
+    private timeout: number = 3_000;
+
     get logger() {
         return this.testExecutionContext.logger;
     }
@@ -155,22 +157,8 @@ export class AccessorUtil {
         return Promise.resolve([]);
     }
 
-    async fetchElements(query: SahiElementQuery, retry: number = 10, waitTimeout: number = 10_000): Promise<WebElement[]> {
-        return this.webDriver.wait<WebElement[]>(() => {
-            return this._fetchElements(query, retry).then(
-                (elements) => {
-                    return (elements.length) ? elements : false
-                },
-                () => {
-                    return false
-                }
-            )
-        }, waitTimeout);
-
-    }
-
-    async _fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
-        try {
+    async fetchElements(query: SahiElementQuery, waitTimeout: number = this.timeout): Promise<WebElement[]> {
+        return this.webDriver.wait<WebElement[]>(async () => {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
             const elementsAfterIdentifier = await this.resolveByIdentifier(elements, queryAfterRelation.identifier);
@@ -178,16 +166,13 @@ export class AccessorUtil {
                 return elementsAfterIdentifier;
             }
             throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
-        } catch (e) {
-            if (retry <= 0) throw e;
-            this.testExecutionContext.logger.debug(e.message);
-            return this._fetchElements(query, retry - 1);
-        }
+        }, waitTimeout);
+
     }
 
-    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, retry: number = 10, waitTimeout: number = 10_000): Promise<WebElement> {
+    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, waitTimeout: number = this.timeout): Promise<WebElement> {
         return isSahiElementQuery(query)
-            ? this.fetchElements(query, retry, waitTimeout).then(([first]) => first)
+            ? this.fetchElements(query, waitTimeout).then(([first]) => first)
             : Promise.resolve(query)
     }
 
