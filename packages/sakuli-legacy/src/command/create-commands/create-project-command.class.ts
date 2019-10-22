@@ -2,15 +2,16 @@ import {Argv} from "yargs";
 import {createTestsuite} from "../../init-command/create-structure";
 
 export = {
-    command: 'project [directory] [suiteName]',
+    command: 'project [path] [suiteName]',
     describe: 'Generates a default project structure',
     builder(argv: Argv) {
-        return argv.positional('directory', {
-            describe: 'path where the sakuli project should be created'
-            }).demandOption('directory')
+        return argv.positional('path', {
+                describe: 'Path to create testsuite',
+                default: process.cwd(),
+            })
             .positional('suiteName', {
-                describe: 'name of the testsuite',
-                default: 'sakuli'
+                describe: 'Name of testsuite',
+                default: 'sakuli',
             });
     },
     async handler(opts: any) {
