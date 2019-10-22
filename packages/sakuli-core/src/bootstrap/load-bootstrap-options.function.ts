@@ -1,7 +1,7 @@
-import {join} from "path";
 import {SakuliBootstrapDefaults, SakuliBootstrapOptions} from "./bootstrap-options.interface";
-import {readJsonSync} from "fs-extra";
 import {ifPresent, Maybe} from "@sakuli/commons";
+import {promises as fs} from 'fs';
+import { join } from "path";
 
 /**
  * Reads sakuli bootconfiguration from a json file. The configuration is considered under a sakuli wich must implement the {@see SakuliBootstrapOptions} interface.*
@@ -17,7 +17,10 @@ export async function loadBootstrapOptions(path: string = '.', file: string = 'p
     let conf: Maybe<SakuliBootstrapOptions>;
 
     try {
-        const packageJson = await readJsonSync(join(path, file)) as any;
+        //const packageJson = await readJsonSync(join(path, file)) as any;
+        const packageJsonContent = await fs.readFile(join(path, file));
+        const packageJson = JSON.parse(packageJsonContent.toString());
+
         if (packageJson && packageJson.sakuli) {
             conf = packageJson.sakuli
         }
