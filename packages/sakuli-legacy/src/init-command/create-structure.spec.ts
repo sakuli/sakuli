@@ -72,4 +72,15 @@ describe("Scheme test", () => {
         expect(readFileSync(`${TEST_SUITE_DIR}/case1/check.js`, 'utf8'))
             .toBe("");
     });
+
+    it("should create recursive directory for testsuite", () => {
+        // GIVEN
+
+        // WHEN
+        createTestsuite(`${CUR_DIR}/foo`, TEST_SUITE);
+
+        // THEN
+        expect(readdirSync(`${CUR_DIR}/foo/${TEST_SUITE}`)).toEqual(["case1", "testsuite.properties", "testsuite.suite"]);
+
+    });
 });
