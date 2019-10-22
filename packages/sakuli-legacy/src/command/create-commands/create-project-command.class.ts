@@ -1,5 +1,6 @@
 import {Argv} from "yargs";
 import {createTestsuite} from "../../init-command/create-structure";
+import chalk from "chalk";
 
 export = {
     command: 'project [path] [suiteName]',
@@ -15,8 +16,13 @@ export = {
             });
     },
     async handler(opts: any) {
-        console.log("creating project structure");
-        createTestsuite(opts.directory, opts.suiteName);
-        process.exit(0);
+        try {
+            console.log(`creating project structure ${opts.path}`);
+            createTestsuite(opts.directory, opts.suiteName);
+            process.exit(0);
+        } catch (e) {
+            console.log(chalk`{red.bold An error occured}: ${e}`);
+            process.exit(-1);
+        }
     }
 };
