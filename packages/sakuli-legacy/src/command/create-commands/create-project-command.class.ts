@@ -18,6 +18,7 @@ export = {
                 type: "string",
             })
             .option('force', {
+                alias: 'f',
                 describe: 'Forces sakuli to create testsuite',
                 default: false,
                 type: "boolean",
@@ -29,8 +30,9 @@ export = {
             if(existsSync(testsuitePath) && readdirSync(testsuitePath).includes("testsuite.properties") && !opts.force) {
                 console.log(chalk`{red ${testsuitePath} is already a sakuli testsuite. Use --force to overwrite the files.}`);
             } else {
-                console.log(`creating project structure ${opts.path}`);
+                console.log(`Creating testsuite in ${opts.path}`);
                 createTestsuite(opts.path, opts.suiteName);
+                console.log(chalk`{green.bold Successfully created testsuite in ${opts.path}}`);
             }
             process.exit(0);
         } catch (e) {

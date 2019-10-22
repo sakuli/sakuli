@@ -4,6 +4,7 @@ import { stripIndent } from 'common-tags';
 export const createTestsuite = (directory: string, suiteName: string) => {
     const rootDir = directory + `/${suiteName}`;
     mkdirSync(rootDir, {recursive: true});
+    console.log(`Created directory ${suiteName}`);
     createTestsuiteProperties(rootDir, suiteName);
     createTestsuiteSuite(rootDir);
     createTestcaseInTestsuite(rootDir);
@@ -30,13 +31,17 @@ const createTestsuiteProperties = (path: string, suiteName: string) => {
         #sakuli.screenshot.dir=\${sakuli.log.folder}/_screenshots
         `,
         {encoding: 'utf8'});
+    console.log('Created file testsuite.properties.');
 };
 
 const createTestsuiteSuite = (path: string) => {
     writeFileSync(`${path}/testsuite.suite`, 'case1/check.js https://sakuli.io', {encoding: 'utf8'});
+    console.log('Created file testsuite.suite.');
 };
 
 const createTestcaseInTestsuite = (path: string) => {
     mkdirSync(`${path}/case1`, {recursive: true});
+    console.log('Created directory /case1');
     writeFileSync(`${path}/case1/check.js`, "", {encoding: 'utf8'});
+    console.log('Created file /case1/check.js.');
 };
