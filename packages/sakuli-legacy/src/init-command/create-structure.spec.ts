@@ -46,8 +46,23 @@ describe("Scheme test", () => {
         // THEN
         expect(readFileSync(`${TEST_SUITE_DIR}/testsuite.properties`, 'utf8'))
             .toBe(
-                stripIndents`testsuite.id=${TEST_SUITE}
-                testsuite.browser=chrome`
+                stripIndents`
+                testsuite.id=${TEST_SUITE}
+                testsuite.browser=chrome
+                #testsuite.name=\${testsuite.id}
+                #testsuite.warningTime=0
+                #testsuite.criticalTime=0
+                #testsuite.uiOnly=false
+                
+                #sakuli.environment.similarity.default=0.99
+                #sakuli.autoHighlight=false
+                #sakuli.highlight.seconds=0.2
+                #sakuli.typeDelay=300
+                #sakuli.clickDelay=0.2
+                #sakuli.encryption.key=""
+                #sakuli.screenshot.onError=true
+                #sakuli.screenshot.dir=\${sakuli.log.folder}/_screenshots
+                `
             );
     });
 
