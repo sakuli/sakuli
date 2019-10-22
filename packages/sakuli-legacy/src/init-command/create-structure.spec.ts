@@ -1,4 +1,4 @@
-import { createTestsuite } from "./createStructure";
+import { createTestsuite } from "./create-structure";
 import { readdirSync, readFileSync } from "fs";
 import { stripIndents } from 'common-tags';
 import { tmpdir } from "os";

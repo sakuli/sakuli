@@ -1,5 +1,5 @@
 import {Argv} from "yargs";
-import {createTestsuite} from "../../init-command/createStructure";
+import {createTestsuite} from "../../init-command/create-structure";
 
 export = {
     command: 'project [directory] [suiteName]',
