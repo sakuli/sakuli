@@ -1,4 +1,4 @@
-import { createTestsuite } from "./create-structure";
+import { createTestsuite, createPackageJson } from "./create-structure";
 import {mkdtempSync, readdirSync, readFileSync, existsSync, lstatSync, unlinkSync, rmdirSync} from "fs";
 import { stripIndents } from "common-tags";
 import { join } from "path";
@@ -98,6 +98,30 @@ describe("Scheme test", () => {
         // THEN
         expect(readdirSync(`${CUR_DIR}/foo/${TEST_SUITE}`)).toEqual(["case1", "testsuite.properties", "testsuite.suite"]);
 
+    });
+
+    it("should create package.json", () => {
+        // GIVEN
+        const packageJson = {
+            name: TEST_SUITE,
+            version: "1.0.0",
+            description: "",
+            main: "index.js",
+            scripts: {
+                test: `sakuli run ${TEST_SUITE}`
+            },
+            author: "",
+            license: "ISC",
+            dependencies: {
+                "@sakuli/cli": "^2.1.3",
+            },
+        };
+
+        // WHEN
+        createPackageJson(CUR_DIR, TEST_SUITE);
+
+        // THEN
+        expect(readFileSync(`${CUR_DIR}/package.json`, {encoding: 'utf8'})).toBe((JSON.stringify(packageJson, null, 4)));
     });
 });
 

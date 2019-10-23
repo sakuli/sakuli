@@ -10,6 +10,26 @@ export const createTestsuite = (directory: string, suiteName: string) => {
     createTestcaseInTestsuite(rootDir);
 };
 
+export const createPackageJson = (path: string, suiteName: string) => {
+    const packageJson = {
+        name: suiteName,
+        version: "1.0.0",
+        description: "",
+        main: "index.js",
+        scripts: {
+            test: `sakuli run ${suiteName}`
+        },
+        author: "",
+        license: "ISC",
+        dependencies: {
+            "@sakuli/cli": "^2.1.3",
+        },
+    };
+
+    writeFileSync(`${path}/package.json`, JSON.stringify(packageJson, null, 4));
+    console.log("Created package.json")
+};
+
 const createTestsuiteProperties = (path: string, suiteName: string) => {
     writeFileSync(
         `${path}/testsuite.properties`,
@@ -31,17 +51,17 @@ const createTestsuiteProperties = (path: string, suiteName: string) => {
         #sakuli.screenshot.dir=\${sakuli.log.folder}/_screenshots
         `,
         {encoding: 'utf8'});
-    console.log('Created file testsuite.properties.');
+    console.log('Created file testsuite.properties');
 };
 
 const createTestsuiteSuite = (path: string) => {
     writeFileSync(`${path}/testsuite.suite`, 'case1/check.js https://sakuli.io', {encoding: 'utf8'});
-    console.log('Created file testsuite.suite.');
+    console.log('Created file testsuite.suite');
 };
 
 const createTestcaseInTestsuite = (path: string) => {
     mkdirSync(`${path}/case1`, {recursive: true});
     console.log('Created directory /case1');
     writeFileSync(`${path}/case1/check.js`, "", {encoding: 'utf8'});
-    console.log('Created file /case1/check.js.');
+    console.log('Created file /case1/check.js');
 };

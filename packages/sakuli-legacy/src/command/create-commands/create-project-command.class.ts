@@ -1,5 +1,5 @@
 import {Argv} from "yargs";
-import {createTestsuite} from "../../init-command/create-structure";
+import {createPackageJson, createTestsuite} from "../../init-command/create-structure";
 import chalk from "chalk";
 import {existsSync, readdirSync} from "fs";
 
@@ -22,6 +22,11 @@ export = {
                 describe: 'Forces sakuli to create testsuite',
                 default: false,
                 type: "boolean",
+            })
+            .option('package', {
+                describe: 'Create additional package.json for testsuite',
+                default: false,
+                type: "boolean"
             });
     },
     async handler(opts: any) {
@@ -33,6 +38,9 @@ export = {
                 console.log(`Creating testsuite in ${opts.path}`);
                 createTestsuite(opts.path, opts.suiteName);
                 console.log(chalk`{green.bold Successfully created testsuite in ${opts.path}}`);
+            }
+            if (opts.package) {
+                createPackageJson(opts.path, opts.suiteName);
             }
             process.exit(0);
         } catch (e) {
