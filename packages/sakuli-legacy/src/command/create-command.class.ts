@@ -1,5 +1,5 @@
-import {CommandModuleProvider} from "@sakuli/core";
-import {Argv, CommandModule} from "yargs";
+import { CommandModuleProvider } from "@sakuli/core";
+import { Argv, CommandModule } from "yargs";
 
 
 export const createCommand: CommandModuleProvider = (): CommandModule => {

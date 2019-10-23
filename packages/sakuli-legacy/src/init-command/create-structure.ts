@@ -27,7 +27,7 @@ export const createPackageJson = (path: string, suiteName: string) => {
     };
 
     writeFileSync(`${path}/package.json`, JSON.stringify(packageJson, null, 4));
-    console.log("Created package.json")
+    console.log("Created file package.json")
 };
 
 const createTestsuiteProperties = (path: string, suiteName: string) => {

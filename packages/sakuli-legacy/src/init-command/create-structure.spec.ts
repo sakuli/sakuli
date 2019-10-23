@@ -1,5 +1,5 @@
 import { createTestsuite, createPackageJson } from "./create-structure";
-import {mkdtempSync, readdirSync, readFileSync, existsSync, lstatSync, unlinkSync, rmdirSync} from "fs";
+import { mkdtempSync, readdirSync, readFileSync, existsSync, lstatSync, unlinkSync, rmdirSync } from "fs";
 import { stripIndents } from "common-tags";
 import { join } from "path";
 import { tmpdir } from "os";
