@@ -1,20 +1,21 @@
 import { createTestsuite } from "./create-structure";
-import { readdirSync, readFileSync } from "fs";
-import { stripIndents } from 'common-tags';
+import {mkdtempSync, readdirSync, readFileSync, existsSync, lstatSync, unlinkSync, rmdirSync} from "fs";
+import { stripIndents } from "common-tags";
+import { join } from "path";
 import { tmpdir } from "os";
-import mock from "mock-fs";
 
 describe("Scheme test", () => {
     const TEST_SUITE = "testsuite";
-    const CUR_DIR = tmpdir();
-    const TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
+    let CUR_DIR: string;
+    let TEST_SUITE_DIR: string;
 
     beforeEach(() => {
-        mock();
+        CUR_DIR = mkdtempSync(join(tmpdir(), 'testsuite-'));
+        TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
     });
 
     afterEach(() => {
-        mock.restore();
+        deleteFolderRecursive(CUR_DIR);
     });
 
     it("should create files and directory in testsuite", () => {
@@ -99,3 +100,17 @@ describe("Scheme test", () => {
 
     });
 });
+
+const deleteFolderRecursive = (path: string) => {
+    if (existsSync(path)) {
+        readdirSync(path).forEach((file) => {
+            const curPath = join(path, file);
+            if (lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                unlinkSync(curPath);
+            }
+        });
+        rmdirSync(path);
+    }
+};
