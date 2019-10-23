@@ -37,10 +37,10 @@ export = {
             } else {
                 console.log(`Creating testsuite in ${opts.path}`);
                 createTestsuite(opts.path, opts.suiteName);
+                if (opts.package) {
+                    createPackageJson(opts.path, opts.suiteName);
+                }
                 console.log(chalk`{green.bold Successfully created testsuite in ${opts.path}}`);
-            }
-            if (opts.package) {
-                createPackageJson(opts.path, opts.suiteName);
             }
             process.exit(0);
         } catch (e) {
