@@ -41,6 +41,9 @@ const createTestsuiteProperties = (path: string, suiteName: string) => {
         #testsuite.criticalTime=0
         #testsuite.uiOnly=false
         
+        #log.level=INFO
+        #sakuli.log.maxAge=14
+        #sakuli.log.folder=\${sakuli.testsuite.folder}/_logs
         #sakuli.environment.similarity.default=0.99
         #sakuli.autoHighlight=false
         #sakuli.highlight.seconds=0.2
