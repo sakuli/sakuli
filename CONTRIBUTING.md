@@ -92,7 +92,7 @@ maintainers and make sure that it's possible for you to propose a [pull request]
 release date of the milestone, if specified.  
 
 #### Unsure where to begin contributing to Sakuli?
-You can start by looking for issues labeled with `good first issue` which should only require a few lines of code, and
+You can start by looking for issues labeled with [good first issue](https://github.com/sakuli/sakuli/labels/good%20first%20issue) which should only require a few lines of code, and
 a test or two. 
 
 ### Pull Requests
