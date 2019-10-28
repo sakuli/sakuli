@@ -1,5 +1,7 @@
 import {TestScriptExecutor, TestScriptExecutorOptions} from "./test-script-executor.interface";
 import {createContext, RunningScriptOptions, Script} from "vm";
+import {isPromise} from './is-promise.function'
+import { inspect } from "util";
 
 export class JsScriptExecutor implements TestScriptExecutor {
 
@@ -22,10 +24,15 @@ export class JsScriptExecutor implements TestScriptExecutor {
                 console,
                 {done: () => res(sandbox)}
             ));
-            script.runInNewContext(sandbox, {
+            const result = script.runInNewContext(sandbox, {
                 ...options as RunningScriptOptions,
                 displayErrors: true
             });
+
+            if(isPromise(result)) {
+                result.then(res);
+            }
+
             if (!options.waitUntilDone) {
                 res(sandbox);
             }
