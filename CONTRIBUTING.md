@@ -74,7 +74,7 @@ suggestions :mag_right:. We distinguish between different [different types of ch
 Maintenance, Enhancements, Features and Bugs. This section only concerns the first three of these. If you want to learn
 about how to report bugs, [this](#reporting-bugs) might help you.
 
-Before creating a suggestion, please check Check if there's already an [issue](https://github.com/sakuli/sakuli/issues)
+Before creating a suggestion, please check if there's already an [issue](https://github.com/sakuli/sakuli/issues)
 addressing your suggestion. When you are creating an enhancement/feature suggestion, please fill in
 the [enhancement](https://github.com/sakuli/sakuli/issues/new?template=enhancement.md) or
 [feature template](https://github.com/sakuli/sakuli/issues/new?template=feature.md) and ensure, that the 
@@ -96,10 +96,10 @@ You can start by looking for issues labeled with [good first issue](https://gith
 a test or two. 
 
 ### Pull Requests
-Pull requests are required for every contribution to Sakuli including contributions from maintainers and administrators.
-Before you propose a pull request, please ensure, that the [definition of done](#definition-of-done) is fulfilled.
-Please ensure that every pull request is linked to an issue. If you open a pull request without an existing issue, please 
-open an issue as well, to point out the requirements for the change. That helps us to separate the functional discussion 
+Pull requests are required for every contribution to Sakuli, including contributions from maintainers and administrators.
+Before you propose a pull request, please ensure that the [definition of done](#definition-of-done) is fulfilled.
+Please ensure that every pull request is linked to an issue. If you open a pull request without an existing issue please 
+open an issue as well, to point out the requirements for the change. This way we're separating the functional discussion 
 (issue) from the technical discussion (pull-request).
 
 This helps us to reach several goals:
@@ -108,7 +108,7 @@ This helps us to reach several goals:
 * Discuss changes to ensure that the best possible solution will make it into the next release
 * Enable a sustainable system for Sakuli maintainers to review contributions
 
->**Important Note**: If you'd like to propose a pull request for a bug fix, please ensure that your base branch is
+>**Important Note**: If you'd like to propose a pull request for a bug fix, please make sure that your base branch is
 `develop` instead of master and that the target branch for the pull request is `develop` as well .
 
 The pull request workflow is as follows: 
@@ -135,7 +135,7 @@ knowledge about the Sakuli framework.
   change is verified by automated unit and integration tests.
 * **Enhancements**  
   Smaller or medium size improvements of the functionality of Sakuli. Those tasks are completable in a limited amount of
-  time with a little or average knowledge about the Sakuli internals.
+  time with little or average knowledge about the Sakuli internals.
 * **Features**  
   Medium or large additions to the framework. E.g. the integration of a new technology. Those changes require a medium
   or large amount of time and a deep knowledge of the framework.
