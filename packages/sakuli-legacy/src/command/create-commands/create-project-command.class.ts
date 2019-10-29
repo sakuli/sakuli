@@ -1,5 +1,8 @@
 import { Argv } from "yargs";
-import { createPackageJson, createTestsuite } from "../../init-command/create-structure";
+import {
+    createPackageJson, createTestcaseDirectory, createTestcaseFile, createTestsuiteDirectory,
+    createTestsuiteProperties, createTestsuiteSuite
+} from "../../init-command/create-structure";
 import chalk from "chalk";
 import { existsSync, readdirSync } from "fs";
 
@@ -36,9 +39,25 @@ export = {
                 console.log(chalk`{red ${testsuitePath} is already a sakuli testsuite. Use --force to overwrite the files.}`);
             } else {
                 console.log(`Creating testsuite in ${opts.path}`);
-                createTestsuite(opts.path, opts.suiteName);
+
+                createTestsuiteDirectory(testsuitePath);
+                console.log(`Created directory ${opts.suiteName}`);
+
+                createTestsuiteProperties(testsuitePath, opts.suiteName);
+                console.log(`Created file testsuite.properties`);
+
+                createTestsuiteSuite(testsuitePath);
+                console.log(`Created file testsuite.suite`);
+
+                createTestcaseDirectory(testsuitePath);
+                console.log(`Created directory /case1`);
+
+                createTestcaseFile(testsuitePath);
+                console.log('Created file /case1/check.js');
+
                 if (opts.package) {
                     createPackageJson(opts.path, opts.suiteName);
+                    console.log("Created file package.json");
                 }
                 console.log(chalk`{green.bold Successfully created testsuite in ${opts.path}}`);
             }

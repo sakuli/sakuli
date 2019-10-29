@@ -1,4 +1,9 @@
-import { createTestsuite, createPackageJson } from "./create-structure";
+import {
+    createPackageJson, createTestcaseDirectory,
+    createTestcaseFile,
+    createTestsuiteDirectory,
+    createTestsuiteProperties, createTestsuiteSuite
+} from "./create-structure";
 import { mkdtempSync, readdirSync, readFileSync, existsSync, lstatSync, unlinkSync, rmdirSync } from "fs";
 import { stripIndents } from "common-tags";
 import { join } from "path";
@@ -7,45 +12,33 @@ import { tmpdir } from "os";
 describe("Scheme test", () => {
     const TEST_SUITE = "testsuite";
     let CUR_DIR: string;
-    let TEST_SUITE_DIR: string;
 
     beforeEach(() => {
         CUR_DIR = mkdtempSync(join(tmpdir(), 'testsuite-'));
-        TEST_SUITE_DIR = `${CUR_DIR}/${TEST_SUITE}`;
     });
 
     afterEach(() => {
         deleteFolderRecursive(CUR_DIR);
     });
 
-    it("should create files and directory in testsuite", () => {
+    it("should create testsuite directory", () => {
         // GIVEN
 
         // WHEN
-        createTestsuite(CUR_DIR, TEST_SUITE);
+        createTestsuiteDirectory(CUR_DIR);
 
         // THEN
-        expect(readdirSync(TEST_SUITE_DIR)).toEqual(["case1", "testsuite.properties", "testsuite.suite"]);
-    });
-
-    it("should create file in testcase", () => {
-        // GIVEN
-
-        // WHEN
-        createTestsuite(CUR_DIR, TEST_SUITE);
-
-        // THEN
-        expect(readdirSync(`${TEST_SUITE_DIR}/case1`)).toEqual(["check.js"]);
+        expect(existsSync(`${CUR_DIR}/${TEST_SUITE}`));
     });
 
     it("should create testsuite.properties with config", () => {
         // GIVEN
 
         // WHEN
-        createTestsuite(CUR_DIR, TEST_SUITE);
+        createTestsuiteProperties(CUR_DIR, TEST_SUITE);
 
         // THEN
-        expect(readFileSync(`${TEST_SUITE_DIR}/testsuite.properties`, 'utf8'))
+        expect(readFileSync(`${CUR_DIR}/testsuite.properties`, 'utf8'))
             .toBe(
                 stripIndents`
                 testsuite.id=${TEST_SUITE}
@@ -74,21 +67,32 @@ describe("Scheme test", () => {
         // GIVEN
 
         // WHEN
-        createTestsuite(CUR_DIR, TEST_SUITE);
+        createTestsuiteSuite(CUR_DIR);
 
         // THEN
-        expect(readFileSync(`${TEST_SUITE_DIR}/testsuite.suite`, 'utf8'))
+        expect(readFileSync(`${CUR_DIR}/testsuite.suite`, 'utf8'))
             .toBe("case1/check.js https://sakuli.io");
+    });
+
+    it("should create testcase directory", () => {
+        // GIVEN
+
+        // WHEN
+        createTestcaseDirectory(CUR_DIR);
+
+        // THEN
+        expect(existsSync(`${CUR_DIR}/case1`));
     });
 
     it("should create empty check.js", () => {
         // GIVEN
 
         // WHEN
-        createTestsuite(CUR_DIR, TEST_SUITE);
+        createTestcaseDirectory(CUR_DIR);
+        createTestcaseFile(CUR_DIR);
 
         // THEN
-        expect(readFileSync(`${TEST_SUITE_DIR}/case1/check.js`, 'utf8'))
+        expect(readFileSync(`${CUR_DIR}/case1/check.js`, 'utf8'))
             .toBe("");
     });
 
@@ -96,10 +100,10 @@ describe("Scheme test", () => {
         // GIVEN
 
         // WHEN
-        createTestsuite(`${CUR_DIR}/foo`, TEST_SUITE);
+        createTestcaseDirectory(`${CUR_DIR}/foo`);
 
         // THEN
-        expect(readdirSync(`${CUR_DIR}/foo/${TEST_SUITE}`)).toEqual(["case1", "testsuite.properties", "testsuite.suite"]);
+        expect(existsSync(`${CUR_DIR}/foo/${TEST_SUITE}`));
 
     });
 
