@@ -22,7 +22,9 @@
   },
   "private": true,
   "scripts": {
+    "rebuild": "npm run clean && npm run bootstrap && npm run build",
     "postinstall": "lerna bootstrap --progress --no-ci",
+    "clean": "lerna clean -y",
     "build": "lerna run build",
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
