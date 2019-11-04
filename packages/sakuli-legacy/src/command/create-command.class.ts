@@ -1,5 +1,5 @@
-import {CommandModuleProvider} from "@sakuli/core";
-import {Argv, CommandModule} from "yargs";
+import { CommandModuleProvider } from "@sakuli/core";
+import { Argv, CommandModule } from "yargs";
 
 
 export const createCommand: CommandModuleProvider = (): CommandModule => {
@@ -7,7 +7,8 @@ export const createCommand: CommandModuleProvider = (): CommandModule => {
         command: 'create',
         describe: `Create new Sakuli objects`,
         builder(argv: Argv) {
-            return argv.commandDir("./create-commands");
+            return argv.commandDir("./create-commands")
+                .help();
         },
         handler() {
         }
