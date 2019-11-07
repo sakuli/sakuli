@@ -496,6 +496,12 @@ const _NoopSahiApi: SahiApi = {
     },
     _assertNull(value: any, message?: String): Promise<void> {
         throw new Error("Not Implemented");
+    },
+    _setFetchTimeout(timeout: number): void {
+        throw new Error("Not Implemented");
+    },
+    _getFetchTimeout() {
+        throw new Error("Not Implemented");
     }
 };
 
