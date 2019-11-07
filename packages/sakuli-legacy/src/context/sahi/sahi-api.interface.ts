@@ -14,4 +14,16 @@ export interface SahiApi extends ActionApi, AccessorApi, RelationApi, FetchApi, 
      */
     _dynamicInclude(): Promise<void>;
 
+    /**
+     * Sets the maximum time Sakuli will try to find an element on dom.
+     *
+     * @param timeOutMs - Timeout in milliseconds
+     */
+    _setFetchTimeout(timeOutMs: number): void;
+
+    /**
+     * Gets the maximum time Sakuli will try to find an element on dom.
+     *
+     */
+    _getFetchTimeout(): number;
 }

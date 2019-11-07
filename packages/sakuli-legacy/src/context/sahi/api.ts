@@ -64,6 +64,12 @@ export function sahiApi(
         ...relations,
         ...fetch,
         ...assertion,
-        _dynamicInclude: (): Promise<void> => Promise.resolve()
+        _dynamicInclude: (): Promise<void> => Promise.resolve(),
+        _setFetchTimeout: (timeout: number) => {
+            accessorUtil.setTimeout(timeout);
+        },
+        _getFetchTimeout: (): number => {
+            return accessorUtil.getTimeout();
+        }
     })
 }
