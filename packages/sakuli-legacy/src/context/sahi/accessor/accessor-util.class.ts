@@ -77,31 +77,39 @@ export class AccessorUtil {
      *  - innerText
      *  - value
      *  - src
-     * @param element
+     * @param elements
      */
-    async getStringIdentifiersForElement(element: WebElement) {
-        return this.webDriver.executeScript<string[]>(`
-            const e = arguments[0];
-            return [
-                e.getAttribute('aria-describedby'),
-                e.getAttribute('name'),
-                e.getAttribute('id'),
-                e.className,
-                e.innerText,
-                e.value,
-                e.src
-            ];
-        `, element);
+    async getStringIdentifiersForElement(elements: WebElement[]) {
+        return this.webDriver.executeScript<[WebElement, string[]][]>(`
+            console.log('Test');
+            function getAttributes(e) {
+                return [
+                    e.getAttribute('aria-describedby'),
+                    e.getAttribute('name'),
+                    e.getAttribute('id'),
+                    e.className,
+                    e.innerText,
+                    e.value,
+                    e.src
+                ]
+            }
+            var result = [];
+            var elements = arguments[0];
+            for(var i = 0; i < elements .length; i++) {
+                var element = elements[i];
+                if(!element) {
+                    throw Error('undefined e ' + i + ' of ' + elements.length + ' elements');
+                }
+                result.push([element, getAttributes(element)]);
+            }
+            return result;
+        `, elements);
     }
 
     async getByRegEx(elements: WebElement[], regEx: RegExp): Promise<WebElement[]> {
-        const eAndText: [WebElement, string[]][] = await Promise.all(elements
-            .map(async (e): Promise<[WebElement, string[]]> => {
-                const potentialMatches: string[] = await this.getStringIdentifiersForElement(e);
-                return [e, potentialMatches]
-            })
-        );
-        return eAndText.filter(([e, potentialMatches]) => {
+       const eAndText: [WebElement, string[]][] = await this.getStringIdentifiersForElement(elements);
+
+        return eAndText.filter(([, potentialMatches]) => {
             const matches = potentialMatches.filter(x => x).map(text => {
                 const match = text.match(regEx);
                 return match ? match.length > 0 : false
