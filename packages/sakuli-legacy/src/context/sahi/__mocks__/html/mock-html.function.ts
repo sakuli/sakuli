@@ -1,5 +1,23 @@
-export function mockHtml(code: string) {
-    return `data:text/html;base64, ${Buffer.from(`
+import { html } from "common-tags";
+
+export interface MockHtmlOptions {
+  /**
+   * Indicates whether an enclosing body-tag is wrapped around the html-content or not (useful if the html-content is a frameset)
+   */
+  autoBody: boolean
+}
+
+export function mockHtml(code: string, options?: Partial<MockHtmlOptions>) {
+  const {autoBody}: MockHtmlOptions = {
+    ...{
+      autoBody: true
+    },
+    ...options,
+  }
+
+  const bodyCode = autoBody ? `<body>${code}</body>` : code;
+
+  return `data:text/html;base64, ${Buffer.from(html`
         <!doctype html>
         <html lang="en">
         <head>
@@ -9,9 +27,7 @@ export function mockHtml(code: string) {
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Document</title>
         </head>
-        <body>
-          ${code}
-        </body>
+        ${bodyCode}
         </html>
     `).toString('base64')}`
 }
