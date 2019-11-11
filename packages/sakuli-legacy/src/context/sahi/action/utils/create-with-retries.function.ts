@@ -1,7 +1,4 @@
-import { ThenableWebDriver, WebElement, error as SeleniumErrors } from "selenium-webdriver";
-import { AccessorUtil } from "../../accessor";
-import { ifPresent } from "@sakuli/commons/dist";
-import { isSahiElementQuery, SahiElementQueryOrWebElement } from "../../sahi-element.interface"
+import { error as SeleniumErrors } from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
 
 export function createWithRetries(

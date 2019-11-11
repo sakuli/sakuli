@@ -8,6 +8,7 @@ import { ActionApi } from "./action-api.interface";
 import { commonActionsApi } from "./common-action";
 import { createWithRetries } from "./utils/create-with-retries.function";
 import { createWithActionContext } from "./utils";
+import { createWithTryAcrossFrames } from "./utils/create-with-try-across-frames.function";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
@@ -19,8 +20,9 @@ export function actionApi(
 
     const withRetries = createWithRetries(ctx);
     const withActionContext = createWithActionContext(ctx);
+    const withTryAcrossFrames = createWithTryAcrossFrames(webDriver);
     const runAsAction = <ARGS extends any[], R>(name: string, fn: (...args:ARGS) => Promise<R>): ((...args: ARGS) => Promise<R>) => {
-        return withActionContext(name, withRetries(5, fn));
+        return withActionContext(name, withTryAcrossFrames(withRetries(5, fn)));
     }
 
     const {
