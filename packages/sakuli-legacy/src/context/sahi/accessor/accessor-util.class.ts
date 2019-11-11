@@ -81,24 +81,26 @@ export class AccessorUtil {
      */
     async getStringIdentifiersForElement(elements: WebElement[]) {
         return this.webDriver.executeScript<[WebElement, string[]][]>(`
-            function getAttributes(e) {
-                return [
-                    e.getAttribute('aria-describedby'),
-                    e.getAttribute('name'),
-                    e.getAttribute('id'),
-                    e.className,
-                    e.innerText,
-                    e.value,
-                    e.src
-                ]
-            }
-            var result = [];
-            var elements = arguments[0];
-            for(var i = 0; i < elements.length; i++) {
-                var element = elements[i];
-                result.push([element, getAttributes(element)]);
-            }
-            return result;
+            return (function(element) {
+                function getAttributes(e) {
+                    return [
+                        e.getAttribute('aria-describedby'),
+                        e.getAttribute('name'),
+                        e.getAttribute('id'),
+                        e.className,
+                        e.innerText,
+                        e.value,
+                        e.src
+                    ]
+                }
+                var result = [];
+                var elements = arguments[0];
+                for(var i = 0; i < elements.length; i++) {
+                    var element = elements[i];
+                    result.push([element, getAttributes(element)]);
+                }
+                return result;
+            })(arguments[0])
         `, elements);
     }
 
