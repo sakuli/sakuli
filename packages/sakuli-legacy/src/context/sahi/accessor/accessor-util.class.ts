@@ -1,4 +1,4 @@
-import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
+import {Locator, ThenableWebDriver, until, WebElement, By} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
@@ -81,7 +81,6 @@ export class AccessorUtil {
      */
     async getStringIdentifiersForElement(elements: WebElement[]) {
         return this.webDriver.executeScript<[WebElement, string[]][]>(`
-            console.log('Test');
             function getAttributes(e) {
                 return [
                     e.getAttribute('aria-describedby'),
@@ -95,11 +94,8 @@ export class AccessorUtil {
             }
             var result = [];
             var elements = arguments[0];
-            for(var i = 0; i < elements .length; i++) {
+            for(var i = 0; i < elements.length; i++) {
                 var element = elements[i];
-                if(!element) {
-                    throw Error('undefined e ' + i + ' of ' + elements.length + ' elements');
-                }
                 result.push([element, getAttributes(element)]);
             }
             return result;
