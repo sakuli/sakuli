@@ -33,7 +33,10 @@
     "ansi-escapes": "4.2.1",
     "chalk": "2.4.2",
     "date-fns": "1.30.1",
+    "execa": "^3.3.0",
     "figlet": "1.2.3",
+    "inquirer": "^7.0.0",
+    "ora": "^4.0.3",
     "yargonaut": "1.1.4",
     "yargs": "12.0.5",
     "youch": "2.0.10",
@@ -41,6 +44,7 @@
   },
   "devDependencies": {
     "@types/figlet": "1.2.0",
+    "@types/inquirer": "^6.5.0",
     "@types/jest": "24.0.16",
     "@types/node": "11.13.18",
     "@types/yargs": "^12.0.12",
