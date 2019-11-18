@@ -1,16 +1,14 @@
 import { EnterpriseAnswers, hasLicense } from "./enterprise-answers.interface";
 import { FeatureChoices } from "./feature-choices.const";
-import { oraTask, Task, getPackageBootstrapTasks } from "./tasks";
-import { licenseGlobalTask } from "./tasks/license-tasks.function";
-import { npmGlobalTask } from "./tasks/npm-global-task.function";
+import { oraTask, Task, getPackageBootstrapTasks, npmGlobalTask, licenseGlobalTask } from "./tasks";
 
 export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     const tasks: Task[] = [];
 
     if (hasLicense(answers)) {
         tasks.push(
-            oraTask('Configure global npm token', npmGlobalTask(answers.npmKey!)),
-            oraTask('Configure global license key', licenseGlobalTask(answers.npmKey!)
+            oraTask('Configure global npm token', npmGlobalTask(answers.npmKey || "")),
+            oraTask('Configure global license key', licenseGlobalTask(answers.licenseKey || "")
             )
         );
     }
@@ -30,7 +28,7 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
         ))
     }
 
-    if (answers.features.includes(FeatureChoices.CheckMk)) {
+    if (answers.features.includes(FeatureChoices.OMD)) {
         tasks.push(...getPackageBootstrapTasks(
             '@sakuli/forwarder-gearman',
             {
@@ -44,7 +42,7 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
         ))
     }
 
-    if (answers.features.includes(FeatureChoices.CheckMk)) {
+    if (answers.features.includes(FeatureChoices.Icinga2)) {
         tasks.push(...getPackageBootstrapTasks(
             '@sakuli/forwarder-icinga2',
             {
