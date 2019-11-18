@@ -3,6 +3,7 @@ import execa = require("execa");
 import { promises as fs } from 'fs';
 import { sep, join } from "path";
 import { homedir } from "os";
+import rimraf = require("rimraf");
 jest.mock('execa', () => jest.fn());
 jest.mock('os', () => ({
     homedir: jest.fn()
@@ -79,7 +80,7 @@ describe('licenseGlobalTask', () => {
 
             // THEN
             const bashRcContent = await fs.readFile(join(tmpHomeDirMock, '.bashrc')).then(buf => buf.toString());
-            expect(bashRcContent).toContain('# something here'); 
+            expect(bashRcContent).toContain('# something here');
             expect(bashRcContent).toContain('exports SAKULI_LICENSE_KEY=abcdefg');
         })
 
@@ -87,6 +88,7 @@ describe('licenseGlobalTask', () => {
             Object.defineProperty(process, 'platform', {
                 value: platform
             })
+            rimraf.sync(tmpHomeDirMock);
         })
 
     })

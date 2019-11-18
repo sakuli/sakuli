@@ -2,6 +2,7 @@ import { configureFeatureTask } from "./configure-feature-task.function"
 import { promises as fs } from 'fs';
 import { join, sep } from "path";
 import { tmpdir } from "os";
+import rimraf = require("rimraf");
 
 describe('configureFeatureTask', () => {
 
@@ -11,10 +12,7 @@ describe('configureFeatureTask', () => {
     });
 
     afterEach(async () => {
-        try {
-            await fs.rmdir(fsRoot)
-        } catch (e) {
-        }
+        rimraf.sync(fsRoot);
     })
 
     it('should write configuration to sakuli.properties', async () => {
