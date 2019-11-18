@@ -1,9 +1,9 @@
 import {promises as fs} from 'fs';
 import { join } from 'path';
 
-export const registerPackageTask = (npmPackageName: string) => async () => {
-    const packageJsonPath = join(process.cwd(), 'package.json');
-    const packageJsonFile = (await fs.readFile(packageJsonPath)).toString();
+export const registerPackageTask = (npmPackageName: string, packageJsonPath: string = process.cwd()) => async () => {
+    const packageJsonFilePath = join(packageJsonPath, 'package.json');
+    const packageJsonFile = (await fs.readFile(packageJsonFilePath)).toString();
     const packageJson = JSON.parse(packageJsonFile);
     if (!("sakuli" in packageJson)) {
         packageJson["sakuli"] = { presetProvider: [] };
@@ -16,5 +16,5 @@ export const registerPackageTask = (npmPackageName: string) => async () => {
     }
     packageJson.sakuli.presetProvider.push(npmPackageName);
 
-    await fs.writeFile(packageJsonPath, JSON.stringify(packageJson));
+    await fs.writeFile(packageJsonFilePath, JSON.stringify(packageJson));
 }
