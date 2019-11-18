@@ -1,9 +1,13 @@
 import { Task, oraTask, installPackageTask } from ".";
 import chalk from "chalk";
-import { join } from "path";
 import { configureFeatureTask } from "./configure-feature-task.function";
 import { registerPackageTask } from "./register-package-task.function";
 
+/**
+ * Creates a list of {@see oraTask} which can be used to bootstrap configuration and installation of a certain package.
+ * @param npmPackageName
+ * @param configurationItems
+ */
 export const getPackageBootstrapTasks = (
     npmPackageName: string,
     configurationItems: Record<string, string>
