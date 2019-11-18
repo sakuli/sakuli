@@ -2,7 +2,6 @@ import { promises as fs } from "fs";
 import execa from 'execa';
 import { join } from "path";
 import { homedir } from "os";
-import { Task } from ".";
 
 const LicenseKeyEnv = (key:string) => `SAKULI_LICENSE_KEY=${key}`
 
@@ -20,13 +19,16 @@ const licenseGlobalWinTask = (key: string) => async () => {
  */
 const licenseGlobalNixTask = (key: string) => async () => {
     const bashRcFile = join(homedir(), '.bashrc');
-    await fs.writeFile(bashRcFile, `\n${LicenseKeyEnv(key)}\n`, {flag: 'a'});
+    await fs.writeFile(bashRcFile, `\nexports ${LicenseKeyEnv(key)}\n`, {flag: 'a'});
 }
 
 /**
  * Creates a task that sets the SAKULI_LICENSE_KEY on the specific platform
  * @param
  */
-export const licenseGlobalTask = process.platform === 'win32'
-    ? licenseGlobalWinTask
-    : licenseGlobalNixTask
+export const licenseGlobalTask = (key: string) => {
+    return process.platform === 'win32'
+        ? licenseGlobalWinTask(key)
+        : licenseGlobalNixTask(key)
+}
+
