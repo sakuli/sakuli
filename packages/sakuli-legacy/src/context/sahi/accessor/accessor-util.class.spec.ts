@@ -1,4 +1,4 @@
-import {By, ThenableWebDriver} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
 import {AccessorUtil} from "./accessor-util.class";
 import {RelationsResolver} from "../relations";
@@ -8,6 +8,9 @@ import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('AccessorUtil', () => {
+
+    const {arrayContaining} = expect;
+
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
         let accessorUtil: AccessorUtil;
@@ -32,50 +35,59 @@ describe('AccessorUtil', () => {
 
         it('should fetch fuzzy matching identifiers from element', async () => {
             await driver.get(mockHtml(`
-         <div
-            id="element-to-test"
-            aria-describedby="aria"
-            class="so many names"
-            name="my-name-is-earl"
-          >Some Text content</div>
-        `));
+             <div
+                id="element-to-test"
+                aria-describedby="aria"
+                class="so many names"
+                name="my-name-is-earl"
+              >Some Text content</div>
+            `));
             const element = await driver.findElement(By.id('element-to-test'));
-            const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
-            return expect(identifiers).toEqual([
+            const identifiers = await accessorUtil.getStringIdentifiersForElement([element]);
+            expect(identifiers.length).toBe(1);
+            const [matches] = identifiers;
+            expect(matches[0]).toEqual(expect.any(WebElement));
+            expect(matches[1]).toEqual([
                 'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'Some Text content', null, null
             ]);
         });
 
         it('should fetch img src for fuzzy matching', async () => {
             await driver.get(mockHtml(`
-         <img 
-            src="https://www.consol.de/fileadmin/images/svg/consol-logo.svg"
-            id="element-to-test"
-            aria-describedby="aria"
-            class="so many names"
-            name="my-name-is-earl"
-            />
-        `));
+             <img
+                src="https://www.consol.de/fileadmin/images/svg/consol-logo.svg"
+                id="element-to-test"
+                aria-describedby="aria"
+                class="so many names"
+                name="my-name-is-earl"
+                />
+            `));
             const element = await driver.findElement(By.id('element-to-test'));
-            const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
-            return expect(identifiers).toEqual([
+            const identifiers = await accessorUtil.getStringIdentifiersForElement([element]);
+            expect(identifiers.length).toBe(1);
+            const [matches] = identifiers;
+            expect(matches[0]).toEqual(expect.any(WebElement));
+            expect(matches[1]).toEqual([
                 'aria', 'my-name-is-earl', 'element-to-test', 'so many names', '', null, 'https://www.consol.de/fileadmin/images/svg/consol-logo.svg'
             ]);
         });
 
         it('should fetch button value for fuzzy matching', async () => {
             await driver.get(mockHtml(`
-         <button
-            value="foo"
-            id="element-to-test"
-            aria-describedby="aria"
-            class="so many names"
-            name="my-name-is-earl"
-            >button text</button>
-        `));
+             <button
+                value="foo"
+                id="element-to-test"
+                aria-describedby="aria"
+                class="so many names"
+                name="my-name-is-earl"
+                >button text</button>
+            `));
             const element = await driver.findElement(By.id('element-to-test'));
-            const identifiers = await accessorUtil.getStringIdentifiersForElement(element);
-            return expect(identifiers).toEqual([
+            const identifiers = await accessorUtil.getStringIdentifiersForElement([element]);
+            expect(identifiers.length).toBe(1);
+            const [matches] = identifiers;
+            expect(matches[0]).toEqual(expect.any(WebElement));
+            expect(matches[1]).toEqual([
                 'aria', 'my-name-is-earl', 'element-to-test', 'so many names', 'button text', 'foo', null
             ]);
         });
