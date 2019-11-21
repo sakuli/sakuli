@@ -38,7 +38,7 @@ export = <CommandModule>{
             },
         ]);
 
-        const tasks = getBootstrapTasks(answer)
+        const tasks = getBootstrapTasks(answer);
         try {
             for(let task of tasks) {
                 await task();
