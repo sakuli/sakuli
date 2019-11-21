@@ -36,7 +36,7 @@ export = <CommandModule>{
                 message: 'Please Select Enterprise Features to bootstrap',
                 choices: AllFeatureChoices,
             },
-        ])
+        ]);
 
         const tasks = getBootstrapTasks(answer)
         try {
