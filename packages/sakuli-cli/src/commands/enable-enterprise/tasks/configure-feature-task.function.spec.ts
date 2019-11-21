@@ -18,7 +18,7 @@ describe('configureFeatureTask', () => {
     it('should write configuration to sakuli.properties', async () => {
         // GIVEN
         const task = configureFeatureTask({
-            "KEY": "value"
+            "KEY": {isComment: false, value: "value"}
         }, fsRoot);
 
         // WHEN
@@ -32,7 +32,7 @@ describe('configureFeatureTask', () => {
         // GIVEN
         await fs.writeFile(join(fsRoot, 'sakuli.properties'), "EXISTING=value\n")
         const task = configureFeatureTask({
-            "KEY": "value"
+            "KEY": {isComment: false, value: "value"}
         }, fsRoot);
 
         // WHEN

@@ -1,11 +1,9 @@
 import { EnterpriseAnswers } from "./enterprise-answers.interface"
 import { getBootstrapTasks } from "./get-bootstrap-tasks.function"
-import { npmGlobalTask, licenseGlobalTask, getPackageBootstrapTasks } from "./tasks"
+import { npmGlobalTask, licenseGlobalTask, getPackageBootstrapTasks, ConfigurationRecord } from "./tasks"
 import { FeatureChoices } from "./feature-choices.const"
-import { stringLiteral } from "@babel/types"
-
-
 jest.mock('./tasks', () => ({
+    ...jest.requireActual('./tasks'),
     oraTask: jest.fn(),
     npmGlobalTask: jest.fn(),
     licenseGlobalTask: jest.fn(),
@@ -50,10 +48,10 @@ describe('getBootstrapTasks', () => {
         expect(licenseGlobalTask).toHaveBeenCalledWith(answers.licenseKey)
     })
 
-    test.each(<([string, string, Record<string, string>][])>[
-        [FeatureChoices.Icinga2, '@sakuli/forwarder-icinga2', { "sakuli.forwarder.icinga2.enabled": "true" }],
-        [FeatureChoices.OMD, '@sakuli/forwarder-gearman', { "sakuli.forwarder.gearman.enabled": "true" }],
-        [FeatureChoices.CheckMk, '@sakuli/forwarder-checkmk', { "sakuli.forwarder.check_mk.enabled": "true" }]
+    test.each(<([string, string, ConfigurationRecord][])>[
+        [FeatureChoices.Icinga2, '@sakuli/forwarder-icinga2', { "sakuli.forwarder.icinga2.enabled": {isComment: false, value: "true"} }],
+        [FeatureChoices.OMD, '@sakuli/forwarder-gearman', { "sakuli.forwarder.gearman.enabled": {isComment: false, value: "true"} }],
+        [FeatureChoices.CheckMk, '@sakuli/forwarder-checkmk', { "sakuli.forwarder.check_mk.enabled": {isComment: false, value: "true"} }]
     ])('when user choosed "%s" package %s should installed with at least %s', (
         answer,
         packageName,

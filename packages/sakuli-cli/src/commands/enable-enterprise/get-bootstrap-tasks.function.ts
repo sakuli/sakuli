@@ -1,6 +1,6 @@
 import { EnterpriseAnswers, hasLicense } from "./enterprise-answers.interface";
 import { FeatureChoices } from "./feature-choices.const";
-import { oraTask, Task, getPackageBootstrapTasks, npmGlobalTask, licenseGlobalTask } from "./tasks";
+import { oraTask, Task, getPackageBootstrapTasks, npmGlobalTask, licenseGlobalTask, configValue, commentValue } from "./tasks";
 
 export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     const tasks: Task[] = [];
@@ -17,13 +17,13 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
         tasks.push(...getPackageBootstrapTasks(
             '@sakuli/forwarder-checkmk',
             {
-                "sakuli.forwarder.check_mk.enabled": "true",
-                "sakuli.forwarder.check_mk.spooldir": "/var/lib/check_mk_agent/spool",
-                "sakuli.forwarder.check_mk.freshness": "600",
-                "sakuli.forwarder.check_mk.spoolfile_prefix": "sakuli_suite",
-                "sakuli.forwarder.check_mk.service_description": "${testsuite.id}",
-                "sakuli.forwarder.check_mk.piggyback_hostname": "local",
-                "sakuli.forwarder.check_mk.output.details": "true"
+                "sakuli.forwarder.check_mk.enabled": configValue("true"),
+                "sakuli.forwarder.check_mk.spooldir": commentValue(),
+                "sakuli.forwarder.check_mk.freshness": commentValue(),
+                "sakuli.forwarder.check_mk.spoolfile_prefix": commentValue(),
+                "sakuli.forwarder.check_mk.service_description": commentValue(),
+                "sakuli.forwarder.check_mk.piggyback_hostname": commentValue(),
+                "sakuli.forwarder.check_mk.output.details": commentValue()
             }
         ))
     }
@@ -32,12 +32,12 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
         tasks.push(...getPackageBootstrapTasks(
             '@sakuli/forwarder-gearman',
             {
-                "sakuli.forwarder.gearman.enabled": "true",
-                "sakuli.forwarder.gearman.encryption": "true",
-                "sakuli.forwarder.gearman.secret.key": "secret-password",
-                "sakuli.forwarder.gearman.server.host": "",
-                "sakuli.forwarder.gearman.server.port": "4730",
-                "sakuli.forwarder.gearman.server.queue": "check_results"
+                "sakuli.forwarder.gearman.enabled": configValue("true"),
+                "sakuli.forwarder.gearman.server.host": configValue(),
+                "sakuli.forwarder.gearman.server.port": commentValue(),
+                "sakuli.forwarder.gearman.encryption": commentValue(),
+                "sakuli.forwarder.gearman.secret.key": commentValue(),
+                "sakuli.forwarder.gearman.server.queue": commentValue()
             }
         ))
     }
@@ -46,14 +46,14 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
         tasks.push(...getPackageBootstrapTasks(
             '@sakuli/forwarder-icinga2',
             {
-                "sakuli.forwarder.icinga2.enabled": "true",
-                "sakuli.forwarder.icinga2.api.host": "",
-                "sakuli.forwarder.icinga2.api.port": "5665",
-                "sakuli.forwarder.icinga2.api.username": "",
-                "sakuli.forwarder.icinga2.api.password": "",
-                "sakuli.forwarder.icinga2.hostname": "",
-                "sakuli.forwarder.icinga2.service_description": "${testsuite.id}",
-                "sakuli.forwarder.icinga2.allow_insecure_connection": "false"
+                "sakuli.forwarder.icinga2.enabled": configValue("true"),
+                "sakuli.forwarder.icinga2.api.host": configValue(),
+                "sakuli.forwarder.icinga2.api.username": configValue(),
+                "sakuli.forwarder.icinga2.api.password": configValue(),
+                "sakuli.forwarder.icinga2.hostname": configValue(),
+                "sakuli.forwarder.icinga2.api.port": commentValue(),
+                "sakuli.forwarder.icinga2.service_description": commentValue(),
+                "sakuli.forwarder.icinga2.allow_insecure_connection": commentValue()
             }
         ))
     }

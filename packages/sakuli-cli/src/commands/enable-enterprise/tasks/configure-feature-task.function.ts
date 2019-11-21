@@ -1,10 +1,6 @@
 import { promises as fs } from "fs";
 import { join } from "path";
-
-export const recordToPropertiesString = (record: Record<string, string>) => Object
-    .entries(record)
-    .map(([key, value]) => `${key}=${value}`)
-    .join('\n')
+import { ConfigurationRecord, recordToPropertiesString } from "./configuration-record.type";
 
 /**
  * Creates a task that will convert the configurationRecords (key - value pairs)
@@ -17,7 +13,7 @@ export const recordToPropertiesString = (record: Record<string, string>) => Obje
  * @param path - the path to `sakuli.properties`
  */
 export const configureFeatureTask = (
-    configurationRecord: Record<string, string>,
+    configurationRecord: ConfigurationRecord,
     path: string = process.cwd()
 ) => async () => {
     await fs.writeFile(
