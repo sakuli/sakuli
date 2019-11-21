@@ -1,4 +1,5 @@
 import { recordToPropertiesString } from "./configuration-record.type"
+import { EOL } from "os";
 
 describe('recordTo', () => {
 
@@ -10,6 +11,7 @@ describe('recordTo', () => {
 
         expect(result).toContain('#comment-me-out=i-am-hidden');
         expect(result).toContain('\nshow-me-out=i-am-visible');
+        expect(result.endsWith(EOL)).toBeTruthy();
     })
 
 })

@@ -1,3 +1,4 @@
+import { EOL } from "os";
 
 export interface ConfigValue {
     isComment: boolean,
@@ -12,4 +13,4 @@ export type ConfigurationRecord = Record<string, ConfigValue>;
 export const recordToPropertiesString = (record: ConfigurationRecord) => Object
     .entries(record)
     .map(([key, {isComment, value}]) => `${isComment ? '#' : ''}${key}=${value}`)
-    .join('\n')
+    .join(EOL) + EOL

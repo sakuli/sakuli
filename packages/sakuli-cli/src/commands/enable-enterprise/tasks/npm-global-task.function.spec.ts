@@ -1,6 +1,6 @@
 import {promises as fs} from 'fs';
 import { sep, join } from 'path';
-import { homedir } from 'os';
+import { homedir, EOL } from 'os';
 import { npmGlobalTask } from './npm-global-task.function';
 import rimraf = require('rimraf');
 
@@ -26,7 +26,8 @@ describe('npmGlobalTask', () => {
 
         // THEN
         const npmRcContent = await fs.readFile(join(homeDirMockPath, '.npmrc')).then(buf => buf.toString());
-        expect(npmRcContent).toContain('//registry.npmjs.org/:_authToken=abcdefg')
+        expect(npmRcContent).toContain('//registry.npmjs.org/:_authToken=abcdefg');
+        expect(npmRcContent.endsWith(EOL)).toBeTruthy();
     })
 
     it('should append registry with license key to existing .npmrc', async () => {

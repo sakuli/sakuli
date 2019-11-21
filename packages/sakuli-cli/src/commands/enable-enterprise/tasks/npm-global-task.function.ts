@@ -1,8 +1,8 @@
 import { join } from "path";
-import { homedir } from "os";
+import { homedir, EOL } from "os";
 import { promises as fs } from 'fs'
 
-const npmRcContent = (key: string) => `//registry.npmjs.org/:_authToken=${key}`;
+const npmRcContent = (key: string) => `//registry.npmjs.org/:_authToken=${key}${EOL}`;
 
 export const npmGlobalTask = (key: string) => async () => {
     const npmRcFile = join(homedir(), '.npmrc');
