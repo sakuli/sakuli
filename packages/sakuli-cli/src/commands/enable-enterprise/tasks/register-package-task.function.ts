@@ -16,5 +16,5 @@ export const registerPackageTask = (npmPackageName: string, packageJsonPath: str
     }
     packageJson.sakuli.presetProvider.push(npmPackageName);
 
-    await fs.writeFile(packageJsonFilePath, JSON.stringify(packageJson));
+    await fs.writeFile(packageJsonFilePath, JSON.stringify(packageJson, null, 2));
 }
