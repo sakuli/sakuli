@@ -31,7 +31,7 @@ describe('getBootstrapTasks', () => {
         expect(tasks.length).toBe(0);
     })
 
-    it('should return an empty task list when the user has no license', () => {
+    it('should configure npm config task and licence config task', () => {
 
         // GIVEN
         const answers: EnterpriseAnswers = {
