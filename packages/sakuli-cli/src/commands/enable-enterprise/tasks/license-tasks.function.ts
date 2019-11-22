@@ -24,11 +24,10 @@ const licenseGlobalNixTask = (key: string) => async () => {
 
 /**
  * Creates a task that sets the SAKULI_LICENSE_KEY on the specific platform
- * @param key The license key to be set
+ * @param key - The license key to be set
  */
 export const licenseGlobalTask = (key: string) => {
     return process.platform === 'win32'
         ? licenseGlobalWinTask(key)
         : licenseGlobalNixTask(key)
 };
-
