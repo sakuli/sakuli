@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.2.0
+- Enhancement: Fetch Retry Performance [(#251)](https://github.com/sakuli/sakuli/issues/251) 
+- Enhancement: Add Typescript support [(#245)](https://github.com/sakuli/sakuli/issues/245) 
+- Enhancement: CLI - Sakuli enterprise project bootstrap [(#242)](https://github.com/sakuli/sakuli/issues/242)
+- Enhancement: Enhance documentation for Action-API and Fetch-API [(#241)](https://github.com/sakuli/sakuli/issues/241)
+- Enhancement: Add Apache License [(#240)](https://github.com/sakuli/sakuli/issues/240)
+- Enhancement: Improve performance on element fetching [(#221)](https://github.com/sakuli/sakuli/issues/221)
+- Enhancement: steps.cache mix up in testcases [(#204)](https://github.com/sakuli/sakuli/issues/204)
+- Enhancement: Get rid of `done` function in testfiles [(#187)](https://github.com/sakuli/sakuli/issues/187)
+- Bugfix: Add missing Assertion API [(#142)](https://github.com/sakuli/sakuli/issues/142)
+- Enhancement: Switch between frames automatically [(#134)](https://github.com/sakuli/sakuli/issues/134)
+- Bugfix: Highlight does not show red border around element [(#133)](https://github.com/sakuli/sakuli/issues/133)
+- Bugfix: Firefox click not working on some elements [(#120)](https://github.com/sakuli/sakuli/issues/120)
+- Enhancement: Add contribution guideline [(#39)](https://github.com/sakuli/sakuli/issues/39)
+- Enhancement: Legacy testsuite generator [(#22)](https://github.com/sakuli/sakuli/issues/22)
+
 ## v2.1.3
 - Bugfix: Sakuli Errors are not forwarded to log-file [(#232)](https://github.com/sakuli/sakuli/issues/232)
 - Bugfix: Data object are not logged properly [(#230)](https://github.com/sakuli/sakuli/issues/230)
