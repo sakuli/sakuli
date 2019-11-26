@@ -101,36 +101,27 @@ export class AccessorUtil {
     }
 
     async enableHook() {
-            await this.webDriver.executeScript(INJECT_SAKULI_HOOK);
+        await this.webDriver.executeScript(INJECT_SAKULI_HOOK);
     }
 
     async openRequests(): Promise<number> {
-            return this.webDriver.executeScript<number>(CHECK_OPEN_REQUESTS);
+        return this.webDriver.executeScript<number>(CHECK_OPEN_REQUESTS);
     }
 
     async resetRequests() {
-            this.webDriver.executeScript(RESET_OPEN_REQUESTS);
+        await this.webDriver.executeScript(RESET_OPEN_REQUESTS);
     }
 
     async waitForOpenRequests(timeout: number) {
-        this.testExecutionContext.logger.info("Waiting for open requests.");
-        let openRequests = 0;
         try {
-            openRequests = await this.openRequests();
-            this.testExecutionContext.logger.info(`Open requests: ${openRequests}`);
-            const startTime = Date.now();
-            while (openRequests) {
-                if (Date.now() - startTime > timeout) {
-                    this.testExecutionContext.logger.info(`Timeout of ${timeout} ms for open requests reached.`);
-                    await this.resetRequests();
-                    break;
-                }
-                openRequests = await this.openRequests();
-            }
-        } catch (e) {
-            this.testExecutionContext.logger.info(`Dynamic wait cancelled, reason: ${e}`);
+            await this.webDriver.wait(async () => {
+                const openRequest = await this.openRequests();
+                return openRequest === 0;
+            }, timeout)
+        } catch(e) {
+            this.testExecutionContext.logger.debug(`Dynamic wait cancelled, reason: ${e}`);
+            await this.resetRequests();
         }
-        this.testExecutionContext.logger.info("Continuing test execution.");
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
@@ -164,7 +155,7 @@ export class AccessorUtil {
         return Promise.resolve([]);
     }
 
-    async fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
+    async fetchElements(query: SahiElementQuery, retry: number = 10, waitTimeout: number = 10_000): Promise<WebElement[]> {
         return this.webDriver.wait<WebElement[]>(() => {
             return this._fetchElements(query, retry).then(
                 (elements) => {
@@ -174,7 +165,8 @@ export class AccessorUtil {
                     return false
                 }
             )
-        }, 10_000);
+        }, waitTimeout);
+
     }
 
     async _fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
@@ -187,39 +179,48 @@ export class AccessorUtil {
             }
             throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
         } catch (e) {
-            if (retry === 0) throw e;
-            this.testExecutionContext.logger.info(e.message);
+            if (retry <= 0) throw e;
+            this.testExecutionContext.logger.debug(e.message);
             return this._fetchElements(query, retry - 1);
         }
     }
 
-    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, ignoreDefaults: boolean = false, retry: number = 10): Promise<WebElement> {
+    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, retry: number = 10, waitTimeout: number = 10_000): Promise<WebElement> {
         return isSahiElementQuery(query)
-            ? this.fetchElements(query, retry).then(([first]) => first)
+            ? this.fetchElements(query, retry, waitTimeout).then(([first]) => first)
             : Promise.resolve(query)
     }
 
-    async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
+    private isRegExpString(identifier: string) {
+        return (identifier.startsWith('/') && identifier.endsWith('/'));
+    }
+
+    private normaliseIdentifierString(identifier: string) {
         if (identifier.startsWith('/')) {
             identifier = identifier.substr(1, identifier.length);
         }
         if (identifier.endsWith('/')) {
             identifier = identifier.substr(identifier.length, 1);
         }
-        const isRegEx = (identifier.startsWith('/') && identifier.endsWith('/'));
+        return identifier;
+    }
+
+    async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
             async ([_, index]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
-                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx));
+                const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier));
                 return [elementsByRegExp[Number(index)]];
             },
-            () => this.getByRegEx(elements, this.stringToRegExp(identifier, isRegEx))
+            () => this.getByRegEx(elements, this.stringToRegExp(identifier))
         )
     }
 
-    private stringToRegExp(str: string, isRegEx: boolean = true) {
+    private stringToRegExp(str: string) {
+        const isRegEx = this.isRegExpString(str);
+        str = this.normaliseIdentifierString(str);
         return new RegExp(isRegEx
             ? str
             : "^\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\s*$"

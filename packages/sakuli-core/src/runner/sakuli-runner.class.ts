@@ -17,7 +17,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     }
 
     /**
-     * Tears up all context providers, merges their results of getContext and pass this result to the testFile Executor
+     * Tears up all lifecycle-hooks, merges their results of getContext and pass this result to the testFile Executor
      * Tears down all service providers after execution of each testFile
      *
      * @param project The Project Structure found by a Project loader
@@ -25,9 +25,11 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
      */
     async execute(project: Project): Promise<any> {
         this.testExecutionContext.startExecution();
-        process.on('unhandledRejection', error => {
-
-        });
+        const handleError = (e: any) => {
+            this.testExecutionContext.error = e;
+        }
+        process.on('unhandledRejection', handleError);
+        process.on('uncaughtException', handleError);
         // onProject Phase
         await this.onProject(project, this.testExecutionContext);
         let result = {};
@@ -94,7 +96,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
             .lifecycleHooks
             .filter(hook => 'requestContext' in hook)
             .map(hook => hook.requestContext!(testExecutionContext, project)));
-        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {});
+        return contexts.reduce((ctx, context) => ({...ctx, ...context}), {...global});
     }
 
     async readFileContent(testFile: TestFile, project: Project, context: TestExecutionContext): Promise<string> {

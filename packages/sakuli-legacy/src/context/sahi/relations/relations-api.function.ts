@@ -1,39 +1,24 @@
 import {By, ILocation, ISize, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {RelationProducer, RelationProducerWithOffset, SahiRelation} from "./sahi-relation.interface";
-import {filterAsync, ifPresent, mapAsync} from "@sakuli/commons";
+import {ifPresent, mapAsync} from "@sakuli/commons";
 import {edges} from "./edges.function";
 import {isLeftOf, isRightOf} from "./vector2.type";
 import {AccessorUtil} from "../accessor";
-import {isSahiElementQuery, SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
+import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {isChildOf} from "../helper/is-child-of.function";
 import {distanceBetween} from "../helper/distance-between.function";
 import {getSiblingIndex} from "../helper/get-sibling-index.function";
 import {getParent} from "../helper/get-parent.function";
 import {parentApi} from "./parent-api.function";
-
-
-interface PositionalInfo {
-    location: ILocation,
-    size: ISize,
-    origin: WebElement
-}
-
-export async function positionalInfo(origin: WebElement): Promise<PositionalInfo> {
-    const [location, size] = await Promise.all([
-        origin.getLocation(),
-        origin.getSize()
-    ]);
-    return ({location, size, origin});
-}
-
-export type RelationApi = ReturnType<typeof relationsApi>;
+import {PositionalInfo, positionalInfo} from "./positional-info.function";
+import { RelationApi } from "./relations-api.interface";
 
 export function relationsApi(
     driver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     testExecutionContext: TestExecutionContext,
-) {
+): RelationApi {
     const NULL_QUERY = {locator: By.js(`return []`), relations: [], identifier: new RegExp('')};
 
     function webElementsToQuery(elements: WebElement[]) {
@@ -168,11 +153,17 @@ export function relationsApi(
     };
 
     const {
-        _parentNode
+        _parentNode,
+        _parentCell,
+        _parentRow,
+        _parentTable
     } = parentApi(driver, accessorUtil, testExecutionContext);
 
     return ({
         _parentNode,
+        _parentCell,
+        _parentRow,
+        _parentTable,
         _in,
         _near,
         _rightOf,

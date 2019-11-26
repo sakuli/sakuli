@@ -1,11 +1,11 @@
 #!/bin/node
 
 /**
- * 
+ *
  * For development only
- * 
+ *
  * this will take the script from sharedScripts property in package.json and adds this script to your packages
- * 
+ *
  */
 
 const args = require('yargs').argv;
@@ -33,23 +33,25 @@ const packagesDir = join(dir, 'packages');
             .forEach(async ([packageName, sharedPackageJson]) => {
                 const _sharedScripts = {...sharedScripts};
                 const pkgJson = await readJson(sharedPackageJson);
-                const { currentScript } = pkgJson;
-                Object.keys(_sharedScripts).forEach(scriptKey => {
-                    _sharedScripts[scriptKey] = `${_sharedScripts[scriptKey]}`
-                    .replace(/\{package\}/g, packageName)
-                })
-                const newPackageJson = {
-                    ...pkgJson,
-                    scripts: {
-                        ...pkgJson.scripts,
-                        ..._sharedScripts
+                if (pkgJson && pkgJson.name.startsWith('@sakuli')) {
+
+                    Object.keys(_sharedScripts).forEach(scriptKey => {
+                        _sharedScripts[scriptKey] = `${_sharedScripts[scriptKey]}`
+                            .replace(/\{package\}/g, packageName)
+                    })
+                    const newPackageJson = {
+                        ...pkgJson,
+                        scripts: {
+                            ...pkgJson.scripts,
+                            ..._sharedScripts
+                        }
                     }
+                    console.log('Would write to ' + sharedPackageJson);
+                    console.log(JSON.stringify(_sharedScripts, null, 2))
+                    await writeJson(sharedPackageJson, newPackageJson, {
+                        spaces: 2
+                    });
                 }
-                console.log('Would write to ' + sharedPackageJson);
-                console.log(JSON.stringify(_sharedScripts, null, 2))
-                await writeJson(sharedPackageJson, newPackageJson, {
-                    spaces: 2
-                });
             })
     }
 })();

@@ -2,6 +2,23 @@ import {TestExecutionContext} from "./test-execution-context.class";
 import {TestSuiteContext} from "./test-suite-context.class";
 import {mockPartial} from "sneer";
 import {SimpleLogger} from "@sakuli/commons";
+import {
+    END_EXECUTION,
+    END_TESTACTION,
+    END_TESTCASE,
+    END_TESTSTEP,
+    END_TESTSUITE,
+    START_EXECUTION,
+    START_TESTACTION,
+    START_TESTCASE,
+    START_TESTSTEP,
+    START_TESTSUITE,
+    TestExecutionContextEventTypes,
+    UPDATE_TESTACTION,
+    UPDATE_TESTCASE,
+    UPDATE_TESTSTEP,
+    UPDATE_TESTSUITE
+} from "./test-execution-context.events";
 
 describe('TestExecutionContext', () => {
 
@@ -65,7 +82,6 @@ describe('TestExecutionContext', () => {
         });
 
         it('complex', () => {
-
             tec.startTestSuite({id: 'S001'});
             tec.endTestSuite();
             tec.startTestSuite({id: 'S002'});
@@ -155,4 +171,102 @@ describe('TestExecutionContext', () => {
             expect(() => tec.endExecution()).toThrow()
         });
     });
+
+    describe('events', () => {
+
+        type EventSpies = {
+            startExecution: jest.Mock<any, any>,
+            endExecution: jest.Mock<any, any>,
+            startTestSuite: jest.Mock<any, any>,
+            updateTestSuite: jest.Mock<any, any>,
+            endTestSuite: jest.Mock<any, any>,
+            startTestCase: jest.Mock<any, any>,
+            updateTestCase: jest.Mock<any, any>,
+            endTestCase: jest.Mock<any, any>,
+            startTestStep: jest.Mock<any, any>,
+            updateTestStep: jest.Mock<any, any>,
+            endTestStep: jest.Mock<any, any>,
+            startTestAction: jest.Mock<any, any>,
+            updateTestAction: jest.Mock<any, any>,
+            endTestAction: jest.Mock<any, any>,
+        };
+        let spies: EventSpies;
+        beforeEach(() => {
+            spies = {
+                startExecution: jest.fn(),
+                endExecution: jest.fn(),
+                startTestSuite: jest.fn(),
+                updateTestSuite: jest.fn(),
+                endTestSuite: jest.fn(),
+                startTestCase: jest.fn(),
+                updateTestCase: jest.fn(),
+                endTestCase: jest.fn(),
+                startTestStep: jest.fn(),
+                updateTestStep: jest.fn(),
+                endTestStep: jest.fn(),
+                startTestAction: jest.fn(),
+                updateTestAction: jest.fn(),
+                endTestAction: jest.fn(),
+            };
+            tec.on(START_EXECUTION, spies.startExecution);
+            tec.on(END_EXECUTION, spies.endExecution);
+            tec.on(START_TESTSUITE, spies.startTestSuite);
+            tec.on(UPDATE_TESTSUITE, spies.updateTestSuite);
+            tec.on(END_TESTSUITE, spies.endTestSuite);
+            tec.on(START_TESTCASE, spies.startTestCase);
+            tec.on(UPDATE_TESTCASE, spies.updateTestCase);
+            tec.on(END_TESTCASE, spies.endTestCase);
+            tec.on(START_TESTSTEP, spies.startTestStep);
+            tec.on(UPDATE_TESTSTEP, spies.updateTestStep);
+            tec.on(END_TESTSTEP, spies.endTestStep);
+            tec.on(START_TESTACTION, spies.startTestAction);
+            tec.on(UPDATE_TESTACTION, spies.updateTestAction);
+            tec.on(END_TESTACTION, spies.endTestAction);
+
+            // Prevent code from autoformatting: https://stackoverflow.com/a/19492318/2218197
+            // @formatter:off
+            tec.startExecution();
+                tec.startTestSuite({id: 'S001'});
+                tec.updateCurrentTestSuite({});
+                tec.endTestSuite();
+                tec.startTestSuite({id: 'S002'});
+                    tec.startTestCase({id: 'S002C001'});
+                        tec.startTestStep();
+                        tec.updateCurrentTestStep({id: 'late added'});
+                            tec.startTestAction({});
+                            tec.updateCurrentTestAction({id: 'Action'});
+                            tec.endTestAction();
+                        tec.endTestStep();
+                    tec.endTestCase();
+                    tec.startTestCase({id: 'S002C002'});
+                    tec.updateCurrentTestCase({});
+                    tec.endTestCase();
+                tec.endTestSuite();
+            tec.endExecution();
+            // @formatter:on
+        });
+
+        it.each(<[TestExecutionContextEventTypes, number, keyof EventSpies][]>[
+            [START_EXECUTION, 1, 'startExecution'],
+            [END_EXECUTION, 1, 'endExecution'],
+            [START_TESTSUITE, 2, 'startTestSuite'],
+            [UPDATE_TESTSUITE, 1, 'updateTestSuite'],
+            [END_TESTSUITE, 2, 'endTestSuite'],
+            [START_TESTCASE, 2, 'startTestCase'],
+            [UPDATE_TESTCASE, 1, 'updateTestCase'],
+            [END_TESTCASE, 2, 'endTestCase'],
+            [START_TESTSTEP, 1, 'startTestStep'],
+            [UPDATE_TESTSTEP, 1, 'updateTestStep'],
+            [END_TESTSTEP, 1, 'endTestStep'],
+            [START_TESTACTION, 1, 'startTestAction'],
+            [UPDATE_TESTACTION, 1, 'updateTestAction'],
+            [END_TESTACTION, 1, 'endTestAction'],
+        ])("should invoke event %s %i times", (
+            event: TestExecutionContextEventTypes,
+            times: number,
+            spy: keyof EventSpies
+        ) => {
+            expect(spies[spy]).toBeCalledTimes(times);
+        })
+    })
 });

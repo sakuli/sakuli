@@ -1,13 +1,21 @@
-import './winston-workaround';
 import {SakuliRunOptions} from "./sakuli-run-options.interface";
 import {SakuliRunner} from "./runner";
 import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
 import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
-import {CliArgsSource, ifPresent, Maybe} from "@sakuli/commons";
+import {
+    CliArgsSource,
+    DecoratedClassDefaultsSource,
+    EnvironmentSource,
+    ifPresent,
+    Maybe,
+    SimpleLogger,
+    StaticPropertySource
+} from "@sakuli/commons";
 import {Project} from "./loader";
 import {SakuliExecutionContextProvider, TestExecutionContext} from "./runner/test-execution-context";
 import {CommandModule} from "yargs";
-import {SimpleLogger} from "@sakuli/commons";
+import {connectForwarderToTestExecutionContext} from "./forwarder/connect-forwarder-to-test-execution-context.function";
+import {SakuliCoreProperties} from "./sakuli-core-properties.class";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -54,21 +62,40 @@ export class SakuliClass {
         return this.presetRegistry.commandModules.map(cmp => cmp(this));
     }
 
-    async run(_opts: string | SakuliRunOptions): Promise<TestExecutionContext> {
+    async initializeProject(_opts: string | SakuliRunOptions): Promise<Project> {
         const opts = typeof _opts === 'string' ? {path: _opts} : _opts;
         let project: Project = new Project(opts.path || process.cwd());
-        await project.installPropertySource(new CliArgsSource(process.argv));
-        for(let loader of this.loader) {
+
+        await project.installPropertySource(new StaticPropertySource({
+            'sakuli.testsuite.folder': project.rootDir
+        }));
+        await project.installPropertySource(new DecoratedClassDefaultsSource(SakuliCoreProperties));
+
+        for (let loader of this.loader) {
             project = (await loader.load(project)) || project;
         }
+        await project.installPropertySource(new EnvironmentSource());
+        await project.installPropertySource(new CliArgsSource(process.argv));
+        return project;
+    }
 
+    async run(project: Project): Promise<TestExecutionContext> {
+        const forwarderTearDown = await Promise.all(this.forwarder
+            .map(forwarder => connectForwarderToTestExecutionContext(
+                forwarder,
+                this.testExecutionContext,
+                project
+            )));
         const runner = new SakuliRunner(
             this.lifecycleHooks,
             this.testExecutionContext
         );
         await runner.execute(project);
 
-        await Promise.all(this.forwarder.map(f => f.forward(this.testExecutionContext, project)));
+        await Promise.all(forwarderTearDown
+            .map(teardown => teardown())
+        );
+
         return this.testExecutionContext;
     }
 

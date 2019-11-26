@@ -2,7 +2,8 @@ import {Project, ProjectLoader} from '@sakuli/core'
 import {join} from 'path';
 import {readdirSync, readFileSync,} from 'fs';
 import {parseSahiTestsuiteDefiniton} from './parse-sahi-testsuite-definition.function';
-import {ifPresent, JavaPropertiesFileSource, throwIfAbsent} from '@sakuli/commons';
+import {DecoratedClassDefaultsSource, ifPresent, JavaPropertiesFileSource, throwIfAbsent} from '@sakuli/commons';
+import {LegacyProjectProperties} from './legacy-project-properties.class';
 
 export class LegacyLoader implements ProjectLoader {
 
@@ -26,11 +27,14 @@ export class LegacyLoader implements ProjectLoader {
     async load(project: Project): Promise<Project> {
         const path = project.rootDir;
         const rootDirContents = readdirSync(project.rootDir);
+        await project.installPropertySource(new DecoratedClassDefaultsSource(LegacyProjectProperties));
         await this.readProperties(project);
         const testsuiteSuiteFile = rootDirContents.find(dir => dir === 'testsuite.suite');
         const testSuiteFiles = ifPresent(testsuiteSuiteFile,
             file => parseSahiTestsuiteDefiniton(readFileSync(join(path, file)).toString()),
-            () => { throw Error(`Unable to find testsuite.suite in ${path}`) }
+            () => {
+                throw Error(`Unable to find testsuite.suite in ${path}`)
+            }
         );
         testSuiteFiles.forEach(tsf => project.addTestFile(tsf));
 

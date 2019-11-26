@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0-RC3",
+  "version": "2.1.3",
   "packages": [
     "packages/*"
   ],
@@ -12,7 +12,10 @@
       ]
     },
     "version": {
-      "allowBranch": "release/*"
+      "allowBranch": [
+        "release/*",
+        "develop"
+      ]
     }
   }
 }

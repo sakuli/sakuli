@@ -2,7 +2,7 @@ import {Region as NutRegion, screen} from "@nut-tree/nut-js";
 import {FileType} from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import {parse} from "path";
 import {cwd} from "process";
-import {Region} from "../region.interface";
+import {Region} from "../region";
 
 const getCoordinates = async (region: Region) => {
     return ({
@@ -13,7 +13,26 @@ const getCoordinates = async (region: Region) => {
     })
 };
 
-export type SearchResult = {left: number, top: number, width: number, height: number};
+/**
+ * getTimezoneOffset returns the timezone offset to UTC in milliseconds
+ */
+const getTimezoneOffset = (): number => {
+    return new Date().getTimezoneOffset() * 60_000;
+};
+
+/**
+ * getTimestamp returns the local time in format YYYY-MM-ddTHH:mm:ss
+ * @param when Timestamp in milliseconds
+ * @param offset Timezone offset in milliseconds
+ */
+export const getTimestamp = (when: number = Date.now(), offset: number = 0): string => {
+    const timestamp = new Date(when - offset).toISOString();
+    const sliceIndex = timestamp.indexOf('.');
+    const timestampString = (sliceIndex > -1) ? timestamp.slice(0, sliceIndex) : timestamp;
+    return timestampString.split(":").join("-");
+};
+
+export type SearchResult = { left: number, top: number, width: number, height: number };
 
 export const ScreenApi = {
     async find(filename: string, path: string, confidence: number, searchRegion: Region): Promise<SearchResult> {
@@ -80,6 +99,6 @@ export const ScreenApi = {
     async takeScreenshotWithTimestamp(filename: string): Promise<string> {
         const pathParts = parse(filename);
         const outputDir = (pathParts.dir && pathParts.dir.length > 0) ? pathParts.dir : cwd();
-        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${new Date().toISOString()}_`, "");
+        return screen.capture(pathParts.name, FileType.PNG, outputDir, `${getTimestamp(Date.now(), getTimezoneOffset())}_`, "");
     }
 };

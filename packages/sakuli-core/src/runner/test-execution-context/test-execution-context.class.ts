@@ -14,6 +14,28 @@ import {TestActionContext} from "./test-action-context.class";
 import {toJson} from "./test-context-entity-to-json.function";
 import {TestExecutionContextRaw} from "./test-execution-context-raw.interface";
 import {TestContextEntityState} from "./test-context-entity-state.class";
+import {EventEmitter} from "events";
+import {
+    END_EXECUTION,
+    END_TESTACTION,
+    END_TESTCASE,
+    END_TESTSTEP,
+    END_TESTSUITE,
+    START_EXECUTION,
+    START_TESTACTION,
+    START_TESTCASE,
+    START_TESTSTEP,
+    START_TESTSUITE,
+    TestActionChangeListener, TestActionEndListener,
+    TestCaseChangeListener, TestCaseEndListener,
+    TestExecutionContextEventTypes,
+    TestStepChangeListener, TestStepEndListener,
+    TestSuiteChangeListener, TestSuiteEndListener,
+    UPDATE_TESTACTION,
+    UPDATE_TESTCASE,
+    UPDATE_TESTSTEP,
+    UPDATE_TESTSUITE
+} from "./test-execution-context.events";
 
 export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
 
@@ -21,9 +43,8 @@ export type TestExecutionChangeListener = (state: TestExecutionContext) => void;
  * An execution-context is the main bridge between sakuli and any api that runs on sakuli
  *
  */
-export class TestExecutionContext implements Measurable {
+export class TestExecutionContext extends EventEmitter implements Measurable {
 
-    private changeListeners: TestExecutionChangeListener[] = [];
     startDate: Date | null = null;
     endDate: Date | null = null;
     readonly testSuites: TestSuiteContext[] = [];
@@ -32,11 +53,33 @@ export class TestExecutionContext implements Measurable {
     constructor(
         readonly logger: SimpleLogger
     ) {
+        super();
+    }
+
+    on(e: typeof START_EXECUTION, cb: (e: TestExecutionContext) => void): this;
+    on(e: typeof END_EXECUTION, cb: (e: TestExecutionContext) => void): this;
+    on(e: typeof START_TESTSUITE, cb: TestSuiteChangeListener): this;
+    on(e: typeof UPDATE_TESTSUITE, cb: TestSuiteChangeListener): this;
+    on(e: typeof END_TESTSUITE, cb: TestSuiteEndListener): this;
+    on(e: typeof START_TESTCASE, cb: TestCaseChangeListener): this;
+    on(e: typeof UPDATE_TESTCASE, cb: TestCaseChangeListener): this;
+    on(e: typeof END_TESTCASE, cb: TestCaseEndListener): this;
+    on(e: typeof START_TESTSTEP, cb: TestStepChangeListener): this;
+    on(e: typeof UPDATE_TESTSTEP, cb: TestStepChangeListener): this;
+    on(e: typeof END_TESTSTEP, cb: TestStepEndListener): this;
+    on(e: typeof START_TESTACTION, cb: TestActionChangeListener): this;
+    on(e: typeof UPDATE_TESTACTION, cb: TestActionChangeListener): this;
+    on(e: typeof END_TESTACTION, cb: TestActionEndListener): this;
+    on(e: 'change', cb: (e: TestExecutionContext) => void): this;
+    on(type: TestExecutionContextEventTypes | 'change', listener: (...args: any[]) => void): this {
+        super.on(type, listener);
+        return this;
     }
 
     startExecution() {
         this.startDate = new Date();
-        this.logger.info( "Started Execution");
+        this.logger.info("Started Execution");
+        this.emit(START_EXECUTION, this);
         this.emitChange();
     }
 
@@ -54,11 +97,12 @@ export class TestExecutionContext implements Measurable {
         } else {
             throw new Error('You cannot end an execution before it has been started. Please call TestExecutionContext::startExecution before call endExecution')
         }
-        this.logger.info( "Finished Execution");
+        this.logger.info("Finished Execution");
+        this.emit(END_EXECUTION, this);
         this.emitChange();
     }
 
-    get entites() {
+    get entities() {
         return [
             ...this.testSuites,
             ...this.testCases,
@@ -68,7 +112,7 @@ export class TestExecutionContext implements Measurable {
     }
 
     get testCases() {
-        return this.testSuites.reduce((tc, ts)=> [...ts.testCases], [] as TestCaseContext[])
+        return this.testSuites.reduce((tc, ts) => [...ts.testCases], [] as TestCaseContext[])
     }
 
     get testSteps() {
@@ -89,9 +133,9 @@ export class TestExecutionContext implements Measurable {
 
     startTestSuite(testSuite: Partial<TestSuiteContext> = {}) {
         if (this.isExecutionStarted()) {
-            this.testSuites.push(new TestSuiteContext);
-            this.updateCurrentTestSuite({startDate: new Date()});
-            this.updateCurrentTestSuite(testSuite);
+            const newTestSuite = Object.assign(new TestSuiteContext(), testSuite, {startDate: new Date()});
+            this.testSuites.push(newTestSuite);
+            this.emit(START_TESTSUITE, newTestSuite);
             this.emitChange();
         } else {
             throw Error('You have to start execution before starting a testsuite');
@@ -102,21 +146,28 @@ export class TestExecutionContext implements Measurable {
         return [...this.testSuites].pop();
     }
 
-    updateCurrentTestSuite(testSuite: Partial<TestSuiteContext>) {
+    updateCurrentTestSuite(testSuite: Partial<TestSuiteContext>): TestSuiteContext {
+        const updatedTestSuite = this._updateCurrentTestSuite(testSuite);
+        this.emit(UPDATE_TESTSUITE, updatedTestSuite);
+        this.emitChange();
+        return updatedTestSuite;
+    }
+
+    private _updateCurrentTestSuite(testSuite: Partial<TestSuiteContext>): TestSuiteContext {
         const current = throwIfAbsent(
             this.getCurrentTestSuite(),
             Error('There is no current Testsuite to update. Please ensure that you already called TestExecutionContext::startTestSuite()')
         );
-        this.testSuites[this.testSuites.length - 1] = Object.assign(
+        return this.testSuites[this.testSuites.length - 1] = Object.assign(
             (new TestSuiteContext),
             current,
             testSuite
         );
-        this.emitChange();
     }
 
     endTestSuite() {
-        this.updateCurrentTestSuite({endDate: new Date()});
+        const updatedTestSuite = this._updateCurrentTestSuite({endDate: new Date()});
+        this.emit(END_TESTSUITE, updatedTestSuite);
         this.emitChange();
     }
 
@@ -125,13 +176,14 @@ export class TestExecutionContext implements Measurable {
             this.getCurrentTestSuite(),
             Error(`Cannot start testcase because no test suite has been started`)
         );
-        this.updateCurrentTestSuite({
+        const newTestCase = Object.assign(new TestCaseContext, testCase, {startDate: new Date()});
+        this._updateCurrentTestSuite({
             testCases: [
                 ...suite.testCases,
-                Object.assign(new TestCaseContext, testCase)
+                newTestCase
             ]
         });
-        this.updateCurrentTestCase({startDate: new Date()});
+        this.emit(START_TESTCASE, newTestCase);
         this.emitChange();
     }
 
@@ -144,6 +196,13 @@ export class TestExecutionContext implements Measurable {
     }
 
     updateCurrentTestCase(testCaseContext: Partial<TestCaseContext>) {
+        const updateTestCase = this._updateCurrentTestCase(testCaseContext);
+        this.emit(UPDATE_TESTCASE, updateTestCase);
+        this.emitChange();
+        return updateTestCase;
+    }
+
+    private _updateCurrentTestCase(testCaseContext: Partial<TestCaseContext>) {
         const suite = throwIfAbsent(
             this.getCurrentTestSuite(),
             Error(`Cannot get testcase because no test suite has been started`)
@@ -152,21 +211,22 @@ export class TestExecutionContext implements Measurable {
             this.getCurrentTestCase(),
             Error(`Cannot get testcase because no test suite has been started`)
         );
-        suite.testCases[suite.testCases.length - 1] = Object.assign(
+        const updatedTestCase = suite.testCases[suite.testCases.length - 1] = Object.assign(
             new TestCaseContext,
             testCase,
             testCaseContext
         );
-        this.updateCurrentTestSuite({
+        this._updateCurrentTestSuite({
             testCases: suite.testCases
         });
-        this.emitChange();
+        return updatedTestCase;
     }
 
     endTestCase() {
-        this.updateCurrentTestCase({
+        const updatedTestCase = this._updateCurrentTestCase({
             endDate: new Date()
         });
+        this.emit(END_TESTCASE, updatedTestCase);
         this.emitChange();
     }
 
@@ -175,17 +235,25 @@ export class TestExecutionContext implements Measurable {
             this.getCurrentTestCase(),
             Error(`Cannot start teststep because no testcase has been started`)
         );
-        this.updateCurrentTestCase({
+        const newTestStep = Object.assign(new TestStepContext, testStep, {startDate: new Date()});
+        this._updateCurrentTestCase({
             testSteps: [
                 ...testcase.testSteps,
-                Object.assign(new TestStepContext, testStep)
+                newTestStep
             ]
         });
-        this.updateCurrentTestStep({startDate: new Date()});
+        this.emit(START_TESTSTEP, newTestStep);
         this.emitChange();
     }
 
     updateCurrentTestStep(testStep: Partial<TestStepContext>) {
+        const updatedTestStep = this._updateCurrentTestStep(testStep);
+        this.emit(UPDATE_TESTSTEP, updatedTestStep);
+        this.emitChange();
+        return updatedTestStep;
+    }
+
+    private _updateCurrentTestStep(testStep: Partial<TestStepContext>) {
         const testCase = throwIfAbsent(
             this.getCurrentTestCase(),
             Error(`Cannot get testcase because no test suite has been started`)
@@ -194,14 +262,22 @@ export class TestExecutionContext implements Measurable {
             this.getCurrentTestStep(),
             Error(`Cannot get teststep because no test case has been started`)
         );
-        testCase.testSteps[testCase.testSteps.length - 1] = Object.assign(
+        const updatedTestStep = testCase.testSteps[testCase.testSteps.length - 1] = Object.assign(
             new TestStepContext,
             step,
             testStep
         );
-        this.updateCurrentTestCase({
+        this._updateCurrentTestCase({
             testSteps: testCase.testSteps
         });
+        return updatedTestStep;
+    }
+
+    endTestStep() {
+        const updatedStep = this._updateCurrentTestStep({
+            endDate: new Date()
+        });
+        this.emit(END_TESTSTEP, updatedStep);
         this.emitChange();
     }
 
@@ -213,29 +289,35 @@ export class TestExecutionContext implements Measurable {
         return [...testcase.testSteps].pop();
     }
 
-    endTestStep() {
-        this.updateCurrentTestStep({
-            endDate: new Date()
-        });
-        this.emitChange();
-    }
-
-    startTestAction(testaction: Partial<TestActionContext>) {
+    startTestAction(testAction: Partial<TestActionContext>) {
         const testStep = throwIfAbsent(
             this.getCurrentTestStep(),
             Error(`Cannot start testaction because no teststep has been started`)
         );
-        this.updateCurrentTestStep({
+        const newAction = Object.assign(new TestActionContext, testAction, {startDate: new Date()});
+        this._updateCurrentTestStep({
             testActions: [
                 ...testStep.testActions,
-                Object.assign(new TestActionContext, testaction)
+                newAction
             ]
         });
-        this.updateCurrentTestAction({startDate: new Date()});
+        this.emit(START_TESTACTION, newAction);
         this.emitChange();
     }
 
-    updateCurrentTestAction(testaction: Partial<TestActionContext>): any {
+    updateCurrentTestAction(testAction: Partial<TestActionContext>): TestActionContext {
+        const updatedAction = this._updateCurrentTestAction(testAction);
+        this.emit(UPDATE_TESTACTION, updatedAction);
+        this.emitChange();
+        return updatedAction;
+    }
+
+    /**
+     * The actual logic to update a test action - will not emit any event
+     * @param testAction
+     * @private
+     */
+    private _updateCurrentTestAction(testAction: Partial<TestActionContext>): TestActionContext {
         const testStep = throwIfAbsent(
             this.getCurrentTestStep(),
             Error(`Cannot get teststep because no testcase has been started`)
@@ -244,38 +326,37 @@ export class TestExecutionContext implements Measurable {
             this.getCurrentTestAction(),
             Error(`Cannot get testaction because no teststep has been started`)
         );
-        testStep.testActions[testStep.testActions.length - 1] = Object.assign(
+        const updatedAction = testStep.testActions[testStep.testActions.length - 1] = Object.assign(
             new TestActionContext,
             action,
-            testaction
+            testAction
         );
-        this.updateCurrentTestStep({
+        this._updateCurrentTestStep({
             testActions: testStep.testActions
         });
+        return updatedAction;
+    }
+
+    endTestAction() {
+        const finishedAction = this._updateCurrentTestAction({endDate: new Date});
+        this.emit(END_TESTACTION, finishedAction);
         this.emitChange();
     }
 
     getCurrentTestAction(): Maybe<TestActionContext> {
-        const teststep = throwIfAbsent(
+        const testStep = throwIfAbsent(
             this.getCurrentTestStep(),
             Error(`Cannot get testaction because no teststep has been started`)
         );
-        return [...teststep.testActions].pop();
-    }
-
-    endTestAction() {
-        this.updateCurrentTestAction({endDate: new Date});
-        this.emitChange();
+        return [...testStep.testActions].pop();
     }
 
     private emitChange() {
-        this.changeListeners.forEach(listener => {
-            listener(this);
-        })
+        this.emit('change', this);
     }
 
     onChange(listener: TestExecutionChangeListener) {
-        this.changeListeners.push(listener);
+        this.on('change', listener);
     }
 
     get resultState(): TestContextEntityState {

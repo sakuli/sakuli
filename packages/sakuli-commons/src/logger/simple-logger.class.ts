@@ -1,56 +1,69 @@
 import {EventEmitter} from "events";
 import {LogEvent} from "./log-event.interface";
+import {LogLevel} from "./log-level.class";
 
 export class SimpleLogger {
     private emitter = new EventEmitter;
-    constructor() {
+    private level: LogLevel = LogLevel.INFO;
+
+    constructor(logLevel: LogLevel = LogLevel.INFO) {
+        this.level = logLevel;
+    }
+
+    set logLevel(logLevel: LogLevel) {
+        this.level = logLevel;
+    }
+
+    get logLevel(): LogLevel {
+        return this.level;
     }
 
     log(event: LogEvent) {
-        this.emitter.emit('event', event);
+        if (event.level >= this.level) {
+            this.emitter.emit('event', event);
+        }
     }
 
-    onEvent(eventConsumer:(event: LogEvent) => void) {
+    onEvent(eventConsumer: (event: LogEvent) => void) {
         this.emitter.on('event', eventConsumer);
         return () => {
             this.emitter.off('event', eventConsumer);
         }
     }
 
-    debug(message: string, ...data:any[]) {
+    debug(message: string, ...data: any[]) {
         this.log({
-            level: 'DEBUG',
+            level: LogLevel.DEBUG,
             time: new Date(),
             message,
             data
         })
     }
 
-    info(message: string, ...data:any[]) {
+    info(message: string, ...data: any[]) {
         this.log({
-            level: 'INFO',
+            level: LogLevel.INFO,
             time: new Date(),
             message,
             data
         })
     }
 
-    warn(message: string, ...data:any[]) {
+    warn(message: string, ...data: any[]) {
         this.log({
-            level: 'WARN',
+            level: LogLevel.WARN,
             time: new Date(),
             message,
             data
         })
     }
 
-    error(message: string, ...data:any[]) {
+    error(message: string, ...data: any[]) {
         this.log({
-            level: 'ERROR',
+            level: LogLevel.ERROR,
             time: new Date(),
             message,
             data
         })
     }
-
 }

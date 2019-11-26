@@ -1,5 +1,6 @@
-import {CommandLineResult} from "../commandline-result.class";
+
 import {spawn} from "child_process";
+import {CommandLineResult} from "../environment";
 
 export function execute(cmd: string, ...params: string[]): Promise<CommandLineResult> {
     return new Promise<CommandLineResult>((resolve, reject) => {

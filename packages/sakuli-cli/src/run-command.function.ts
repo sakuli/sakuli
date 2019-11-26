@@ -1,21 +1,22 @@
 import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import renderExecution from "./components";
-import {ifPresent, isPresent} from "@sakuli/commons";
-import Youch from "youch";
-import forTerminal from "youch-terminal";
+import {CommandModuleProvider, SakuliCoreProperties, SakuliInstance, TestExecutionContext} from "@sakuli/core";
+import {ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe} from "@sakuli/commons";
 import chalk from "chalk";
-import {createWriteStream} from "fs";
+import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
+import {createLogConsumer} from "./create-log-consumer.function";
+import {join} from "path";
+import {LogLevel} from "@sakuli/commons/dist/logger/log-level.class";
 
 async function renderError(e: Error) {
-    const youch = (new Youch(e, {}));
-    const errorJson = await youch.toJSON().then(forTerminal);
-    console.log(errorJson);
+    console.error(chalk.red(e.toString()));
+    if (e.stack) {
+        console.error(chalk.gray(e.stack.replace(e.toString(), '').trim()));
+    }
 }
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
     function findError(testExecutionContext: TestExecutionContext) {
-        return testExecutionContext.entites.find(e => isPresent(e.error));
+        return testExecutionContext.entities.find(e => isPresent(e.error));
     }
 
     return ({
@@ -28,34 +29,45 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
         },
 
         async handler(runOptions: any) {
-            const logStream = createWriteStream('sakuli.log', {flags: 'a'});
-            sakuli.testExecutionContext.logger.onEvent(e => {
-                logStream.write(`[${e.time}] ${e.level} ${e.message}\n`)
-                if (e.data) {
-                    logStream.write(`${JSON.stringify(e.data, null, 2)}\n`)
-                }
-            });
-            const unmount = renderExecution(sakuli.testExecutionContext);
-            const testExecutionContext = await sakuli.run(runOptions);
+
+            const rendering = testExecutionContextRenderer(sakuli.testExecutionContext);
+            let cleanLogConsumer: Maybe<() => void>;
             try {
-                await ifPresent(testExecutionContext.error, async error => {
+                const project = await sakuli.initializeProject(runOptions);
+                const coreProps = project.objectFactory(SakuliCoreProperties);
+
+                console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`);
+                const logLevel = LogLevel[coreProps.logLevel.toUpperCase() as keyof typeof LogLevel];
+                sakuli.testExecutionContext.logger.logLevel = ifPresent(logLevel,
+                    () => logLevel,
+                    () => LogLevel.INFO
+                );
+                const logPath = ensure<string>(coreProps.sakuliLogFolder, '');
+                await ensurePath(logPath);
+                const logFile = join(logPath, 'sakuli.log');
+                console.log(chalk`Writing logs to: {bold.gray ${logFile}}`);
+                cleanLogConsumer = createLogConsumer(
+                    sakuli.testExecutionContext.logger,
+                    logFile
+                );
+
+                await sakuli.run(project);
+                await rendering;
+                await ifPresent(sakuli.testExecutionContext.error, async error => {
                     console.log(chalk`Error during Execution: \n`);
                     await renderError(error);
-                });
-                await ifPresent(findError(testExecutionContext), async errorEntity => {
+                }, () => Promise.resolve());
+                await ifPresent(findError(sakuli.testExecutionContext), async errorEntity => {
                     await ifPresent(errorEntity.error, async e => {
-                        console.log(chalk`Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}`);
+                        console.log(chalk`\n{underline Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}}:\n`);
                         await renderError(e);
                     });
-                });
-                setTimeout(() => {
-                    unmount();
-                    process.exit(testExecutionContext.resultState)
-                }, 500);
+                }, () => Promise.resolve());
             } catch (e) {
                 await renderError(e);
             } finally {
-                logStream.close();
+                invokeIfPresent(cleanLogConsumer);
+                process.exit(sakuli.testExecutionContext.resultState)
             }
         }
     })

@@ -3,19 +3,21 @@ import {By} from "selenium-webdriver";
 import {AccessorFunction, AccessorIdentifier} from "../api";
 import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
 import {isAccessorIdentifierAttributesWithClassName} from "./accessor-model.interface";
+import {AccessorApi} from "./accessor-api.interface";
 
-export type AccessorApi = ReturnType<typeof accessorApi>;
 export type DefaultAccessors = Pick<AccessorApi, Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">>
 export type AccessorFunctions = Exclude<keyof AccessorApi, "_activeElement" | "_byId" | "_byText" | "_byClassName" | "_byXPath">;
 
-export function accessorApi() {
+export function accessorApi(): AccessorApi {
 
-    function createAccessorFunction(css: string): AccessorFunction {
+    function createAccessorFunction(...css: string[]): AccessorFunction {
         return (identifier: AccessorIdentifier, ...relations: SahiRelation[]) => {
-            let extendedLocator = By.css(css);
-            if(isAccessorIdentifierAttributesWithClassName(identifier)) {
-                extendedLocator = By.css(`${css}.${identifier.className.split(" ").join(".")}`)
-            }
+            let extendedLocator = isAccessorIdentifierAttributesWithClassName(identifier)
+                ? By.css(css
+                    .map(css => `${css}.${identifier.className.split(" ").join(".")}`)
+                    .join(', ')
+                )
+                : By.css(css.join(', '));
             return ({
                 locator: extendedLocator,
                 identifier,
@@ -61,7 +63,7 @@ export function accessorApi() {
             })
         },
         _password: createAccessorFunction('input[type="password"]'),
-        _textbox: createAccessorFunction('input[type="text"]'),
+        _textbox: createAccessorFunction('input[type="text"]', 'input:not([type])'),
         _hidden: createAccessorFunction('input[type="hidden"]'),
         _datebox: createAccessorFunction('input[type="date"]'),
         _datetimebox: createAccessorFunction('input[type="datetime"]'),

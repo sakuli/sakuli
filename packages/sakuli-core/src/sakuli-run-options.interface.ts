@@ -3,4 +3,5 @@ export interface SakuliRunOptions {
     preHook: string[]
     postHook: string[]
     loop: number
+    masterkey: string
 }
