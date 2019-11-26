@@ -23,6 +23,7 @@
   },
   "private": true,
   "scripts": {
+    "audit": "node scripts/npm-audit",
     "rebuild": "npm run clean && npm run bootstrap && npm run build",
     "postinstall": "lerna bootstrap --progress --no-ci",
     "clean": "lerna clean -y",
