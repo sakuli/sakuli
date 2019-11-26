@@ -1,11 +1,13 @@
-import { ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {AccessorUtil} from "../../accessor";
-import {isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString} from "../../sahi-element.interface";
-import {stripIndents} from "common-tags";
-import {timeout} from "../poll-action.function";
-import {INJECT_SAKULI_HOOK} from "../inject.const";
-import {TestExecutionContext} from "@sakuli/core";
-import {CommonActionsApi} from "./common-actions.interface";
+import { ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { AccessorUtil } from "../../accessor";
+import { isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString } from "../../sahi-element.interface";
+import { stripIndents } from "common-tags";
+import { timeout } from "../poll-action.function";
+import { INJECT_SAKULI_HOOK } from "../inject.const";
+import { TestExecutionContext } from "@sakuli/core";
+import { CommonActionsApi } from "./common-actions.interface";
+import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
+import { throwIfAbsent } from "@sakuli/commons/dist";
 
 export function commonActionsApi(
     webDriver: ThenableWebDriver,
@@ -34,17 +36,30 @@ export function commonActionsApi(
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
-        await element.getId();
-        const oldBorder = await webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[0].style.border;
-            arguments[0].style.border = '2px solid red'
-            return oldBorder;
-        `, element);
-        await _wait(timeoutMs);
-        await webDriver.executeScript(stripIndents`
-            const oldBorder = arguments[1];
-            arguments[0].style.border = oldBorder
-        `, element, oldBorder);
+            
+        const elementRect = await element.getRect();
+        await webDriver.executeAsyncScript(stripIndents`
+            var rect = arguments[0];
+            var timeout = arguments[1];
+            var done = arguments[arguments.length -1];
+            var element = document.createElement('div');
+
+            element.style.border = '2px solid red';
+            element.style.position = 'absolute';
+            element.style.top = rect.y + 'px';
+            element.style.left = rect.x + 'px';
+            element.style.width = rect.width + 'px';
+            element.style.height = rect.height + 'px';
+            element.style.zIndex = 99999;
+            element.style.background = 'transparent';
+
+            document.body.appendChild(element);
+
+            setTimeout(function() {
+                document.body.removeChild(element);
+                done();
+            }, timeout);
+        `, elementRect, timeoutMs);
     }
 
     async function _wait(millis: number, expression?: (...locators: SahiElementQueryOrWebElement[]) => Promise<boolean>): Promise<void> {

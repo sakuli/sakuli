@@ -1,3 +1,12 @@
+export interface NewableTestCase {
+    new(
+        caseId?: string,
+        warningTime?: number,
+        criticalTime?: number,
+        _imagePath?: string[]
+    ): TestCase;
+}
+
 export interface TestCase {
     readonly caseId?: string;
     readonly warningTime: number;
@@ -20,9 +29,9 @@ export interface TestCase {
      */
     endOfStep(
         stepName: string,
-        warning: number,
-        critical: number,
-        forward: boolean
+        warning?: number,
+        critical?: number,
+        forward?: boolean
     ): void;
 
     /**

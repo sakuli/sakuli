@@ -1,6 +1,9 @@
 import {MouseButton} from "../button.class";
 import {Key} from "../key.class";
 
+/**
+ * A Region on the screen XOXO
+ */
 export interface Region {
     find(imageName: string): Promise<Region>;
 

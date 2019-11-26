@@ -9,7 +9,8 @@
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
     "Simon Hofmann <simon.hofmann@consol.de>",
-    "Sven Hettwer <sven.hettwer@consol.de"
+    "Sven Hettwer <sven.hettwer@consol.de>",
+    "Cliff Le Van <cliff.le.van@consol.de>"
   ],
   "homepage": "https://github.com/sakuli/sakuli#readme",
   "license": "Apache-2.0",
@@ -22,7 +23,10 @@
   },
   "private": true,
   "scripts": {
+    "audit": "node scripts/npm-audit",
+    "rebuild": "npm run clean && npm run bootstrap && npm run build",
     "postinstall": "lerna bootstrap --progress --no-ci",
+    "clean": "lerna clean -y",
     "build": "lerna run build",
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",

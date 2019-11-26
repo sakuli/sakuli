@@ -42,10 +42,31 @@ Please refer to the [Sakuli website](https://sakuli.io) and the [Getting Started
 
 # Development
 
+## Workstation
 To start developing Sakuli 2 some setup on your workstation is required.
 
+* Make sure to have the active LTS version (v10) of node installed.
 * Make sure to have docker installed and started
 * Make sure to execute `docker pull selenium/standalone-chrome-debug` before you start developing.
+
+## Building the Project
+In some situations, it is necessary to build/rebuild the sources (e.g. after changing branches) to create a consistent
+state in the project.
+
+To do so, please use `npm run rebuild`
+
+## Executing the current state of Sakuli
+During development you might want to test the overall behavior of Sakuli from a developers perspective. Therefore we
+created an `packages/integration-tests` module containing a Sakuli project using Sakuli at the current state of the
+repository.
+
+Build and execute Sakuli as it is in the current state of the repository:
+```shell script
+npm run rebuild
+cd packages/integration-tests
+npx sakuli
+``` 
+_This step has to be done after every code change so that the changes take place in the prepared Sakuli environment._
 
 ## Updating dependencies
 Long story short: `npm run update`

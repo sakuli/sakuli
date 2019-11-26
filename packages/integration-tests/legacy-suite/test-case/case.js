@@ -5,6 +5,7 @@
         testCase.endOfStep("Open Landing Page",5);                      // 2
         await _click(_link("Getting started"));                         // 3
         testCase.endOfStep("Navigate to Getting Started",3);            // 4
+        await _assertExists(_code('npm init'));
         await _highlight(_code("npm init"));                            // 5
         testCase.endOfStep("Find npm init code sample");
     } catch (e) {
@@ -12,4 +13,4 @@
     } finally {
         await testCase.saveResult();
     }
-})().then(done);
+})()

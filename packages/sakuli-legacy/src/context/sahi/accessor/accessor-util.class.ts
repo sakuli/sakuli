@@ -1,4 +1,4 @@
-import {Locator, ThenableWebDriver, until, WebElement} from "selenium-webdriver";
+import {Locator, ThenableWebDriver, until, WebElement, By} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 import {types} from "util";
 import {
@@ -28,6 +28,16 @@ export class AccessorUtil {
         readonly testExecutionContext: TestExecutionContext,
         readonly relationResolver: RelationsResolver
     ) {
+    }
+
+    private timeout: number = 3_000;
+
+    setTimeout(timeoutMs: number) {
+        this.timeout = timeoutMs;
+    }
+
+    getTimeout(): number {
+        return this.timeout;
     }
 
     get logger() {
@@ -67,31 +77,37 @@ export class AccessorUtil {
      *  - innerText
      *  - value
      *  - src
-     * @param element
+     * @param elements
      */
-    async getStringIdentifiersForElement(element: WebElement) {
-        return this.webDriver.executeScript<string[]>(`
-            const e = arguments[0];
-            return [
-                e.getAttribute('aria-describedby'),
-                e.getAttribute('name'),
-                e.getAttribute('id'),
-                e.className,
-                e.innerText,
-                e.value,
-                e.src
-            ];
-        `, element);
+    async getStringIdentifiersForElement(elements: WebElement[]) {
+        return this.webDriver.executeScript<[WebElement, string[]][]>(`
+            return (function(element) {
+                function getAttributes(e) {
+                    return [
+                        e.getAttribute('aria-describedby'),
+                        e.getAttribute('name'),
+                        e.getAttribute('id'),
+                        e.className,
+                        e.innerText,
+                        e.value,
+                        e.src
+                    ]
+                }
+                var result = [];
+                var elements = arguments[0];
+                for(var i = 0; i < elements.length; i++) {
+                    var element = elements[i];
+                    result.push([element, getAttributes(element)]);
+                }
+                return result;
+            })(arguments[0])
+        `, elements);
     }
 
     async getByRegEx(elements: WebElement[], regEx: RegExp): Promise<WebElement[]> {
-        const eAndText: [WebElement, string[]][] = await Promise.all(elements
-            .map(async (e): Promise<[WebElement, string[]]> => {
-                const potentialMatches: string[] = await this.getStringIdentifiersForElement(e);
-                return [e, potentialMatches]
-            })
-        );
-        return eAndText.filter(([e, potentialMatches]) => {
+       const eAndText: [WebElement, string[]][] = await this.getStringIdentifiersForElement(elements);
+
+        return eAndText.filter(([, potentialMatches]) => {
             const matches = potentialMatches.filter(x => x).map(text => {
                 const match = text.match(regEx);
                 return match ? match.length > 0 : false
@@ -155,39 +171,21 @@ export class AccessorUtil {
         return Promise.resolve([]);
     }
 
-    async fetchElements(query: SahiElementQuery, retry: number = 10, waitTimeout: number = 10_000): Promise<WebElement[]> {
-        return this.webDriver.wait<WebElement[]>(() => {
-            return this._fetchElements(query, retry).then(
-                (elements) => {
-                    return (elements.length) ? elements : false
-                },
-                () => {
-                    return false
-                }
-            )
-        }, waitTimeout);
-
-    }
-
-    async _fetchElements(query: SahiElementQuery, retry: number = 10): Promise<WebElement[]> {
-        try {
+    async fetchElements(query: SahiElementQuery, waitTimeout: number = this.timeout): Promise<WebElement[]> {
+        return this.webDriver.wait<WebElement[]>(async () => {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
             const elementsAfterIdentifier = await this.resolveByIdentifier(elements, queryAfterRelation.identifier);
-            if (elementsAfterIdentifier.length) {
-                return elementsAfterIdentifier;
-            }
-            throw Error('Cannot find Element by query:\n' + sahiQueryToString(query))
-        } catch (e) {
-            if (retry <= 0) throw e;
-            this.testExecutionContext.logger.debug(e.message);
-            return this._fetchElements(query, retry - 1);
-        }
+            return  elementsAfterIdentifier.length
+                ? elementsAfterIdentifier
+                : false
+        }, waitTimeout, `Cannot find Element within ${waitTimeout}ms by query:\n${sahiQueryToString(query)}`);
+
     }
 
-    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, retry: number = 10, waitTimeout: number = 10_000): Promise<WebElement> {
+    async fetchElement(query: SahiElementQueryOrWebElement | WebElement, waitTimeout: number = this.timeout): Promise<WebElement> {
         return isSahiElementQuery(query)
-            ? this.fetchElements(query, retry, waitTimeout).then(([first]) => first)
+            ? this.fetchElements(query, waitTimeout).then(([first]) => first)
             : Promise.resolve(query)
     }
 

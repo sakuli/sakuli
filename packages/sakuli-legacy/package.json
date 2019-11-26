@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/legacy",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -28,9 +28,9 @@
   "dependencies": {
     "@nut-tree/nut-js": "1.3.0",
     "@nut-tree/secrets": "3.0.0",
-    "@sakuli/commons": "^2.1.3",
-    "@sakuli/core": "^2.1.3",
-    "@sakuli/rollup-hooks": "^2.1.3",
+    "@sakuli/commons": "^2.2.0",
+    "@sakuli/core": "^2.2.0",
+    "@sakuli/rollup-hooks": "^2.2.0",
     "class-validator": "^0.9.1",
     "common-tags": "^1.8.0",
     "escodegen": "^1.11.0",
@@ -55,7 +55,7 @@
     "@types/properties-reader": "0.0.1",
     "@types/selenium-webdriver": "4.0.0",
     "@types/yargs": "^12.0.12",
-    "chromedriver": "76.0.0",
+    "chromedriver": "78.0.0",
     "dockerode": "^2.5.8",
     "express": "^4.16.4",
     "geckodriver": "^1.16.2",
@@ -63,8 +63,7 @@
     "node-fetch": "^2.3.0",
     "sneer": "^1.0.1",
     "ts-jest": "^24.0.2",
-    "typedoc": "^0.14.2",
-    "typedoc-plugin-markdown": "^2.0.9",
+    "typedoc": "^0.15.0",
     "typescript": "^3.4.3"
   }
 }

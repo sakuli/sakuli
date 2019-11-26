@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/rollup-hooks",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
     "rollup",
@@ -13,7 +13,8 @@
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
     "Simon Hofmann <simon.hofmann@consol.de>",
-    "Sven Hettwer <sven.hettwer@consol.de"
+    "Sven Hettwer <sven.hettwer@consol.de>",
+    "Cliff Le Van <cliff.le.van@consol.de>"
   ],
   "homepage": "https://github.com/sakuli/sakuli#readme",
   "license": "Apache-2.0",
@@ -35,25 +36,27 @@
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "devDependencies": {
-    "@types/common-tags": "^1.4.0",
-    "@types/jest": "^24.0.13",
-    "@types/mock-fs": "^3.6.30",
-    "@types/node": "^11.13.5",
-    "@types/rollup": "^0.54.0",
-    "@types/rollup-plugin-node-resolve": "^4.1.0",
-    "jest": "^24.7.1",
-    "mock-fs": "^4.8.0",
-    "rollup-plugin-typescript2": "^0.20.1",
-    "sneer": "^1.0.1",
-    "ts-jest": "^24.0.2",
-    "typedoc": "^0.14.2",
-    "typedoc-plugin-markdown": "^2.0.9",
-    "typescript": "^3.4.3"
+    "@types/common-tags": "1.8.0",
+    "@types/jest": "24.0.13",
+    "@types/mock-fs": "3.6.30",
+    "@types/node": "11.13.5",
+    "@types/rollup": "0.54.0",
+    "jest": "24.7.1",
+    "mock-fs": "4.8.0",
+    "sneer": "1.0.1",
+    "ts-jest": "24.0.2",
+    "typedoc": "0.15.0",
+    "typescript": "3.4.3"
   },
   "dependencies": {
-    "@sakuli/commons": "^2.1.3",
-    "@sakuli/core": "^2.1.3",
-    "rollup": "^1.10.0",
-    "rollup-plugin-node-resolve": "^4.2.3"
+    "@sakuli/commons": "^2.2.0",
+    "@sakuli/core": "^2.2.0",
+    "chalk": "2.4.2",
+    "common-tags": "1.8.0",
+    "execa": "2.0.4",
+    "ora": "3.4.0",
+    "rollup": "1.10.0",
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-typescript2": "0.20.1"
   }
 }

@@ -1,1 +1,4 @@
 wetter-light/**/*
+*.png
+*.steps.cache
+_logs/

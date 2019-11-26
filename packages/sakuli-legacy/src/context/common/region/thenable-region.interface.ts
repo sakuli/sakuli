@@ -2,6 +2,10 @@ import {Region} from "./region.interface";
 import {Key} from "../key.class";
 import {MouseButton} from "../button.class";
 
+export interface NewableThenableRegion {
+    new(left:number, top: number, width: number, height: number): ThenableRegion;
+}
+
 export interface ThenableRegion extends PromiseLike<Region> {
     _left?: number;
     _top?: number;
