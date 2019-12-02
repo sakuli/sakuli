@@ -6,6 +6,7 @@ import { commonActionsApi } from "./common-actions.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
+import * as scrollIntoViewModule from "../utils/scroll-into-view-if-needed.function";
 
 jest.setTimeout(15_000);
 describe('common-actions', () => {
@@ -37,7 +38,7 @@ describe('common-actions', () => {
         });
 
         function queryByLocator(locator: Locator): SahiElementQueryOrWebElement {
-            return ({locator, relations: [], identifier: 0})
+            return ({ locator, relations: [], identifier: 0 })
         }
 
         it('should not throw when highlighting', async () => {
@@ -49,6 +50,19 @@ describe('common-actions', () => {
                 </ul>
             `));
             await api._highlight(queryByLocator(By.css('#second')))
+        })
+
+        it('should call scrollIntoViewIfNeeded when highlighting', async () => {
+            jest.spyOn(scrollIntoViewModule, 'scrollIntoViewIfNeeded');
+            await driver.get(mockHtml(`
+                <ul>
+                    <li>First</li>
+                    <li id="second">Second</li>
+                    <li>Last</li>
+                </ul>
+            `));
+            await api._highlight(queryByLocator(By.css('#second')));
+            expect(scrollIntoViewModule.scrollIntoViewIfNeeded).toHaveBeenCalled();
         })
 
         it('should invoke script on the page', async () => {
