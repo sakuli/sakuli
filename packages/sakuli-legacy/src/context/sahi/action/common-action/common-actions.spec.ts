@@ -50,7 +50,7 @@ describe('common-actions', () => {
                 </ul>
             `));
             await api._highlight(queryByLocator(By.css('#second')))
-        })
+        });
 
         it('should call scrollIntoViewIfNeeded when highlighting', async () => {
             jest.spyOn(scrollIntoViewModule, 'scrollIntoViewIfNeeded');
@@ -63,7 +63,7 @@ describe('common-actions', () => {
             `));
             await api._highlight(queryByLocator(By.css('#second')));
             expect(scrollIntoViewModule.scrollIntoViewIfNeeded).toHaveBeenCalled();
-        })
+        });
 
         it('should invoke script on the page', async () => {
             await driver.get(mockHtml(`
@@ -76,7 +76,7 @@ describe('common-actions', () => {
             await api._eval(`document.getElementById('second').innerHTML = 'changed'`);
             const second = await driver.findElement(By.css('#second'));
             await expect(second.getText()).resolves.toEqual('changed');
-        })
+        });
 
         it('should invoke script on the page with parameter', async () => {
             await driver.get(mockHtml(`
@@ -94,7 +94,7 @@ describe('common-actions', () => {
             );
             const second = await driver.findElement(By.css('#second'));
             await expect(second.getText()).resolves.toEqual('changed');
-        })
+        });
 
         it('should return value from script', async () => {
             await driver.get(mockHtml(`
