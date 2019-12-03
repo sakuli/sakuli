@@ -36,8 +36,9 @@ export function commonActionsApi(
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
-            
+
         const elementRect = await element.getRect();
+        await scrollIntoViewIfNeeded(element);
         await webDriver.executeAsyncScript(stripIndents`
             var rect = arguments[0];
             var timeout = arguments[1];
