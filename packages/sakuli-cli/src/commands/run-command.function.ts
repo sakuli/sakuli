@@ -1,29 +1,14 @@
 import { Argv, CommandModule } from "yargs";
-import { CommandModuleProvider, SakuliCoreProperties, SakuliInstance, TestExecutionContext } from "@sakuli/core";
+import { CommandModuleProvider, SakuliCoreProperties, SakuliInstance } from "@sakuli/core";
 import { ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
-import { testExecutionContextRenderer } from "./cli-utils/test-execution-context-renderer.function";
-import { createLogConsumer } from "./create-log-consumer.function";
+import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
+import { createLogConsumer } from "../create-log-consumer.function";
 import { join } from "path";
-import { inspect } from "util";
-import { writeFileSync } from "fs";
-
-async function renderError(e: Error) {
-    console.error(chalk.red(e.toString()));
-    if (e.stack) {
-        console.error(chalk.gray(e.stack.replace(e.toString(), '').trim()));
-    }
-}
+import { renderError } from "./run-command/render-error.function";
+import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
-    function findErrors(testExecutionContext: TestExecutionContext) {
-        return testExecutionContext.entities.filter(e => {
-            const hasError = isPresent(e.error);
-            console.log(`ENTITY: ${e.kind}:${e.id} has error: ${e.error ? "YES" : 'NO'}`)
-            return hasError;
-        });
-    }
-
     return ({
         command: 'run [path]',
         describe: 'Runs a Sakuli Suite',
@@ -63,14 +48,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                     await renderError(error);
                 }, () => Promise.resolve());
 
-                const errors = findErrors(sakuli.testExecutionContext);
-                for(let errorEntity of errors) {
-                    const e = errorEntity.error;
-                    if(isPresent(e)) {
-                        console.log(chalk`\n{underline Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}}:\n`);
-                        await renderError(e);
-                    }
-                }
+               await renderErrorsFromContext(sakuli.testExecutionContext);
             } catch (e) {
                 await renderError(e);
             } finally {
