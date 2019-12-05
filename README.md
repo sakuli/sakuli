@@ -1,15 +1,15 @@
 # Sakuli2
 
-[![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=master)](https://travis-ci.com/sakuli/sakuli) 
-[![Coverage Status](https://coveralls.io/repos/github/sakuli/sakuli/badge.svg?branch=master)](https://coveralls.io/github/sakuli/sakuli?branch=master)
-[![SonarCloud Alert Status](https://sonarcloud.io/api/project_badges/measure?project=sakuli:sakuli&metric=alert_status)](https://sonarcloud.io/organizations/sakuli/projects)
+[![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=develop)](https://travis-ci.com/sakuli/sakuli)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sakuli%3Asakuli&metric=alert_status)](https://sonarcloud.io/dashboard?id=sakuli%3Asakuli)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sakuli%3Asakuli&metric=coverage)](https://sonarcloud.io/dashboard?id=sakuli%3Asakuli)
 
 ## Why Sakuli 2?
 
-In the past we encountered a lot of issues with the architecture of Sakuli. But first and foremost the inactive 
+In the past we encountered a lot of issues with the architecture of Sakuli. But first and foremost the inactive
 development of Sahi and its deep integration into Sakuli was one of the main reasons to rethink our technology stack.
 
-So we decide to create a brandnew platform which allows users to test and monitor their systems and developers to extend 
+So we decide to create a brandnew platform which allows users to test and monitor their systems and developers to extend
 the platform to their own needs.
 
 ## What is the new Stack of Sakuli2?
@@ -33,7 +33,7 @@ while we try our best to keep the sakuli api backwards compatible.
 Expect the full power of Sakuli, which means testing and monitoring systems either in web or native.
 
 ### ...as a developer
- 
+
 Use the full power of typescript, nodejs and their corresponding ecosystems.
 
 # Installation
@@ -65,7 +65,7 @@ Build and execute Sakuli as it is in the current state of the repository:
 npm run rebuild
 cd packages/integration-tests
 npx sakuli
-``` 
+```
 _This step has to be done after every code change so that the changes take place in the prepared Sakuli environment._
 
 ## Updating dependencies
