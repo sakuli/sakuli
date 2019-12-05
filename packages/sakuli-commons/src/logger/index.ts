@@ -3,3 +3,4 @@ export * from './log-event.interface';
 export * from './log-consumer-adapter.interface';
 export * from './consumer';
 export * from './stringifier';
+export * from './log-level.class';

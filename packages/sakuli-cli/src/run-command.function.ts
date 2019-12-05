@@ -1,11 +1,10 @@
-import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, SakuliCoreProperties, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import {ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe} from "@sakuli/commons";
+import { Argv, CommandModule } from "yargs";
+import { CommandModuleProvider, SakuliCoreProperties, SakuliInstance, TestExecutionContext } from "@sakuli/core";
+import { ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
-import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
-import {createLogConsumer} from "./create-log-consumer.function";
-import {join} from "path";
-import {LogLevel} from "@sakuli/commons/dist/logger/log-level.class";
+import { testExecutionContextRenderer } from "./cli-utils/test-execution-context-renderer.function";
+import { createLogConsumer } from "./create-log-consumer.function";
+import { join } from "path";
 
 async function renderError(e: Error) {
     console.error(chalk.red(e.toString()));
