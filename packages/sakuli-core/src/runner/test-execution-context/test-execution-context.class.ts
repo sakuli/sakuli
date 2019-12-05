@@ -1,5 +1,5 @@
-import {TestSuiteContext} from "./test-suite-context.class";
-import {Maybe, SimpleLogger, throwIfAbsent} from "@sakuli/commons";
+import { TestSuiteContext } from "./test-suite-context.class";
+import { Maybe, SimpleLogger, throwIfAbsent } from "@sakuli/commons";
 import {
     FinishedMeasurable,
     getDuration,
@@ -8,13 +8,13 @@ import {
     Measurable,
     StartedMeasurable
 } from "./measureable.interface";
-import {TestCaseContext} from "./test-case-context.class";
-import {TestStepContext} from "./test-step-context.class";
-import {TestActionContext} from "./test-action-context.class";
-import {toJson} from "./test-context-entity-to-json.function";
-import {TestExecutionContextRaw} from "./test-execution-context-raw.interface";
-import {TestContextEntityState} from "./test-context-entity-state.class";
-import {EventEmitter} from "events";
+import { TestCaseContext } from "./test-case-context.class";
+import { TestStepContext } from "./test-step-context.class";
+import { TestActionContext } from "./test-action-context.class";
+import { toJson } from "./test-context-entity-to-json.function";
+import { TestExecutionContextRaw } from "./test-execution-context-raw.interface";
+import { TestContextEntityState } from "./test-context-entity-state.class";
+import { EventEmitter } from "events";
 import {
     END_EXECUTION,
     END_TESTACTION,
@@ -112,15 +112,15 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
     }
 
     get testCases() {
-        return this.testSuites.reduce((tc, ts) => [...ts.testCases], [] as TestCaseContext[])
+        return this.testSuites.reduce((tc, ts) => [...tc, ...ts.testCases], [] as TestCaseContext[])
     }
 
     get testSteps() {
-        return this.testCases.reduce((ts, tc) => [...tc.testSteps], [] as TestStepContext[]);
+        return this.testCases.reduce((ts, tc) => [...ts, ...tc.testSteps], [] as TestStepContext[]);
     }
 
     get testActions() {
-        return this.testSteps.reduce((ta, ts) => [...ts.testActions], [] as TestActionContext[]);
+        return this.testSteps.reduce((ta, ts) => [...ta, ...ts.testActions], [] as TestActionContext[]);
     }
 
     get duration() {
@@ -133,7 +133,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
 
     startTestSuite(testSuite: Partial<TestSuiteContext> = {}) {
         if (this.isExecutionStarted()) {
-            const newTestSuite = Object.assign(new TestSuiteContext(), testSuite, {startDate: new Date()});
+            const newTestSuite = Object.assign(new TestSuiteContext(), testSuite, { startDate: new Date() });
             this.testSuites.push(newTestSuite);
             this.emit(START_TESTSUITE, newTestSuite);
             this.emitChange();
@@ -166,7 +166,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
     }
 
     endTestSuite() {
-        const updatedTestSuite = this._updateCurrentTestSuite({endDate: new Date()});
+        const updatedTestSuite = this._updateCurrentTestSuite({ endDate: new Date() });
         this.emit(END_TESTSUITE, updatedTestSuite);
         this.emitChange();
     }
@@ -176,7 +176,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
             this.getCurrentTestSuite(),
             Error(`Cannot start testcase because no test suite has been started`)
         );
-        const newTestCase = Object.assign(new TestCaseContext, testCase, {startDate: new Date()});
+        const newTestCase = Object.assign(new TestCaseContext, testCase, { startDate: new Date() });
         this._updateCurrentTestSuite({
             testCases: [
                 ...suite.testCases,
@@ -235,7 +235,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
             this.getCurrentTestCase(),
             Error(`Cannot start teststep because no testcase has been started`)
         );
-        const newTestStep = Object.assign(new TestStepContext, testStep, {startDate: new Date()});
+        const newTestStep = Object.assign(new TestStepContext, testStep, { startDate: new Date() });
         this._updateCurrentTestCase({
             testSteps: [
                 ...testcase.testSteps,
@@ -294,7 +294,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
             this.getCurrentTestStep(),
             Error(`Cannot start testaction because no teststep has been started`)
         );
-        const newAction = Object.assign(new TestActionContext, testAction, {startDate: new Date()});
+        const newAction = Object.assign(new TestActionContext, testAction, { startDate: new Date() });
         this._updateCurrentTestStep({
             testActions: [
                 ...testStep.testActions,
@@ -338,7 +338,7 @@ export class TestExecutionContext extends EventEmitter implements Measurable {
     }
 
     endTestAction() {
-        const finishedAction = this._updateCurrentTestAction({endDate: new Date});
+        const finishedAction = this._updateCurrentTestAction({ endDate: new Date });
         this.emit(END_TESTACTION, finishedAction);
         this.emitChange();
     }

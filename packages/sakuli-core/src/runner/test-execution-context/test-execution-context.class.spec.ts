@@ -1,7 +1,7 @@
-import {TestExecutionContext} from "./test-execution-context.class";
-import {TestSuiteContext} from "./test-suite-context.class";
-import {mockPartial} from "sneer";
-import {SimpleLogger} from "@sakuli/commons";
+import { TestExecutionContext } from "./test-execution-context.class";
+import { TestSuiteContext } from "./test-suite-context.class";
+import { mockPartial } from "sneer";
+import { SimpleLogger } from "@sakuli/commons";
 import {
     END_EXECUTION,
     END_TESTACTION,
@@ -33,7 +33,7 @@ describe('TestExecutionContext', () => {
 
         beforeEach(() => tec.startExecution());
 
-        const {objectContaining, any, arrayContaining} = expect;
+        const { objectContaining, any, arrayContaining } = expect;
         const validContextEntity = (moreMatcher: object = {}) => objectContaining({
             id: any(String),
             startDate: any(Date),
@@ -42,9 +42,9 @@ describe('TestExecutionContext', () => {
         });
 
         it('should add multiple testsuitecontexts', () => {
-            tec.startTestSuite({id: 'First-Suite'});
+            tec.startTestSuite({ id: 'First-Suite' });
             tec.endTestSuite();
-            tec.startTestSuite({id: 'Second-Suite'});
+            tec.startTestSuite({ id: 'Second-Suite' });
             tec.updateCurrentTestSuite({
                 warningTime: 40,
                 criticalTime: 50
@@ -65,14 +65,14 @@ describe('TestExecutionContext', () => {
         });
 
         it('should add testcases within testcases', () => {
-            tec.startTestSuite({id: 'First-Suite'});
-            tec.startTestCase({id: 'First-Case'});
+            tec.startTestSuite({ id: 'First-Suite' });
+            tec.startTestCase({ id: 'First-Case' });
             tec.endTestCase();
             tec.endTestSuite();
-            tec.startTestSuite({id: 'Second-Suite'});
-            tec.startTestCase({id: 'Second-Case'});
+            tec.startTestSuite({ id: 'Second-Suite' });
+            tec.startTestCase({ id: 'Second-Case' });
             tec.endTestCase();
-            tec.startTestCase({id: 'Third-Case'});
+            tec.startTestCase({ id: 'Third-Case' });
             tec.endTestCase();
             tec.endTestSuite();
 
@@ -81,61 +81,76 @@ describe('TestExecutionContext', () => {
             expect(tec.testSuites[1].testCases.length).toBe(2)
         });
 
-        it('complex', () => {
-            tec.startTestSuite({id: 'S001'});
-            tec.endTestSuite();
-            tec.startTestSuite({id: 'S002'});
-            tec.startTestCase({id: 'S002C001'});
-            tec.startTestStep();
-            tec.updateCurrentTestStep({id: 'late added'});
-            tec.startTestAction({});
-            tec.updateCurrentTestAction({id: 'Action'});
-            tec.endTestAction();
-            tec.endTestStep();
-            tec.endTestCase();
-            tec.startTestCase({id: 'S002C002'});
-            tec.endTestCase();
-            tec.startTestCase({id: 'S002C003'});
-            tec.endTestCase();
-            tec.endTestSuite();
-            tec.startTestSuite({id: 'S003'});
-            tec.startTestCase({id: 'S003C001'});
-            tec.endTestCase();
-            tec.endTestSuite();
-            tec.endExecution();
-            expect(tec.isExecutionStarted()).toBeTruthy();
-            expect(tec.isExecutionFinished()).toBeTruthy();
-            expect(tec.duration).toEqual(expect.any(Number));
-            expect(tec.testSuites).toEqual(arrayContaining([
-                validContextEntity({id: 'S001'}), // S001
-                validContextEntity({ // S002
-                    id: 'S002',
-                    testCases: arrayContaining([
-                        validContextEntity({ // S002C001
-                            id: 'S002C001',
-                            testSteps: arrayContaining([
-                                validContextEntity({
-                                    id: 'late added',
-                                    testActions: arrayContaining([
-                                        validContextEntity({
-                                            kind: 'action',
-                                            id: 'Action'
-                                        })
-                                    ])
-                                })
-                            ])
-                        }),
-                        validContextEntity({
-                            id: 'S002C002'
-                        }),
-                        validContextEntity({
-                            id: 'S002C003'
-                        }),
-                    ])
-                }),
-                validContextEntity()
-            ]))
-        })
+        describe('complex', () => {
+            beforeEach(() => {
+                tec.startTestSuite({ id: 'S001' });
+                tec.endTestSuite();
+                tec.startTestSuite({ id: 'S002' });
+                tec.startTestCase({ id: 'S002C001' });
+                tec.startTestStep();
+                tec.updateCurrentTestStep({ id: 'late added' });
+                tec.startTestAction({});
+                tec.updateCurrentTestAction({ id: 'Action' });
+                tec.endTestAction();
+                tec.endTestStep();
+                tec.endTestCase();
+                tec.startTestCase({ id: 'S002C002' });
+                tec.endTestCase();
+                tec.startTestCase({ id: 'S002C003' });
+                tec.endTestCase();
+                tec.endTestSuite();
+                tec.startTestSuite({ id: 'S003' });
+                tec.startTestCase({ id: 'S003C001' });
+                tec.endTestCase();
+                tec.endTestSuite();
+                tec.endExecution();
+            })
+
+            it('should have a valid finshed state', () => {
+                expect(tec.isExecutionStarted()).toBeTruthy();
+                expect(tec.isExecutionFinished()).toBeTruthy();
+                expect(tec.duration).toEqual(expect.any(Number));
+            })
+
+            it('should aggregate all entities correctly', () => {
+                expect(tec.testSuites.length).toBe(3);
+                expect(tec.testCases.length).toBe(4);
+                expect(tec.testSteps.length).toBe(1);
+                expect(tec.testActions.length).toBe(1);
+            });
+
+            it('should have correctly set state to entities', () => {
+                expect(tec.testSuites).toEqual(arrayContaining([
+                    validContextEntity({ id: 'S001' }), // S001
+                    validContextEntity({ // S002
+                        id: 'S002',
+                        testCases: arrayContaining([
+                            validContextEntity({ // S002C001
+                                id: 'S002C001',
+                                testSteps: arrayContaining([
+                                    validContextEntity({
+                                        id: 'late added',
+                                        testActions: arrayContaining([
+                                            validContextEntity({
+                                                kind: 'action',
+                                                id: 'Action'
+                                            })
+                                        ])
+                                    })
+                                ])
+                            }),
+                            validContextEntity({
+                                id: 'S002C002'
+                            }),
+                            validContextEntity({
+                                id: 'S002C003'
+                            }),
+                        ])
+                    }),
+                    validContextEntity()
+                ]));
+            });
+        });
 
 
     });
@@ -226,22 +241,22 @@ describe('TestExecutionContext', () => {
             // Prevent code from autoformatting: https://stackoverflow.com/a/19492318/2218197
             // @formatter:off
             tec.startExecution();
-                tec.startTestSuite({id: 'S001'});
-                tec.updateCurrentTestSuite({});
-                tec.endTestSuite();
-                tec.startTestSuite({id: 'S002'});
-                    tec.startTestCase({id: 'S002C001'});
-                        tec.startTestStep();
-                        tec.updateCurrentTestStep({id: 'late added'});
-                            tec.startTestAction({});
-                            tec.updateCurrentTestAction({id: 'Action'});
-                            tec.endTestAction();
-                        tec.endTestStep();
-                    tec.endTestCase();
-                    tec.startTestCase({id: 'S002C002'});
-                    tec.updateCurrentTestCase({});
-                    tec.endTestCase();
-                tec.endTestSuite();
+            tec.startTestSuite({ id: 'S001' });
+            tec.updateCurrentTestSuite({});
+            tec.endTestSuite();
+            tec.startTestSuite({ id: 'S002' });
+            tec.startTestCase({ id: 'S002C001' });
+            tec.startTestStep();
+            tec.updateCurrentTestStep({ id: 'late added' });
+            tec.startTestAction({});
+            tec.updateCurrentTestAction({ id: 'Action' });
+            tec.endTestAction();
+            tec.endTestStep();
+            tec.endTestCase();
+            tec.startTestCase({ id: 'S002C002' });
+            tec.updateCurrentTestCase({});
+            tec.endTestCase();
+            tec.endTestSuite();
             tec.endExecution();
             // @formatter:on
         });

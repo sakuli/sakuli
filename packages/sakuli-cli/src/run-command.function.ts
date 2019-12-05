@@ -5,6 +5,8 @@ import chalk from "chalk";
 import { testExecutionContextRenderer } from "./cli-utils/test-execution-context-renderer.function";
 import { createLogConsumer } from "./create-log-consumer.function";
 import { join } from "path";
+import { inspect } from "util";
+import { writeFileSync } from "fs";
 
 async function renderError(e: Error) {
     console.error(chalk.red(e.toString()));
@@ -14,8 +16,12 @@ async function renderError(e: Error) {
 }
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
-    function findError(testExecutionContext: TestExecutionContext) {
-        return testExecutionContext.entities.find(e => isPresent(e.error));
+    function findErrors(testExecutionContext: TestExecutionContext) {
+        return testExecutionContext.entities.filter(e => {
+            const hasError = isPresent(e.error);
+            console.log(`ENTITY: ${e.kind}:${e.id} has error: ${e.error ? "YES" : 'NO'}`)
+            return hasError;
+        });
     }
 
     return ({
@@ -56,12 +62,15 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                     console.log(chalk`Error during Execution: \n`);
                     await renderError(error);
                 }, () => Promise.resolve());
-                await ifPresent(findError(sakuli.testExecutionContext), async errorEntity => {
-                    await ifPresent(errorEntity.error, async e => {
+
+                const errors = findErrors(sakuli.testExecutionContext);
+                for(let errorEntity of errors) {
+                    const e = errorEntity.error;
+                    if(isPresent(e)) {
                         console.log(chalk`\n{underline Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}}:\n`);
                         await renderError(e);
-                    });
-                }, () => Promise.resolve());
+                    }
+                }
             } catch (e) {
                 await renderError(e);
             } finally {
