@@ -10,6 +10,15 @@ jest.mock('../read-json.function.ts', () => ({
 jest.mock('execa', () => jest.fn());
 
 describe('getSakuliVersion', () => {
+
+    beforeEach(() => {
+        jest.spyOn(console, 'debug');
+    });
+
+    afterEach(() => {
+        jest.resetAllMocks();
+    })
+
     it('should use version from dependencies in package.json', async () => {
         (<jest.Mock>readJson).mockResolvedValueOnce({
             dependencies: { '@sakuli/cli': '2.2.0-file' },
@@ -18,6 +27,7 @@ describe('getSakuliVersion', () => {
         const version = await getSakuliVersion('some/path');
         expect(version).toBe('2.2.0-file');
         expect(readJson).toHaveBeenCalledWith(join('some/path', 'package.json'));
+        expect(console.debug).not.toHaveBeenCalled();
     })
 
     it('should use version from devDependencies in package.json when not in dependencies', async () => {
@@ -35,6 +45,7 @@ describe('getSakuliVersion', () => {
         const version = await getSakuliVersion('some/path');
         expect(version).toBe('2.2.0-cli');
         expect(execa).toHaveBeenCalledWith('npx', ['sakuli', '--version'], expect.objectContaining({ cwd: 'some/path' }));
+        expect(console.debug).toHaveBeenCalledTimes(1);
     });
 
     it('should fallback to output of npx command when sakuli is not in the dependencies', async () => {
@@ -46,6 +57,7 @@ describe('getSakuliVersion', () => {
         const version = await getSakuliVersion('some/path');
         expect(version).toBe('2.2.0-cli');
         expect(execa).toHaveBeenCalledWith('npx', ['sakuli', '--version'], expect.objectContaining({ cwd: 'some/path' }));
+        expect(console.debug).toHaveBeenCalledTimes(1);
     });
 
     it('should fallback to @latest when all other mechanisms not working', async () => {
@@ -53,5 +65,6 @@ describe('getSakuliVersion', () => {
         (<jest.Mock>execa).mockRejectedValue(null);
         const version = await getSakuliVersion('some/path');
         expect(version).toBe('latest');
+        expect(console.debug).toHaveBeenCalledTimes(2);
     });
 });

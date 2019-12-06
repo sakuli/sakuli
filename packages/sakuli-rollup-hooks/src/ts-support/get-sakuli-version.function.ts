@@ -2,7 +2,7 @@ import { join } from "path";
 import { readJson } from "../read-json.function";
 import { JSONSchemaForNPMPackageJsonFiles, Dependency } from "@schemastore/package";
 import execa = require("execa");
-import { ifPresent, throwIfAbsent } from "@sakuli/commons";
+import { ifPresent, throwIfAbsent, SimpleLogger } from "@sakuli/commons";
 
 export const getSakuliVersion = async (packageJsonPath: string) => {
     try {
@@ -13,12 +13,16 @@ export const getSakuliVersion = async (packageJsonPath: string) => {
                 const devDep = throwIfAbsent(packageJson.devDependencies);
                 return getDep(devDep);
             });
-    } catch (e) { } // want to avoid nested try/catch ;)
+    } catch (e) {
+        console.debug(`enable-typescript could not determine version from ${join(packageJsonPath, 'package.json')}`)
+    } // want to avoid nested try/catch ;)
 
     try {
         const commandResult = await execa('npx', ['sakuli', '--version'], { cwd: packageJsonPath })
         return commandResult.stdout;
-    } catch (e) { }
+    } catch (e) {
+        console.debug(`enable-typescript could not determine version from running 'npx sakuli --version'`)
+    }
 
     return 'latest';
 }
