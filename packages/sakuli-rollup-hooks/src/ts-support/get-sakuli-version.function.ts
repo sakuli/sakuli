@@ -18,11 +18,11 @@ export const getSakuliVersion = async (packageJsonPath: string) => {
     } // want to avoid nested try/catch ;)
 
     try {
-        const commandResult = await execa('npx', ['sakuli', '--version'], { cwd: packageJsonPath })
+        const commandResult = await execa('npx', ['sakuli', '--version'], { cwd: packageJsonPath });
         return commandResult.stdout;
     } catch (e) {
         console.debug(`enable-typescript could not determine version from running 'npx sakuli --version'`)
     }
 
     return 'latest';
-}
+};

@@ -36,13 +36,13 @@ describe('getInstalledPresets', () => {
         const presets = await getInstalledPresets('/invalid');
         expect(readJson).toHaveBeenCalledWith('/invalid/package.json');
         expect(presets.length).toBe(1);
-        expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']))
+        expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']));
     });
 
     it('should return fallback array when json doesn\'t have sakuli property', async () => {
         const presets = await getInstalledPresets('/missing-sakuli-key');
         expect(readJson).toHaveBeenCalledWith('/missing-sakuli-key/package.json');
         expect(presets.length).toBe(1);
-        expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']))
+        expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']));
     });
 });

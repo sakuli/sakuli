@@ -5,7 +5,7 @@ const execa: jest.Mock = require("execa");
 
 jest.mock('../read-json.function.ts', () => ({
     readJson: jest.fn()
-}))
+}));
 
 jest.mock('execa', () => jest.fn());
 
@@ -17,7 +17,7 @@ describe('getSakuliVersion', () => {
 
     afterEach(() => {
         jest.resetAllMocks();
-    })
+    });
 
     it('should use version from dependencies in package.json', async () => {
         (<jest.Mock>readJson).mockResolvedValueOnce({
@@ -28,7 +28,7 @@ describe('getSakuliVersion', () => {
         expect(version).toBe('2.2.0-file');
         expect(readJson).toHaveBeenCalledWith(join('some/path', 'package.json'));
         expect(console.debug).not.toHaveBeenCalled();
-    })
+    });
 
     it('should use version from devDependencies in package.json when not in dependencies', async () => {
         (<jest.Mock>readJson).mockResolvedValueOnce({
