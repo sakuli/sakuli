@@ -1,17 +1,17 @@
-import { SakuliInstance, Project } from "@sakuli/core";
+import { Project, SakuliInstance } from "@sakuli/core";
 import { mockPartial, mockRecursivePartial } from 'sneer'
 import { runCommand } from "./run-command.function";
 import { Argv, CommandModule } from 'yargs';
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
-import { LogLevel, ensurePath } from "@sakuli/commons";
-import * as commons from '@sakuli/commons';
+import * as commons from "@sakuli/commons";
+import { ensurePath, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 
 jest.mock('../cli-utils/test-execution-context-renderer.function', () => ({
     testExecutionContextRenderer: jest.fn()
-}))
+}));
 
 jest.mock("../create-log-consumer.function", () => ({
     createLogConsumer: jest.fn()
@@ -19,7 +19,7 @@ jest.mock("../create-log-consumer.function", () => ({
 
 jest.mock("./run-command/render-errors-from-context.function", () => ({
     renderErrorsFromContext: jest.fn()
-}))
+}));
 
 describe('runCommand', () => {
 
@@ -32,7 +32,7 @@ describe('runCommand', () => {
         argv = mockPartial<Argv>({
             positional: jest.fn().mockImplementation(() => argv),
             demandOption: jest.fn().mockImplementation(() => argv)
-        })
+        });
 
         project = mockRecursivePartial<Project>({
             objectFactory: jest.fn(),
@@ -53,7 +53,7 @@ describe('runCommand', () => {
         Object.defineProperty(sakuli.testExecutionContext.logger, 'logLevel', {
             get: () => logLevelMock(),
             set: v => logLevelMock(v)
-        })
+        });
         command = runCommand(sakuli);
     });
 
@@ -62,7 +62,7 @@ describe('runCommand', () => {
     it('should require path', () => {
         (command.builder as Function)(argv as any);
         expect(argv.demandOption).toHaveBeenCalledWith('path');
-    })
+    });
 
     describe('handler', () => {
         const runOptions = Symbol('run-options-placeholder');
@@ -77,9 +77,9 @@ describe('runCommand', () => {
 
         afterEach(() => {
             processExitMock.mockRestore();
-        })
+        });
 
-        it('handler should init renderer with sakuli context', async () => {
+        it('should init renderer with sakuli context', async () => {
             await command.handler(runOptions);
             expect(testExecutionContextRenderer).toHaveBeenCalledWith(sakuli.testExecutionContext);
         });
@@ -139,7 +139,7 @@ describe('runCommand', () => {
         it('should call render errors from context', async () => {
             await command.handler(runOptions);
             expect(renderErrorsFromContext).toHaveBeenLastCalledWith(sakuli.testExecutionContext);
-        })
+        });
 
         it('should exit the process with sakulis resutlState', async () => {
             await command.handler(runOptions);

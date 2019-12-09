@@ -12,4 +12,4 @@ export const renderErrorsFromContext = async (context: TestExecutionContext) => 
             await renderError(e);
         }
     }
-}
+};

@@ -85,6 +85,7 @@ describe('TestExecutionContext', () => {
             beforeEach(() => {
                 tec.startTestSuite({ id: 'S001' });
                 tec.endTestSuite();
+
                 tec.startTestSuite({ id: 'S002' });
                 tec.startTestCase({ id: 'S002C001' });
                 tec.startTestStep();
@@ -99,18 +100,19 @@ describe('TestExecutionContext', () => {
                 tec.startTestCase({ id: 'S002C003' });
                 tec.endTestCase();
                 tec.endTestSuite();
+
                 tec.startTestSuite({ id: 'S003' });
                 tec.startTestCase({ id: 'S003C001' });
                 tec.endTestCase();
                 tec.endTestSuite();
                 tec.endExecution();
-            })
+            });
 
-            it('should have a valid finshed state', () => {
+            it('should have a valid finished state', () => {
                 expect(tec.isExecutionStarted()).toBeTruthy();
                 expect(tec.isExecutionFinished()).toBeTruthy();
                 expect(tec.duration).toEqual(expect.any(Number));
-            })
+            });
 
             it('should aggregate all entities correctly', () => {
                 expect(tec.testSuites.length).toBe(3);
@@ -190,20 +192,20 @@ describe('TestExecutionContext', () => {
     describe('events', () => {
 
         type EventSpies = {
-            startExecution: jest.Mock<any, any>,
-            endExecution: jest.Mock<any, any>,
-            startTestSuite: jest.Mock<any, any>,
-            updateTestSuite: jest.Mock<any, any>,
-            endTestSuite: jest.Mock<any, any>,
-            startTestCase: jest.Mock<any, any>,
-            updateTestCase: jest.Mock<any, any>,
-            endTestCase: jest.Mock<any, any>,
-            startTestStep: jest.Mock<any, any>,
-            updateTestStep: jest.Mock<any, any>,
-            endTestStep: jest.Mock<any, any>,
-            startTestAction: jest.Mock<any, any>,
-            updateTestAction: jest.Mock<any, any>,
-            endTestAction: jest.Mock<any, any>,
+            startExecution: jest.Mock,
+            endExecution: jest.Mock,
+            startTestSuite: jest.Mock,
+            updateTestSuite: jest.Mock,
+            endTestSuite: jest.Mock,
+            startTestCase: jest.Mock,
+            updateTestCase: jest.Mock,
+            endTestCase: jest.Mock,
+            startTestStep: jest.Mock,
+            updateTestStep: jest.Mock,
+            endTestStep: jest.Mock,
+            startTestAction: jest.Mock,
+            updateTestAction: jest.Mock,
+            endTestAction: jest.Mock,
         };
         let spies: EventSpies;
         beforeEach(() => {
