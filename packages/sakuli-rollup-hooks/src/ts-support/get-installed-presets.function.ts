@@ -1,8 +1,9 @@
-import { PathLike } from "fs"
 import { readJson } from "../read-json.function"
 import { join } from "path";
+import { JSONSchemaForNPMPackageJsonFiles } from "@schemastore/package";
 
 export const getInstalledPresets = async (packageJsonPath: string): Promise<string[]> => {
+    const fallbackPackages = ['@sakuli/legacy'];
     try {
         const packageJson = await readJson(join(packageJsonPath, 'package.json'));
         if("sakuli" in packageJson) {
@@ -11,8 +12,8 @@ export const getInstalledPresets = async (packageJsonPath: string): Promise<stri
                 return sakuliConfig.presetProvider;
             }
         }
-        return [];
+        return fallbackPackages;
     } catch(e) {
-        return [];
+        return fallbackPackages;
     }
 }
