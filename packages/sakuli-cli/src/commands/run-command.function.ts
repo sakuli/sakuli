@@ -1,6 +1,6 @@
 import { Argv, CommandModule } from "yargs";
 import { CommandModuleProvider, SakuliCoreProperties, SakuliInstance } from "@sakuli/core";
-import { ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe, LogLevel } from "@sakuli/commons";
+import { ensure, ensurePath, ifPresent, invokeIfPresent, Maybe, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
 import { createLogConsumer } from "../create-log-consumer.function";
@@ -27,7 +27,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 const coreProps = project.objectFactory(SakuliCoreProperties);
 
                 console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`);
-                const logLevel = LogLevel[coreProps.logLevel.toUpperCase() as keyof typeof LogLevel];
+                const logLevel = LogLevel[(coreProps.logLevel || '').toUpperCase() as keyof typeof LogLevel];
                 sakuli.testExecutionContext.logger.logLevel = ifPresent(logLevel,
                     () => logLevel,
                     () => LogLevel.INFO
