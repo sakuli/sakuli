@@ -1,24 +1,14 @@
-import {Argv, CommandModule} from "yargs";
-import {CommandModuleProvider, SakuliCoreProperties, SakuliInstance, TestExecutionContext} from "@sakuli/core";
-import {ensure, ensurePath, ifPresent, invokeIfPresent, isPresent, Maybe} from "@sakuli/commons";
+import { Argv, CommandModule } from "yargs";
+import { CommandModuleProvider, SakuliCoreProperties, SakuliInstance } from "@sakuli/core";
+import { ensure, ensurePath, ifPresent, invokeIfPresent, Maybe, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
-import {testExecutionContextRenderer} from "./cli-utils/test-execution-context-renderer.function";
-import {createLogConsumer} from "./create-log-consumer.function";
-import {join} from "path";
-import {LogLevel} from "@sakuli/commons/dist/logger/log-level.class";
-
-async function renderError(e: Error) {
-    console.error(chalk.red(e.toString()));
-    if (e.stack) {
-        console.error(chalk.gray(e.stack.replace(e.toString(), '').trim()));
-    }
-}
+import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
+import { createLogConsumer } from "../create-log-consumer.function";
+import { join } from "path";
+import { renderError } from "./run-command/render-error.function";
+import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 
 export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): CommandModule => {
-    function findError(testExecutionContext: TestExecutionContext) {
-        return testExecutionContext.entities.find(e => isPresent(e.error));
-    }
-
     return ({
         command: 'run [path]',
         describe: 'Runs a Sakuli Suite',
@@ -37,7 +27,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 const coreProps = project.objectFactory(SakuliCoreProperties);
 
                 console.log(chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`);
-                const logLevel = LogLevel[coreProps.logLevel.toUpperCase() as keyof typeof LogLevel];
+                const logLevel = LogLevel[(coreProps.logLevel || '').toUpperCase() as keyof typeof LogLevel];
                 sakuli.testExecutionContext.logger.logLevel = ifPresent(logLevel,
                     () => logLevel,
                     () => LogLevel.INFO
@@ -57,12 +47,8 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                     console.log(chalk`Error during Execution: \n`);
                     await renderError(error);
                 }, () => Promise.resolve());
-                await ifPresent(findError(sakuli.testExecutionContext), async errorEntity => {
-                    await ifPresent(errorEntity.error, async e => {
-                        console.log(chalk`\n{underline Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}}:\n`);
-                        await renderError(e);
-                    });
-                }, () => Promise.resolve());
+
+               await renderErrorsFromContext(sakuli.testExecutionContext);
             } catch (e) {
                 await renderError(e);
             } finally {

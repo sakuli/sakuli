@@ -11,7 +11,7 @@ require('yargonaut')
 import {bootstrap, loadBootstrapOptions} from "@sakuli/core";
 import * as yargs from 'yargs';
 import chalk from 'chalk';
-import {runCommand} from './run-command.function';
+import {runCommand} from './commands/run-command.function';
 
 import {loadPresets} from "./load-presets.function";
 import {cwd} from "process";
