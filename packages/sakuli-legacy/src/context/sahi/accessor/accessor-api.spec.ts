@@ -123,6 +123,7 @@ describe('accessor api', () => {
                   <input type="week" id="_weekbox" />
                   <textarea id="_textarea"></textarea>
                   <button id="_button"></button>
+                  <input type="button" id="_input-type-button"/>
                   <input type="checkbox" id="_checkbox">
                   <input type="checkbox" id="_checkbox">
                   <input type="radio" id="_radio">
@@ -232,7 +233,8 @@ describe('accessor api', () => {
                 testTriple('_urlbox'),
                 testTriple('_weekbox'),
                 testTriple('_textarea'),
-                testTriple('_button'),
+                testTriple('_button', 0, '_button'),
+                testTriple('_button', 1, '_input-type-button'),
                 testTriple('_checkbox'),
                 testTriple('_radio'),
                 testTriple('_submit'),
