@@ -11,7 +11,7 @@ import { getInstalledPresets } from "./get-installed-presets.function";
 import packageTypingMapping from "./package-typing-mapping.const";
 import { EOL } from "os";
 import { getSakuliVersion } from "./get-sakuli-version.function";
-import { containsTypescript } from "./contains-typescript";
+import { containsTypescript } from "./contains-typescript.function";
 
 const userInput = async (question: string): Promise<string> => {
     const rl = createInterface(process.stdin, process.stdout);

@@ -1,5 +1,5 @@
 import { readJson } from '../read-json.function'
-import { containsTypescript } from "./contains-typescript";
+import { containsTypescript } from "./contains-typescript.function";
 
 jest.mock('../read-json.function.ts', () => {
     return ({
@@ -14,6 +14,36 @@ jest.mock('../read-json.function.ts', () => {
             if(path.endsWith('/noTypescript/package.json')) {
                 return Promise.resolve({
                     "dependencies": {
+                        "sakuli": "1.2.3"
+                    }
+                });
+            }
+            if(path.endsWith('/devTypescript/package.json')) {
+                return Promise.resolve({
+                    "dependencies": {
+                        "sakuli": "1.2.3"
+                    },
+                    "devDependencies" :{
+                        "typescript": "1.2.3"
+                    }
+                });
+            }
+            if(path.endsWith('/depTypescript/package.json')) {
+                return Promise.resolve({
+                    "dependencies": {
+                        "typescript": "1.2.3"
+                    },
+                    "devDependencies" :{
+                        "sakuli": "1.2.3"
+                    }
+                });
+            }
+            if(path.endsWith('/noDepAndDevTypescript/package.json')) {
+                return Promise.resolve({
+                    "dependencies": {
+                        "sakuli": "1.2.3"
+                    },
+                    "devDependencies" :{
                         "sakuli": "1.2.3"
                     }
                 });
@@ -41,6 +71,24 @@ describe('getInstalledPresets', () => {
     it('should return false for non-existing typescript', async () => {
         const dependencies = await containsTypescript('/noTypescript');
         expect(readJson).toHaveBeenCalledWith('/noTypescript/package.json');
+        expect(dependencies).toBeFalsy();
+    });
+
+    it('should return true for existing typescript in devDependencies', async () => {
+        const dependencies = await containsTypescript('/devTypescript');
+        expect(readJson).toHaveBeenCalledWith('/devTypescript/package.json');
+        expect(dependencies).toBeTruthy();
+    });
+
+    it('should return true for existing typescript in dependencies', async () => {
+        const dependencies = await containsTypescript('/depTypescript');
+        expect(readJson).toHaveBeenCalledWith('/depTypescript/package.json');
+        expect(dependencies).toBeTruthy();
+    });
+
+    it('should return false for non-existing typescript in devDependency', async () => {
+        const dependencies = await containsTypescript('/noDepAndDevTypescript');
+        expect(readJson).toHaveBeenCalledWith('/noDepAndDevTypescript/package.json');
         expect(dependencies).toBeFalsy();
     });
 
