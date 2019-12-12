@@ -10,8 +10,8 @@ import { defaultTsConfig } from "./default-ts-config.const";
 import { getInstalledPresets } from "./get-installed-presets.function";
 import packageTypingMapping from "./package-typing-mapping.const";
 import { EOL } from "os";
-import { readJson } from "../read-json.function";
 import { getSakuliVersion } from "./get-sakuli-version.function";
+import { containsTypescript } from "./contains-typescript.function";
 
 const userInput = async (question: string): Promise<string> => {
     const rl = createInterface(process.stdin, process.stdout);
@@ -21,7 +21,7 @@ const userInput = async (question: string): Promise<string> => {
             rl.close();
         });
     })
-}
+};
 
 export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
@@ -39,7 +39,12 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
             const sakuliVersion = await getSakuliVersion(baseDir);
             const typingPackages = presets
                 .filter(preset => packageTypingMapping.has(preset))
-                .map(preset => packageTypingMapping.get(preset)!)
+                .map(preset => packageTypingMapping.get(preset)!);
+
+            if (!await containsTypescript(baseDir)) {
+                typingPackages.unshift("typescript");
+            }
+
             const answer = await userInput(stripIndents`
                 This command will install and configure all relevant packages to use ${chalk.bold.blueBright('Typescript')} in your project:
                 ${typingPackages.map(pkg => `  - Install ${chalk.green(pkg)}`).join(EOL)}
@@ -49,8 +54,8 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
 
             `);
             if (answer.toUpperCase() !== 'n') {
-                const installs: [string, Ora][] = typingPackages.map(pkg => [pkg, ora(`Running npm i install ${pkg}@${sakuliVersion}`)]);
-                const createFile = ora('Creating tsconfig.json')
+                const installs: [string, Ora][] = typingPackages.map(pkg => [pkg, ora(`Running npm install ${pkg}@${sakuliVersion}`)]);
+                const createFile = ora('Creating tsconfig.json');
                 for (let [pkg, install] of installs) {
                     try {
                         install.start();
@@ -62,12 +67,12 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
                 }
                 try {
                     createFile.start();
-                    const cfg = { ...defaultTsConfig };
+                    const cfg = {...defaultTsConfig};
                     (cfg.compilerOptions.types as string[]).push(...typingPackages);
                     await fs.writeFile(
                         join(baseDir, 'tsconfig.json'),
                         JSON.stringify(cfg, null, 2),
-                        { flag: 'w' }
+                        {flag: 'w'}
                     );
                     createFile.succeed();
                 } catch (e) {
