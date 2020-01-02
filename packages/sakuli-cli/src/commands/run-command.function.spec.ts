@@ -8,6 +8,7 @@ import { ensurePath, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
+import { renderError } from "./run-command/render-error.function";
 
 jest.mock('../cli-utils/test-execution-context-renderer.function', () => ({
     testExecutionContextRenderer: jest.fn()
@@ -20,6 +21,10 @@ jest.mock("../create-log-consumer.function", () => ({
 jest.mock("./run-command/render-errors-from-context.function", () => ({
     renderErrorsFromContext: jest.fn()
 }));
+
+jest.mock('./run-command/render-error.function', () => ({
+    renderError: jest.fn()
+}))
 
 describe('runCommand', () => {
 
@@ -141,9 +146,19 @@ describe('runCommand', () => {
             expect(renderErrorsFromContext).toHaveBeenLastCalledWith(sakuli.testExecutionContext);
         });
 
-        it('should exit the process with sakulis resutlState', async () => {
+        it('should exit the process with sakulis resultState', async () => {
             await command.handler(runOptions);
             expect(process.exit).toHaveBeenCalledWith(sakuli.testExecutionContext.resultState);
+        });
+
+        it('should exit with -1 when an error occurs during execution', async () => {
+            const dummyError = Error('Dummy');
+            (<jest.Mock>createLogConsumer).mockImplementation(() => {
+                throw dummyError;
+            });
+            await command.handler(runOptions);
+            expect(renderError).toHaveBeenCalledWith(dummyError);
+            expect(process.exit).toHaveBeenLastCalledWith(-1);
         })
 
     })
