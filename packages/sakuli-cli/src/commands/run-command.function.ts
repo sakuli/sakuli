@@ -49,11 +49,12 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                 }, () => Promise.resolve());
 
                await renderErrorsFromContext(sakuli.testExecutionContext);
+               process.exit(sakuli.testExecutionContext.resultState)
             } catch (e) {
                 await renderError(e);
+                process.exit(1);
             } finally {
                 invokeIfPresent(cleanLogConsumer);
-                process.exit(sakuli.testExecutionContext.resultState)
             }
         }
     })
