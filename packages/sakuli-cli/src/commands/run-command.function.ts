@@ -52,7 +52,7 @@ export const runCommand: CommandModuleProvider = (sakuli: SakuliInstance): Comma
                process.exit(sakuli.testExecutionContext.resultState)
             } catch (e) {
                 await renderError(e);
-                process.exit(-1);
+                process.exit(1);
             } finally {
                 invokeIfPresent(cleanLogConsumer);
             }

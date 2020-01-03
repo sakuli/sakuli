@@ -151,14 +151,14 @@ describe('runCommand', () => {
             expect(process.exit).toHaveBeenCalledWith(sakuli.testExecutionContext.resultState);
         });
 
-        it('should exit with -1 when an error occurs during execution', async () => {
+        it('should exit with 1 when an error occurs during execution', async () => {
             const dummyError = Error('Dummy');
             (<jest.Mock>createLogConsumer).mockImplementation(() => {
                 throw dummyError;
             });
             await command.handler(runOptions);
             expect(renderError).toHaveBeenCalledWith(dummyError);
-            expect(process.exit).toHaveBeenLastCalledWith(-1);
+            expect(process.exit).toHaveBeenLastCalledWith(1);
         })
 
     })
