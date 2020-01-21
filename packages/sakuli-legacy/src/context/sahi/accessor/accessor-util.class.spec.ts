@@ -1,4 +1,4 @@
-import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { By, error, ThenableWebDriver, WebElement } from "selenium-webdriver";
 import { createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment } from "../__mocks__";
 import { AccessorUtil } from "./accessor-util.class";
 import { RelationsResolver } from "../relations";
@@ -204,22 +204,18 @@ describe('AccessorUtil', () => {
             await expect(span.getAttribute('id')).resolves.toEqual('m-2')
         });
 
-        it('Should throw if element could not be found.', async () => {
+        it('Should reject if element could not be found.', async () => {
             await driver.get(mockHtml(`
                 <div></div>
             `));
 
-            const fetchElements = () => accessorUtil.fetchElements({
+            const fetchElements = accessorUtil.fetchElements({
                 locator: By.css('span'),
                 identifier: "/aintenance/[1]",
                 relations: []
             });
 
-            const result = await fetchElements();
-
-            console.log(JSON.stringify(result));
-
-            expect(await fetchElements()).toThrow("Cannot read property 'getAttribute' of undefined");
+            await expect(fetchElements).rejects.toThrowError(/Cannot find Element within 3000ms by query:.*/);
         })
     });
 });
