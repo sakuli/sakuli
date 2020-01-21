@@ -7,7 +7,6 @@ import { INJECT_SAKULI_HOOK } from "../inject.const";
 import { TestExecutionContext } from "@sakuli/core";
 import { CommonActionsApi } from "./common-actions.interface";
 import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
-import { throwIfAbsent } from "@sakuli/commons/dist";
 
 export function commonActionsApi(
     webDriver: ThenableWebDriver,
@@ -38,7 +37,7 @@ export function commonActionsApi(
             : query;
 
         const elementRect = await element.getRect();
-        await scrollIntoViewIfNeeded(element);
+        await scrollIntoViewIfNeeded(element, ctx);
         await webDriver.executeAsyncScript(stripIndents`
             var rect = arguments[0];
             var timeout = arguments[1];
