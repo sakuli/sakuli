@@ -20,6 +20,7 @@ import {
 import { ifPresent } from "@sakuli/commons";
 import { AccessorIdentifier } from "../api";
 import { CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS } from "../action/inject.const";
+import { waitUntilPageIsLoaded } from "../helper/wait-until-page-is-loaded.function";
 
 export class AccessorUtil {
 
@@ -31,6 +32,7 @@ export class AccessorUtil {
     }
 
     private timeout: number = 3_000;
+    private interval: number = 200;
 
     setTimeout(timeoutMs: number) {
         this.timeout = timeoutMs;
@@ -52,25 +54,8 @@ export class AccessorUtil {
         return values.every(v => hayStack.includes(v));
     }
 
-    private async waitUntilPageIsLoaded(){
-        let interval = 200;
-        for (let waited = 0; waited <= this.timeout; waited -=- interval){
-            const old = await this.webDriver.getPageSource();
-            await this.wait(interval);
-            if(old === await this.webDriver.getPageSource()){
-                return;
-            }
-        }
-    }
-
-    private async wait(milliseconds: number) {
-        await new Promise<void>((res) => {
-            setTimeout(() => res(), milliseconds);
-        });
-    }
-
     async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
-        this.waitUntilPageIsLoaded();
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         const matches: WebElement[] = [];
         for (let element of elements) {
             const elementClasses = ((await element.getAttribute("class")) || "").split(" ");
@@ -98,7 +83,7 @@ export class AccessorUtil {
      * @param elements
      */
     async getStringIdentifiersForElement(elements: WebElement[]) {
-        this.waitUntilPageIsLoaded();
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         return this.webDriver.executeScript<[WebElement, string[]][]>(`
             return (function(element) {
                 function getAttributes(e) {
@@ -124,8 +109,8 @@ export class AccessorUtil {
     }
 
     async getByRegEx(elements: WebElement[], regEx: RegExp): Promise<WebElement[]> {
-        this.waitUntilPageIsLoaded();
-       const eAndText: [WebElement, string[]][] = await this.getStringIdentifiersForElement(elements);
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
+        const eAndText: [WebElement, string[]][] = await this.getStringIdentifiersForElement(elements);
 
         return eAndText.filter(([, potentialMatches]) => {
             const matches = potentialMatches.filter(x => x).map(text => {
@@ -176,7 +161,7 @@ export class AccessorUtil {
     }
 
     async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
-        this.waitUntilPageIsLoaded();
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         if (isAccessorIdentifierAttributes(identifier)) {
             return await this.getElementsByAccessorIdentifier(elements, identifier);
         }
@@ -193,7 +178,7 @@ export class AccessorUtil {
     }
 
     async fetchElements(query: SahiElementQuery, waitTimeout: number = this.timeout): Promise<WebElement[]> {
-        this.waitUntilPageIsLoaded();
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         return this.webDriver.wait<WebElement[]>(async () => {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
@@ -206,7 +191,7 @@ export class AccessorUtil {
     }
 
     async fetchElement(query: SahiElementQueryOrWebElement | WebElement, waitTimeout: number = this.timeout): Promise<WebElement> {
-        this.waitUntilPageIsLoaded();
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         return isSahiElementQuery(query)
             ? this.fetchElements(query, waitTimeout).then(([first]) => first)
             : Promise.resolve(query)
@@ -227,7 +212,7 @@ export class AccessorUtil {
     }
 
     async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
-        this.waitUntilPageIsLoaded();
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
