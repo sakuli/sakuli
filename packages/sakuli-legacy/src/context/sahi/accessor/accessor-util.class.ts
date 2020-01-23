@@ -55,7 +55,6 @@ export class AccessorUtil {
     }
 
     async getElementBySahiClassName(elements: WebElement[], {className}: AccessorIdentifierAttributesWithClassName) {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         const matches: WebElement[] = [];
         for (let element of elements) {
             const elementClasses = ((await element.getAttribute("class")) || "").split(" ");
@@ -83,7 +82,6 @@ export class AccessorUtil {
      * @param elements
      */
     async getStringIdentifiersForElement(elements: WebElement[]) {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         return this.webDriver.executeScript<[WebElement, string[]][]>(`
             return (function(element) {
                 function getAttributes(e) {
@@ -109,7 +107,6 @@ export class AccessorUtil {
     }
 
     async getByRegEx(elements: WebElement[], regEx: RegExp): Promise<WebElement[]> {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         const eAndText: [WebElement, string[]][] = await this.getStringIdentifiersForElement(elements);
 
         return eAndText.filter(([, potentialMatches]) => {
@@ -146,6 +143,7 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         try {
             await this.enableHook();
             // TODO Make timeout configurable
@@ -212,7 +210,6 @@ export class AccessorUtil {
     }
 
     async getByString(elements: WebElement[], identifier: string): Promise<WebElement[]> {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.timeout);
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
