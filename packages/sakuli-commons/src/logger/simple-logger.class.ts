@@ -1,6 +1,6 @@
-import {EventEmitter} from "events";
-import {LogEvent} from "./log-event.interface";
-import {LogLevel} from "./log-level.class";
+import { EventEmitter } from "events";
+import { LogEvent } from "./log-event.interface";
+import { LogLevel } from "./log-level.class";
 
 export class SimpleLogger {
     private emitter = new EventEmitter;
@@ -29,6 +29,15 @@ export class SimpleLogger {
         return () => {
             this.emitter.off('event', eventConsumer);
         }
+    }
+
+    trace(message: string, ...data: any[]) {
+        this.log({
+            level: LogLevel.TRACE,
+            time: new Date(),
+            message,
+            data
+        })
     }
 
     debug(message: string, ...data: any[]) {

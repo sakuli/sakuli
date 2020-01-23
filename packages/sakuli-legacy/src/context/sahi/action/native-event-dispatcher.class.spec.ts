@@ -1,7 +1,7 @@
-import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {NativeEventDispatcher} from "./native-event-dispatcher.class";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { NativeEventDispatcher } from "./native-event-dispatcher.class";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('NativeEventDispatcher', () => {
@@ -37,6 +37,20 @@ describe('NativeEventDispatcher', () => {
             const out = await driver.findElement(By.css('#out'));
             return expect(out.getText()).resolves.toBe('emitted b')
         });
-    })
+    });
 
+    it('should throw on null or undefined WebElement', async () => {
+
+        //GIVEN
+        const webElement = (undefined as unknown) as WebElement;
+        const nativeEventDispatcher = new NativeEventDispatcher(webElement);
+
+        //WHEN
+        const dispatchEvent = nativeEventDispatcher.dispatchKeyboardEvent("keydown", {key: 'b'});
+
+        //THEN
+        await expect(dispatchEvent)
+            .rejects
+            .toThrowError("Could not dispatch native event due to null or undefined WebElement reference")
+    })
 });

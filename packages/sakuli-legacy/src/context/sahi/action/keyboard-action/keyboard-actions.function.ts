@@ -1,12 +1,12 @@
-import {Key, ThenableWebDriver} from "selenium-webdriver";
-import {AccessorUtil} from "../../accessor";
-import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQueryOrWebElement} from "../../sahi-element.interface";
-import {stripIndents} from "common-tags";
-import {CharInfo, charInfoToKey} from "./../char-info.interface";
-import {NativeEventDispatcher} from "./../native-event-dispatcher.class";
-import {getSeleniumKeysFromComboString} from "./../sahi-selenium-key-map.const";
-import {KeyboardActionsApi} from "./keyboard-actions.interface";
+import { Key, ThenableWebDriver } from "selenium-webdriver";
+import { AccessorUtil } from "../../accessor";
+import { TestExecutionContext } from "@sakuli/core";
+import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
+import { stripIndents } from "common-tags";
+import { CharInfo, charInfoToKey } from "./../char-info.interface";
+import { NativeEventDispatcher } from "./../native-event-dispatcher.class";
+import { getSeleniumKeysFromComboString } from "./../sahi-selenium-key-map.const";
+import { KeyboardActionsApi } from "./keyboard-actions.interface";
 import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
 
 export function keyboardActionApi(
@@ -18,7 +18,7 @@ export function keyboardActionApi(
 
     async function _setValue(query: SahiElementQueryOrWebElement, value: string): Promise<void> {
         const element = await accessorUtil.fetchElement(query);
-        await scrollIntoViewIfNeeded(element);
+        await scrollIntoViewIfNeeded(element, ctx);
         try {
             await element.clear();
             for (let char of value.split('')) {
@@ -38,7 +38,7 @@ export function keyboardActionApi(
 
     async function keyEvent(query: SahiElementQueryOrWebElement, charInfo: CharInfo, combo: string, eventName: string) {
         const e = await accessorUtil.fetchElement(query);
-        await scrollIntoViewIfNeeded(e);
+        await scrollIntoViewIfNeeded(e, ctx);
         const dispatcher = new NativeEventDispatcher(e);
         const keys = getSeleniumKeysFromComboString(combo);
         const value = charInfoToKey(charInfo);
@@ -66,7 +66,7 @@ export function keyboardActionApi(
 
     async function _type(query: SahiElementQueryOrWebElement, text: string) {
         const e = await accessorUtil.fetchElement(query);
-        await scrollIntoViewIfNeeded(e);
+        await scrollIntoViewIfNeeded(e, ctx);
         return e.sendKeys(...text.split(''));
     }
 
