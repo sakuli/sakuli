@@ -43,7 +43,8 @@ describe("scroll into view if needed", () => {
         //THEN
         expect(await scrollIntoView).resolves;
         expect(webElementMock.getDriver().executeScript).toBeCalledWith(expect.any(String), webElementMock);
-        expect(ctx.logger.trace).toBeCalledWith(expect.stringContaining("scroll into view started with element:"))
+        expect(ctx.logger.trace).toBeCalledWith(expect.stringContaining("scroll into view started with element:"));
+        expect(ctx.logger.trace).toBeCalledWith(expect.stringContaining("scroll into view finished for element:"))
     });
 
     it("should resolve if script execution rejects", async () => {

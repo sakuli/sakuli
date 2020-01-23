@@ -12,5 +12,7 @@ export async function scrollIntoViewIfNeeded(element: WebElement, ctx: TestExecu
             inline: "center",
             block: "center"
         });
-    `, element).catch((): void => {});
+    `, element)
+        .then(() => ctx.logger.trace(`scroll into view finished for element: ${JSON.stringify(element)}`))
+        .catch((): void => {});
 }
