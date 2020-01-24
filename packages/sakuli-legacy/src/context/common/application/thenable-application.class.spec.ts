@@ -1,10 +1,10 @@
-import {Project, TestExecutionContext} from "@sakuli/core";
-import {mockPartial} from "sneer";
-import {Application} from "./application.interface";
-import {createThenableApplicationClass} from "./thenable-application.class";
-import {createThenableRegionClass, Region, ThenableRegion} from "../region";
-import {createTestExecutionContextMock} from "../../sahi/__mocks__";
-import {Type} from "@sakuli/commons";
+import { Project, TestExecutionContext } from "@sakuli/core";
+import { mockPartial } from "sneer";
+import { Application } from "./application.interface";
+import { createThenableApplicationClass } from "./thenable-application.class";
+import { createThenableRegionClass, Region, ThenableRegion } from "../region";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { Type } from "@sakuli/commons";
 
 const defer = <T>(v: T) => Promise.resolve(v);
 describe('ThenableApplication', () => {

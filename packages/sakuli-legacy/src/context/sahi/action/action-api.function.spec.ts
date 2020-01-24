@@ -1,9 +1,10 @@
-import { By, ThenableWebDriver, until } from "selenium-webdriver";
+import { By, ThenableWebDriver } from "selenium-webdriver";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 import { actionApi } from "./action-api.function";
 import { AccessorUtil } from "../accessor";
 import { RelationsResolver } from "../relations";
-import { createTestEnv, TestEnvironment, createTestExecutionContextMock, mockHtml } from "../__mocks__";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__"
 
 
 jest.setTimeout(25_000);
@@ -55,7 +56,7 @@ describe('action-api', () => {
                             document.getElementById('out').innerText = 'clicked';
                         })
                     </script>
-                `))
+                `));
                 await expect(api._click({
                     locator: By.css('#btn'),
                     identifier: 0,
@@ -63,7 +64,7 @@ describe('action-api', () => {
                 })).resolves.toBeUndefined();
                 const out = await driver.findElement(By.id('out'));
                 await expect(out.getText()).resolves.toEqual('clicked');
-            })
+            });
 
             it('should autoscroll a element in a scrollabel container to click element', async () => {
                 const api = createApi(driver);
@@ -77,7 +78,7 @@ describe('action-api', () => {
                             document.getElementById('out').innerText = 'clicked';
                         })
                     </script>
-                `))
+                `));
                 await expect(api._click({
                     locator: By.css('#btn'),
                     identifier: 0,
@@ -86,11 +87,12 @@ describe('action-api', () => {
                 const out = await driver.findElement(By.id('out'));
                 await expect(out.getText()).resolves.toEqual('clicked');
             })
-        })
+        });
 
         describe('auto switch between frames', () => {
             it('should find elements over all frames in frameset', async () => {
                 const api = createApi(driver);
+                // noinspection HtmlDeprecatedTag,HtmlUnknownAttribute,HtmlDeprecatedAttribute
                 await driver.get(mockHtml(`
                 <frameset cols="25%, 75%">
                     <frame src="${mockHtml(`
@@ -106,7 +108,7 @@ describe('action-api', () => {
                     identifier: 0,
                     relations: []
                 })).resolves.toBe(void 0);
-            })
+            });
 
             it('should find elements in iframes', async () => {
                 const api = createApi(driver);

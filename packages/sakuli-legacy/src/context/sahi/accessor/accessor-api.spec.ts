@@ -1,10 +1,11 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {AccessorUtil} from "./accessor-util.class";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {RelationsResolver} from "../relations";
-import {accessorApi, AccessorFunctions} from "./accessor-api";
-import {AccessorFunction} from "../api";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { AccessorUtil } from "./accessor-util.class";
+import { By, ThenableWebDriver } from "selenium-webdriver";
+import { RelationsResolver } from "../relations";
+import { accessorApi, AccessorFunctions } from "./accessor-api";
+import { AccessorFunction } from "../api";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('accessor api', () => {
@@ -103,6 +104,7 @@ describe('accessor api', () => {
         describe('generic element accessor functions', () => {
 
             beforeAll(async () => {
+                // noinspection HtmlRequiredAltAttribute,HtmlDeprecatedAttribute,HtmlDeprecatedTag,HtmlWrongAttributeValue
                 await driver.get(mockHtml(`
                 <form>
                   <input id="_textbox-without-type" />

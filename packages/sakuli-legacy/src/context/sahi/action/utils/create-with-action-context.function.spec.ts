@@ -1,5 +1,5 @@
 import { createWithActionContext } from "./create-with-action-context.function";
-import { createTestExecutionContextMock } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
 import { TestExecutionContext } from "@sakuli/core/dist";
 
 describe('create-with-action-context', () => {
@@ -10,7 +10,7 @@ describe('create-with-action-context', () => {
     beforeEach(() => {
         ctx = createTestExecutionContextMock();
          withActionContext = createWithActionContext(ctx)
-    })
+    });
 
     describe('successful execution', () => {
         let actionMock: <ARGS extends any[], R>(...args: ARGS) => Promise<R>;
@@ -20,10 +20,10 @@ describe('create-with-action-context', () => {
             actionMock = jest.fn().mockResolvedValue('Works');
             wrappedAction = withActionContext('dummy', actionMock);
 
-        })
+        });
 
         it('should invoke action and return its result', async () => {
-            const result = await wrappedAction(1, "Test");
+            await wrappedAction(1, "Test");
             expect(ctx.startTestAction).toHaveBeenCalledWith(expect.objectContaining({id: 'dummy'}));
             expect(ctx.endTestAction).toHaveBeenCalled();
         });
@@ -34,7 +34,7 @@ describe('create-with-action-context', () => {
             expect(ctx.endTestAction).toHaveBeenCalled();
 
         })
-    })
+    });
 
     describe('error in execution', () => {
         let actionMock: <ARGS extends any[], R>(...args: ARGS) => Promise<R>;
@@ -42,11 +42,11 @@ describe('create-with-action-context', () => {
         let actionError: Error;
 
         beforeEach(() => {
-            actionError = Error('Error in Action')
+            actionError = Error('Error in Action');
             actionMock = jest.fn().mockRejectedValue(actionError);
             wrappedAction = withActionContext('dummy', actionMock);
 
-        })
+        });
 
         it('should invoke action and throw an error', async () => {
             const wrappedActionResultPromise = wrappedAction(1, "Test");

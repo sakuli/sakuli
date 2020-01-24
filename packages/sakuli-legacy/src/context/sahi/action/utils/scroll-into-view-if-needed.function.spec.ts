@@ -1,7 +1,7 @@
 import { WebDriver, WebElement } from "selenium-webdriver";
 import { scrollIntoViewIfNeeded } from "./scroll-into-view-if-needed.function";
 import { TestExecutionContext } from "@sakuli/core";
-import { createTestExecutionContextMock } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
 import { mockPartial } from "sneer";
 
 function mockExecuteScript(promise: Promise<void>) {

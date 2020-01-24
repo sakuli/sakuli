@@ -1,12 +1,13 @@
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {AccessorUtil} from "../accessor";
-import {RelationsResolver} from "./relations-resolver.class";
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {parentApi} from "./parent-api.function";
-import {ParentApi} from './parent-api.interface';
-import {isEqual} from "../helper/is-equal.function";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { By, ThenableWebDriver } from "selenium-webdriver";
+import { AccessorUtil } from "../accessor";
+import { RelationsResolver } from "./relations-resolver.class";
+import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { parentApi } from "./parent-api.function";
+import { ParentApi } from './parent-api.interface';
+import { isEqual } from "../helper/is-equal.function";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('relations-api', () => {
@@ -51,7 +52,7 @@ describe('relations-api', () => {
             const expected = await driver.findElement(By.css(parentId));
             const found = await accessorUtil.fetchElement(q);
             return expect(isEqual(expected, found)).resolves.toBe(true)
-        })
+        });
 
         it('should find parent by webelement reference', async () => {
             const {_parentNode} = api;
@@ -61,7 +62,7 @@ describe('relations-api', () => {
               <a href="" id="a-link">aLink</a>
             </div></span>
           </div>
-        `))
+        `));
             const e = await driver.findElement(By.css('#a-link'));
             const pq = await _parentNode(e, 'div', 1);
             const found = await accessorUtil.fetchElement(pq);

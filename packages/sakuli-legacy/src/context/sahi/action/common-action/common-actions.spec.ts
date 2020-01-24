@@ -1,6 +1,7 @@
 import { getTestBrowserList } from "../../__mocks__/get-browser-list.function";
-import { TestEnvironment, createTestEnv, createTestExecutionContextMock, mockHtml } from "../../__mocks__";
-import { ThenableWebDriver, Locator, By } from "selenium-webdriver";
+import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
+import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { CommonActionsApi } from "./common-actions.interface";
 import { commonActionsApi } from "./common-actions.function";
 import { AccessorUtil } from "../../accessor";

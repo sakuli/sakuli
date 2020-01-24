@@ -1,7 +1,7 @@
 import { mockPartial } from "sneer";
 import { ThenableWebDriver } from "selenium-webdriver";
 import { sahiApi } from "./api";
-import { createTestExecutionContextMock } from "./__mocks__";
+import { createTestExecutionContextMock } from "../__mocks__";
 import { SahiApi } from "./sahi-api.interface";
 
 let getTimeoutMock = jest.fn();
@@ -13,7 +13,7 @@ jest.mock('./accessor', () => ({
         getTimeout: getTimeoutMock,
         setTimeout: setTimeoutMock
     }))
-}))
+}));
 
 describe('SahiApi', () => {
 
@@ -25,12 +25,12 @@ describe('SahiApi', () => {
         let api: SahiApi;
         beforeEach(() => {
             api = sahiApi(mockDriver, ctx);
-        })
+        });
 
         it('should setTimeout in AccessorUtil', () => {
             api._setFetchTimeout(10_000);
             expect(setTimeoutMock).toHaveBeenCalledWith(10_000);
-        })
+        });
 
         it('should call getTimeout from AccessorUtils', () => {
             const returnValue = Math.random();

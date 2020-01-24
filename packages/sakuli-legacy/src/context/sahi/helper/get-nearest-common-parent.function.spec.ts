@@ -1,10 +1,10 @@
-import {relationsApi, RelationsResolver} from "../relations";
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {AccessorUtil} from "../accessor";
-import {By, Locator} from "selenium-webdriver";
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {getNearestCommonParent} from "./get-nearest-common-parent.function";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { relationsApi, RelationsResolver } from "../relations";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { AccessorUtil } from "../accessor";
+import { By } from "selenium-webdriver";
+import { getNearestCommonParent } from "./get-nearest-common-parent.function";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(50000);
 
@@ -22,14 +22,6 @@ describe('getNearestCommonParent', () => {
             api = relationsApi(driver, accessorUtil, testExecutionContext);
             done();
         });
-
-        function createQuery(locator: Locator): SahiElementQueryOrWebElement {
-            return ({
-                locator,
-                identifier: 0,
-                relations: []
-            })
-        }
 
         afterAll(async done => {
             await env.stop();
