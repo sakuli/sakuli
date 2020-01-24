@@ -33,7 +33,7 @@ export class AccessorUtil {
 
     private timeout: number = 3_000;
 
-    private waitUntilLoadedTimeout: number = 1_000;
+    private waitUntilPageIsLoadedTimeout: number = 1_600;
     private interval: number = 200;
 
     setTimeout(timeoutMs: number) {
@@ -145,7 +145,7 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilLoadedTimeout);
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilPageIsLoadedTimeout);
         try {
             await this.enableHook();
             // TODO Make timeout configurable
@@ -161,7 +161,7 @@ export class AccessorUtil {
     }
 
     async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilLoadedTimeout);
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilPageIsLoadedTimeout);
         if (isAccessorIdentifierAttributes(identifier)) {
             return await this.getElementsByAccessorIdentifier(elements, identifier);
         }
@@ -178,7 +178,7 @@ export class AccessorUtil {
     }
 
     async fetchElements(query: SahiElementQuery, waitTimeout: number = this.timeout): Promise<WebElement[]> {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilLoadedTimeout);
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilPageIsLoadedTimeout);
         return this.webDriver.wait<WebElement[]>(async () => {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
@@ -191,7 +191,7 @@ export class AccessorUtil {
     }
 
     async fetchElement(query: SahiElementQueryOrWebElement | WebElement, waitTimeout: number = this.timeout): Promise<WebElement> {
-        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilLoadedTimeout);
+        await waitUntilPageIsLoaded(this.webDriver, this.interval, this.waitUntilPageIsLoadedTimeout);
         return isSahiElementQuery(query)
             ? this.fetchElements(query, waitTimeout).then(([first]) => first)
             : Promise.resolve(query)
