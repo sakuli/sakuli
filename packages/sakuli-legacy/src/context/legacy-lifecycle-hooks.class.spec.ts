@@ -86,7 +86,24 @@ describe("LegacyLifecycleHooks", () => {
             await expect(lcp.driver).toBeDefined();
             jest.spyOn(lcp.driver!, 'quit');
             await lcp.afterExecution(minimumProject, testExecutionContext);
-            return expect(lcp.driver!.quit).toHaveBeenCalled();
+            expect(lcp.driver!.quit).toHaveBeenCalled();
+            expect(testExecutionContext.logger.debug).toHaveBeenCalledWith("Closed webdriver");
+        });
+
+        it('should log in case the webdriver in teardown errored', async () => {
+
+            //GIVEN
+            await lcp.onProject(minimumProject);
+            await expect(lcp.driver).toBeDefined();
+            const expectedError = Error("Oh no! Quit did some fuxi wuxi =/");
+            lcp.driver!.quit = jest.fn().mockRejectedValue(expectedError);
+
+            //THEN
+            await lcp.afterExecution(minimumProject, testExecutionContext);
+
+            //WHEN
+            expect(testExecutionContext.logger.warn)
+                .toHaveBeenCalledWith("Webdriver doesn't quit reliably", expectedError);
         });
     });
 
