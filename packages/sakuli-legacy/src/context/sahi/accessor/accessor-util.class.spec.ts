@@ -46,7 +46,6 @@ describe('AccessorUtil', () => {
         });
 
         it('should fetch img src for fuzzy matching', async () => {
-            // noinspection HtmlRequiredAltAttribute,HtmlDeprecatedAttribute
             await driver.get(mockHtml(`
              <img
                 src="https://www.consol.de/fileadmin/images/svg/consol-logo.svg"

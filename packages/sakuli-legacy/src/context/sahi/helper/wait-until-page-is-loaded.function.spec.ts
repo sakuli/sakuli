@@ -14,17 +14,36 @@ describe("wait until page is loaded", () => {
 
     const testExecutionContext = createTestExecutionContextMock();
 
-    function createWebDriverMock (getPageSourceMock: jest.Mock) {
-        return mockPartial<WebDriver>({getPageSource: getPageSourceMock});
+    function createWebDriverMock () {
+        function withMock(getPageSourceMock: jest.Mock){
+            return mockPartial<WebDriver>({getPageSource: getPageSourceMock}); 
+        }
+        
+        function withFiveDomChanges(){
+            return withMock(jest.fn()
+                .mockResolvedValueOnce("<html></html>")
+                .mockResolvedValueOnce("<html><div></div></html>")
+                .mockResolvedValueOnce("<html></html>")
+                .mockResolvedValueOnce("<html><div></div></html>")
+                .mockResolvedValueOnce("<html></html>"));
+        }
+
+        function withTwoDomChanges(){
+            return withMock(jest.fn()
+                .mockResolvedValueOnce("<html></html>")
+                .mockResolvedValue("<html><div></div></html>"));
+        }
+        
+        return {
+            withMock, 
+            withFiveDomChanges, 
+            withTwoDomChanges}
     }
 
     it("should wait if page is changing its dom over time", async () => {
 
         //GIVEN
-        // noinspection HtmlRequiredLangAttribute
-        const webDriverMock = createWebDriverMock(jest.fn()
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValue("<html><div></div></html>"));
+        const webDriverMock = createWebDriverMock().withTwoDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -36,13 +55,7 @@ describe("wait until page is loaded", () => {
     it("should not wait longer than the timeout defines", async () => {
 
         //GIVEN
-        // noinspection HtmlRequiredLangAttribute
-        const webDriverMock = createWebDriverMock(jest.fn()
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValueOnce("<html><div></div></html>")
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValueOnce("<html><div></div></html>")
-            .mockResolvedValueOnce("<html></html>"));
+        const webDriverMock = createWebDriverMock().withFiveDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -54,9 +67,8 @@ describe("wait until page is loaded", () => {
     it("should wait as long as the interval defines", async () => {
 
         //GIVEN
-        // noinspection HtmlRequiredLangAttribute
-        const webDriverMock = createWebDriverMock(
-            jest.fn().mockResolvedValue("<html></html>"));
+        const webDriverMock = createWebDriverMock().withMock(
+                                    jest.fn().mockResolvedValue("<html></html>"));
 
 
         //WHEN
@@ -69,10 +81,7 @@ describe("wait until page is loaded", () => {
     it("should log when waiting starts", async () => {
 
         //GIVEN
-        // noinspection HtmlRequiredLangAttribute
-        const webDriverMock = createWebDriverMock(jest.fn()
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValue("<html><div></div></html>"));
+        const webDriverMock = createWebDriverMock().withTwoDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -85,30 +94,20 @@ describe("wait until page is loaded", () => {
     it("should log when waiting ends before timeout", async () => {
 
         //GIVEN
-        // noinspection HtmlRequiredLangAttribute
-        const webDriverMock = createWebDriverMock(jest.fn()
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValueOnce("<html><div></div></html>")
-            .mockResolvedValue("<html><div><a></a></div></html>"));
+        const webDriverMock = createWebDriverMock().withTwoDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
 
         //THEN
         expect(testExecutionContext.logger.debug)
-            .toHaveBeenCalledWith("Finished page loading after 2ms");
+            .toHaveBeenCalledWith("Finished page loading after 1ms");
     });
 
     it("should log when waiting ends because of timeout", async () => {
 
         //GIVEN
-        // noinspection HtmlRequiredLangAttribute
-        const webDriverMock = createWebDriverMock(jest.fn()
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValueOnce("<html><div></div></html>")
-            .mockResolvedValueOnce("<html></html>")
-            .mockResolvedValueOnce("<html><div></div></html>")
-            .mockResolvedValueOnce("<html></html>"));
+        const webDriverMock = createWebDriverMock().withFiveDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);

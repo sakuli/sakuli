@@ -176,7 +176,6 @@ describe('mouse-actions', () => {
 
             it('should drag #a to #b', async () => {
                 const {_dragDrop} = createApi(driver);
-                // noinspection HtmlUnknownAttribute
                 await driver.get(mockHtml(`
                 <!-- From: https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_draganddrop -->
                 <style>

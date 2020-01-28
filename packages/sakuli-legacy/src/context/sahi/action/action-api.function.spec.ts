@@ -92,7 +92,6 @@ describe('action-api', () => {
         describe('auto switch between frames', () => {
             it('should find elements over all frames in frameset', async () => {
                 const api = createApi(driver);
-                // noinspection HtmlDeprecatedTag,HtmlUnknownAttribute,HtmlDeprecatedAttribute
                 await driver.get(mockHtml(`
                 <frameset cols="25%, 75%">
                     <frame src="${mockHtml(`

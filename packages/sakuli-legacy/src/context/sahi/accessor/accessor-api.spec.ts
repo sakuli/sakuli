@@ -104,7 +104,6 @@ describe('accessor api', () => {
         describe('generic element accessor functions', () => {
 
             beforeAll(async () => {
-                // noinspection HtmlRequiredAltAttribute,HtmlDeprecatedAttribute,HtmlDeprecatedTag,HtmlWrongAttributeValue
                 await driver.get(mockHtml(`
                 <form>
                   <input id="_textbox-without-type" />

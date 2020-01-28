@@ -79,7 +79,6 @@ describe('relations-api', () => {
                 });
 
                 it('should resolve within a table', async done => {
-                    // noinspection HtmlUnknownTarget
                     await driver.get(mockHtml(`
                 <table style="width:300px" class="_in">
                   <tr>
@@ -113,7 +112,6 @@ describe('relations-api', () => {
 
             describe('_near', () => {
                 it('should work', async () => {
-                    // noinspection HtmlUnknownTarget
                     const html = mockHtml(`
                     <table class="_in">
                       <tr>
