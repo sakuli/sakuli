@@ -19,7 +19,7 @@ describe("wait until page is loaded", () => {
             return mockPartial<WebDriver>({getPageSource: getPageSourceMock}); 
         }
         
-        function withFiveDomChanges(){
+        function withFourDomChanges(){
             return withMock(jest.fn()
                 .mockResolvedValueOnce("<html></html>")
                 .mockResolvedValueOnce("<html><div></div></html>")
@@ -28,7 +28,7 @@ describe("wait until page is loaded", () => {
                 .mockResolvedValueOnce("<html></html>"));
         }
 
-        function withTwoDomChanges(){
+        function withOneDomChange(){
             return withMock(jest.fn()
                 .mockResolvedValueOnce("<html></html>")
                 .mockResolvedValue("<html><div></div></html>"));
@@ -36,14 +36,14 @@ describe("wait until page is loaded", () => {
         
         return {
             withMock, 
-            withFiveDomChanges, 
-            withTwoDomChanges}
+            withFourDomChanges,
+            withOneDomChange}
     }
 
     it("should wait if page is changing its dom over time", async () => {
 
         //GIVEN
-        const webDriverMock = createWebDriverMock().withTwoDomChanges();
+        const webDriverMock = createWebDriverMock().withOneDomChange();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -55,7 +55,7 @@ describe("wait until page is loaded", () => {
     it("should not wait longer than the timeout defines", async () => {
 
         //GIVEN
-        const webDriverMock = createWebDriverMock().withFiveDomChanges();
+        const webDriverMock = createWebDriverMock().withFourDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -81,7 +81,7 @@ describe("wait until page is loaded", () => {
     it("should log when waiting starts", async () => {
 
         //GIVEN
-        const webDriverMock = createWebDriverMock().withTwoDomChanges();
+        const webDriverMock = createWebDriverMock().withOneDomChange();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -94,7 +94,7 @@ describe("wait until page is loaded", () => {
     it("should log when waiting ends before timeout", async () => {
 
         //GIVEN
-        const webDriverMock = createWebDriverMock().withTwoDomChanges();
+        const webDriverMock = createWebDriverMock().withOneDomChange();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
@@ -107,7 +107,7 @@ describe("wait until page is loaded", () => {
     it("should log when waiting ends because of timeout", async () => {
 
         //GIVEN
-        const webDriverMock = createWebDriverMock().withFiveDomChanges();
+        const webDriverMock = createWebDriverMock().withFourDomChanges();
 
         //WHEN
         await waitUntilPageIsLoaded(webDriverMock, interval, timeout, testExecutionContext);
