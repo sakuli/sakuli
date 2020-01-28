@@ -1,5 +1,6 @@
-import { By, error, ThenableWebDriver, WebElement } from "selenium-webdriver";
-import { createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment } from "../__mocks__";
+import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
 import { AccessorUtil } from "./accessor-util.class";
 import { RelationsResolver } from "../relations";
 import { TestExecutionContext } from "@sakuli/core";
@@ -51,8 +52,7 @@ describe('AccessorUtil', () => {
                 id="element-to-test"
                 aria-describedby="aria"
                 class="so many names"
-                name="my-name-is-earl"
-                />
+                name="my-name-is-earl"/>
             `));
             const element = await driver.findElement(By.id('element-to-test'));
             const identifiers = await accessorUtil.getStringIdentifiersForElement([element]);

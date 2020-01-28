@@ -1,10 +1,11 @@
-import {By, Locator, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {fetchApi} from "./fetch-api.function";
-import {AccessorUtil} from "../accessor";
-import {RelationsResolver} from "../relations";
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { fetchApi } from "./fetch-api.function";
+import { AccessorUtil } from "../accessor";
+import { RelationsResolver } from "../relations";
+import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('fetch-api', () => {
@@ -204,13 +205,13 @@ describe('fetch-api', () => {
             const parentQ = queryByLocator(By.css('#d1'));
             const childQ = queryByLocator(By.css('#inside'));
             return expect(_contains(parentQ, childQ)).resolves.toBe(true)
-        })
+        });
 
         test('_title to read the title from document', async () => {
             const {_title} = api;
             await driver.get(mockHtml(``));
             return expect(_title()).resolves.toBe('Document');
-        })
+        });
 
         test('_style should read a style property ', async () => {
             const {_style} = api;
@@ -219,7 +220,7 @@ describe('fetch-api', () => {
         `));
             const q = queryByLocator(By.css('div'));
             return expect(_style(q, 'display')).resolves.toBe('block');
-        })
+        });
 
         test('_position to return position of absolute placed element', async () => {
             const {_position} = api;
@@ -228,7 +229,7 @@ describe('fetch-api', () => {
         `));
             const q = queryByLocator(By.css('div'));
             return expect(_position(q)).resolves.toEqual([20, 10]);
-        })
+        });
 
         test('_getSelectionText to return selected text', async () => {
             const {_getSelectionText} = api;
@@ -242,7 +243,6 @@ describe('fetch-api', () => {
                 window.getSelection().addRange(range);            
             </script>
         `));
-            const q = queryByLocator(By.css('div'));
 
             return expect(_getSelectionText()).resolves.toEqual('Lorem ipsum dolor sit amet');
         });

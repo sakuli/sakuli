@@ -1,23 +1,23 @@
-import {Builder, ThenableWebDriver} from 'selenium-webdriver';
-import {ifPresent, Maybe, throwIfAbsent} from "@sakuli/commons";
-import {createTestCaseClass} from "./common/test-case";
-import {Key} from "./common/key.class";
-import {sahiApi} from "./sahi/api";
-import {Project, TestExecutionContext, TestExecutionLifecycleHooks} from "@sakuli/core";
-import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
-import {dirname, join, parse, sep, basename} from "path";
-import {createLoggerObject} from "./common/logger";
-import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {promises as fs} from "fs";
-import {MouseButton} from "./common/button.class";
-import {createThenableApplicationClass} from "./common/application";
-import {createThenableEnvironmentClass} from "./common/environment";
-import {createThenableRegionClass} from "./common/region";
-import {LegacyApi} from "./legacy-api.interface";
-import {createDriverFromProject} from "./selenium-config/create-driver-from-project.function";
+import { Builder, ThenableWebDriver } from 'selenium-webdriver';
+import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
+import { createTestCaseClass } from "./common/test-case";
+import { Key } from "./common/key.class";
+import { sahiApi } from "./sahi/api";
+import { Project, TestExecutionContext, TestExecutionLifecycleHooks } from "@sakuli/core";
+import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
+import { basename, dirname, join, parse, sep } from "path";
+import { createLoggerObject } from "./common/logger";
+import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
+import { promises as fs } from "fs";
+import { MouseButton } from "./common/button.class";
+import { createThenableApplicationClass } from "./common/application";
+import { createThenableEnvironmentClass } from "./common/environment";
+import { createThenableRegionClass } from "./common/region";
+import { LegacyApi } from "./legacy-api.interface";
+import { createDriverFromProject } from "./selenium-config/create-driver-from-project.function";
 import { TestStepCache } from './common/test-case/steps-cache/test-step-cache.class';
-import {NoopSahiApi} from './noop-sahi-api.const'
-import {SahiApi} from './sahi/sahi-api.interface';
+import { NoopSahiApi } from './noop-sahi-api.const'
+import { SahiApi } from './sahi/sahi-api.interface';
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -56,9 +56,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         testExecutionContext.endTestSuite();
         await ifPresent(this.driver, async driver => {
             try {
-                await driver.quit()
+                await driver.quit();
+                testExecutionContext.logger.debug("Closed webdriver");
             } catch (e) {
-                console.warn(`Webdriver doesn't quit reliably`, e);
+                testExecutionContext.logger.warn(`Webdriver doesn't quit reliably`, e);
             }
         }, () => Promise.resolve());
     }

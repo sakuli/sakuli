@@ -1,11 +1,12 @@
-import {By, Locator, ThenableWebDriver} from "selenium-webdriver";
-import {relationsApi} from "./relations-api.function";
-import {AccessorUtil} from "../accessor";
-import {RelationsResolver} from "./relations-resolver.class";
-import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
-import {RelationApi} from './relations-api.interface'
+import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
+import { relationsApi } from "./relations-api.function";
+import { AccessorUtil } from "../accessor";
+import { RelationsResolver } from "./relations-resolver.class";
+import { SahiElementQuery, SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
+import { RelationApi } from './relations-api.interface'
 import { ParentApi } from "./parent-api.interface";
 
 jest.setTimeout(15_000);
@@ -140,13 +141,6 @@ describe('relations-api', () => {
             });
         });
 
-        type RelationFunctionWithOffsetKeys =
-            "_leftOf"
-            | "_rightOf"
-            | "_under"
-            | "_above"
-            | "_leftOrRightOf"
-            | "_underOrAbove";
         describe('position', () => {
 
             beforeAll(async () => {

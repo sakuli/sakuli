@@ -1,9 +1,10 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../../__mocks__";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../../relations";
-import {focusActionApi} from "./focus-actions.function";
-import {getTestBrowserList} from "../../__mocks__/get-browser-list.function";
+import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
+import { By, ThenableWebDriver } from "selenium-webdriver";
+import { AccessorUtil } from "../../accessor";
+import { RelationsResolver } from "../../relations";
+import { focusActionApi } from "./focus-actions.function";
+import { getTestBrowserList } from "../../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('focus-api', () => {
@@ -56,7 +57,7 @@ describe('focus-api', () => {
             const inputLocator = By.css("#text-input");
             const focusLocator = By.css(':focus');
             const inputId = await driver.findElement(inputLocator).getId();
-            await expect(driver.findElement(focusLocator).getId()).resolves.toBe(inputId)
+            await expect(driver.findElement(focusLocator).getId()).resolves.toBe(inputId);
             await _blur({
                 locator: inputLocator,
                 identifier: 0,

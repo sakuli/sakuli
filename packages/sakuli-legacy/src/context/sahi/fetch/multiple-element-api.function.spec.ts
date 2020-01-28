@@ -1,10 +1,11 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {ThenableWebDriver} from "selenium-webdriver";
-import {multipleElementApi} from "./multiple-element-api.function";
-import {AccessorUtil} from "../accessor";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
-import {RelationsResolver} from "../relations";
-import {MultipleElementApi} from "./multiple-element-api.interface";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { ThenableWebDriver } from "selenium-webdriver";
+import { multipleElementApi } from "./multiple-element-api.function";
+import { AccessorUtil } from "../accessor";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
+import { RelationsResolver } from "../relations";
+import { MultipleElementApi } from "./multiple-element-api.interface";
 
 jest.setTimeout(15_000);
 describe('multipleElementApi', () => {

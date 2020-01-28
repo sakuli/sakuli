@@ -1,11 +1,12 @@
-import {LegacyLifecycleHooks} from "./legacy-lifecycle-hooks.class";
-import {Builder, Capabilities, ThenableWebDriver, Options, Window} from "selenium-webdriver";
-import {mockPartial} from "sneer";
-import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
-import {Project, TestExecutionContext} from "@sakuli/core";
-import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
+import { LegacyLifecycleHooks } from "./legacy-lifecycle-hooks.class";
+import { Builder, Capabilities, Options, ThenableWebDriver, Window } from "selenium-webdriver";
+import { mockPartial } from "sneer";
+import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
+import { Project, TestExecutionContext } from "@sakuli/core";
+import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
+import { createPropertyMapMock } from "@sakuli/commons/dist/properties/__mocks__";
+import { createTestExecutionContextMock } from "./__mocks__";
 import Mock = jest.Mock;
-import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
 
 describe("LegacyLifecycleHooks", () => {
 
@@ -20,7 +21,7 @@ describe("LegacyLifecycleHooks", () => {
     beforeEach(async() => {
         window = mockPartial<Window>({
             maximize: jest.fn()
-        })
+        });
 
         options = mockPartial<Options>({
             window: jest.fn().mockReturnValue(window)
@@ -31,13 +32,7 @@ describe("LegacyLifecycleHooks", () => {
 
         });
 
-        testExecutionContext = mockPartial<TestExecutionContext>({
-            startTestCase: jest.fn(),
-            endTestSuite: jest.fn(),
-            startTestSuite: jest.fn(),
-            getCurrentTestCase: jest.fn(),
-            updateCurrentTestCase: jest.fn(),
-        });
+        testExecutionContext = createTestExecutionContextMock();
 
 
         legacyProps = new LegacyProjectProperties();
@@ -61,10 +56,10 @@ describe("LegacyLifecycleHooks", () => {
             build: jest.fn(() => driver)
         });
         lcp = new LegacyLifecycleHooks(builder);
-    })
+    });
 
     afterEach(() => {
-    })
+    });
 
     describe('Sahi Api', () => {
 
@@ -77,11 +72,11 @@ describe("LegacyLifecycleHooks", () => {
         it('should maximize browser after init', async () => {
             await lcp.onProject(minimumProject);
             expect(window.maximize).toHaveBeenCalled();
-        })
+        });
 
         it('should publish sahi function into context', async () => {
             await lcp.onProject(minimumProject);
-            lcp.currentTest = '/some/where/over/the/rainbow'
+            lcp.currentTest = '/some/where/over/the/rainbow';
             const context = await lcp.requestContext(testExecutionContext, minimumProject);
             return expect(context._navigateTo).toBeDefined()
         });
@@ -91,7 +86,24 @@ describe("LegacyLifecycleHooks", () => {
             await expect(lcp.driver).toBeDefined();
             jest.spyOn(lcp.driver!, 'quit');
             await lcp.afterExecution(minimumProject, testExecutionContext);
-            return expect(lcp.driver!.quit).toHaveBeenCalled();
+            expect(lcp.driver!.quit).toHaveBeenCalled();
+            expect(testExecutionContext.logger.debug).toHaveBeenCalledWith("Closed webdriver");
+        });
+
+        it('should log in case the webdriver in teardown errored', async () => {
+
+            //GIVEN
+            await lcp.onProject(minimumProject);
+            await expect(lcp.driver).toBeDefined();
+            const expectedError = Error("Oh no! Quit did some fuxi wuxi =/");
+            lcp.driver!.quit = jest.fn().mockRejectedValue(expectedError);
+
+            //THEN
+            await lcp.afterExecution(minimumProject, testExecutionContext);
+
+            //WHEN
+            expect(testExecutionContext.logger.warn)
+                .toHaveBeenCalledWith("Webdriver doesn't quit reliably", expectedError);
         });
     });
 
@@ -115,7 +127,7 @@ describe("LegacyLifecycleHooks", () => {
                 expect.objectContaining({id: 'from-property'})
             )
         });
-    })
+    });
 
     describe('ui-only scenario', () => {
         const legacyProps = new LegacyProjectProperties();
@@ -131,7 +143,7 @@ describe("LegacyLifecycleHooks", () => {
             expect(lcp.uiOnly).toBeTruthy();
             expect(builder.build).toHaveBeenCalledTimes(0);
             expect(lcp.driver).toBeNull();
-        })
+        });
 
         it('should create a context without sahi api', async () => {
             await lcp.onProject(uiOnlyProject);
