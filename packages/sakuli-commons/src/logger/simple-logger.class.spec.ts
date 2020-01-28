@@ -1,5 +1,5 @@
-import {SimpleLogger} from "./simple-logger.class";
-import {LogLevel} from "./log-level.class";
+import { SimpleLogger } from "./simple-logger.class";
+import { LogLevel } from "./log-level.class";
 
 describe("SimpleLogger", () => {
     it("should log on info level by default", () => {
@@ -10,6 +10,7 @@ describe("SimpleLogger", () => {
         const payload = "log message";
 
         // WHEN
+        SUT.trace(payload);
         SUT.debug(payload);
         SUT.info(payload);
         SUT.warn(payload);
@@ -27,6 +28,7 @@ describe("SimpleLogger", () => {
     });
 
     it.each([
+        [5, LogLevel.TRACE],
         [4, LogLevel.DEBUG],
         [3, LogLevel.INFO],
         [2, LogLevel.WARN],
@@ -40,6 +42,7 @@ describe("SimpleLogger", () => {
         const payload = "log message";
 
         // WHEN
+        SUT.trace(payload);
         SUT.debug(payload);
         SUT.info(payload);
         SUT.warn(payload);

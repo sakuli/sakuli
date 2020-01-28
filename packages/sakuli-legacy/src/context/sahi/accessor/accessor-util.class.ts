@@ -1,6 +1,6 @@
-import {Locator, ThenableWebDriver, until, WebElement, By} from "selenium-webdriver";
-import {TestExecutionContext} from "@sakuli/core";
-import {types} from "util";
+import { Locator, ThenableWebDriver, until, WebElement } from "selenium-webdriver";
+import { TestExecutionContext } from "@sakuli/core";
+import { types } from "util";
 import {
     AccessorIdentifierAttributes,
     AccessorIdentifierAttributesWithClassName,
@@ -10,16 +10,16 @@ import {
     isAccessorIdentifierAttributesWithSahiIndex,
     isAccessorIdentifierAttributesWithText
 } from "./accessor-model.interface";
-import {RelationsResolver} from "../relations";
+import { RelationsResolver } from "../relations";
 import {
     isSahiElementQuery,
     SahiElementQuery,
     SahiElementQueryOrWebElement,
     sahiQueryToString
 } from "../sahi-element.interface";
-import {ifPresent} from "@sakuli/commons";
-import {AccessorIdentifier} from "../api";
-import {CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS} from "../action/inject.const";
+import { ifPresent } from "@sakuli/commons";
+import { AccessorIdentifier } from "../api";
+import { CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS } from "../action/inject.const";
 
 export class AccessorUtil {
 
@@ -207,10 +207,11 @@ export class AccessorUtil {
         const indexRegExp = /.*\[([0-9]+)\]$/;
         const matches = identifier.match(indexRegExp);
         return ifPresent(matches,
-            async ([_, index]) => {
+            async ([_, indexString]) => {
                 identifier = identifier.substr(0, identifier.lastIndexOf('['));
                 const elementsByRegExp = await this.getByRegEx(elements, this.stringToRegExp(identifier));
-                return [elementsByRegExp[Number(index)]];
+                const element =  elementsByRegExp[Number(indexString)];
+                return element ? [element] : [];
             },
             () => this.getByRegEx(elements, this.stringToRegExp(identifier))
         )
