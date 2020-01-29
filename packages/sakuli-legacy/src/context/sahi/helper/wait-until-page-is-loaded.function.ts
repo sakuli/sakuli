@@ -16,6 +16,6 @@ export async function waitUntilPageIsLoaded(webDriver: WebDriver,
             return;
         }
         oldDom = newDom;
-        ctx.logger.debug(`Page has not finished loading after a timeout of ${timeout}ms. Continuing test execution`);
     }
+    ctx.logger.debug(`Page has not finished loading after a timeout of ${timeout}ms. Continuing test execution`);
 }
