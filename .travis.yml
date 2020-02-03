@@ -29,6 +29,7 @@ addons:
 
 services:
   - docker
+  - xvfb
 
 before_install:
   - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
