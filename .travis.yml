@@ -38,6 +38,10 @@ stages:
     if: (branch IN (master, develop)) OR (tag IS present)
 
 jobs:
+  allow_failures:
+    - node_js: lts/erbium
+      os: osx
+
   include:
     - stage: deploy
       os: linux
