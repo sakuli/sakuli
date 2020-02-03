@@ -1,5 +1,22 @@
 cache: npm
 
+os:
+  - osx
+  - linux
+
+osx_image:
+  - xcode11
+
+dist: bionic
+
+language: node_js
+
+node_js:
+  - lts/dubnium
+  - 11
+  - 12.13.0
+  - lts/erbium
+
 addons:
   sonarcloud:
     organization: "sakuli"
@@ -17,18 +34,6 @@ stages:
 jobs:
   include:
     - stage: build
-      os:
-        - osx
-        - linux
-      osx_image:
-        - xcode11
-      dist: bionic
-      language: node_js
-      node_js:
-        - lts/dubnium
-        - 11
-        - 12.13.0
-        - lts/erbium
       before_install:
         - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
       install: true
