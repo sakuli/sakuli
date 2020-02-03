@@ -1,0 +1,40 @@
+{
+  "name": "e2e-tests",
+  "version": "2.2.0",
+  "description": "A compilation of e2e tests for Sakuli",
+  "private": true,
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de>",
+    "Cliff Le Van <cliff.le.van@consol.de>"
+  ],
+  "homepage": "https://github.com/sakuli/sakuli#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakuli/sakuli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sakuli/sakuli/issues"
+  },
+  "scripts": {
+    "test": "sakuli run e2e-suite",
+    "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run e2e-suite"
+  },
+  "dependencies": {
+    "@sakuli/cli": "^2.2.0",
+    "@sakuli/legacy": "^2.2.0",
+    "@sakuli/legacy-types": "^2.2.0",
+    "chromedriver": "^79.0.2",
+    "geckodriver": "^1.19.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.5"
+  },
+  "sakuli": {
+    "presetProvider": [
+      "@sakuli/legacy"
+    ]
+  }
+}
