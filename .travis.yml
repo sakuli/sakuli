@@ -26,20 +26,19 @@ addons:
 services:
   - docker
 
+before_install:
+  - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
+install: true
+script:
+  - "bash ./.build/run_${TRAVIS_OS_NAME}.sh"
+
 stages:
-  - build
+  - test
   - name: deploy
     if: (branch IN (master, develop)) OR (tag IS present)
 
 jobs:
   include:
-    - stage: build
-      before_install:
-        - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
-      install: true
-      script:
-        - "bash ./.build/run_${TRAVIS_OS_NAME}.sh"
-
     - stage: deploy
       os: linux
       dist: bionic
