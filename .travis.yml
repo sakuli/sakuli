@@ -12,7 +12,7 @@ services:
 stages:
   - build
   - name: deploy
-    if: branch IN (master, develop) OR tag IS present
+    if: (branch IN (master, develop)) OR (tag IS present)
 
 jobs:
   include:
