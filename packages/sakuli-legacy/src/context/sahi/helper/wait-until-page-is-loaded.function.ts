@@ -12,7 +12,7 @@ export async function waitUntilPageIsLoaded(webDriver: WebDriver,
         await wait(interval);
         const newDom = await webDriver.getPageSource();
         if(oldDom === newDom){
-            ctx.logger.debug(`Finished page loading after ${waited}ms`);
+            ctx.logger.debug(`Finished page loading after ${waited+interval}ms`);
             return;
         }
         oldDom = newDom;

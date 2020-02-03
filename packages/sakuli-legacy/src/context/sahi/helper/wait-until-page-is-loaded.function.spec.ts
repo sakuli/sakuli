@@ -3,6 +3,7 @@ import { mockPartial } from "sneer";
 import { waitUntilPageIsLoaded } from "./wait-until-page-is-loaded.function";
 import { wait } from "./wait.function";
 import { createTestExecutionContextMock } from "../../__mocks__";
+import { TestExecutionContext } from "@sakuli/core";
 
 jest.mock("./wait.function", () => ({wait: jest.fn()}));
 
@@ -11,8 +12,7 @@ describe("wait until page is loaded", () => {
 
     const timeout = 4;
     const interval = 1;
-
-    const testExecutionContext = createTestExecutionContextMock();
+    let testExecutionContext: TestExecutionContext;
 
     function createWebDriverMock () {
         function withMock(getPageSourceMock: jest.Mock){
@@ -39,6 +39,10 @@ describe("wait until page is loaded", () => {
             withFourDomChanges,
             withOneDomChange}
     }
+
+    beforeEach(() => {
+        testExecutionContext = createTestExecutionContextMock();
+    });
 
     it("should wait if page is changing its dom over time", async () => {
 
@@ -101,7 +105,7 @@ describe("wait until page is loaded", () => {
 
         //THEN
         expect(testExecutionContext.logger.debug)
-            .toHaveBeenCalledWith("Finished page loading after 1ms");
+            .toHaveBeenCalledWith("Finished page loading after 2ms");
     });
 
     it("should log when waiting ends because of timeout", async () => {
