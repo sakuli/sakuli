@@ -9,7 +9,7 @@ addons:
 stages:
   - build
   - name: deploy
-    if: branch = master
+    if: branch IN (master, develop) OR tag IS present
 
 jobs:
   include:
