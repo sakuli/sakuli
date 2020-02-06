@@ -12,7 +12,9 @@ dist: bionic
 language: node_js
 
 node_js:
+  - lts/dubnium
   - lts/erbium
+  - 12.13.0
 
 addons:
   sonarcloud:
@@ -36,8 +38,6 @@ script:
 
 stages:
   - test
-  - name: test_matrix
-    if: (branch IN (master, develop)) OR (tag IS present)
   - name: deploy
     if: (branch = develop) OR (tag IS present)
 
@@ -47,23 +47,6 @@ jobs:
       os: osx
 
   include:
-    - stage: test_matrix
-      os:
-        - linux
-        - osx
-      dist: bionic
-      osx_image: xcode11
-      language: node_js
-      node_js:
-        - lts/dubnium
-        - 12.13.0
-
-      before_install:
-        - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
-      install: true
-      script:
-        - "bash ./.build/run_${TRAVIS_OS_NAME}.sh"
-
     - stage: deploy
       os: linux
       dist: bionic
