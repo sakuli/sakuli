@@ -1,9 +1,3 @@
-const searchData = {
-    searchDate: "01.05.2020",
-    birthDate: "01.02.2020",
-    location: "Agnes-Pockels-Bogen 21, 80992 München"
-};
-
 (async () => {
     const testCase = new TestCase("kitafinder");
 
@@ -15,7 +9,7 @@ const searchData = {
         await _assert(_isVisible(_heading1("Jetzt Ihren Kita-Platz suchen!")));
         await testCase.endOfStep("Seite prüfen");
 
-        await fillSearchData(searchData);
+        await fillSearchData();
         await testCase.endOfStep("Fill data");
 
         await _highlight(_button("Suchen"));
@@ -31,8 +25,13 @@ const searchData = {
     }
 })();
 
-async function fillSearchData(data) {
-    await _setValue(_textbox("date-input-0"), data.searchDate);
-    await _setValue(_textbox("date-input-1"), data.birthDate);
-    await _setValue(_textbox("location-input-0"), data.location);
+async function fillSearchData() {
+    const today = new Date();
+    const birthDate = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`
+    const searchDate = birthDate;
+    const location = "Agnes-Pockels-Bogen 21, 80992 München";
+
+    await _setValue(_textbox("date-input-0"), searchDate);
+    await _setValue(_textbox("date-input-1"), birthDate);
+    await _setValue(_textbox("location-input-0"), location);
 }
