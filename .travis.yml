@@ -36,10 +36,6 @@ install: true
 script:
   - "bash ./.build/run_${TRAVIS_OS_NAME}.sh"
 
-after_success:
-  - test $TRAVIS_NODE_VERSION = "lts/erbium" && $TRAVIS_OS_NAME = "linux" &&
-    sonar-scanner
-
 stages:
   - test
   - name: deploy
