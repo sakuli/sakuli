@@ -26,11 +26,14 @@ export function mouseActionApi(
     async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         await scrollIntoViewIfNeeded(e, ctx);
-        return runActionsWithComboKeys(
-            webDriver.actions({bridge: true}),
-            combo,
-            a => a.click(e)
-        ).perform();
+        if(combo){
+            return runActionsWithComboKeys(
+                webDriver.actions({bridge: true}),
+                combo,
+                a => a.click(e)
+            ).perform();
+        }
+        await webDriver.executeScript("arguments[0].click();", e);
     }
 
     async function _mouseDown(query: SahiElementQueryOrWebElement, isRight: boolean = false, combo: string = ''): Promise<void> {
