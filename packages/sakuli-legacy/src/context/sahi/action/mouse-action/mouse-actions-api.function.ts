@@ -33,7 +33,7 @@ export function mouseActionApi(
                 a => a.click(e)
             ).perform();
         }
-        await webDriver.executeScript("arguments[0].click();", e);
+        return e.click();
     }
 
     async function _mouseDown(query: SahiElementQueryOrWebElement, isRight: boolean = false, combo: string = ''): Promise<void> {

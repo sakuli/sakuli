@@ -220,5 +220,43 @@ describe('mouse-actions', () => {
                 await expect(driver.findElement(By.css('#out')).getText()).resolves.toBe('dropped');
             });
         });
+
+        it("should click radio button with fat box above", async () => {
+
+            //GIVEN
+            const iframeContent = mockHtml(`
+                <style>            
+                    .modal-content {
+                        /* margin top-bottom and border are the problem */
+                        margin: 350px auto; 
+                        border: 15px solid #000;
+                        width: 100%;
+                    }
+                </style>
+                <form>
+                    <div class="modal-content"></div>
+                    <input id="AnnahmeJaNeintrue" type="radio" value="true">
+                    <label for="AnnahmeJaNeintrue">Ja</label>
+                </form>`);
+
+            // await driver.manage().window().maximize();
+            await driver.get(mockHtml(`
+                <iframe src="${iframeContent}" style="height: 1458px; width: 100%;"></iframe>
+            `));
+
+            const {_click} = createApi(driver);
+            const query: SahiElementQuery = {
+                locator: By.id('AnnahmeJaNeintrue'),
+                identifier: 0,
+                relations: []
+            };
+            await driver.switchTo().frame(0);
+
+            //WHEN
+            await _click(query);
+
+            //THEN
+            await expect(driver.executeScript(`return document.getElementById("AnnahmeJaNeintrue").checked`)).resolves.toBeTruthy();
+        });
     });
 });
