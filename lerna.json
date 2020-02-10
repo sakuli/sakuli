@@ -8,7 +8,8 @@
       "ignoreChanges": [
         "*.md",
         "*.txt",
-        "packages/integration-tests/"
+        "packages/integration-tests/",
+        "packages/e2e/"
       ]
     },
     "version": {
