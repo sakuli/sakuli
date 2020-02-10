@@ -239,7 +239,6 @@ describe('mouse-actions', () => {
                     <label for="AnnahmeJaNeintrue">Ja</label>
                 </form>`);
 
-            // await driver.manage().window().maximize();
             await driver.get(mockHtml(`
                 <iframe src="${iframeContent}" style="height: 1458px; width: 100%;"></iframe>
             `));
