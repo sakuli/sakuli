@@ -11,7 +11,7 @@
     "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-legacy/docs.json --out ../../docs/sakuli-legacy src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e && npm run build && npm test"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && npm run build && npm test"
   },
   "keywords": [
     "sakuli",
