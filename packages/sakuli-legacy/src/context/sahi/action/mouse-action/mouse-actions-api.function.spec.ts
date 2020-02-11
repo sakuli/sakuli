@@ -1,12 +1,11 @@
-import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
-import { createTestExecutionContextMock } from "../../../__mocks__";
 import { By, error, ThenableWebDriver } from "selenium-webdriver";
 import { mouseActionApi } from "./mouse-actions-api.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQuery } from "../../sahi-element.interface";
-import { getTestBrowserList } from "../../__mocks__/get-browser-list.function";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
 
 jest.setTimeout(25_000);
 describe('mouse-actions', () => {

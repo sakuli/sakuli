@@ -10,7 +10,10 @@ export async function isElementCovered(elem: WebElement, driver: WebDriver): Pro
     }
     
     let elemLocation = arguments[0].getBoundingClientRect();
-    let elemAtPoint = owner.elementFromPoint(elemLocation.x, elemLocation.y);
+    let x = elemLocation.left + (elemLocation.right - elemLocation.left) / 2;
+    let y = elemLocation.top + (elemLocation.bottom - elemLocation.top) / 2;    
+    
+    let elemAtPoint = owner.elementFromPoint(x, y);
     
     return elemAtPoint !== arguments[0]
     `, elem)
