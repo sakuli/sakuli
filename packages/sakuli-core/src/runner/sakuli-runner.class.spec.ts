@@ -12,7 +12,8 @@ describe('SakuliRunner', () => {
 
     let tempDir: string;
     beforeEach(async () => tempDir = await fs.mkdtemp(`${tmpdir()}${sep}`));
-    afterEach(async () => fs.unlink(tempDir).catch(() => {}));
+    afterEach(async () => fs.unlink(tempDir).catch(() => {
+    }));
 
     const createContextProviderMock = (): jest.Mocked<TestExecutionLifecycleHooks> => ({
         onProject: jest.fn(),
@@ -86,8 +87,14 @@ describe('SakuliRunner', () => {
     });
 
     it('should execute with a merged context object from all lifecyclehooks', async done => {
-        (lifecycleHooks1.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}) as any);
-        (lifecycleHooks2.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}) as any);
+        (lifecycleHooks1.requestContext as jest.Mock).mockReturnValue(Promise.resolve({
+            ctx1: 'ctx1',
+            common: 'ignore'
+        }) as any);
+        (lifecycleHooks2.requestContext as jest.Mock).mockReturnValue(Promise.resolve({
+            ctx2: 'ctx2',
+            common: 'overridden'
+        }) as any);
         await sakuliRunner.execute(projectWithThreeTestFiles);
         const expectedContext = expect.objectContaining({
             ctx1: 'ctx1',
@@ -102,8 +109,14 @@ describe('SakuliRunner', () => {
     });
 
     it('should get all proceed contexts from execute', async () => {
-        (lifecycleHooks1.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx1: 'ctx1', common: 'ignore'}) as any);
-        (lifecycleHooks2.requestContext as jest.Mock).mockReturnValue(Promise.resolve({ctx2: 'ctx2', common: 'overridden'}) as any);
+        (lifecycleHooks1.requestContext as jest.Mock).mockReturnValue(Promise.resolve({
+            ctx1: 'ctx1',
+            common: 'ignore'
+        }) as any);
+        (lifecycleHooks2.requestContext as jest.Mock).mockReturnValue(Promise.resolve({
+            ctx2: 'ctx2',
+            common: 'overridden'
+        }) as any);
         const result = await sakuliRunner.execute(projectWithThreeTestFiles);
         return expect(result).toEqual(expect.objectContaining({
             common: 'overridden',
@@ -126,4 +139,25 @@ describe('SakuliRunner', () => {
         done();
     });
 
+    it('should catch execution errors and still call afterExecution hooks', async done => {
+        // GIVEN
+        const bundleHook = mockPartial<TestExecutionLifecycleHooks>({
+            readFileContent: jest.fn(() => Promise.reject(Error("Failed to bundle due to syntax errors")))
+        });
+
+        const scriptExecutor = createScriptExecutorMock();
+        const sakuliRunner = new SakuliRunner(
+            [lifecycleHooks1, lifecycleHooks2, bundleHook],
+            testExecutionContext,
+            scriptExecutor
+        );
+
+        // WHEN
+        await sakuliRunner.execute(projectWithThreeTestFiles);
+
+        // THEN
+        expect(lifecycleHooks1.afterExecution).toBeCalledTimes(1);
+        expect(lifecycleHooks2.afterExecution).toBeCalledTimes(1);
+        done();
+    });
 });

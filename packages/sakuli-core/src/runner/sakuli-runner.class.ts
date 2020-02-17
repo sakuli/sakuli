@@ -1,11 +1,10 @@
-import {Project} from "../loader/model";
+import {Project, TestFile} from "../loader/model";
 import {TestExecutionLifecycleHooks} from "./context-provider.interface";
 import {TestScriptExecutor} from "./test-script-executor.interface";
 import {readFile} from "fs";
 import {JsScriptExecutor} from "./js-script-executor.class";
 import {join, resolve} from "path";
 import {TestExecutionContext} from "./test-execution-context";
-import {TestFile} from "../loader/model/test-file.interface";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
 
@@ -27,7 +26,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         this.testExecutionContext.startExecution();
         const handleError = (e: any) => {
             this.testExecutionContext.error = e;
-        }
+        };
         process.on('unhandledRejection', handleError);
         process.on('uncaughtException', handleError);
         // onProject Phase
@@ -35,8 +34,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         let result = {};
         await this.beforeExecution(project, this.testExecutionContext);
         for (const testFile of project.testFiles) {
-            const testFileContent = await this.readFileContent(testFile, project, this.testExecutionContext);
             try {
+                const testFileContent = await this.readFileContent(testFile, project, this.testExecutionContext);
                 await this.beforeRunFile(testFile, project, this.testExecutionContext);
                 const context = await this.requestContext(this.testExecutionContext, project);
                 const resultCtx = await this.testFileExecutor.execute(testFileContent.toString(), context, {
