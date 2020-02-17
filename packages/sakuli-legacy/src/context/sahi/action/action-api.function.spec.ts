@@ -61,7 +61,7 @@ describe('action-api', () => {
                     locator: By.css('#btn'),
                     identifier: 0,
                     relations: []
-                })).resolves.toBeUndefined();
+                })).resolves.toBeNull();
                 const out = await driver.findElement(By.id('out'));
                 await expect(out.getText()).resolves.toEqual('clicked');
             });
@@ -83,7 +83,7 @@ describe('action-api', () => {
                     locator: By.css('#btn'),
                     identifier: 0,
                     relations: []
-                })).resolves.toBeUndefined();
+                })).resolves.toBeNull();
                 const out = await driver.findElement(By.id('out'));
                 await expect(out.getText()).resolves.toEqual('clicked');
             })

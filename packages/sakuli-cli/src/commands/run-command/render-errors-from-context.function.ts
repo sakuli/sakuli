@@ -8,7 +8,7 @@ export const renderErrorsFromContext = async (context: TestExecutionContext) => 
     for (let errorEntity of errors) {
         const e = errorEntity.error;
         if (isPresent(e)) {
-            console.log(chalk`\n{underline Failed to successfully finish {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}}:\n`);
+            console.log(chalk`\n{underline Failed to perform {yellow ${errorEntity.kind}} {yellow.bold ${errorEntity.id || ''}}}:\n`);
             await renderError(e);
         }
     }

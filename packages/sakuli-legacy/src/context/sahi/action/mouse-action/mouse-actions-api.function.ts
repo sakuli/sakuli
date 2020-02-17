@@ -6,7 +6,7 @@ import { stripIndents } from "common-tags";
 import 'selenium-webdriver/lib/input'
 import { MouseActionApi } from "./mouse-action-api.interface";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
-import { runActionsWithComboKeys } from "../run-actions-with-combo.keys.function";
+import { runActionsWithComboKeys } from "../run-actions-with-combo-keys.function";
 import { AccessorUtil } from "../../accessor";
 import { positionalInfo } from "../../relations/positional-info.function";
 import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
@@ -29,16 +29,18 @@ export function mouseActionApi(
     async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         await scrollIntoViewIfNeeded(e, ctx);
-        if(await isElementCovered(e, webDriver)) {
-            throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
-        }
+        if(combo){
+            if(await isElementCovered(e, webDriver)) {
+                throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
+            }
 
-        return runActionsWithComboKeys(
-            webDriver.actions({bridge: true}),
-            e,
-            combo,
-            a => a.click(e)
-        ).perform();
+            return runActionsWithComboKeys(
+                webDriver.actions({bridge: true}),
+                combo,
+                a => a.click(e)
+            ).perform();
+        }
+        return e.click();
     }
 
     async function _mouseDown(query: SahiElementQueryOrWebElement, isRight: boolean = false, combo: string = ''): Promise<void> {
@@ -47,7 +49,7 @@ export function mouseActionApi(
         await scrollIntoViewIfNeeded(e, ctx);
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
-            e, combo,
+            combo,
             a => a.move(toElement(e)).press(mouseButton)
         ).perform();
     }
@@ -58,7 +60,7 @@ export function mouseActionApi(
         await scrollIntoViewIfNeeded(e, ctx);
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
-            e, combo,
+            combo,
             a => a.move(toElement(e)).release(mouseButton)
         ).perform();
     }
@@ -68,7 +70,7 @@ export function mouseActionApi(
         await scrollIntoViewIfNeeded(e, ctx);
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
-            e, combo,
+            combo,
             a => a.contextClick(e)
         ).perform();
     }
@@ -78,7 +80,7 @@ export function mouseActionApi(
         await scrollIntoViewIfNeeded(e, ctx);
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
-            e, combo,
+            combo,
             a => a.move({origin: e, x: 1, y: 1}).move(toElement(e))
         ).perform();
     }

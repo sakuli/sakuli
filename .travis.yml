@@ -56,8 +56,7 @@ jobs:
       before_install:
         - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
       install: true
-      script:
-        - "bash ./.build/run_${TRAVIS_OS_NAME}.sh"
+      script: true
       before_deploy:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
       deploy:
