@@ -55,7 +55,7 @@
     "@types/properties-reader": "0.0.1",
     "@types/selenium-webdriver": "4.0.0",
     "@types/yargs": "^12.0.12",
-    "chromedriver": "78.0.0",
+    "chromedriver": "^80.0.1",
     "dockerode": "^2.5.8",
     "express": "^4.16.4",
     "geckodriver": "^1.16.2",

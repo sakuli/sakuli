@@ -71,9 +71,7 @@ describe('mouse-actions', () => {
         });
 
         describe('_click', () => {
-            it('should throw when button is covered by div', async () => {
-                const api = createApi(driver);
-                await driver.get(mockHtml(`
+            const htmlSnippet = `
                 <style>
                     .container {display: grid}
                     .content, .overlay {grid-area: 1 / 1 }
@@ -82,13 +80,21 @@ describe('mouse-actions', () => {
                     <button id="btn" class="content" style="width: 200px; height: 20px">Not clickable</button>
                     <div class="overlay">Overlay - must be placed under content in the HTML</div>
                 </div>
-                `));
+                `;
+
+            it.each(<[string][]>[
+                [""],
+                ["ALT"],
+            ])('_click should throw when click with %s is used because button is covered by div', async (combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet));
                 const query: SahiElementQuery = {
                     locator: By.css('#btn'),
                     identifier: 0,
                     relations: []
                 };
-                await expect(api._click(query)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
+
+                await expect(api._click(query, combo)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
             });
         });
 
