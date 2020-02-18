@@ -2,8 +2,8 @@ import {Project, TestExecutionContext, TestExecutionLifecycleHooks, TestFile} fr
 import {Plugin, rollup} from "rollup";
 import rollupTsPlugin from 'rollup-plugin-typescript2';
 import {extname, isAbsolute, join} from "path";
-import { Maybe, SimpleLogger, ifPresent } from "@sakuli/commons";
-import { defaultTsConfig } from "./ts-support/default-ts-config.const";
+import {ifPresent, Maybe, SimpleLogger} from "@sakuli/commons";
+import {defaultTsConfig} from "./ts-support/default-ts-config.const";
 
 export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
@@ -24,7 +24,7 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
 
         const plugins: Plugin[] = [];
         const extName = extname(filePath);
-        if(extName === '.ts' || extName === '.tsx') {
+        if (extName === '.ts' || extName === '.tsx') {
             // THe provided files to TS-Config if not provided the plugin will look for tsconfig.json
             const tsconfig: Maybe<string> = project.get('tsconfig');
 
@@ -41,26 +41,33 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
             }));
         }
 
-        const bundle = await rollup({
-            input: filePath,
-            onwarn:  message => {
-                this.debug(`[BUNDLER WARNING] ${message}`)
-            },
-            plugins
-        });
+        try {
+            const bundle = await rollup({
+                input: filePath,
+                onwarn: message => {
+                    this.debug(`[BUNDLER WARNING] ${message}`)
+                },
+                plugins
+            });
 
-        const {output} = await bundle.generate({
-            format: 'commonjs',
-            sourcemap: true,
-            file: 'bundle-rollup.js',
-        });
-        const [rollupOutput] = output;
-        //this.debug(`Bundled testcase file ${filePath} to: `, rollupOutput.code);
-        return Promise.resolve(rollupOutput.code);
+            const {output} = await bundle.generate({
+                format: 'commonjs',
+                sourcemap: true,
+                file: 'bundle-rollup.js',
+            });
+            const [rollupOutput] = output;
+            return Promise.resolve(rollupOutput.code);
+        } catch (e) {
+            if (e.code === "PARSE_ERROR") {
+                throw new Error(`Syntax error in file ${e.loc.file} on line ${e.loc.line}, column ${e.loc.column}.\n${e.frame}`);
+            } else {
+                throw e;
+            }
+        }
     }
 
     async requestContext(testExecutionContext: TestExecutionContext, project: Project): Promise<Record<string, any>> {
-       return ({require});
+        return ({require});
     }
 
 }
