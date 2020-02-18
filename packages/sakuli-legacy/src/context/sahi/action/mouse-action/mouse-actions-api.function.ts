@@ -1,4 +1,4 @@
-import { Button, By, ILocation, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { Button, By, error, ILocation, ThenableWebDriver, WebElement } from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
 import { stripIndents } from "common-tags";
 
@@ -10,6 +10,9 @@ import { runActionsWithComboKeys } from "../run-actions-with-combo-keys.function
 import { AccessorUtil } from "../../accessor";
 import { positionalInfo } from "../../relations/positional-info.function";
 import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
+import ElementClickInterceptedError = error.ElementClickInterceptedError;
+import { isElementCovered } from "../utils";
+
 
 export function mouseActionApi(
     webDriver: ThenableWebDriver,
@@ -27,6 +30,10 @@ export function mouseActionApi(
         const e = await accessorUtil.fetchElement(query);
         await scrollIntoViewIfNeeded(e, ctx);
         if(combo){
+            if(await isElementCovered(e, webDriver)) {
+                throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
+            }
+
             return runActionsWithComboKeys(
                 webDriver.actions({bridge: true}),
                 combo,

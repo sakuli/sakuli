@@ -1,11 +1,11 @@
-import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
-import { createTestExecutionContextMock } from "../../../__mocks__";
-import { By, ThenableWebDriver } from "selenium-webdriver";
+import { By, error, ThenableWebDriver } from "selenium-webdriver";
 import { mouseActionApi } from "./mouse-actions-api.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQuery } from "../../sahi-element.interface";
-import { getTestBrowserList } from "../../__mocks__/get-browser-list.function";
+import ElementClickInterceptedError = error.ElementClickInterceptedError;
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
 
 jest.setTimeout(25_000);
 describe('mouse-actions', () => {
@@ -67,6 +67,34 @@ describe('mouse-actions', () => {
                 }, selector);
                 const selectedOption = await driver.findElement(By.css('#beer'));
                 return expect(selectedOption.isSelected()).resolves.toBeTruthy();
+            });
+        });
+
+        describe('_click', () => {
+            const htmlSnippet = `
+                <style>
+                    .container {display: grid}
+                    .content, .overlay {grid-area: 1 / 1 }
+                </style>
+                <div class="container">
+                    <button id="btn" class="content" style="width: 200px; height: 20px">Not clickable</button>
+                    <div class="overlay">Overlay - must be placed under content in the HTML</div>
+                </div>
+                `;
+
+            it.each(<[string][]>[
+                [""],
+                ["ALT"],
+            ])('_click should throw when click with %s is used because button is covered by div', async (combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet));
+                const query: SahiElementQuery = {
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                };
+
+                await expect(api._click(query, combo)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
             });
         });
 
