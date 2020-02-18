@@ -1,5 +1,5 @@
 import {RollupLifecycleHooks} from "./rollup-lifecycle-hooks.class";
-import {join, resolve} from "path";
+import {join} from "path";
 import {Project} from "@sakuli/core";
 import {mockPartial} from "sneer";
 
@@ -33,10 +33,6 @@ describe('RollupLifecycleHooks', () => {
         // GIVEN
         const hooks = new RollupLifecycleHooks();
         const fileName = "error.js";
-        const filePath = resolve("__mock__", fileName);
-        const expectedError = new Error(`Syntax error in file ${filePath} on line 1, column 41.
-1: console.log(\"this should throw an error\"));
-                                            ^`);
 
         // WHEN
         const o = hooks.readFileContent({
@@ -44,7 +40,7 @@ describe('RollupLifecycleHooks', () => {
         }, project);
 
         // THEN
-        await expect(o).rejects.toThrowError(expectedError);
+        await expect(o).rejects.toThrowError(/^Syntax error in file .* on line 1, column 41\.\n1: console.log\("this should throw an error"\)\);\n.*$/);
     });
 
     it('should add typescript plugin if file extension is .ts', async () => {
