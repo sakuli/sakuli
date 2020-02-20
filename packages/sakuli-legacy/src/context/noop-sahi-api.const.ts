@@ -47,7 +47,7 @@ const _NoopSahiApi: SahiApi = {
     },        _xy(): never {
         throw new Error("Method not implemented.");
     },
-    _click(query: SahiElementQueryOrWebElement, combo?: string | undefined): Promise<void> {
+    _click(query: SahiElementQueryOrWebElement, combo?: string | undefined, options?: object | undefined): Promise<void> {
         throw new Error("Method not implemented.");
     },
     _mouseDown(query: SahiElementQueryOrWebElement, isRight?: boolean | undefined, combo?: string | undefined): Promise<void> {
