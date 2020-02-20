@@ -30,14 +30,14 @@ export function mouseActionApi(
         await scrollIntoViewIfNeeded(e, ctx);
 
         if(options && options.force) {
-            return comboClickWithActionSequence(webDriver, combo, e);
+            return comboClickWithActionSequence(combo, e);
         }
 
         if(combo){
             if(await isElementCovered(e, webDriver)) {
                 throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
             }
-            return comboClickWithActionSequence(webDriver, combo, e);
+            return comboClickWithActionSequence(combo, e);
         }
         return e.click();
     }
@@ -166,7 +166,7 @@ export function mouseActionApi(
         `, e, selected);
     }
 
-    function comboClickWithActionSequence(webDriver: ThenableWebDriver, combo: string, e: WebElement) {
+    function comboClickWithActionSequence(combo: string, e: WebElement) {
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
             combo,
