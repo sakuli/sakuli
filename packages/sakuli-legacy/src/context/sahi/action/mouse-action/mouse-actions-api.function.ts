@@ -6,11 +6,10 @@ import { stripIndents } from "common-tags";
 import 'selenium-webdriver/lib/input'
 import { MouseActionApi } from "./mouse-action-api.interface";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
-import { runActionsWithComboKeys } from "../run-actions-with-combo-keys.function";
+import { runActionsWithComboKeys } from "..";
 import { AccessorUtil } from "../../accessor";
-import { positionalInfo } from "../../relations/positional-info.function";
-import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
-import { isElementCovered } from "../utils";
+import { positionalInfo } from "../../relations";
+import { isElementCovered, scrollIntoViewIfNeeded } from "../utils";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 
