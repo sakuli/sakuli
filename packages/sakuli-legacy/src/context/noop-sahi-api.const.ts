@@ -107,6 +107,9 @@ const _NoopSahiApi: SahiApi = {
     _highlight(query: SahiElementQueryOrWebElement, timeoutMs?: number | undefined): Promise<void> {
         throw new Error("Method not implemented.");
     },
+    _pageIsStable(timeout?: number, interval?: number): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    },
     _wait(millis: number, expression?: ((...locators: SahiElementQueryOrWebElement[]) => Promise<boolean>) | undefined): Promise<void> {
         throw new Error("Method not implemented.");
     },
