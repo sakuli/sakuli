@@ -3,9 +3,9 @@ import { mouseActionApi } from "./mouse-actions-api.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQuery } from "../../sahi-element.interface";
-import ElementClickInterceptedError = error.ElementClickInterceptedError;
 import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
+import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 jest.setTimeout(25_000);
 describe('mouse-actions', () => {
@@ -78,8 +78,24 @@ describe('mouse-actions', () => {
                 </style>
                 <div class="container">
                     <button id="btn" class="content" style="width: 200px; height: 20px">Not clickable</button>
-                    <div class="overlay">Overlay - must be placed under content in the HTML</div>
+                    <button id="cover" class="overlay">Overlay - must be placed under content in the HTML</button>
                 </div>
+                <div id="out"></div>
+                <script >
+                const $$ = document.getElementById.bind(document);
+                const btn = $$('cover');
+                const out = $$('out');
+                btn.addEventListener('click', e => {
+                    e.preventDefault();
+                    const keyAddon = [];
+                    if(e.ctrlKey) keyAddon.push('CTRL');
+                    if(e.metaKey) keyAddon.push('META');
+                    if(e.shiftKey) keyAddon.push('SHIFT');
+                    if(e.altKey) keyAddon.push('ALT');
+                    out.innerHTML = '_click ' + keyAddon.join("|");
+                    return false;
+                });
+                </script>
                 `;
 
             it.each(<[string][]>[
@@ -95,6 +111,24 @@ describe('mouse-actions', () => {
                 };
 
                 await expect(api._click(query, combo)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
+            });
+
+            it.each(<[string][]>[
+                [""],
+                ["ALT"],
+            ])('_click should click with %s when forced even though button is covered', async (combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet));
+                const query: SahiElementQuery = {
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                };
+                const options = {force: true};
+
+                await expect(api._click(query, combo, options)).resolves.toBeUndefined();
+                const out = await driver.findElement(By.css('#out'));
+                await expect(out.getText()).resolves.toBe(`_click ${combo}`.trim());
             });
         });
 
@@ -145,11 +179,9 @@ describe('mouse-actions', () => {
                 return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
             });
             it.each(<[MouseMethods, string, string][]>[
-                ['_click', 'click', ""],
                 ['_rightClick', 'contextmenu', ""],
                 ['_mouseOver', 'mouseover', ""],
                 ['_mouseDown', 'mousedown', ""],
-                ['_click', 'click', "META|ALT"],
                 ['_rightClick', 'contextmenu', "META|ALT"],
                 ['_mouseOver', 'mouseover', "META"],
                 ['_mouseDown', 'mousedown', "ALT"],
@@ -167,6 +199,25 @@ describe('mouse-actions', () => {
                 } else {
                     await apiMethod(query,false,combo);
                 }
+                //await new Promise(res => setTimeout(res, 2500));
+                const out = await driver.findElement(By.css('#out'));
+                return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
+            });
+
+            it.each(<[MouseMethods, string, string][]>[
+                ['_click', 'click', ""],
+                ['_click', 'click', "META|ALT"]
+            ])('%s should invoke native event %s with %s pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
+                const apiMethod: any = api[method];
+                const query: SahiElementQuery = {
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                };
+                await apiMethod(query,combo);
+
                 //await new Promise(res => setTimeout(res, 2500));
                 const out = await driver.findElement(By.css('#out'));
                 return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());

@@ -10,8 +10,8 @@ import { runActionsWithComboKeys } from "../run-actions-with-combo-keys.function
 import { AccessorUtil } from "../../accessor";
 import { positionalInfo } from "../../relations/positional-info.function";
 import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
-import ElementClickInterceptedError = error.ElementClickInterceptedError;
 import { isElementCovered } from "../utils";
+import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 
 export function mouseActionApi(
@@ -26,19 +26,19 @@ export function mouseActionApi(
         throw Error('Not yet implemented due to api incompatibility');
     }
 
-    async function _click(query: SahiElementQueryOrWebElement, combo: string = ""): Promise<void> {
+    async function _click(query: SahiElementQueryOrWebElement, combo: string = "", options: {force:boolean}): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         await scrollIntoViewIfNeeded(e, ctx);
+
+        if(options && options.force) {
+            return comboClickWithActionSequence(webDriver, combo, e);
+        }
+
         if(combo){
             if(await isElementCovered(e, webDriver)) {
                 throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
             }
-
-            return runActionsWithComboKeys(
-                webDriver.actions({bridge: true}),
-                combo,
-                a => a.click(e)
-            ).perform();
+            return comboClickWithActionSequence(webDriver, combo, e);
         }
         return e.click();
     }
@@ -116,16 +116,6 @@ export function mouseActionApi(
         ]);
         return webDriver.actions({bridge: true})
             .dragAndDrop(src, target).perform();
-
-        /*
-        return webDriver.actions({bridge: true})
-            .move({origin: src, x: 1, y: 1})
-            .press()
-            .move({origin: target, x: 1, y: 1})
-            .release()
-            .perform()
-
-         */
     }
 
     async function _dragDropXY(q: SahiElementQueryOrWebElement, x: number, y: number, $isRelative: boolean = false): Promise<void> {
@@ -151,14 +141,12 @@ export function mouseActionApi(
             }
             if (isNumberArray(valuesOrIndices)) {
                 if (valuesOrIndices.includes(i)) {
-                    //await setElementSelect(option, true);
                     await option.click()
                 }
             } else {
                 const value = await option.getAttribute('value');
                 const text = await option.getText();
                 if (valuesOrIndices.includes(value) || valuesOrIndices.includes(text)) {
-                    //await setElementSelect(option, true);
                     await option.click();
                 }
             }
@@ -177,6 +165,14 @@ export function mouseActionApi(
             }
             done(e.innerText);
         `, e, selected);
+    }
+
+    function comboClickWithActionSequence(webDriver: ThenableWebDriver, combo: string, e: WebElement) {
+        return runActionsWithComboKeys(
+            webDriver.actions({bridge: true}),
+            combo,
+            a => a.click(e)
+        ).perform();
     }
 
     return ({
