@@ -3,10 +3,10 @@ import { TestExecutionContext } from "@sakuli/core";
 import { ThenableWebDriver } from "selenium-webdriver";
 import { focusActionApi } from "./focus-action";
 import { mouseActionApi } from "./mouse-action";
-import { keyboardActionApi } from "./keyboard-action/keyboard-actions.function";
+import { keyboardActionApi } from "./keyboard-action";
 import { ActionApi } from "./action-api.interface";
 import { commonActionsApi } from "./common-action";
-import { createWithRetries } from "./utils/create-with-retries.function";
+import { createWithRetries } from "./utils";
 import { createWithActionContext } from "./utils";
 import { createWithTryAcrossFrames } from "./utils/create-with-try-across-frames.function";
 
@@ -23,14 +23,15 @@ export function actionApi(
     const withTryAcrossFrames = createWithTryAcrossFrames(webDriver);
     const runAsAction = <ARGS extends any[], R>(name: string, fn: (...args:ARGS) => Promise<R>): ((...args: ARGS) => Promise<R>) => {
         return withActionContext(name, withTryAcrossFrames(withRetries(5, fn)));
-    }
+    };
 
     const {
         _eval,
         _highlight,
         _navigateTo,
         _rteWrite,
-        _wait
+        _wait,
+        _pageIsStable
     } = commonActionsApi(webDriver, accessorUtil, ctx);
 
     const {
@@ -84,6 +85,7 @@ export function actionApi(
         _removeFocus: runAsAction('removeFocus', _blur),
 
         _wait: runAsAction('wait', _wait),
+        _pageIsStable: runAsAction('pageIsStable', _pageIsStable),
         _highlight: runAsAction('highlight', _highlight),
         _navigateTo: runAsAction('navigateTo', _navigateTo),
         _rteWrite: runAsAction('rteWrite', _rteWrite),

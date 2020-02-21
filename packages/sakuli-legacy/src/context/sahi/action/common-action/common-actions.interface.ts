@@ -89,6 +89,30 @@ export interface CommonActionsApi {
     _navigateTo(target: string, forceReload?: boolean, credentials?: { user: string, password: string }): Promise<any>
 
     /**
+     * Continuously fetches the page source and checks for DOM changes.
+     * Will be repeated every $timeout milliseconds until either the DOM does no longer change or $timeout is reached
+     *
+     * @example
+     * ```typescript
+     * // Wait for a stable DOM with default timeout and interval, continue test execution if it does not stabilize within timeout
+     * await _pageIsStable();
+     *
+     * // Wait for a stable DOM with custom timeout and default interval, continue test execution if it does not stabilize within timeout
+     * await _pageIsStable(5000);
+     *
+     * // Wait for a stable DOM with custom timeout and custom interval, continue test execution if it does not stabilize within timeout
+     * await _pageIsStable(5000, 100);
+     *
+     * // Wait for a stable DOM, stop test execution if it does not stabilize within timeout
+     * await _assertTrue(_pageIsStable(5000, 100));
+     * ```
+     *
+     * @param timeout Maximum timout in ms to wait for DOM stabilization. Default: 2000 ms
+     * @param interval Interval between stability checks in ms. Default: 200 ms
+     */
+    _pageIsStable(timeout?: number, interval?: number): Promise<boolean>
+
+    /**
      * @deprecated
      *
      * @param query

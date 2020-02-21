@@ -20,7 +20,6 @@ import {
 import { ifPresent } from "@sakuli/commons";
 import { AccessorIdentifier } from "../api";
 import { CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS } from "../action/inject.const";
-import { waitUntilPageIsLoaded } from "../helper/wait-until-page-is-loaded.function";
 
 export class AccessorUtil {
 
@@ -32,9 +31,6 @@ export class AccessorUtil {
     }
 
     private timeout: number = 3_000;
-
-    private waitUntilPageIsLoadedTimeout: number = 1_600;
-    private interval: number = 200;
 
     setTimeout(timeoutMs: number) {
         this.timeout = timeoutMs;
@@ -145,7 +141,6 @@ export class AccessorUtil {
     }
 
     async findElements(locator: Locator): Promise<WebElement[]> {
-        await this.waitUntilPageIsLoaded();
         try {
             await this.enableHook();
             // TODO Make timeout configurable
@@ -161,7 +156,6 @@ export class AccessorUtil {
     }
 
     async resolveByIdentifier(elements: WebElement[], identifier: AccessorIdentifier): Promise<WebElement[]> {
-        await this.waitUntilPageIsLoaded();
         if (isAccessorIdentifierAttributes(identifier)) {
             return await this.getElementsByAccessorIdentifier(elements, identifier);
         }
@@ -178,7 +172,6 @@ export class AccessorUtil {
     }
 
     async fetchElements(query: SahiElementQuery, waitTimeout: number = this.timeout): Promise<WebElement[]> {
-        await this.waitUntilPageIsLoaded();
         return this.webDriver.wait<WebElement[]>(async () => {
             const queryAfterRelation = await this.relationResolver.applyRelations(query);
             const elements = await this.findElements(queryAfterRelation.locator);
@@ -191,7 +184,6 @@ export class AccessorUtil {
     }
 
     async fetchElement(query: SahiElementQueryOrWebElement | WebElement, waitTimeout: number = this.timeout): Promise<WebElement> {
-        await this.waitUntilPageIsLoaded();
         return isSahiElementQuery(query)
             ? this.fetchElements(query, waitTimeout).then(([first]) => first)
             : Promise.resolve(query)
@@ -247,13 +239,5 @@ export class AccessorUtil {
             elements = [this.getElementBySahiIndex(elements, identifier)];
         }
         return elements;
-    }
-
-    private async waitUntilPageIsLoaded() {
-        await waitUntilPageIsLoaded(
-            this.webDriver,
-            this.interval,
-            this.waitUntilPageIsLoadedTimeout,
-            this.testExecutionContext);
     }
 }
