@@ -31,19 +31,19 @@ export function mouseActionApi(
         await scrollIntoViewIfNeeded(e, ctx);
 
         if(!combo && !options) {
-            console.trace("Using selenium click");
+            ctx.logger.trace("Using selenium click");
             return e.click();
         } else {
             validateComboAndOptions(combo, options);
             if(isClickNotForced(combo, options)) {
-                console.trace("Validate element for click");
+                ctx.logger.trace("Validate element for click");
                 if(await isElementCovered(e, webDriver)) {
                     throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
                 }
-                console.trace("Element is clickable");
+                ctx.logger.trace("Element is clickable");
             }
 
-            console.trace("Click with action sequence");
+            ctx.logger.trace("Click with action sequence");
             if(!combo || isClickOptions(combo)) {
                 return comboClickWithActionSequence("", e);
             }
@@ -178,7 +178,7 @@ export function mouseActionApi(
 
     function validateComboAndOptions(combo: undefined | string | ClickOptions, options: undefined | ClickOptions): void {
         if(combo && isClickOptions(combo) && options && isClickOptions(options)) {
-            console.log("_click was used with two clickOptions in combo and options");
+            ctx.logger.info("_click was used with two clickOptions");
             if((combo.force && !options.force) || (!combo.force && options.force)) {
                 throw Error(`Invalid argument combination for combo ${combo} and options ${options}`);
             }
