@@ -1,4 +1,5 @@
-import {SahiElementQueryOrWebElement} from "../../sahi-element.interface";
+import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
+import { ClickOptions } from "./click-options.interface";
 
 export interface MouseActionApi {
     /**
@@ -17,18 +18,18 @@ export interface MouseActionApi {
      * _click(_button("Click Me"));
      * _click(_button("Click Me"), "CTRL"); // clicks with CTRL key pressed
      * _click(_button("Click Me"), "CTRL|SHIFT"); // clicks with CTRL and SHIFT keys pressed
-     * _click(_button("Click Me"), "", {force: true}); // clicks without validation
+     * _click(_button("Click Me"), {force: true}); // clicks without validation
      * _click(_button("Click Me"), "CTRL", {force: true}); //clicks with CTRL without validation
      * ```
      *
      * @param query - query to the Element to click on
      * @param combo - Optional combo key(s): can be <kbd>CTRL</kbd>, <kbd>SHIFT</kbd>, <kbd>ALT</kbd> or <kbd>META</kbd>;
      *   Can also be two or more keys together like `"CTRL|SHIFT"`
-     * @param options - disables validations prior to click action to enforce clicks where an element e.g. is covered
+     * @param options - disables validations prior to the click action to enforce clicks where an element e.g. is covered
      *
      * @return {Promise<void>} Resolves after the click is invoked, doesn't wait for further actions on the website which are possibly invoked after the click
      */
-    _click(query: SahiElementQueryOrWebElement, combo?: string, options?: object): Promise<void>
+    _click(query: SahiElementQueryOrWebElement, combo?: undefined | string | ClickOptions, options?: undefined | ClickOptions): Promise<void>
 
     /**
      *

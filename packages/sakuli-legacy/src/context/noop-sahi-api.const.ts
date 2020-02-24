@@ -4,6 +4,7 @@ import { AccessorIdentifier } from "./sahi/api";
 import { SahiRelation } from "./sahi/relations/sahi-relation.interface";
 import { WebElement } from "selenium-webdriver";
 import { CharInfo } from "./sahi/action/char-info.interface";
+import { ClickOptions } from "./sahi/action/mouse-action";
 
 const _NoopSahiApi: SahiApi = {
     _parentNode(q: SahiElementQueryOrWebElement, tagName: string, occurrence?: number | undefined): Promise<SahiElementQueryOrWebElement> {
@@ -47,7 +48,7 @@ const _NoopSahiApi: SahiApi = {
     },        _xy(): never {
         throw new Error("Method not implemented.");
     },
-    _click(query: SahiElementQueryOrWebElement, combo?: string | undefined, options?: object | undefined): Promise<void> {
+    _click(query: SahiElementQueryOrWebElement, combo?: string | undefined | ClickOptions, options?: ClickOptions | undefined): Promise<void> {
         throw new Error("Method not implemented.");
     },
     _mouseDown(query: SahiElementQueryOrWebElement, isRight?: boolean | undefined, combo?: string | undefined): Promise<void> {

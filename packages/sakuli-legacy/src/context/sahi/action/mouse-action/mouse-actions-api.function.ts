@@ -10,6 +10,7 @@ import { runActionsWithComboKeys } from "..";
 import { AccessorUtil } from "../../accessor";
 import { positionalInfo } from "../../relations";
 import { isElementCovered, scrollIntoViewIfNeeded } from "../utils";
+import { ClickOptions, isClickOptions } from ".";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 
@@ -25,21 +26,26 @@ export function mouseActionApi(
         throw Error('Not yet implemented due to api incompatibility');
     }
 
-    async function _click(query: SahiElementQueryOrWebElement, combo: string = "", options: {force:boolean}): Promise<void> {
+    async function _click(query: SahiElementQueryOrWebElement, combo: undefined | string | ClickOptions, options: undefined | ClickOptions): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         await scrollIntoViewIfNeeded(e, ctx);
 
-        if(options && options.force) {
-            return comboClickWithActionSequence(combo, e);
-        }
-
-        if(combo){
-            if(await isElementCovered(e, webDriver)) {
-                throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
+        if(!combo && !options) {
+            return e.click();
+        } else {
+            validateComboAndOptions(combo, options);
+            if(isClickNotForced(combo, options)) {
+                if(await isElementCovered(e, webDriver)) {
+                    throw new ElementClickInterceptedError("Element is not clickable because another element obscures it");
+                }
             }
-            return comboClickWithActionSequence(combo, e);
+
+            if(!combo || isClickOptions(combo)) {
+                return comboClickWithActionSequence("", e);
+            } else {
+                return comboClickWithActionSequence(combo, e);
+            }
         }
-        return e.click();
     }
 
     async function _mouseDown(query: SahiElementQueryOrWebElement, isRight: boolean = false, combo: string = ''): Promise<void> {
@@ -166,7 +172,24 @@ export function mouseActionApi(
         `, e, selected);
     }
 
-    function comboClickWithActionSequence(combo: string, e: WebElement) {
+
+    function validateComboAndOptions(combo: undefined | string | ClickOptions, options: undefined | ClickOptions): void {
+        if(combo && isClickOptions(combo) && options && isClickOptions(options)) {
+            if((combo.force && !options.force) || (!combo.force && options.force)) {
+                throw Error(`Invalid argument combination for combo ${combo} and options ${options}`);
+            }
+        }
+    }
+
+    function isClickNotForced(combo: undefined | string | ClickOptions, options: undefined | ClickOptions) {
+        const isComboNotForced= (combo && isClickOptions(combo) && !combo.force);
+        const isOptionsNotForced = (typeof combo === "string"|| !combo) && ((options && !options.force) || (options === undefined));
+
+        return isOptionsNotForced || isComboNotForced;
+    }
+
+
+    function comboClickWithActionSequence(combo: string, e: WebElement): Promise<void> {
         return runActionsWithComboKeys(
             webDriver.actions({bridge: true}),
             combo,

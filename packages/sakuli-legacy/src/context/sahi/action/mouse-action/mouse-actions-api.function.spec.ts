@@ -5,6 +5,7 @@ import { RelationsResolver } from "../../relations";
 import { SahiElementQuery } from "../../sahi-element.interface";
 import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
+import { ClickOptions } from "./click-options.interface";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 jest.setTimeout(25_000);
@@ -97,38 +98,60 @@ describe('mouse-actions', () => {
                 });
                 </script>
                 `;
+            const forced: ClickOptions = {force: true};
+            const notForced: ClickOptions = {force: false};
 
-            it.each(<[string][]>[
-                [""],
-                ["ALT"],
-            ])('_click should throw when click with %s is used because button is covered by div', async (combo: string) => {
-                const api = createApi(driver);
+            const query: SahiElementQuery = {
+                locator: By.css('#btn'),
+                identifier: 0,
+                relations: []
+            };
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                [undefined, undefined],
+                ["", undefined],
+                ["ALT", undefined],
+                ["", notForced],
+                ["ALT", notForced],
+                [undefined, notForced],
+                [notForced, undefined],
+                [notForced, notForced],
+            ])("should throw when _click is called with combo keys %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
                 await driver.get(mockHtml(htmlSnippet));
-                const query: SahiElementQuery = {
-                    locator: By.css('#btn'),
-                    identifier: 0,
-                    relations: []
-                };
-
-                await expect(api._click(query, combo)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
             });
 
-            it.each(<[string][]>[
-                [""],
-                ["ALT"],
-            ])('_click should click with %s when forced even though button is covered', async (combo: string) => {
-                const api = createApi(driver);
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                ["", forced],
+                ["ALT", forced]
+            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
                 await driver.get(mockHtml(htmlSnippet));
-                const query: SahiElementQuery = {
-                    locator: By.css('#btn'),
-                    identifier: 0,
-                    relations: []
-                };
-                const options = {force: true};
-
+                const api = createApi(driver);
                 await expect(api._click(query, combo, options)).resolves.toBeUndefined();
                 const out = await driver.findElement(By.css('#out'));
                 await expect(out.getText()).resolves.toBe(`_click ${combo}`.trim());
+            });
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                [forced, undefined],
+                [forced, forced],
+                [undefined, forced]
+            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+                await driver.get(mockHtml(htmlSnippet));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).resolves.toBeUndefined();
+                const out = await driver.findElement(By.css('#out'));
+                await expect(out.getText()).resolves.toBe(`_click`);
+            });
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                [forced, notForced],
+                [notForced, forced]
+            ])("should throw when different clickOptions(combo: %s, options: %s) are used", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+                await driver.get(mockHtml(htmlSnippet));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).rejects.toThrowError(expect.any(Error));
             });
         });
 
