@@ -46,9 +46,8 @@ export function mouseActionApi(
             console.trace("Click with action sequence");
             if(!combo || isClickOptions(combo)) {
                 return comboClickWithActionSequence("", e);
-            } else {
-                return comboClickWithActionSequence(combo, e);
             }
+            return comboClickWithActionSequence(combo, e);
         }
     }
 
