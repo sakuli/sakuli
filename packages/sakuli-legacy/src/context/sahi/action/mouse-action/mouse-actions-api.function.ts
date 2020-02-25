@@ -179,7 +179,7 @@ export function mouseActionApi(
     function validateComboAndOptions(combo: undefined | string | ClickOptions, options: undefined | ClickOptions): void {
         if(combo && isClickOptions(combo) && options && isClickOptions(options)) {
             ctx.logger.info("_click was used with two clickOptions");
-            if((combo.force && !options.force) || (!combo.force && options.force)) {
+            if (combo.force !== options.force) {
                 throw Error(`Invalid argument combination for combo ${combo} and options ${options}`);
             }
         }
