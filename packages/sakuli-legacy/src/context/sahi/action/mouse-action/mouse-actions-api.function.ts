@@ -187,7 +187,7 @@ export function mouseActionApi(
 
     function isClickNotForced(combo: undefined | string | ClickOptions, options: undefined | ClickOptions) {
         const isComboNotForced= (combo && isClickOptions(combo) && !combo.force);
-        const isOptionsNotForced = (typeof combo === "string"|| !combo) && ((options && !options.force) || (options === undefined));
+        const isOptionsNotForced = (!combo || !isClickOptions(combo)) && (!options || (options && !options.force));
 
         return isOptionsNotForced || isComboNotForced;
     }
