@@ -5,20 +5,22 @@ import {runAsAction, ScreenApi} from "../actions";
 import {createRegionClass, Region} from "../region";
 import {Type} from "@sakuli/commons";
 
-const closeProcess = async (pid: number) => {
+const closeProcess = async (proc: ChildProcess) => {
     if (process.platform === "win32") {
-        await exec(`Taskkill /PID ${pid}`);
+        await exec(`Taskkill /PID ${proc.pid}`);
     } else {
-        await exec(`kill -15 ${pid}`);
+        await exec(`kill -15 ${proc.pid}`);
     }
+    await proc.kill("SIGTERM")
 };
 
-const killProcess = async (pid: number) => {
+const killProcess = async (proc: ChildProcess) => {
     if (process.platform === "win32") {
-        await exec(`Taskkill /PID ${pid} /F`);
+        await exec(`Taskkill /PID ${proc.pid} /F`);
     } else {
-        await exec(`kill -9 ${pid}`);
+        await exec(`kill -9 ${proc.pid}`);
     }
+    await proc.kill("SIGKILL")
 };
 
 export function createApplicationClass(ctx: TestExecutionContext, project: Project): Type<Application> {
@@ -64,7 +66,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     ctx.logger.debug(`Closing application '${this.name}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
-                            await closeProcess(this.process.pid);
+                            await closeProcess(this.process);
                             resolve(this);
                         } catch (e) {
                             if (!optSilent) {
@@ -87,7 +89,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     ctx.logger.debug(`Killing application '${this.name}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
-                            await killProcess(this.process.pid);
+                            await killProcess(this.process);
                             resolve(this);
                         } catch (e) {
                             if (!optSilent) {
