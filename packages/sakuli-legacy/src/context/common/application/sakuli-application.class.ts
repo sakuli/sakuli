@@ -1,18 +1,9 @@
 import {Application} from "./application.interface";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {ChildProcess, exec, spawn} from "child_process";
-import {runAsAction} from "../actions/action.function";
+import {ChildProcess, exec} from "child_process";
+import {runAsAction, ScreenApi} from "../actions";
 import {createRegionClass, Region} from "../region";
-import {ScreenApi} from "../actions/screen.function";
 import {Type} from "@sakuli/commons";
-
-const killProcess = (pid: number) => {
-    if (process.platform === "win32") {
-        exec(`Taskkill /PID ${pid} /F`);
-    } else {
-        exec(`kill -9 ${pid}`);
-    }
-};
 
 export function createApplicationClass(ctx: TestExecutionContext, project: Project): Type<Application> {
     const RegionImpl = createRegionClass(ctx, project);
@@ -29,7 +20,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                 return new Promise<Application>((resolve, reject) => {
                     try {
                         if (!this.process) {
-                            this.process = spawn(this.name);
+                            this.process = exec(this.name);
                         } else {
                             ctx.logger.debug(`Application already open: PID=${this.process.pid}`)
                         }
@@ -57,7 +48,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     ctx.logger.debug(`Closing application '${this.name}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
-                            killProcess(this.process.pid);
+                            this.process.kill('SIGTERM');
                             resolve(this);
                         } catch (e) {
                             if (!optSilent) {
@@ -80,7 +71,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     ctx.logger.debug(`Killing application '${this.name}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
-                            killProcess(this.process.pid);
+                            this.process.kill('SIGKILL');
                             resolve(this);
                         } catch (e) {
                             if (!optSilent) {
