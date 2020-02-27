@@ -15,13 +15,13 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
 
         constructor(command: string) {
             const [cmd, ...options] = command.split(/(?<!\\)\s/);
-            this.cmd = cmd;
+            this.cmd = cmd.split(/\\/).join("");
             this.args = options;
         }
 
         public async open(): Promise<Application> {
             return runAsAction(ctx, "runCommand", () => {
-                ctx.logger.debug(`Opening application '${this.cmd} with args ${this.args}`);
+                ctx.logger.debug(`Opening application '${this.cmd}${this.args.length ? ` with args ${this.args}` : ''}`);
                 return new Promise<Application>((resolve, reject) => {
                     try {
                         if (!this.process) {
@@ -118,8 +118,10 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
         }
 
         public getName(): string {
-            ctx.logger.debug(`Returning app name '${this.cmd}'`);
-            return this.cmd;
+            return runAsAction(ctx, "getName", () => {
+                ctx.logger.debug(`Returning app name '${this.cmd}'`);
+                return this.cmd;
+            })();
         }
     };
 }

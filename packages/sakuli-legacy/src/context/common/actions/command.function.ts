@@ -7,7 +7,8 @@ export function execute(cmd: string, ...params: string[]): Promise<CommandLineRe
         let proc;
         if (!params || params.length === 0) {
             const [command, ...options] = cmd.split(/(?<!\\)\s/);
-            proc = spawn(command, options);
+            const unescapedCommand = command.split(/\\/).join("");
+            proc = spawn(unescapedCommand, options);
         } else {
             proc = spawn(cmd, params);
         }
