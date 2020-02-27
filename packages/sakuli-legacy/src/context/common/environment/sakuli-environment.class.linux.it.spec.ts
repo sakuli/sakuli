@@ -68,4 +68,19 @@ describe("Environment", () => {
         expect(result.getExitCode()).toEqual(0);
         expect(result.getOutput()).toEqual("Linux");
     });
+
+    it("should contain 'Linux'", async () => {
+        // GIVEN
+        const ctx = new TestExecutionContext(new SimpleLogger());
+        const EnvironmentImpl = createEnvironmentClass(ctx, mockProject);
+        prepareContext(ctx);
+        const SUT = new EnvironmentImpl();
+
+        // WHEN
+        const result = await SUT.runCommand("uname -a");
+
+        // THEN
+        expect(result.getExitCode()).toEqual(0);
+        expect(result.getOutput()).toContain("Linux");
+    });
 });

@@ -1,17 +1,12 @@
 import {Key} from "../key.class";
 import {CommandLineResult} from "./commandline-result.class";
 import {decrypt, getEncryptionKey} from "../secrets.function";
-import {ClipboardApi} from "../actions/clipboard.function";
-import {createKeyboardApi} from "../actions/keyboard.function";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {ScreenApi} from "../actions/screen.function";
-import {MouseApi} from "../actions/mouse.function";
+import {ClipboardApi, createKeyboardApi, execute, MouseApi, runAsAction, ScreenApi} from "../actions";
 
 import nutConfig from "../nut-global-config.class";
-import {execute} from "../actions/command.function";
 import {Environment} from "./environment.interface";
 import {createRegionClass, Region} from "../region";
-import {runAsAction} from "../actions/action.function";
 import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
 
 export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {

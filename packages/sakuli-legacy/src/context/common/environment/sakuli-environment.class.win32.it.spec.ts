@@ -1,7 +1,6 @@
 import {createEnvironmentClass} from "./sakuli-environment.class";
 import {Project, TestExecutionContext} from "@sakuli/core";
 import {SimpleLogger} from "@sakuli/commons";
-import {mockPartial} from "sneer";
 import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
 const mockProject = new Project(".");
