@@ -1,35 +1,22 @@
 import {Application} from "./application.interface";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {ChildProcess, exec} from "child_process";
+import {ChildProcess, spawn} from "child_process";
 import {runAsAction, ScreenApi} from "../actions";
 import {createRegionClass, Region} from "../region";
 import {Type} from "@sakuli/commons";
 
-const closeProcess = async (proc: ChildProcess) => {
-    if (process.platform === "win32") {
-        await exec(`Taskkill /PID ${proc.pid}`);
-    } else {
-        await exec(`kill -15 ${proc.pid}`);
-    }
-    await proc.kill("SIGTERM")
-};
-
-const killProcess = async (proc: ChildProcess) => {
-    if (process.platform === "win32") {
-        await exec(`Taskkill /PID ${proc.pid} /F`);
-    } else {
-        await exec(`kill -9 ${proc.pid}`);
-    }
-    await proc.kill("SIGKILL")
-};
-
 export function createApplicationClass(ctx: TestExecutionContext, project: Project): Type<Application> {
     const RegionImpl = createRegionClass(ctx, project);
     return class SakuliApplication implements Application {
+        private cmd: string;
+        private args: string[];
         public sleepTime = 0;
         public process?: ChildProcess;
 
         constructor(public readonly name: string) {
+            const [cmd, ...options] = name.split(/(?<!\\)\s/);
+            this.cmd = cmd;
+            this.args = options;
         }
 
         public async open(): Promise<Application> {
@@ -38,7 +25,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                 return new Promise<Application>((resolve, reject) => {
                     try {
                         if (!this.process) {
-                            this.process = exec(this.name);
+                            this.process = spawn(this.name);
                         } else {
                             ctx.logger.debug(`Application already open: PID=${this.process.pid}`)
                         }
@@ -66,7 +53,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     ctx.logger.debug(`Closing application '${this.name}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
-                            await closeProcess(this.process);
+                            this.process.kill('SIGTERM');
                             resolve(this);
                         } catch (e) {
                             if (!optSilent) {
@@ -89,7 +76,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     ctx.logger.debug(`Killing application '${this.name}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
-                            await killProcess(this.process);
+                            this.process.kill('SIGKILL');
                             resolve(this);
                         } catch (e) {
                             if (!optSilent) {

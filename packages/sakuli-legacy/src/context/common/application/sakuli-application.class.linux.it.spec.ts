@@ -44,7 +44,7 @@ describe("Application", () => {
         await expect(SUT.close()).resolves.not.toThrow();
     });
 
-    it("should return correct application name", async () => {
+    it("should return correct application name", () => {
         // GIVEN
         const ApplicationImpl = createApplicationClass(ctx, mockProject);
         const SUT = new ApplicationImpl(application);
