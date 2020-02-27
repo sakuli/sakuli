@@ -8,24 +8,24 @@ import {Type} from "@sakuli/commons";
 export function createApplicationClass(ctx: TestExecutionContext, project: Project): Type<Application> {
     const RegionImpl = createRegionClass(ctx, project);
     return class SakuliApplication implements Application {
-        private cmd: string;
-        private args: string[];
+        private readonly cmd: string;
+        private readonly args: string[];
         public sleepTime = 0;
         public process?: ChildProcess;
 
-        constructor(public readonly name: string) {
-            const [cmd, ...options] = name.split(/(?<!\\)\s/);
+        constructor(command: string) {
+            const [cmd, ...options] = command.split(/(?<!\\)\s/);
             this.cmd = cmd;
             this.args = options;
         }
 
         public async open(): Promise<Application> {
             return runAsAction(ctx, "runCommand", () => {
-                ctx.logger.debug(`Opening application '${this.name}`);
+                ctx.logger.debug(`Opening application '${this.cmd} with args ${this.args}`);
                 return new Promise<Application>((resolve, reject) => {
                     try {
                         if (!this.process) {
-                            this.process = spawn(this.name);
+                            this.process = spawn(this.cmd, this.args);
                         } else {
                             ctx.logger.debug(`Application already open: PID=${this.process.pid}`)
                         }
@@ -38,19 +38,19 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async focus(): Promise<Application> {
-            ctx.logger.debug(`Focusing application '${this.name}`);
+            ctx.logger.debug(`Focusing application '${this.cmd}`);
             throw new Error("Not Implemented");
         }
 
         public async focusWindow(windowNumber: number): Promise<Application> {
-            ctx.logger.debug(`Focusing window #${windowNumber} of application '${this.name}`);
+            ctx.logger.debug(`Focusing window #${windowNumber} of application '${this.cmd}`);
             throw new Error("Not Implemented");
         }
 
         public async close(optSilent?: boolean): Promise<Application> {
             return runAsAction(ctx, "close", () => {
                 return new Promise<Application>(async (resolve, reject) => {
-                    ctx.logger.debug(`Closing application '${this.name}${optSilent ? ' silently' : ''}`);
+                    ctx.logger.debug(`Closing application '${this.cmd}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
                             this.process.kill('SIGTERM');
@@ -73,7 +73,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
         public async kill(optSilent?: boolean): Promise<Application> {
             return runAsAction(ctx, "kill", () => {
                 return new Promise<Application>(async (resolve, reject) => {
-                    ctx.logger.debug(`Killing application '${this.name}${optSilent ? ' silently' : ''}`);
+                    ctx.logger.debug(`Killing application '${this.cmd}${optSilent ? ' silently' : ''}`);
                     if (this.process) {
                         try {
                             this.process.kill('SIGKILL');
@@ -105,21 +105,21 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
 
         public async getRegion(): Promise<Region> {
             return runAsAction(ctx, "getRegion", async () => {
-                ctx.logger.debug(`Determining region for main window of ${this.name}`);
+                ctx.logger.debug(`Determining region for main window of ${this.cmd}`);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }
 
         public async getRegionForWindow(windowNumber: number): Promise<Region> {
             return runAsAction(ctx, "getRegionForWindow", async () => {
-                ctx.logger.debug(`Determining region for window #${windowNumber} of ${this.name}`);
+                ctx.logger.debug(`Determining region for window #${windowNumber} of ${this.cmd}`);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }
 
         public getName(): string {
-            ctx.logger.debug(`Returning app name '${this.name}'`);
-            return this.name;
+            ctx.logger.debug(`Returning app name '${this.cmd}'`);
+            return this.cmd;
         }
     };
 }
