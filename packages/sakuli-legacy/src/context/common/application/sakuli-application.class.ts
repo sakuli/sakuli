@@ -15,7 +15,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
 
         constructor(command: string) {
             const [cmd, ...options] = command.split(/(?<!\\)\s/);
-            this.cmd = cmd.split(/\\/).join("");
+            this.cmd = cmd.split(/\\\s/).join(" ");
             this.args = options;
         }
 
