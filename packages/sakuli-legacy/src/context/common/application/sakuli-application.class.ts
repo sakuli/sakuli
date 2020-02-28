@@ -40,7 +40,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
                     }
                 });
             })();
-        };
+        }
 
         public async open(): Promise<Application> {
             return runAsAction(ctx, "runCommand", () => {

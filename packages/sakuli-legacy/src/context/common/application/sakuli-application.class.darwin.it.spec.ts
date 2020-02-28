@@ -26,6 +26,17 @@ describe("Application", () => {
         await expect(SUT.close()).resolves.not.toThrow();
     });
 
+    it("should not throw when trying to close a not opened application", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+
+        // WHEN
+
+        // THEN
+        await expect(SUT.close()).resolves.not.toThrow();
+    });
+
     it("should kill calculator", async () => {
         // GIVEN
         const ApplicationImpl = createApplicationClass(ctx, mockProject);
