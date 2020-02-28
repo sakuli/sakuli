@@ -51,9 +51,8 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
                   - Create ${chalk.green('tsconfig.json')} in ${chalk.gray(baseDir)}
 
                 Would you like to proceed [${chalk.green('Y')}/${chalk.red('n')}]: ${chalk.gray('default: Y')}
-
             `);
-            if (answer.toUpperCase() !== 'n') {
+            if (answer.toLowerCase() !== 'n') {
                 const installs: [string, Ora][] = typingPackages.map(pkg => [pkg, ora(`Running npm install ${pkg}@${sakuliVersion}`)]);
                 const createFile = ora('Creating tsconfig.json');
                 for (let [pkg, install] of installs) {
