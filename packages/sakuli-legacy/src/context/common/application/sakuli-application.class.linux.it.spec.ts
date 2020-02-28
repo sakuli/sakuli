@@ -50,8 +50,24 @@ describe("Application", () => {
         const SUT = new ApplicationImpl(application);
 
         // WHEN
+        const result = SUT.getName();
 
         // THEN
-        expect(SUT.getName()).toEqual(application);
+        expect(result).toEqual(application);
+    });
+
+    it("should only return the escaped application name without parameters", () => {
+        // GIVEN
+        const applicationName = "/path/to/my\\ escaped/application\\ name";
+        const parameters = "--withParam one --andParam two";
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(`${applicationName} ${parameters}`);
+        const expectedName = "/path/to/my escaped/application name";
+
+        // WHEN
+        const result = SUT.getName();
+
+        // THEN
+        expect(result).toEqual(expectedName);
     });
 });
