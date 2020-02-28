@@ -123,4 +123,34 @@ describe("Application", () => {
         // THEN
         await expect(testAction()).rejects.toThrowError("Not Implemented");
     });
+
+    it("should return a valid region for getRegion", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+
+        // WHEN
+        const result = await SUT.getRegion();
+
+        // THEN
+        await expect(result.getX()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getY()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getH()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getW()).resolves.toBeGreaterThanOrEqual(0);
+    });
+
+    it("should return a valid region for getRegionFromWindow", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+
+        // WHEN
+        const result = await SUT.getRegionForWindow(0);
+
+        // THEN
+        await expect(result.getX()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getY()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getH()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getW()).resolves.toBeGreaterThanOrEqual(0);
+    });
 });
