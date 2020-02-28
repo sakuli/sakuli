@@ -37,28 +37,29 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
             const baseDir = isAbsolute(project) ? project : resolve(process.cwd(), project);
             const presets = await getInstalledPresets(baseDir);
             const sakuliVersion = await getSakuliVersion(baseDir);
-            const typingPackages = presets
+            const typingPackages: [string, string][] = presets
                 .filter(preset => packageTypingMapping.has(preset))
-                .map(preset => packageTypingMapping.get(preset)!);
+                .map(preset => [packageTypingMapping.get(preset)!, sakuliVersion]);
 
             if (!await containsTypescript(baseDir)) {
-                typingPackages.unshift("typescript");
+                const tsVersion = require(join(__dirname, "..", "..", "package.json")).devDependencies.typescript;
+                typingPackages.unshift(["typescript", tsVersion]);
             }
 
             const answer = await userInput(stripIndents`
                 This command will install and configure all relevant packages to use ${chalk.bold.blueBright('Typescript')} in your project:
-                ${typingPackages.map(pkg => `  - Install ${chalk.green(pkg)}`).join(EOL)}
+                ${typingPackages.map(([pkg]) => `  - Install ${chalk.green(pkg)}`).join(EOL)}
                   - Create ${chalk.green('tsconfig.json')} in ${chalk.gray(baseDir)}
 
                 Would you like to proceed [${chalk.green('Y')}/${chalk.red('n')}]: ${chalk.gray('default: Y')}
             `);
             if (answer.toLowerCase() !== 'n') {
-                const installs: [string, Ora][] = typingPackages.map(pkg => [pkg, ora(`Running npm install ${pkg}@${sakuliVersion}`)]);
+                const installs: [[string, string], Ora][] = typingPackages.map(pkg => [pkg, ora(`Running npm install ${pkg[0]}@${pkg[1]}`)]);
                 const createFile = ora('Creating tsconfig.json');
                 for (let [pkg, install] of installs) {
                     try {
                         install.start();
-                        await execa('npm', ['i', `${pkg}@${sakuliVersion}`], {cwd: baseDir});
+                        await execa('npm', ['i', `${pkg[0]}@${pkg[1]}`], {cwd: baseDir});
                         install.succeed()
                     } catch (e) {
                         install.fail(e.message);
@@ -67,7 +68,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
                 try {
                     createFile.start();
                     const cfg = {...defaultTsConfig};
-                    (cfg.compilerOptions.types as string[]).push(...typingPackages);
+                    (cfg.compilerOptions.types as string[]).push(...typingPackages.map(pkg => pkg[0]));
                     await fs.writeFile(
                         join(baseDir, 'tsconfig.json'),
                         JSON.stringify(cfg, null, 2),
