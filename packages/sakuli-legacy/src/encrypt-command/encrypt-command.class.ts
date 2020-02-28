@@ -1,8 +1,8 @@
 import {CommandModuleProvider} from "@sakuli/core";
 import chalk from "chalk";
 import {Argv, CommandModule} from "yargs";
-import {secret} from "@nut-tree/secrets";
-import {MASTERKEY_ENV_KEY} from "../context/common/secrets.function";
+import {Algorithm, secret} from "@nut-tree/secrets";
+import {MASTERKEY_ENV_KEY} from "../context/common";
 
 export const encryptCommand: CommandModuleProvider = (): CommandModule => {
     return ({
@@ -22,7 +22,7 @@ export const encryptCommand: CommandModuleProvider = (): CommandModule => {
                 process.exit(-1)
             }
             try {
-                const encrypted = await secret.encrypt(opts.secret, key || "");
+                const encrypted = await secret.encrypt(opts.secret, key || "", Algorithm.AES128CBC);
                 console.log(chalk`{green Encrypted secret:} ${encrypted}`);
                 process.exit(0);
             } catch (e) {
