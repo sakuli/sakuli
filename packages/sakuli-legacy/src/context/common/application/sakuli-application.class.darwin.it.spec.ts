@@ -5,7 +5,7 @@ import {Application} from "./application.interface";
 import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
 describe("Application", () => {
-    const application = "/Applications/Insomnia.app/Contents/MacOS/Insomnia";
+    const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
     const mockProject = new Project(".");
     let ctx: TestExecutionContext;
 
