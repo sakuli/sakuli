@@ -118,10 +118,8 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
         }
 
         public getName(): string {
-            return runAsAction(ctx, "getName", () => {
-                ctx.logger.debug(`Returning app name '${this.cmd}'`);
-                return this.cmd;
-            })();
+            ctx.logger.debug(`Returning app name '${this.cmd}'`);
+            return this.cmd;
         }
     };
 }
