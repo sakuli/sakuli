@@ -5,7 +5,7 @@ import {Application} from "./application.interface";
 import {prepareContext} from "../actions/__mocks__/prepare-context.function";
 
 describe("Application", () => {
-    const application = "/Applications/Calculator.app/Contents/MacOS/Calculator";
+    const application = "/Applications/Insomnia.app/Contents/MacOS/Insomnia";
     const mockProject = new Project(".");
     let ctx: TestExecutionContext;
 
@@ -26,6 +26,19 @@ describe("Application", () => {
         await expect(SUT.close()).resolves.not.toThrow();
     });
 
+    it("should kill calculator", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+        await SUT.open();
+
+        // WHEN
+        const testAction = () => SUT.kill();
+
+        // THEN
+        await expect(testAction()).resolves.not.toThrow();
+    });
+
     it("should open calculator with a startup delay", async () => {
         // GIVEN
         const ApplicationImpl = createApplicationClass(ctx, mockProject);
@@ -40,6 +53,23 @@ describe("Application", () => {
 
         // THEN
         expect(end - start).toBeGreaterThanOrEqual(startupDelay * 1000);
+        await expect(SUT.close()).resolves.not.toThrow();
+    });
+
+    it("should not update startupDelay for values < 0", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+        const startupDelay = -3;
+
+        // WHEN
+        SUT.setSleepTime(startupDelay);
+        const start = Date.now();
+        await SUT.open();
+        const end = Date.now();
+
+        // THEN
+        expect(end - start).toBeLessThan(1000);
         await expect(SUT.close()).resolves.not.toThrow();
     });
 
@@ -68,5 +98,29 @@ describe("Application", () => {
 
         // THEN
         expect(result).toEqual(expectedName);
+    });
+
+    it("should throw on not implemented method 'focus'", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+
+        // WHEN
+        const testAction = () => SUT.focus();
+
+        // THEN
+        await expect(testAction()).rejects.toThrowError("Not Implemented");
+    });
+
+    it("should throw on not implemented method 'focusWindow'", async () => {
+        // GIVEN
+        const ApplicationImpl = createApplicationClass(ctx, mockProject);
+        const SUT = new ApplicationImpl(application);
+
+        // WHEN
+        const testAction = () => SUT.focusWindow(0);
+
+        // THEN
+        await expect(testAction()).rejects.toThrowError("Not Implemented");
     });
 });
