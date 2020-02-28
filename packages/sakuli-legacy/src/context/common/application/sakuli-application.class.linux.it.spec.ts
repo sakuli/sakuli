@@ -35,7 +35,7 @@ describe("Application", () => {
         // WHEN
 
         // THEN
-        await expect(SUT.close).resolves.not.toThrow();
+        await expect(SUT.close()).resolves.not.toThrow();
     });
 
     it("should kill gnome-calculator", async () => {
@@ -48,7 +48,7 @@ describe("Application", () => {
         const testAction = () => SUT.kill();
 
         // THEN
-        await expect(testAction).resolves.not.toThrow();
+        await expect(testAction()).resolves.not.toThrow();
     });
 
     it("should open gnome-calculator with a startup delay", async () => {
@@ -65,7 +65,7 @@ describe("Application", () => {
 
         // THEN
         expect(end - start).toBeGreaterThanOrEqual(startupDelay * 1000);
-        await expect(SUT.close).resolves.not.toThrow();
+        await expect(SUT.close()).resolves.not.toThrow();
     });
 
     it("should not update startupDelay for values < 0", async () => {
@@ -82,7 +82,7 @@ describe("Application", () => {
 
         // THEN
         expect(end - start).toBeLessThan(1000);
-        await expect(SUT.close).resolves.not.toThrow();
+        await expect(SUT.close()).resolves.not.toThrow();
     });
 
     it("should return correct application name", () => {
@@ -121,7 +121,7 @@ describe("Application", () => {
         const testAction = () => SUT.focus();
 
         // THEN
-        await expect(testAction).rejects.toThrowError("Not Implemented");
+        await expect(testAction()).rejects.toThrowError("Not Implemented");
     });
 
     it("should throw on not implemented method 'focusWindow'", async () => {
@@ -133,7 +133,7 @@ describe("Application", () => {
         const testAction = () => SUT.focusWindow(0);
 
         // THEN
-        await expect(testAction).rejects.toThrowError("Not Implemented");
+        await expect(testAction()).rejects.toThrowError("Not Implemented");
     });
 
     it("should return a valid region for getRegion", async () => {
@@ -145,10 +145,10 @@ describe("Application", () => {
         const result = await SUT.getRegion();
 
         // THEN
-        await expect(result.getX).resolves.toBeGreaterThanOrEqual(0);
-        await expect(result.getY).resolves.toBeGreaterThanOrEqual(0);
-        await expect(result.getH).resolves.toBeGreaterThanOrEqual(0);
-        await expect(result.getW).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getX()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getY()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getH()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getW()).resolves.toBeGreaterThanOrEqual(0);
     });
 
     it("should return a valid region for getRegionFromWindow", async () => {
@@ -160,9 +160,9 @@ describe("Application", () => {
         const result = await SUT.getRegionForWindow(0);
 
         // THEN
-        await expect(result.getX).resolves.toBeGreaterThanOrEqual(0);
-        await expect(result.getY).resolves.toBeGreaterThanOrEqual(0);
-        await expect(result.getH).resolves.toBeGreaterThanOrEqual(0);
-        await expect(result.getW).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getX()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getY()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getH()).resolves.toBeGreaterThanOrEqual(0);
+        await expect(result.getW()).resolves.toBeGreaterThanOrEqual(0);
     });
 });
