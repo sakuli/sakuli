@@ -19,6 +19,29 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
             this.args = options;
         }
 
+        private closeOrKillFunction(methodName: string, exitSignal: string, optSilent?: boolean) {
+            return runAsAction(ctx, methodName, () => {
+                return new Promise<Application>(async (resolve, reject) => {
+                    ctx.logger.debug(`Trying to ${methodName} application '${this.cmd}${optSilent ? ' silently' : ''}`);
+                    if (this.process) {
+                        try {
+                            this.process.kill(exitSignal);
+                            resolve(this);
+                        } catch (e) {
+                            if (!optSilent) {
+                                reject(`Failed to ${methodName} application with PID=${this.process.pid}`);
+                            } else {
+                                resolve(this);
+                            }
+                        }
+                    } else {
+                        ctx.logger.warn(`No application open to ${methodName}.`);
+                        resolve(this);
+                    }
+                });
+            })();
+        };
+
         public async open(): Promise<Application> {
             return runAsAction(ctx, "runCommand", () => {
                 ctx.logger.debug(`Opening application '${this.cmd}${this.args.length ? ` with args ${this.args}` : ''}`);
@@ -48,49 +71,11 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async close(optSilent?: boolean): Promise<Application> {
-            return runAsAction(ctx, "close", () => {
-                return new Promise<Application>(async (resolve, reject) => {
-                    ctx.logger.debug(`Closing application '${this.cmd}${optSilent ? ' silently' : ''}`);
-                    if (this.process) {
-                        try {
-                            this.process.kill('SIGTERM');
-                            resolve(this);
-                        } catch (e) {
-                            if (!optSilent) {
-                                reject(`Failed to close application with PID=${this.process.pid}`);
-                            } else {
-                                resolve(this);
-                            }
-                        }
-                    } else {
-                        ctx.logger.warn(`No application open to close.`);
-                        resolve(this);
-                    }
-                });
-            })();
+            return this.closeOrKillFunction("close", "SIGTERM", optSilent);
         }
 
         public async kill(optSilent?: boolean): Promise<Application> {
-            return runAsAction(ctx, "kill", () => {
-                return new Promise<Application>(async (resolve, reject) => {
-                    ctx.logger.debug(`Killing application '${this.cmd}${optSilent ? ' silently' : ''}`);
-                    if (this.process) {
-                        try {
-                            this.process.kill('SIGKILL');
-                            resolve(this);
-                        } catch (e) {
-                            if (!optSilent) {
-                                reject(`Failed to kill application with PID=${this.process.pid}`);
-                            } else {
-                                resolve(this);
-                            }
-                        }
-                    } else {
-                        ctx.logger.warn(`No application open to close.`);
-                        resolve(this);
-                    }
-                });
-            })();
+            return this.closeOrKillFunction("kill", "SIGKILL", optSilent);
         }
 
         public setSleepTime(seconds: number): Application {
