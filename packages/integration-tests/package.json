@@ -17,7 +17,7 @@
   },
   "scripts": {
     "demo-page": "node index",
-    "test": "NODE_NO_WARNINGS=1 sakuli run legacy-suite",
+    "test": "sakuli run legacy-suite",
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run legacy-suite",
     "preperformance-test": "node performance/server & echo $! > .pid",
     "performance-test": "sakuli run performance/checks",
