@@ -305,6 +305,6 @@ describe("type", () => {
         // WHEN
 
         // THEN
-        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`Invalid key length: 2`);
+        await expect(SUT.typeAndDecrypt(input)).rejects.toThrow(`Invalid key length`);
     });
 });
