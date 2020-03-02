@@ -1,35 +1,54 @@
 import {Application} from "./application.interface";
 import {Project, TestExecutionContext} from "@sakuli/core";
-import {ChildProcess, exec, spawn} from "child_process";
-import {runAsAction} from "../actions/action.function";
+import {ChildProcess, spawn} from "child_process";
+import {runAsAction, ScreenApi} from "../actions";
 import {createRegionClass, Region} from "../region";
-import {ScreenApi} from "../actions/screen.function";
 import {Type} from "@sakuli/commons";
-
-const killProcess = (pid: number) => {
-    if (process.platform === "win32") {
-        exec(`Taskkill /PID ${pid} /F`);
-    } else {
-        exec(`kill -9 ${pid}`);
-    }
-};
 
 export function createApplicationClass(ctx: TestExecutionContext, project: Project): Type<Application> {
     const RegionImpl = createRegionClass(ctx, project);
     return class SakuliApplication implements Application {
+        private readonly cmd: string;
+        private readonly args: string[];
         public sleepTime = 0;
         public process?: ChildProcess;
 
-        constructor(public readonly name: string) {
+        constructor(command: string) {
+            const [cmd, ...options] = command.split(/(?<!\\)\s/);
+            this.cmd = cmd.split(/\\\s/).join(" ");
+            this.args = options;
+        }
+
+        private closeOrKillFunction(methodName: string, exitSignal: string, optSilent?: boolean) {
+            return runAsAction(ctx, methodName, () => {
+                return new Promise<Application>(async (resolve, reject) => {
+                    ctx.logger.debug(`Trying to ${methodName} application '${this.cmd}${optSilent ? ' silently' : ''}`);
+                    if (this.process) {
+                        try {
+                            this.process.kill(exitSignal);
+                            resolve(this);
+                        } catch (e) {
+                            if (!optSilent) {
+                                reject(`Failed to ${methodName} application with PID=${this.process.pid}`);
+                            } else {
+                                resolve(this);
+                            }
+                        }
+                    } else {
+                        ctx.logger.warn(`No application open to ${methodName}.`);
+                        resolve(this);
+                    }
+                });
+            })();
         }
 
         public async open(): Promise<Application> {
             return runAsAction(ctx, "runCommand", () => {
-                ctx.logger.debug(`Opening application '${this.name}`);
+                ctx.logger.debug(`Opening application '${this.cmd}${this.args.length ? ` with args ${this.args}` : ''}`);
                 return new Promise<Application>((resolve, reject) => {
                     try {
                         if (!this.process) {
-                            this.process = spawn(this.name);
+                            this.process = spawn(this.cmd, this.args);
                         } else {
                             ctx.logger.debug(`Application already open: PID=${this.process.pid}`)
                         }
@@ -42,59 +61,21 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
         }
 
         public async focus(): Promise<Application> {
-            ctx.logger.debug(`Focusing application '${this.name}`);
+            ctx.logger.debug(`Focusing application '${this.cmd}`);
             throw new Error("Not Implemented");
         }
 
         public async focusWindow(windowNumber: number): Promise<Application> {
-            ctx.logger.debug(`Focusing window #${windowNumber} of application '${this.name}`);
+            ctx.logger.debug(`Focusing window #${windowNumber} of application '${this.cmd}`);
             throw new Error("Not Implemented");
         }
 
         public async close(optSilent?: boolean): Promise<Application> {
-            return runAsAction(ctx, "close", () => {
-                return new Promise<Application>((resolve, reject) => {
-                    ctx.logger.debug(`Closing application '${this.name}${optSilent ? ' silently' : ''}`);
-                    if (this.process) {
-                        try {
-                            killProcess(this.process.pid);
-                            resolve(this);
-                        } catch (e) {
-                            if (!optSilent) {
-                                reject(`Failed to close application with PID=${this.process.pid}`);
-                            } else {
-                                resolve(this);
-                            }
-                        }
-                    } else {
-                        ctx.logger.warn(`No application open to close.`);
-                        resolve(this);
-                    }
-                });
-            })();
+            return this.closeOrKillFunction("close", "SIGTERM", optSilent);
         }
 
         public async kill(optSilent?: boolean): Promise<Application> {
-            return runAsAction(ctx, "kill", () => {
-                return new Promise<Application>((resolve, reject) => {
-                    ctx.logger.debug(`Killing application '${this.name}${optSilent ? ' silently' : ''}`);
-                    if (this.process) {
-                        try {
-                            killProcess(this.process.pid);
-                            resolve(this);
-                        } catch (e) {
-                            if (!optSilent) {
-                                reject(`Failed to kill application with PID=${this.process.pid}`);
-                            } else {
-                                resolve(this);
-                            }
-                        }
-                    } else {
-                        ctx.logger.warn(`No application open to close.`);
-                        resolve(this);
-                    }
-                });
-            })();
+            return this.closeOrKillFunction("kill", "SIGKILL", optSilent);
         }
 
         public setSleepTime(seconds: number): Application {
@@ -109,21 +90,21 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
 
         public async getRegion(): Promise<Region> {
             return runAsAction(ctx, "getRegion", async () => {
-                ctx.logger.debug(`Determining region for main window of ${this.name}`);
+                ctx.logger.debug(`Determining region for main window of ${this.cmd}`);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }
 
         public async getRegionForWindow(windowNumber: number): Promise<Region> {
             return runAsAction(ctx, "getRegionForWindow", async () => {
-                ctx.logger.debug(`Determining region for window #${windowNumber} of ${this.name}`);
+                ctx.logger.debug(`Determining region for window #${windowNumber} of ${this.cmd}`);
                 return new RegionImpl(0, 0, await ScreenApi.width(), await ScreenApi.height());
             })();
         }
 
         public getName(): string {
-            ctx.logger.debug(`Returning app name '${this.name}'`);
-            return this.name;
+            ctx.logger.debug(`Returning app name '${this.cmd}'`);
+            return this.cmd;
         }
     };
 }
