@@ -42,7 +42,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
                 .map(preset => [packageTypingMapping.get(preset)!, sakuliVersion]);
 
             if (!await containsTypescript(baseDir)) {
-                const tsVersion = require(join(__dirname, "..", "..", "package.json")).devDependencies.typescript;
+                const tsVersion = require(join(__dirname, "..", "..", "package.json")).devDependencies.typescript || "3.4.3";
                 typingPackages.unshift(["typescript", tsVersion]);
             }
 
