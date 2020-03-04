@@ -20,7 +20,7 @@ export function actionApi(
 
     const withRetries = createWithRetries(ctx);
     const withActionContext = createWithActionContext(ctx);
-    const withTryAcrossFrames = createWithTryAcrossFrames(webDriver);
+    const withTryAcrossFrames = createWithTryAcrossFrames(webDriver, ctx);
     const runAsAction = <ARGS extends any[], R>(name: string, fn: (...args:ARGS) => Promise<R>): ((...args: ARGS) => Promise<R>) => {
         return withActionContext(name, withTryAcrossFrames(withRetries(5, fn)));
     };

@@ -1,8 +1,9 @@
-import { ThenableWebDriver, By } from "selenium-webdriver";
+import { error as SeleniumErrors, ThenableWebDriver, By } from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
 
 export function createWithTryAcrossFrames(
-    driver: ThenableWebDriver
+    driver: ThenableWebDriver,
+    ctx: TestExecutionContext
 ) {
     return function withTryAcrossFrames<ARGS extends any[], R>(
         func: (...args: ARGS) => Promise<R>,
@@ -17,7 +18,12 @@ export function createWithTryAcrossFrames(
                             await driver.switchTo().frame(frame);
                             return await func(...args);
                         } catch(currentError) {
-                            latestError = currentError
+                            if (currentError instanceof SeleniumErrors.TimeoutError) {
+                                ctx.logger.trace(`Received TimoutError when searching for element in frame, not updating error history`);
+                            } else {
+                                ctx.logger.trace(`Received ${currentError} when searching for element in frame, updating error history`);
+                                latestError = currentError
+                            }
                         } finally {
                             await driver.switchTo().defaultContent();
                         }
