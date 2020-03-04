@@ -1,11 +1,11 @@
-import { LegacyLifecycleHooks } from "./legacy-lifecycle-hooks.class";
-import { Builder, Capabilities, Options, ThenableWebDriver, Window } from "selenium-webdriver";
-import { mockPartial } from "sneer";
-import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
-import { Project, TestExecutionContext } from "@sakuli/core";
-import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
-import { createPropertyMapMock } from "@sakuli/commons/dist/properties/__mocks__";
-import { createTestExecutionContextMock } from "./__mocks__";
+import {LegacyLifecycleHooks} from "./legacy-lifecycle-hooks.class";
+import {Builder, Capabilities, Options, ThenableWebDriver, Window} from "selenium-webdriver";
+import {mockPartial} from "sneer";
+import {LegacyProjectProperties} from "../loader/legacy-project-properties.class";
+import {Project, TestExecutionContext} from "@sakuli/core";
+import {TestFile} from "@sakuli/core/dist/loader/model/test-file.interface";
+import {createPropertyMapMock} from "@sakuli/commons/dist/properties/__mocks__";
+import {createTestExecutionContextMock} from "./__mocks__";
 import Mock = jest.Mock;
 
 describe("LegacyLifecycleHooks", () => {
@@ -18,7 +18,7 @@ describe("LegacyLifecycleHooks", () => {
     let minimumProject: Project;
     let testExecutionContext: TestExecutionContext;
     let legacyProps: LegacyProjectProperties;
-    beforeEach(async() => {
+    beforeEach(async () => {
         window = mockPartial<Window>({
             maximize: jest.fn()
         });
@@ -41,9 +41,7 @@ describe("LegacyLifecycleHooks", () => {
             rootDir: '',
             testFiles: [],
             objectFactory: jest.fn().mockReturnValue(legacyProps),
-            ...(createPropertyMapMock({
-
-            }))
+            ...(createPropertyMapMock({}))
         });
 
         builder = mockPartial<Builder>({
@@ -127,6 +125,60 @@ describe("LegacyLifecycleHooks", () => {
                 expect.objectContaining({id: 'from-property'})
             )
         });
+
+        it('should set warning time by property, critical time defaults to 0', async () => {
+            // GIVEN
+            const warningTimeFromProps = 10;
+            legacyProps.testsuiteId = 'from-property';
+            legacyProps.testsuiteWarningTime = warningTimeFromProps;
+            (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+
+            // WHEN
+            await lcp.beforeExecution(minimumProject, testExecutionContext);
+
+            // THEN
+            expect(testExecutionContext.startTestSuite).toHaveBeenCalledWith(
+                expect.objectContaining({id: 'from-property', warningTime: warningTimeFromProps, criticalTime: 0})
+            )
+        });
+
+        it('should set critical time by property, warning time defaults to 0', async () => {
+            // GIVEN
+            const criticalTimeFromProps = 10;
+            legacyProps.testsuiteId = 'from-property';
+            legacyProps.testsuiteCriticalTime = criticalTimeFromProps;
+            (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+
+            // WHEN
+            await lcp.beforeExecution(minimumProject, testExecutionContext);
+
+            // THEN
+            expect(testExecutionContext.startTestSuite).toHaveBeenCalledWith(
+                expect.objectContaining({id: 'from-property', warningTime: 0, criticalTime: criticalTimeFromProps})
+            )
+        });
+
+        it('should set both warning and critical time by property', async () => {
+            // GIVEN
+            const warningTimeFromProps = 5;
+            const criticalTimeFromProps = 10;
+            legacyProps.testsuiteId = 'from-property';
+            legacyProps.testsuiteWarningTime = warningTimeFromProps;
+            legacyProps.testsuiteCriticalTime = criticalTimeFromProps;
+            (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+
+            // WHEN
+            await lcp.beforeExecution(minimumProject, testExecutionContext);
+
+            // THEN
+            expect(testExecutionContext.startTestSuite).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    id: 'from-property',
+                    warningTime: warningTimeFromProps,
+                    criticalTime: criticalTimeFromProps
+                })
+            )
+        });
     });
 
     describe('ui-only scenario', () => {
@@ -155,5 +207,4 @@ describe("LegacyLifecycleHooks", () => {
             }).toThrowError(/_navigateTo/)
         })
     });
-
 });
