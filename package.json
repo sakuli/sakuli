@@ -23,8 +23,8 @@
   },
   "private": true,
   "scripts": {
-    "audit": "node scripts/npm-audit",
-    "rebuild": "npm run clean && npm run bootstrap && npm run build",
+    "audit": "npm audit fix && lerna-audit",
+    "rebuild": "npm run clean && npm i && npm run bootstrap && npm run build",
     "postinstall": "lerna bootstrap --progress --no-ci",
     "clean": "lerna clean -y && npm run clean:artifacts",
     "clean:artifacts": "lerna exec -- rm -rf dist/ tsconfig.tsbuildinfo",
@@ -41,7 +41,8 @@
     "jest": "^24.7.1",
     "lerna": "^3.13.3",
     "ts-jest": "^24.0.2",
-    "yargs": "^12.0.5"
+    "yargs": "^12.0.5",
+    "lerna-audit": "1.1.1"
   },
   "sharedScripts": {
     "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/{package} src/",
