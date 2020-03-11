@@ -1,10 +1,12 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../../__mocks__";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {mouseActionApi} from "./mouse-actions-api.function";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../../relations";
-import {SahiElementQuery} from "../../sahi-element.interface";
-import {getTestBrowserList} from "../../__mocks__/get-browser-list.function";
+import { By, error, ThenableWebDriver } from "selenium-webdriver";
+import { mouseActionApi } from "./mouse-actions-api.function";
+import { AccessorUtil } from "../../accessor";
+import { RelationsResolver } from "../../relations";
+import { SahiElementQuery } from "../../sahi-element.interface";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
+import { ClickOptions } from "./click-options.interface";
+import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 jest.setTimeout(25_000);
 describe('mouse-actions', () => {
@@ -69,6 +71,90 @@ describe('mouse-actions', () => {
             });
         });
 
+        describe('_click', () => {
+            const htmlSnippet = `
+                <style>
+                    .container {display: grid}
+                    .content, .overlay {grid-area: 1 / 1 }
+                </style>
+                <div class="container">
+                    <button id="btn" class="content" style="width: 200px; height: 20px">Not clickable</button>
+                    <button id="cover" class="overlay">Overlay - must be placed under content in the HTML</button>
+                </div>
+                <div id="out"></div>
+                <script >
+                const $$ = document.getElementById.bind(document);
+                const btn = $$('cover');
+                const out = $$('out');
+                btn.addEventListener('click', e => {
+                    e.preventDefault();
+                    const keyAddon = [];
+                    if(e.ctrlKey) keyAddon.push('CTRL');
+                    if(e.metaKey) keyAddon.push('META');
+                    if(e.shiftKey) keyAddon.push('SHIFT');
+                    if(e.altKey) keyAddon.push('ALT');
+                    out.innerHTML = '_click ' + keyAddon.join("|");
+                    return false;
+                });
+                </script>
+                `;
+            const forced: ClickOptions = {force: true};
+            const notForced: ClickOptions = {force: false};
+
+            const query: SahiElementQuery = {
+                locator: By.css('#btn'),
+                identifier: 0,
+                relations: []
+            };
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                [undefined, undefined],
+                ["", undefined],
+                ["ALT", undefined],
+                ["", notForced],
+                ["ALT", notForced],
+                [undefined, notForced],
+                [notForced, undefined],
+                [notForced, notForced],
+            ])("should throw when _click is called with combo keys %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+                await driver.get(mockHtml(htmlSnippet));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
+            });
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                ["", forced],
+                ["ALT", forced]
+            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+                await driver.get(mockHtml(htmlSnippet));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).resolves.toBeUndefined();
+                const out = await driver.findElement(By.css('#out'));
+                await expect(out.getText()).resolves.toBe(`_click ${combo}`.trim());
+            });
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                [forced, undefined],
+                [forced, forced],
+                [undefined, forced]
+            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+                await driver.get(mockHtml(htmlSnippet));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).resolves.toBeUndefined();
+                const out = await driver.findElement(By.css('#out'));
+                await expect(out.getText()).resolves.toBe(`_click`);
+            });
+
+            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+                [forced, notForced],
+                [notForced, forced]
+            ])("should throw when different clickOptions(combo: %s, options: %s) are used", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+                await driver.get(mockHtml(htmlSnippet));
+                const api = createApi(driver);
+                await expect(api._click(query, combo, options)).rejects.toThrowError(expect.any(Error));
+            });
+        });
+
         describe('mouse interaction', () => {
             type MouseMethods = "_click" | "_rightClick" | "_mouseOver" | "_mouseUp" | "_mouseDown";
             const htmlSnippet = (nativeEvent: string, method: string) => `
@@ -116,11 +202,9 @@ describe('mouse-actions', () => {
                 return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
             });
             it.each(<[MouseMethods, string, string][]>[
-                ['_click', 'click', ""],
                 ['_rightClick', 'contextmenu', ""],
                 ['_mouseOver', 'mouseover', ""],
                 ['_mouseDown', 'mousedown', ""],
-                ['_click', 'click', "META|ALT"],
                 ['_rightClick', 'contextmenu', "META|ALT"],
                 ['_mouseOver', 'mouseover', "META"],
                 ['_mouseDown', 'mousedown', "ALT"],
@@ -138,6 +222,25 @@ describe('mouse-actions', () => {
                 } else {
                     await apiMethod(query,false,combo);
                 }
+                //await new Promise(res => setTimeout(res, 2500));
+                const out = await driver.findElement(By.css('#out'));
+                return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
+            });
+
+            it.each(<[MouseMethods, string, string][]>[
+                ['_click', 'click', ""],
+                ['_click', 'click', "META|ALT"]
+            ])('%s should invoke native event %s with %s pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
+                const apiMethod: any = api[method];
+                const query: SahiElementQuery = {
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                };
+                await apiMethod(query,combo);
+
                 //await new Promise(res => setTimeout(res, 2500));
                 const out = await driver.findElement(By.css('#out'));
                 return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
@@ -218,6 +321,43 @@ describe('mouse-actions', () => {
                 );
                 await expect(driver.findElement(By.css('#out')).getText()).resolves.toBe('dropped');
             });
+        });
+
+        it("should click radio button with fat box above", async () => {
+
+            //GIVEN
+            const iframeContent = mockHtml(`
+                <style>            
+                    .modal-content {
+                        /* margin top-bottom and border are the problem */
+                        margin: 350px auto; 
+                        border: 15px solid #000;
+                        width: 100%;
+                    }
+                </style>
+                <form>
+                    <div class="modal-content"></div>
+                    <input id="AnnahmeJaNeintrue" type="radio" value="true">
+                    <label for="AnnahmeJaNeintrue">Ja</label>
+                </form>`);
+
+            await driver.get(mockHtml(`
+                <iframe src="${iframeContent}" style="height: 1458px; width: 100%;"></iframe>
+            `));
+
+            const {_click} = createApi(driver);
+            const query: SahiElementQuery = {
+                locator: By.id('AnnahmeJaNeintrue'),
+                identifier: 0,
+                relations: []
+            };
+            await driver.switchTo().frame(0);
+
+            //WHEN
+            await _click(query);
+
+            //THEN
+            await expect(driver.executeScript(`return document.getElementById("AnnahmeJaNeintrue").checked`)).resolves.toBeTruthy();
         });
     });
 });

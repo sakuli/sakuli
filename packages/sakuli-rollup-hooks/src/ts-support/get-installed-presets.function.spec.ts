@@ -30,17 +30,19 @@ describe('getInstalledPresets', () => {
         expect(readJson).toHaveBeenCalledWith('/valid/package.json');
         expect(presets.length).toBe(1);
         expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']));
-    })
+    });
 
-    it('should return empty array when readJson throws', async () => {
+    it('should return fallback array when readJson throws', async () => {
         const presets = await getInstalledPresets('/invalid');
         expect(readJson).toHaveBeenCalledWith('/invalid/package.json');
-        expect(presets.length).toBe(0);
-    })
+        expect(presets.length).toBe(1);
+        expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']));
+    });
 
-    it('should return empty array when json doesn\'t have sakuli property', async () => {
+    it('should return fallback array when json doesn\'t have sakuli property', async () => {
         const presets = await getInstalledPresets('/missing-sakuli-key');
         expect(readJson).toHaveBeenCalledWith('/missing-sakuli-key/package.json');
-        expect(presets.length).toBe(0);
-    })
+        expect(presets.length).toBe(1);
+        expect(presets).toEqual(expect.arrayContaining(['@sakuli/legacy']));
+    });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/rollup-hooks",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
     "rollup",
@@ -36,6 +36,7 @@
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "devDependencies": {
+    "@schemastore/package": "^0.0.5",
     "@types/common-tags": "1.8.0",
     "@types/jest": "24.0.13",
     "@types/mock-fs": "3.6.30",
@@ -49,8 +50,8 @@
     "typescript": "3.4.3"
   },
   "dependencies": {
-    "@sakuli/commons": "^2.2.0",
-    "@sakuli/core": "^2.2.0",
+    "@sakuli/commons": "^2.3.0",
+    "@sakuli/core": "^2.3.0",
     "chalk": "2.4.2",
     "common-tags": "1.8.0",
     "execa": "2.0.4",

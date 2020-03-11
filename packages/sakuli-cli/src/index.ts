@@ -11,7 +11,7 @@ require('yargonaut')
 import {bootstrap, loadBootstrapOptions} from "@sakuli/core";
 import * as yargs from 'yargs';
 import chalk from 'chalk';
-import {runCommand} from './run-command.function';
+import {runCommand} from './commands/run-command.function';
 
 import {loadPresets} from "./load-presets.function";
 import {cwd} from "process";
@@ -35,7 +35,7 @@ import {cli} from "./cli-utils/command-line.class";
         .scriptName('sakuli')
         .usage(chalk`Usage: {bold $0} {bold.green COMMAND} {green [ARGUMENT]} {gray [OPTIONS]}`)
         .command(runCommand(sakuli))
-        .commandDir('./commands')
+        .commandDir('./commands', {exclude:/\.spec\./})
         .option('loop', {
             describe: 'Loop this suite, wait n seconds between executions, 0 mean no loops (default)',
             default: 0,

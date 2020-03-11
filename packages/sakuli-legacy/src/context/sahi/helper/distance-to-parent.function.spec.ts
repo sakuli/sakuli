@@ -1,9 +1,10 @@
-import {relationsApi, RelationsResolver} from "../relations";
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {AccessorUtil} from "../accessor";
-import {By} from "selenium-webdriver";
-import {distanceToParent} from "./distance-to-parent.function";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { relationsApi, RelationsResolver } from "../relations";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { AccessorUtil } from "../accessor";
+import { By } from "selenium-webdriver";
+import { distanceToParent } from "./distance-to-parent.function";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(50000);
 

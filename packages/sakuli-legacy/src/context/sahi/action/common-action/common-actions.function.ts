@@ -7,14 +7,14 @@ import { INJECT_SAKULI_HOOK } from "../inject.const";
 import { TestExecutionContext } from "@sakuli/core";
 import { CommonActionsApi } from "./common-actions.interface";
 import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
-import { throwIfAbsent } from "@sakuli/commons/dist";
+import {wait} from "../../helper/wait.function";
+import {fetchPageSource} from "../utils/fetch-page-source.function";
 
 export function commonActionsApi(
     webDriver: ThenableWebDriver,
     accessorUtil: AccessorUtil,
     ctx: TestExecutionContext
 ): CommonActionsApi {
-
     async function _eval<T = any>(source: string, ..._args: any[]): Promise<T> {
         const args = await Promise.all(_args.map(arg => {
             if (isSahiElementQuery(arg)) {
@@ -36,8 +36,9 @@ export function commonActionsApi(
         const element = isSahiElementQuery(query)
             ? await accessorUtil.fetchElement(query)
             : query;
-            
+
         const elementRect = await element.getRect();
+        await scrollIntoViewIfNeeded(element, ctx);
         await webDriver.executeAsyncScript(stripIndents`
             var rect = arguments[0];
             var timeout = arguments[1];
@@ -88,6 +89,28 @@ export function commonActionsApi(
         }
     }
 
+    async function _pageIsStable(maxDuration: number = 2_000, interval: number = 200): Promise<boolean> {
+        ctx.logger.debug("Waiting for DOM to stabilize");
+        const start = Date.now();
+        async function compareDom(): Promise<boolean> {
+            const oldDom = await fetchPageSource(webDriver, ctx);
+            await wait(interval);
+            const newDom = await fetchPageSource(webDriver, ctx);
+            const result = (oldDom === newDom);
+            ctx.logger.trace(`DOM is stable? ${result}`);
+            return result;
+        }
+
+        try {
+            await timeout(interval, maxDuration, () => compareDom());
+            ctx.logger.debug(`DOM stabilized after ${Date.now() - start} ms`);
+            return true;
+        } catch (e) {
+            ctx.logger.debug(`DOM still unstable after ${Date.now() - start} ms`);
+            return false;
+        }
+    }
+
     async function _rteWrite(query: SahiElementQueryOrWebElement, content: string): Promise<void> {
         const e = await accessorUtil.fetchElement(query);
         const tagName = await e.getTagName();
@@ -106,12 +129,12 @@ export function commonActionsApi(
         await webDriver.switchTo().window(defaultWindowHandle);
     }
 
-
     return ({
         _wait,
         _highlight,
         _navigateTo,
         _rteWrite,
         _eval,
+        _pageIsStable
     })
 }

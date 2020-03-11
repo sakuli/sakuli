@@ -1,47 +1,49 @@
 {
-	"name": "@sakuli/legacy-types",
-	"version": "2.2.0",
-	"description": "provide typings for Sakuli Legacy api (@sakuli/legacy)",
-	"keywords": [
-		"typings",
-		"sakuli",
-		"e2e",
-		"ui",
-		"testing",
-		"legacy"
-	],
-	"typings": "./dist/index",
-	"scripts": {
-		"build": "ts-node -P tsconfig.json src/build-dts-file",
-		"test": "(cd test && tsc -p tsconfig.test.json)"
-	},
-	"contributors": [
-		"Tim Keiner <tim.keiner@consol.de>",
-		"Simon Hofmann <simon.hofmann@consol.de>",
-		"Sven Hettwer <sven.hettwer@consol.de>",
-		"Cliff Le Van <cliff.le.van@consol.de>"
-	],
-	"homepage": "https://github.com/sakuli/sakuli#readme",
-	"license": "Apache-2.0",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/sakuli/sakuli.git"
-	},
-	"bugs": {
-		"url": "https://github.com/sakuli/sakuli/issues"
-	},
-	"devDependencies": {
-		"@sakuli/commons": "^2.2.0",
-		"@sakuli/legacy": "^2.2.0",
-		"@types/node": "^12.0.5",
-		"dts-dom": "^3.3.0",
-		"flatted": "^2.0.0",
-		"ts-node": "8.2.0",
-		"typedoc": "^0.15.0",
-		"typescript": "^3.4.3"
-	},
-	"peerDependencies": {
-		"@sakuli/legacy": "2.1.1",
-		"@sakuli/rollup-hooks": "2.1.1"
-	}
+  "name": "@sakuli/legacy-types",
+  "version": "2.3.0",
+  "description": "provide typings for Sakuli Legacy api (@sakuli/legacy)",
+  "keywords": [
+    "typings",
+    "sakuli",
+    "e2e",
+    "ui",
+    "testing",
+    "legacy"
+  ],
+  "typings": "./dist/index",
+  "scripts": {
+    "build": "ts-node -P tsconfig.json src/build-dts-file",
+    "test": "(cd test && tsc -p tsconfig.test.json)",
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && lerna run build && npm test"
+  },
+  "contributors": [
+    "Tim Keiner <tim.keiner@consol.de>",
+    "Simon Hofmann <simon.hofmann@consol.de>",
+    "Sven Hettwer <sven.hettwer@consol.de>",
+    "Cliff Le Van <cliff.le.van@consol.de>"
+  ],
+  "homepage": "https://github.com/sakuli/sakuli#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakuli/sakuli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sakuli/sakuli/issues"
+  },
+  "devDependencies": {
+    "@sakuli/commons": "^2.3.0",
+    "@sakuli/legacy": "^2.3.0",
+    "@types/node": "^12.0.5",
+    "dts-dom": "^3.3.0",
+    "flatted": "^2.0.0",
+    "ts-node": "8.2.0",
+    "typedoc": "^0.15.0",
+    "typescript": "^3.4.3"
+  },
+  "peerDependencies": {
+    "@sakuli/legacy": "2.1.1",
+    "@sakuli/rollup-hooks": "2.1.1"
+  },
+  "dependencies": {}
 }

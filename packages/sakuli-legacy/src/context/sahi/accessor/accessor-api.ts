@@ -78,7 +78,7 @@ export function accessorApi(): AccessorApi {
         _urlbox: createAccessorFunction('input[type="url"]'),
         _weekbox: createAccessorFunction('input[type="week"]'),
         _textarea: createAccessorFunction('textarea'),
-        _button: createAccessorFunction('button'),
+        _button: createAccessorFunction('button', 'input[type=button]'),
         _checkbox: createAccessorFunction('input[type="checkbox"]'),
         _radio: createAccessorFunction('input[type="radio"]'),
         _submit: createAccessorFunction('input[type="submit"], button[type="submit"]'),

@@ -1,10 +1,10 @@
-import {createTestExecutionContextMock} from "../../sahi/__mocks__";
-import {Project, TestExecutionContext} from "@sakuli/core";
-import {createThenableRegionClass, ThenableRegion, Region} from "../region";
-import {mockPartial} from "sneer";
-import {createThenableEnvironmentClass} from "./thenable-environment.class";
-import {Environment} from "./environment.interface";
-import {Type} from "@sakuli/commons";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { Project, TestExecutionContext } from "@sakuli/core";
+import { createThenableRegionClass, Region, ThenableRegion } from "../region";
+import { mockPartial } from "sneer";
+import { createThenableEnvironmentClass } from "./thenable-environment.class";
+import { Environment } from "./environment.interface";
+import { Type } from "@sakuli/commons";
 
 describe('ThenableEnvironment', () => {
 

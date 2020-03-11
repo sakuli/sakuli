@@ -16,9 +16,10 @@ export function createWithRetries(
                 } catch (e) {
                     if (e instanceof SeleniumErrors.StaleElementReferenceError) {
                         --retries;
-                        ctx.logger.debug(`StaleElement: ${initialTries - retries} - ${e.stack}`)
+                        ctx.logger.trace(`StaleElement: ${initialTries - retries} - ${e.stack}`)
                     } else {
-                        throw Error(`A non StaleElementReferenceError is thrown during retrying;  \n${e}`)
+                        ctx.logger.trace(`A non StaleElementReferenceError is thrown during retrying: ${e}`);
+                        throw e;
                     }
                 }
             }

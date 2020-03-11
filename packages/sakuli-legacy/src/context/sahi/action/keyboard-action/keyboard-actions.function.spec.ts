@@ -1,9 +1,10 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../../__mocks__";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {keyboardActionApi} from "./keyboard-actions.function";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../../relations";
-import {getTestBrowserList} from "../../__mocks__/get-browser-list.function";
+import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
+import { By, ThenableWebDriver } from "selenium-webdriver";
+import { keyboardActionApi } from "./keyboard-actions.function";
+import { AccessorUtil } from "../../accessor";
+import { RelationsResolver } from "../../relations";
+import { getTestBrowserList } from "../../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('KeyboardActions', () => {

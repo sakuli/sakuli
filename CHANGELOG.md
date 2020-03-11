@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.3.0
+- Bugfix: Incomplete support for button elements [(#275)](https://github.com/sakuli/sakuli/issues/275) 
+- Enhancement: _highlight doesn't "scroll intoview" [(#274)](https://github.com/sakuli/sakuli/issues/274)
+- Bugfix: @sakuli/legacy-types are not published [(#253)](https://github.com/sakuli/sakuli/issues/253)
+- Bugfix: `enable-typescript` command should install @sakuli packages with the same version as in project [(#254)](https://github.com/sakuli/sakuli/issues/254)
+- Enhancement: Error Messages to CLI output in multiple testcase scenarios [(#234)](https://github.com/sakuli/sakuli/issues/234)
+- Bugfix: Typescript is not installed when enabling typescript-support [(#255)](https://github.com/sakuli/sakuli/issues/255)
+- Bugfix: Sakuli Container exists with exit code 0 if npm crashes early [(#279)](https://github.com/sakuli/sakuli/issues/279)
+- Bugfix: getDriver from undefined exception [(#314)](https://github.com/sakuli/sakuli/issues/314)
+- Bugfix: Solve "invalid session id" errors [(#313)](https://github.com/sakuli/sakuli/issues/313)
+- Enhancement: node 12 support [(#266)](https://github.com/sakuli/sakuli/issues/266)
+- Enhancement: Updated docs regarding node 12 [(#343)](https://github.com/sakuli/sakuli/issues/343)
+- Bugfix: Clickable element covered from cookie banner after scroll into view is not clickable [(#332)](https://github.com/sakuli/sakuli/issues/332)
+- Bugfix: Browser not closing on syntax error [(#335)](https://github.com/sakuli/sakuli/issues/335)
+- Bugfix: Radio button not clicked [(#339)](https://github.com/sakuli/sakuli/pull/339)
+- Enhancement: Improve Syntax error logging [(#341)](https://github.com/sakuli/sakuli/issues/341)
+- Bugfix: No Types Available After Installing legacy-types [(#349)](https://github.com/sakuli/sakuli/issues/349)
+- Enhancement: Improve performance during dom stabilization [(#355)](https://github.com/sakuli/sakuli/issues/355)
+- Enhancement: Optionally disable validation prior to click actions [(#354)](https://github.com/sakuli/sakuli/issues/354)
+- Bugfix: Declining in enable-typescript has no effect [(#305)](https://github.com/sakuli/sakuli/issues/305)
+- Enhancement: Resolve crypto deprecation warnings [(#284)](https://github.com/sakuli/sakuli/issues/284)
+- Bugfix: Program arguments are not applied when using `new Application` [(#309)](https://github.com/sakuli/sakuli/issues/309)
+- Bugfix: Enable-typescript installs old typescript version [(#365)](https://github.com/sakuli/sakuli/issues/365)
+- Bugfix: Cannot instantiate Region without parameters in a typescript test [(#359)](https://github.com/sakuli/sakuli/issues/359)
+- Bugfix: Error messages from test failures are not propagated to CLI [(#353)](https://github.com/sakuli/sakuli/issues/353)
+- Bugfix: `testsuite.warningTime` and `testsuite.criticalTime` do not affect suite result [(#371)](https://github.com/sakuli/sakuli/issues/371)
+
+
 ## v2.2.0
 - Enhancement: Fetch Retry Performance [(#251)](https://github.com/sakuli/sakuli/issues/251) 
 - Enhancement: Add Typescript support [(#245)](https://github.com/sakuli/sakuli/issues/245) 

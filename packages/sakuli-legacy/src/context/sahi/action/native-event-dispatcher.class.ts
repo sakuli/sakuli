@@ -1,10 +1,14 @@
-import {WebElement} from "selenium-webdriver";
+import { WebElement } from "selenium-webdriver";
 
 export class NativeEventDispatcher {
 
     constructor(readonly element: WebElement) {}
 
     private async dispatchEvent(eventCtorName: string, eventName: string, eventInit: EventInit) {
+        if(!this.element){
+            throw Error("Could not dispatch native event due to null or undefined WebElement reference");
+        }
+
         await this.element.getDriver().executeScript(`
         const e = arguments[0];
         const eventName = arguments[1];

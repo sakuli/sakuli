@@ -1,5 +1,5 @@
 import { TestExecutionContext } from "@sakuli/core";
-import { createTestExecutionContextMock } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
 import { assertionApi } from "./assertion-api.function";
 import { mockPartial } from "sneer";
 import { FetchApi } from "../fetch";
@@ -9,7 +9,7 @@ import { AssertionError } from "assert";
 
 describe('assertion-api', () => {
 
-    let dummyQuery: SahiElementQuery = { locator: By.css(''), identifier: '', relations: [] }
+    let dummyQuery: SahiElementQuery = { locator: By.css(''), identifier: '', relations: [] };
     let api: ReturnType<typeof assertionApi>;
     let ctx: TestExecutionContext;
     let _containsTextMock = jest.fn();
@@ -17,7 +17,7 @@ describe('assertion-api', () => {
     let fetchApiMock = mockPartial<FetchApi>({
         _containsText: _containsTextMock,
         _exists: _existsMock,
-    })
+    });
 
     beforeAll(async () => {
         ctx = createTestExecutionContextMock();
@@ -45,7 +45,7 @@ describe('assertion-api', () => {
             await expect(api._assert(failingPromise, expectedMessage))
                 .rejects.toThrow(new AssertionError({ message: expectedMessage }));
         });
-    })
+    });
 
     describe('_assertTrue', () => {
 
@@ -67,7 +67,7 @@ describe('assertion-api', () => {
             //WHEN + THEN
             await expect(api._assertTrue(failingPromise, expectedMessage)).rejects.toThrow(new AssertionError({ message: expectedMessage }));
         });
-    })
+    });
 
     describe('_assertFalse', () => {
         it('should do nothing, if given promise resolves to false', async () => {
@@ -220,20 +220,20 @@ describe('assertion-api', () => {
 
     describe('_assertExists', () => {
         it('should do nothing, if element exists', async () => {
-            _existsMock.mockResolvedValue(true)
+            _existsMock.mockResolvedValue(true);
             await expect(api._assertExists(dummyQuery))
                 .resolves.toBeUndefined();
         });
 
         it('should throw an exception, if element does not exists', async () => {
-            _existsMock.mockResolvedValue(false)
+            _existsMock.mockResolvedValue(false);
             await expect(api._assertExists(dummyQuery)).rejects.toThrow(AssertionError);
         });
 
         it('should use the exception message, if the assertion fails', async () => {
             //GIVEN
             const expectedMessage = 'The end is near!';
-            _existsMock.mockResolvedValue(false)
+            _existsMock.mockResolvedValue(false);
 
             //WHEN + THEN
             await expect(api._assertExists(dummyQuery, expectedMessage)).rejects.toThrow(new AssertionError({ message: expectedMessage }));
@@ -243,20 +243,20 @@ describe('assertion-api', () => {
 
     describe('_assertNotExists', () => {
         it('should do nothing, if element does not exists', async () => {
-            _existsMock.mockResolvedValue(false)
+            _existsMock.mockResolvedValue(false);
             await expect(api._assertNotExists(dummyQuery))
                 .resolves.toBeUndefined();
         });
 
         it('should throw an exception, if element exists', async () => {
-            _existsMock.mockResolvedValue(true)
+            _existsMock.mockResolvedValue(true);
             await expect(api._assertNotExists(dummyQuery)).rejects.toThrow(AssertionError);
         });
 
         it('should use the exception message, if the assertion fails', async () => {
             //GIVEN
             const expectedMessage = 'The end is near!';
-            _existsMock.mockResolvedValue(true)
+            _existsMock.mockResolvedValue(true);
 
             //WHEN + THEN
             await expect(api._assertNotExists(dummyQuery, expectedMessage)).rejects.toThrow(new AssertionError({ message: expectedMessage }));

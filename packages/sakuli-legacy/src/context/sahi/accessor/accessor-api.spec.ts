@@ -1,10 +1,11 @@
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {AccessorUtil} from "./accessor-util.class";
-import {By, ThenableWebDriver} from "selenium-webdriver";
-import {RelationsResolver} from "../relations";
-import {accessorApi, AccessorFunctions} from "./accessor-api";
-import {AccessorFunction} from "../api";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { AccessorUtil } from "./accessor-util.class";
+import { By, ThenableWebDriver } from "selenium-webdriver";
+import { RelationsResolver } from "../relations";
+import { accessorApi, AccessorFunctions } from "./accessor-api";
+import { AccessorFunction } from "../api";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(15_000);
 describe('accessor api', () => {
@@ -123,6 +124,7 @@ describe('accessor api', () => {
                   <input type="week" id="_weekbox" />
                   <textarea id="_textarea"></textarea>
                   <button id="_button"></button>
+                  <input type="button" id="_input-type-button"/>
                   <input type="checkbox" id="_checkbox">
                   <input type="checkbox" id="_checkbox">
                   <input type="radio" id="_radio">
@@ -232,7 +234,8 @@ describe('accessor api', () => {
                 testTriple('_urlbox'),
                 testTriple('_weekbox'),
                 testTriple('_textarea'),
-                testTriple('_button'),
+                testTriple('_button', 0, '_button'),
+                testTriple('_button', 1, '_input-type-button'),
                 testTriple('_checkbox'),
                 testTriple('_radio'),
                 testTriple('_submit'),

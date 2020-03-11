@@ -7,7 +7,7 @@ export const createCommand: CommandModuleProvider = (): CommandModule => {
         command: 'create',
         describe: `Create new Sakuli objects`,
         builder(argv: Argv) {
-            return argv.commandDir("./create-commands")
+            return argv.commandDir("./create-commands", {exclude:/\.spec\./})
                 .help();
         },
         handler() {

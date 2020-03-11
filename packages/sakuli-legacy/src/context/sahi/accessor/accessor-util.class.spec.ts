@@ -1,16 +1,14 @@
-import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {createTestEnv, createTestExecutionContextMock, mockHtml, TestEnvironment} from "../__mocks__";
-import {AccessorUtil} from "./accessor-util.class";
-import {RelationsResolver} from "../relations";
-import {TestExecutionContext} from "@sakuli/core";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { createTestExecutionContextMock } from "../../__mocks__";
+import { AccessorUtil } from "./accessor-util.class";
+import { RelationsResolver } from "../relations";
+import { TestExecutionContext } from "@sakuli/core";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 
 jest.setTimeout(15_000);
 describe('AccessorUtil', () => {
-
-    const {arrayContaining} = expect;
-
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
         let accessorUtil: AccessorUtil;
@@ -27,11 +25,6 @@ describe('AccessorUtil', () => {
         afterAll(async () => {
             await env.stop();
         });
-
-
-        function createApi(driver: ThenableWebDriver) {
-            return new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext))
-        }
 
         it('should fetch fuzzy matching identifiers from element', async () => {
             await driver.get(mockHtml(`
@@ -59,8 +52,7 @@ describe('AccessorUtil', () => {
                 id="element-to-test"
                 aria-describedby="aria"
                 class="so many names"
-                name="my-name-is-earl"
-                />
+                name="my-name-is-earl"/>
             `));
             const element = await driver.findElement(By.id('element-to-test'));
             const identifiers = await accessorUtil.getStringIdentifiersForElement([element]);
@@ -167,7 +159,7 @@ describe('AccessorUtil', () => {
             await driver.get(mockHtml(`
             <div>Price (EUR)</div>
             <div>Name</div>
-        `))
+        `));
             const div = await accessorUtil.fetchElement({
                 locator: By.css('div'),
                 identifier: 'Price (EUR)',
@@ -211,5 +203,19 @@ describe('AccessorUtil', () => {
 
             await expect(span.getAttribute('id')).resolves.toEqual('m-2')
         });
+
+        it('Should reject if element could not be found.', async () => {
+            await driver.get(mockHtml(`
+                <div></div>
+            `));
+
+            const fetchElements = accessorUtil.fetchElements({
+                locator: By.css('span'),
+                identifier: "/aintenance/[1]",
+                relations: []
+            });
+
+            await expect(fetchElements).rejects.toThrowError(/Cannot find Element within 3000ms by query:.*/);
+        })
     });
 });
