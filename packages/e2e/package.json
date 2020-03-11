@@ -1,6 +1,6 @@
 {
   "name": "e2e-tests",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A compilation of e2e tests for Sakuli",
   "private": true,
   "contributors": [
@@ -23,9 +23,9 @@
     "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run e2e-suite"
   },
   "dependencies": {
-    "@sakuli/cli": "^2.2.0",
-    "@sakuli/legacy": "^2.2.0",
-    "@sakuli/legacy-types": "^2.2.0",
+    "@sakuli/cli": "^2.3.0",
+    "@sakuli/legacy": "^2.3.0",
+    "@sakuli/legacy-types": "^2.3.0",
     "chromedriver": "^80.0.1",
     "geckodriver": "^1.19.1",
     "typescript": "3.4.3"
@@ -34,5 +34,6 @@
     "presetProvider": [
       "@sakuli/legacy"
     ]
-  }
+  },
+  "devDependencies": {}
 }
