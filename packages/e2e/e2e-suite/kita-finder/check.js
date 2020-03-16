@@ -7,7 +7,7 @@
 
         await _highlight(_heading1("Jetzt Ihren Kita-Platz suchen!"));
         await _assert(_isVisible(_heading1("Jetzt Ihren Kita-Platz suchen!")));
-        await testCase.endOfStep("Seite prüfen");
+        await testCase.endOfStep("Seite pruefen");
 
         await fillSearchData();
         await testCase.endOfStep("Fill data");
@@ -27,8 +27,8 @@
 
 async function fillSearchData() {
     const today = new Date();
-    const birthDate = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`
-    const searchDate = birthDate;
+    const birthDate  = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()-2}`;
+    const searchDate = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`;
     const location = "Agnes-Pockels-Bogen 21, 80992 München";
 
     await _setValue(_textbox("date-input-0"), searchDate);
