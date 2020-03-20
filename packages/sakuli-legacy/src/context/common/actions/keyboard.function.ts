@@ -1,8 +1,8 @@
-import {clipboard, Key as NutKey, keyboard} from "@nut-tree/nut-js";
-import {pasteShortcut} from "./shortcut.function";
-import {withEncryption} from "../secrets.function";
-import {Key} from "../key.class";
-import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
+import { clipboard, Key as NutKey, keyboard } from "@nut-tree/nut-js";
+import { pasteShortcut } from "./shortcut.function";
+import { withEncryption } from "../secrets.function";
+import { Key } from "../key.class";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 export const createKeyboardApi = (props: LegacyProjectProperties) => {
     keyboard.config.autoDelayMs = props.typeDelay;
@@ -17,9 +17,13 @@ export const createKeyboardApi = (props: LegacyProjectProperties) => {
                 await this.paste(decrypted);
             });
         },
-        async type(text: string, ...optModifiers: Key[]) {
+        async type(text: string | Key, ...optModifiers: Key[]) {
             await keyboard.pressKey(...optModifiers as NutKey[]);
-            await keyboard.type(text);
+            if(typeof text === "string") {
+                await keyboard.type(text);
+            } else {
+                await keyboard.type(text as NutKey);
+            }
             await keyboard.releaseKey(...optModifiers as NutKey[]);
         },
         async typeAndDecrypt(key: string, text: string, ...optModifiers: Key[]) {

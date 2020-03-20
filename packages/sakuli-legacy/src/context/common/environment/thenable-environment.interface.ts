@@ -1,7 +1,7 @@
-import {Environment} from "./environment.interface";
-import {Key} from "../key.class";
-import {CommandLineResult} from "./commandline-result.class";
-import {ThenableRegion} from "../region";
+import { Environment } from "./environment.interface";
+import { Key } from "../key.class";
+import { CommandLineResult } from "./commandline-result.class";
+import { ThenableRegion } from "../region";
 
 export interface NewableThenableEnvironment {
     new(): ThenableEnvironment;
@@ -74,11 +74,11 @@ export interface ThenableEnvironment extends PromiseLike<Environment> {
 
     takeScreenshotWithTimestamp(filename: string): Promise<string>;
 
-    type(text: string, ...optModifiers: Key[]): ThenableEnvironment;
+    type(text: string | Key, ...optModifiers: Key[]): ThenableEnvironment;
 
     typeAndDecrypt(text: string, ...optModifiers: Key[]): ThenableEnvironment;
 
-    typeMasked(text: string, ...optModifiers: Key[]): ThenableEnvironment;
+    typeMasked(text: string | Key, ...optModifiers: Key[]): ThenableEnvironment;
 
     write(text: string): ThenableEnvironment;
 }
