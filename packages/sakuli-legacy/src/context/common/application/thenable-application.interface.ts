@@ -1,8 +1,8 @@
-import {Application} from "./application.interface";
-import {ThenableRegion} from "../region";
+import { Application } from "./application.interface";
+import { ThenableRegion } from "../region";
 
 export interface NewableThenableApplication {
-    new(name: string): ThenableRegion;
+    new(name: string): ThenableApplication;
 }
 
 export interface ThenableApplication extends PromiseLike<Application> {
