@@ -1,6 +1,6 @@
-import {Region} from "./region.interface";
-import {Key} from "../key.class";
-import {MouseButton} from "../button.class";
+import { Region } from "./region.interface";
+import { Key } from "../key.class";
+import { MouseButton } from "../button.class";
 
 export interface NewableThenableRegion {
     new(left?: number, top?: number, width?: number, height?: number): ThenableRegion;
@@ -89,11 +89,11 @@ export interface ThenableRegion extends PromiseLike<Region> {
 
     takeScreenshotWithTimestamp(filename: string): Promise<string>;
 
-    type(text: string, ...optModifiers: Key[]): ThenableRegion;
+    type(text: string | Key, ...optModifiers: Key[]): ThenableRegion;
 
     typeAndDecrypt(text: string, ...optModifiers: Key[]): ThenableRegion;
 
-    typeMasked(text: string, ...optModifiers: Key[]): ThenableRegion;
+    typeMasked(text: string | Key, ...optModifiers: Key[]): ThenableRegion;
 
     waitForImage(imageName: string, seconds: number): ThenableRegion;
 
