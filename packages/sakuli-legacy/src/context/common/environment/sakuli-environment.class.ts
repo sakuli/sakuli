@@ -1,13 +1,13 @@
-import {Key} from "../key.class";
-import {CommandLineResult} from "./commandline-result.class";
-import {decrypt, getEncryptionKey} from "../secrets.function";
-import {Project, TestExecutionContext} from "@sakuli/core";
-import {ClipboardApi, createKeyboardApi, execute, MouseApi, runAsAction, ScreenApi} from "../actions";
+import { Key } from "../key.class";
+import { CommandLineResult } from "./commandline-result.class";
+import { decrypt, getEncryptionKey } from "../secrets.function";
+import { Project, TestExecutionContext } from "@sakuli/core";
+import { ClipboardApi, createKeyboardApi, execute, MouseApi, runAsAction, ScreenApi } from "../actions";
 
 import nutConfig from "../nut-global-config.class";
-import {Environment} from "./environment.interface";
-import {createRegionClass, Region} from "../region";
-import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
+import { Environment } from "./environment.interface";
+import { createRegionClass, Region } from "../region";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {
     const props = project.objectFactory(LegacyProjectProperties);
@@ -149,7 +149,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             })();
         }
 
-        public async type(text: string, ...optModifiers: Key[]): Promise<Environment> {
+        public async type(text: string | Key, ...optModifiers: Key[]): Promise<Environment> {
             return runAsAction(ctx, "type", async () => {
                 ctx.logger.debug(`Typing text '${text}' via keyboard`);
                 await keyboardApi.type(text, ...optModifiers);
@@ -157,7 +157,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
             })();
         }
 
-        public async typeMasked(text: string, ...optModifiers: Key[]): Promise<Environment> {
+        public async typeMasked(text: string | Key, ...optModifiers: Key[]): Promise<Environment> {
             return runAsAction(ctx, "typeMasked", async () => {
                 ctx.logger.debug(`Typing text '****' via keyboard`);
                 await keyboardApi.type(text, ...optModifiers);

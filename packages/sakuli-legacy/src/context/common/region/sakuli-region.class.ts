@@ -1,17 +1,14 @@
-import {MouseButton} from "../button.class";
-import {Key} from "../key.class";
-import {MouseApi} from "../actions/mouse.function";
-import {createKeyboardApi} from "../actions/keyboard.function";
-import {ScreenApi} from "../actions/screen.function";
-import {Project, TestExecutionContext} from "@sakuli/core";
+import { MouseButton } from "../button.class";
+import { Key } from "../key.class";
+import { createKeyboardApi, MouseApi, runAsAction, ScreenApi } from "../actions";
+import { Project, TestExecutionContext } from "@sakuli/core";
 
 import nutConfig from "../nut-global-config.class";
-import {existsSync} from "fs";
-import {join} from "path";
-import {Region} from "./region.interface";
-import {runAsAction} from "../actions/action.function";
-import {getEncryptionKey} from "../secrets.function";
-import {LegacyProjectProperties} from "../../../loader/legacy-project-properties.class";
+import { existsSync } from "fs";
+import { join } from "path";
+import { Region } from "./region.interface";
+import { getEncryptionKey } from "../secrets.function";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 const determineResourcePath = (imageName: string) => {
     for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {
@@ -172,7 +169,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             })();
         }
 
-        public async type(text: string, ...optModifiers: Key[]): Promise<Region> {
+        public async type(text: string | Key, ...optModifiers: Key[]): Promise<Region> {
             return runAsAction(ctx, "type", async () => {
                 ctx.logger.debug(`Typing text '${text}' via native keyboard`);
                 await keyboardApi.type(text, ...optModifiers);
@@ -180,7 +177,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             })();
         }
 
-        public async typeMasked(text: string, ...optModifiers: Key[]): Promise<Region> {
+        public async typeMasked(text: string | Key, ...optModifiers: Key[]): Promise<Region> {
             return runAsAction(ctx, "typeMasked", async () => {
                 ctx.logger.debug(`Typing text '****' via native keyboard`);
                 await keyboardApi.type(text, ...optModifiers);
