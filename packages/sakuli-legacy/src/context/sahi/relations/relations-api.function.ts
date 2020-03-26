@@ -41,11 +41,7 @@ export function relationsApi(
         return async (elementsQuery: SahiElementQuery) => { // assume elements is as query
             const parentElement = await accessorUtil.fetchElement(parentQuery);
             const elementsInParent = await parentElement.findElements(elementsQuery.locator);
-            const elementsByIdentifier = await accessorUtil.resolveByIdentifier(elementsInParent, elementsQuery.identifier)
-            /*
-            return (await Promise.all(elements.map(async e => isChildOf(e, parentElement) ? e : null)))
-                .filter((e): e is WebElement => e != null)
-                */
+            const elementsByIdentifier = await accessorUtil.resolveByIdentifier(elementsInParent, elementsQuery.identifier);
             return webElementsToQuery(elementsByIdentifier);
         }
     };
@@ -135,7 +131,7 @@ export function relationsApi(
             return (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) &&
                 (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB));
         })
-    }
+    };
 
     const _rightOf: RelationProducerWithOffset = (query: SahiElementQueryOrWebElement, offset = 0) => {
         return createHorizontalRelation(query, offset, (a, b) => isRightOf(edges(a).center, edges(b).center));
