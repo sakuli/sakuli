@@ -124,7 +124,7 @@ export function relationsApi(
         return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
-            return edgesB.isAbove(edgesA) && edgesB.intersectsVertical(edgesA);
+            return edgesB.isAbove(edgesA) && (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB));
         })
     };
 
