@@ -16,6 +16,7 @@
         await _highlight(links[1]);
         await _click(links[1]);
         await testCase.endOfStep("Contact form clicked");
+        await _pageIsStable();
         await _assert(_isVisible(_heading2(/Get In Touch/)));
     } catch (e) {
         await testCase.handleException(e);

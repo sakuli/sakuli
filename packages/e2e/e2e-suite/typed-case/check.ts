@@ -2,6 +2,11 @@
     const testCase: TestCase = new TestCase("My Typescript based test");
     try {
         await _navigateTo("https://sakuli.io");
+        const cookieBannerButton = _button("Accept all");
+        if (await _isVisible(cookieBannerButton)) {
+            await _highlight(cookieBannerButton);
+            await _click(cookieBannerButton);
+        }
         testCase.endOfStep("TS Open Landing Page");
         await _click(_link("EXPLORE"));
         testCase.endOfStep("TS Open Explore page");
