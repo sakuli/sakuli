@@ -1,24 +1,28 @@
+import { TestCase } from "@sakuli/legacy";
+
 (async () => {
     const testCase: TestCase = new TestCase("My Typescript based test");
+    const url = "https://sakuli.io";
     try {
-        await _navigateTo("https://sakuli.io");
+        await _navigateTo(url + "/#enterprise");
+        await testCase.endOfStep("Navigate to enterprise section");
+
         const cookieBannerButton = _button("Accept all");
         if (await _isVisible(cookieBannerButton)) {
             await _highlight(cookieBannerButton);
             await _click(cookieBannerButton);
         }
-        testCase.endOfStep("TS Open Landing Page");
-        await _click(_link("EXPLORE"));
-        testCase.endOfStep("TS Open Explore page");
-        await _click(_link("Docs"));
-        testCase.endOfStep("TS Navigate to docs");
-        await _wait( 5000, async () => (await driver.getAllWindowHandles()).length === 2);
-        await driver.switchTo().window((await driver.getAllWindowHandles())[1]);
-        await _highlight(_code("npm init"));
-        testCase.endOfStep("Find npm init code sample");
+        await testCase.endOfStep("Close cookie banner");
+
+        const links = await _collect("_link", /Contact/);
+        await _highlight(links[1]);
+        await _click(links[1]);
+        await testCase.endOfStep("Contact form clicked");
+        await _pageIsStable();
+        await _assert(_isVisible(_heading2(/Get In Touch/)));
     } catch (e) {
-        testCase.handleException(e);
+        await testCase.handleException(e);
     } finally {
-        testCase.saveResult();
+        await testCase.saveResult();
     }
 })();
