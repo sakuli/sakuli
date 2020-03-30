@@ -1,6 +1,6 @@
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {AccessorIdentifier} from "../api";
-import {SahiRelation} from "../relations/sahi-relation.interface";
+import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import { AccessorIdentifier } from "../api";
+import { SahiRelation } from "../relations/sahi-relation.interface";
 
 /**
  * All methods of this interface are injected as global functions into Sakuli Scripts
@@ -545,7 +545,7 @@ export interface AccessorApi {
      *     <label>User: <input type="text" name="username" /></label>
      *     <label>Password: <input type="password" name="password" /></label>
      *     <button type="submit">Login</button>
-     * </from>
+     * </form>
      * ```
      *
      * Submitting the form with a [`_click`]{@link MouseActionApi._click}
