@@ -1,5 +1,3 @@
-import { TestCase } from "@sakuli/legacy";
-
 (async () => {
     const testCase: TestCase = new TestCase("My Typescript based test");
     const url = "https://sakuli.io";
