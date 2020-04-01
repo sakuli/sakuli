@@ -2,10 +2,10 @@
     const testCase = new TestCase();
     const url = "https://sakuli.io";
     try {
-        await _navigateTo(url + "/enterprise");
-        await testCase.endOfStep("Opened Enterprise page");
+        await _navigateTo(url + "/#enterprise");
+        await testCase.endOfStep("Navigate to enterprise section");
 
-        const cookieBannerButton = _button("I agree");
+        const cookieBannerButton = _button("Accept all");
         if (await _isVisible(cookieBannerButton)) {
             await _highlight(cookieBannerButton);
             await _click(cookieBannerButton);
@@ -16,7 +16,7 @@
         await _highlight(links[1]);
         await _click(links[1]);
         await testCase.endOfStep("Contact form clicked");
-        await _assert(_isVisible(_heading1(/Contact our Team/)));
+        await _assert(_isVisible(_heading2(/Get In Touch/)));
     } catch (e) {
         await testCase.handleException(e);
     } finally {
