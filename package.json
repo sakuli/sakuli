@@ -38,9 +38,9 @@
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
-    "jest": "^24.7.1",
+    "jest": "^25.2.4",
     "lerna": "^3.13.3",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^25.3.0",
     "yargs": "^12.0.5",
     "lerna-audit": "1.1.1"
   },

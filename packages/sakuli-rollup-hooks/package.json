@@ -38,14 +38,14 @@
   "devDependencies": {
     "@schemastore/package": "^0.0.5",
     "@types/common-tags": "1.8.0",
-    "@types/jest": "24.0.13",
+    "@types/jest": "^25.1.4",
     "@types/mock-fs": "3.6.30",
     "@types/node": "11.13.5",
     "@types/rollup": "0.54.0",
-    "jest": "24.7.1",
+    "jest": "^25.2.4",
     "mock-fs": "4.8.0",
     "sneer": "1.0.1",
-    "ts-jest": "24.0.2",
+    "ts-jest": "^25.3.0",
     "typedoc": "0.15.0",
     "typescript": "3.8.3"
   },
