@@ -3,6 +3,7 @@
     const url = "https://sakuli.io";
     try {
         await _navigateTo(url + "/#enterprise");
+        await _pageIsStable();
         await testCase.endOfStep("Navigate to enterprise section");
 
         const cookieBannerButton = _button("Accept all");
@@ -12,12 +13,11 @@
         }
         await testCase.endOfStep("Close cookie banner");
 
-        const links = await _collect("_link", /Contact/);
-        await _highlight(links[1]);
-        await _click(links[1]);
+        await _highlight(_link("Request"));
+        await _click(_link("Request"));
+        await _pageIsStable(5000, 500);
+        await _assertEqual("M-Package", await _getSelectedText(_select("powermail_field_kundenwunsch")));
         await testCase.endOfStep("Contact form clicked");
-        await _pageIsStable();
-        await _assert(_isVisible(_heading2(/Get In Touch/)));
     } catch (e) {
         await testCase.handleException(e);
     } finally {
