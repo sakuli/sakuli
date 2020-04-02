@@ -5,6 +5,7 @@
         testCase.endOfStep("TS Open Landing Page");
         await _click(_link("EXPLORE"));
         testCase.endOfStep("TS Open Explore page");
+        await _pageIsStable();
         await _click(_link("Docs"));
         testCase.endOfStep("TS Navigate to docs");
         await _wait( 5000, async () => (await driver.getAllWindowHandles()).length === 2);
