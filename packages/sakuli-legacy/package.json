@@ -63,7 +63,7 @@
     "node-fetch": "^2.3.0",
     "sneer": "^1.0.1",
     "ts-jest": "^24.0.2",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.4.3"
+    "typedoc": "^0.17.3",
+    "typescript": "^3.8.3"
   }
 }
