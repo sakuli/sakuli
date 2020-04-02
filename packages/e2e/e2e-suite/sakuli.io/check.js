@@ -13,8 +13,9 @@
         }
         await testCase.endOfStep("Close cookie banner");
 
+        await _highlight(_link("Request"));
         await _click(_link("Request"));
-        await _pageIsStable();
+        await _pageIsStable(5000, 500);
         await _assertEqual("M-Package", await _getSelectedText(_select("powermail_field_kundenwunsch")));
         await testCase.endOfStep("Contact form clicked");
     } catch (e) {
