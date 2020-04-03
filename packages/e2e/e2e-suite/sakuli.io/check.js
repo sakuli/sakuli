@@ -16,7 +16,7 @@
         await _highlight(_link("Request"));
         await _click(_link("Request"));
         await _pageIsStable(5000, 500);
-        await _assertEqual("M-Package", await _getSelectedText(_select("powermail_field_kundenwunsch")));
+        await _assertEqual(/M-Package/, await _getSelectedText(_select("powermail_field_kundenwunsch")));
         await testCase.endOfStep("Contact form clicked");
     } catch (e) {
         await testCase.handleException(e);
