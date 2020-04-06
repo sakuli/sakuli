@@ -141,6 +141,49 @@ describe('relations-api', () => {
             });
         });
 
+        describe('relation', () => {
+            beforeAll(async () => {
+                await driver.get(mockHtml((`
+                <style>
+                    div{
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    code {
+                        background: silver;
+                        margin: 2rem;
+                    }
+                </style>
+                <div>
+                    <code>top</code>
+                    <p id="anchor">porem ipsum</p>
+                    <code>bottom</code>
+                </div>
+                `)));
+            });
+
+            it('should find element with _above', async () => {
+                const anchor = await createQuery(By.css('#anchor'));
+                const underQuery = await api._above(anchor, 0)(createCssQuery(By.css('code')));
+                const above = await accessorUtil.fetchElements(underQuery);
+                expect(above.length).toBe(1);
+            });
+
+            it('should find element with _under', async () => {
+                const anchor = await createQuery(By.css('#anchor'));
+                const underQuery = await api._under(anchor, 0)(createCssQuery(By.css('code')));
+                const under = await accessorUtil.fetchElements(underQuery);
+                expect(under.length).toBe(1);
+            });
+
+            it('should find element with  _underOrAbove', async () => {
+                const anchor = await createQuery(By.css('#anchor'));
+                const underQuery = await api._underOrAbove(anchor, 0)(createCssQuery(By.css('code')));
+                const underOrAbove = await accessorUtil.fetchElements(underQuery);
+                expect(underOrAbove.length).toBe(2);
+            });
+        });
+
         describe('position', () => {
 
             beforeAll(async () => {

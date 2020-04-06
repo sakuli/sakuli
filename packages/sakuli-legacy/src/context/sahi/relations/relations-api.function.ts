@@ -1,17 +1,17 @@
-import {By, ILocation, ISize, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {TestExecutionContext} from "@sakuli/core";
-import {RelationProducer, RelationProducerWithOffset, SahiRelation} from "./sahi-relation.interface";
-import {ifPresent, mapAsync} from "@sakuli/commons";
-import {edges} from "./edges.function";
-import {isLeftOf, isRightOf} from "./vector2.type";
-import {AccessorUtil} from "../accessor";
-import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {isChildOf} from "../helper/is-child-of.function";
-import {distanceBetween} from "../helper/distance-between.function";
-import {getSiblingIndex} from "../helper/get-sibling-index.function";
-import {getParent} from "../helper/get-parent.function";
-import {parentApi} from "./parent-api.function";
-import {PositionalInfo, positionalInfo} from "./positional-info.function";
+import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { TestExecutionContext } from "@sakuli/core";
+import { RelationProducer, RelationProducerWithOffset, SahiRelation } from "./sahi-relation.interface";
+import { ifPresent, mapAsync } from "@sakuli/commons";
+import { edges } from "./edges.function";
+import { isLeftOf, isRightOf } from "./vector2.type";
+import { AccessorUtil } from "../accessor";
+import { SahiElementQuery, SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import { isChildOf } from "../helper/is-child-of.function";
+import { distanceBetween } from "../helper/distance-between.function";
+import { getSiblingIndex } from "../helper/get-sibling-index.function";
+import { getParent } from "../helper/get-parent.function";
+import { parentApi } from "./parent-api.function";
+import { PositionalInfo, positionalInfo } from "./positional-info.function";
 import { RelationApi } from "./relations-api.interface";
 
 export function relationsApi(
@@ -41,11 +41,7 @@ export function relationsApi(
         return async (elementsQuery: SahiElementQuery) => { // assume elements is as query
             const parentElement = await accessorUtil.fetchElement(parentQuery);
             const elementsInParent = await parentElement.findElements(elementsQuery.locator);
-            const elementsByIdentifier = await accessorUtil.resolveByIdentifier(elementsInParent, elementsQuery.identifier)
-            /*
-            return (await Promise.all(elements.map(async e => isChildOf(e, parentElement) ? e : null)))
-                .filter((e): e is WebElement => e != null)
-                */
+            const elementsByIdentifier = await accessorUtil.resolveByIdentifier(elementsInParent, elementsQuery.identifier);
             return webElementsToQuery(elementsByIdentifier);
         }
     };
@@ -116,7 +112,7 @@ export function relationsApi(
         return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
-            return edgesB.isUnder(edgesA) && edgesB.intersectsVertical(edgesA);
+            return edgesB.isUnder(edgesA) && (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB));
         })
     };
 
@@ -124,7 +120,7 @@ export function relationsApi(
         return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
-            return edgesB.isAbove(edgesA) && edgesB.intersectsVertical(edgesA);
+            return edgesB.isAbove(edgesA) && (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB));
         })
     };
 
@@ -132,9 +128,10 @@ export function relationsApi(
         return createVerticalRelation(query, offset, (a, b) => {
             const edgesA = edges(a);
             const edgesB = edges(b);
-            return (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) && edgesB.intersectsVertical(edgesA);
+            return (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) &&
+                (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB));
         })
-    }
+    };
 
     const _rightOf: RelationProducerWithOffset = (query: SahiElementQueryOrWebElement, offset = 0) => {
         return createHorizontalRelation(query, offset, (a, b) => isRightOf(edges(a).center, edges(b).center));
