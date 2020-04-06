@@ -19,7 +19,7 @@ export function createApplicationClass(ctx: TestExecutionContext, project: Proje
             this.args = options;
         }
 
-        private closeOrKillFunction(methodName: string, exitSignal: string, optSilent?: boolean) {
+        private closeOrKillFunction(methodName: string, exitSignal: NodeJS.Signals, optSilent?: boolean) {
             return runAsAction(ctx, methodName, () => {
                 return new Promise<Application>(async (resolve, reject) => {
                     ctx.logger.debug(`Trying to ${methodName} application '${this.cmd}${optSilent ? ' silently' : ''}`);
