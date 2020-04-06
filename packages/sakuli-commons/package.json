@@ -27,20 +27,20 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/common-tags": "^1.8.0",
-    "@types/jest": "^25.1.4",
-    "@types/node": "^11.13.5",
-    "@types/properties-reader": "^0.0.1",
-    "jest": "^24.7.1",
-    "sneer": "^1.0.1",
-    "ts-jest": "^25.3.0",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.4.3"
+    "@types/common-tags": "1.8.0",
+    "@types/jest": "25.1.5",
+    "@types/node": "12.12.34",
+    "@types/properties-reader": "0.0.1",
+    "jest": "25.2.7",
+    "sneer": "1.0.1",
+    "ts-jest": "25.3.0",
+    "typedoc": "0.17.4",
+    "typescript": "3.8.3"
   },
   "dependencies": {
-    "common-tags": "^1.8.0",
-    "properties-reader": "^0.0.16",
-    "reflect-metadata": "^0.1.13",
+    "common-tags": "1.8.0",
+    "properties-reader": "0.0.16",
+    "reflect-metadata": "0.1.13",
     "yargs": "15.3.1",
     "@types/yargs": "15.0.4"
   }
