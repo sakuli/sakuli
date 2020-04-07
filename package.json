@@ -29,6 +29,7 @@
     "clean": "lerna clean -y && npm run clean:artifacts",
     "clean:artifacts": "lerna exec -- rm -rf dist/ tsconfig.tsbuildinfo",
     "build": "lerna run build",
+    "postbuild": "lerna bootstap",
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
     "test:e2e": "npm --prefix ./packages/e2e test",
