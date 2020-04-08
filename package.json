@@ -34,7 +34,7 @@
     "test:e2e": "npm --prefix ./packages/e2e test",
     "bootstrap": "lerna bootstrap",
     "lerna:publish": "lerna publish from-package --yes ",
-    "lerna:publish-next": "lerna publish --canary prerelease --preid next --dist-tag next --pre-dist-tag next --no-push --no-git-tag-version --no-git-reset --force-publish --yes",
+    "lerna:publish-next": "lerna publish --canary --include-merged-tags --preid next --dist-tag next --pre-dist-tag next --no-push --no-git-tag-version --no-git-reset --force-publish --yes",
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
