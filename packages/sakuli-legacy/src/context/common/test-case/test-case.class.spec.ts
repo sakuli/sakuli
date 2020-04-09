@@ -12,7 +12,6 @@ import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { TestStep } from "./__mocks__/test-step.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import { tmpdir } from "os";
-import { ScreenshotStorage } from "./screenshot-storage.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -266,7 +265,7 @@ describe("TestCase", () => {
             const testFolder = "testCaseFolder";
             const legacyProps = new LegacyProjectProperties();
             legacyProps.screenshotDir = tmpdir();
-            legacyProps.screenshotStorage = ScreenshotStorage.hierarchical;
+            legacyProps.screenshotStorage = "hierarchical";
             project = mockPartial<Project>({
                 objectFactory: jest.fn().mockReturnValue(legacyProps)
             });
@@ -280,26 +279,6 @@ describe("TestCase", () => {
             // THEN
             expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(`${tmpdir()}/UNKNOWN_TESTSUITE_testcase_1/error_UNKNOWN_TESTSUITE_testcase_1`);
         });
-
-        it("should take a screenshot and save it flat when explicitly specified in props", async () => {
-            // GIVEN
-            const testFolder = "testCaseFolder";
-            const legacyProps = new LegacyProjectProperties();
-            legacyProps.screenshotDir = tmpdir();
-            legacyProps.screenshotStorage = ScreenshotStorage.flat;
-            project = mockPartial<Project>({
-                objectFactory: jest.fn().mockReturnValue(legacyProps)
-            });
-            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
-            const tc = new SUT("testId", 0, 0);
-            const testError = new Error("testError");
-
-            // WHEN
-            await tc.handleException(testError);
-
-            // THEN
-            expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(`${tmpdir()}/error_UNKNOWN_TESTSUITE_testcase_1`);
-        })
     });
 
     describe('caching', () => {
