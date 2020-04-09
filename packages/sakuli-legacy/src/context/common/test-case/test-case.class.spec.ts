@@ -12,6 +12,7 @@ import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { TestStep } from "./__mocks__/test-step.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import { tmpdir } from "os";
+import { ScreenshotStorage } from "./screenshot-storage.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -265,7 +266,7 @@ describe("TestCase", () => {
             const testFolder = "testCaseFolder";
             const legacyProps = new LegacyProjectProperties();
             legacyProps.screenshotDir = tmpdir();
-            legacyProps.screenshotStorage = "hierarchical";
+            legacyProps.screenshotStorage = ScreenshotStorage.hierarchical;
             project = mockPartial<Project>({
                 objectFactory: jest.fn().mockReturnValue(legacyProps)
             });
@@ -285,7 +286,7 @@ describe("TestCase", () => {
             const testFolder = "testCaseFolder";
             const legacyProps = new LegacyProjectProperties();
             legacyProps.screenshotDir = tmpdir();
-            legacyProps.screenshotStorage = "flat";
+            legacyProps.screenshotStorage = ScreenshotStorage.flat;
             project = mockPartial<Project>({
                 objectFactory: jest.fn().mockReturnValue(legacyProps)
             });

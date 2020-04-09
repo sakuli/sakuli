@@ -1,5 +1,6 @@
 import { BooleanProperty, ifPresent, Maybe, NumberProperty, StringProperty } from "@sakuli/commons";
 import { Browsers } from "../context/selenium-config/create-driver-from-project.function";
+import { ScreenshotStorage } from "../context/common/test-case/screenshot-storage.class";
 
 export class LegacyProjectProperties {
     /**
@@ -163,6 +164,6 @@ export class LegacyProjectProperties {
      * The way error screenshots are stored on the harddrive.
      */
     @StringProperty('sakuli.screenshot.storage')
-    screenshotStorage: string = "hierarchical";
+    screenshotStorage: ScreenshotStorage = ScreenshotStorage.hierarchical;
 
 }
