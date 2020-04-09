@@ -160,7 +160,7 @@ export class LegacyProjectProperties {
     screenshotDir: string = "${sakuli.log.folder}/_screenshots";
 
     /**
-     * how the screenshots are saved
+     * The way error screenshots are stored on the harddrive.
      */
     @StringProperty('sakuli.screenshot.storage')
     screenshotStorage: string = "hierarchical";
