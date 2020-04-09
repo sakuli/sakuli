@@ -2,7 +2,7 @@
     const testCase = new TestCase();
     const url = "https://sakuli.io";
     try {
-        await _navigateTo(url + "/#enterprise");
+        await _navigateTo(url);
         await _pageIsStable();
         await testCase.endOfStep("Navigate to enterprise section");
 
