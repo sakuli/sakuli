@@ -12,6 +12,7 @@
             await _click(cookieBannerButton);
         }
         await testCase.endOfStep("Close cookie banner");
+        await _pageIsStable(5000, 500);
 
         await _highlight(_link("Request"));
         await _click(_link("Request"));
