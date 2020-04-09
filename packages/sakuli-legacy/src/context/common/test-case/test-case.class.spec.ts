@@ -241,6 +241,25 @@ describe("TestCase", () => {
             });
         });
 
+        it("should take a screenshot and save it hierarchical when not explicitly specified in props", async () => {
+            // GIVEN
+            const testFolder = "testCaseFolder";
+            const legacyProps = new LegacyProjectProperties();
+            legacyProps.screenshotDir = tmpdir();
+            project = mockPartial<Project>({
+                objectFactory: jest.fn().mockReturnValue(legacyProps)
+            });
+            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
+            const tc = new SUT("testId", 0, 0);
+            const testError = new Error("testError");
+
+            // WHEN
+            await tc.handleException(testError);
+
+            // THEN
+            expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(`${tmpdir()}/UNKNOWN_TESTSUITE_testcase_1/error_UNKNOWN_TESTSUITE_testcase_1`);
+        });
+
         it("should take a screenshot and save it hierarchical when explicitly specified in props", async () => {
             // GIVEN
             const testFolder = "testCaseFolder";
