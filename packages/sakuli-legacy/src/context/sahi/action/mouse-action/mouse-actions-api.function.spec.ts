@@ -1,11 +1,11 @@
-import { By, error, ThenableWebDriver } from "selenium-webdriver";
-import { mouseActionApi } from "./mouse-actions-api.function";
-import { AccessorUtil } from "../../accessor";
-import { RelationsResolver } from "../../relations";
-import { SahiElementQuery } from "../../sahi-element.interface";
-import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
-import { createTestExecutionContextMock } from "../../../__mocks__";
-import { ClickOptions } from "./click-options.interface";
+import {By, error, ThenableWebDriver} from "selenium-webdriver";
+import {mouseActionApi} from "./mouse-actions-api.function";
+import {AccessorUtil} from "../../accessor";
+import {RelationsResolver} from "../../relations";
+import {SahiElementQuery} from "../../sahi-element.interface";
+import {createTestEnv, getTestBrowserList, mockHtml, TestEnvironment} from "../../__mocks__";
+import {createTestExecutionContextMock} from "../../../__mocks__";
+import {ClickOptions} from "./click-options.interface";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
 jest.setTimeout(25_000);
@@ -36,7 +36,7 @@ describe('mouse-actions', () => {
         afterEach(async () => {
             try {
                 await driver.actions({bridge: true}).clear();
-            } catch(e) {
+            } catch (e) {
                 console.log('Actions are not cleaned because ', e);
             }
         });
@@ -107,7 +107,7 @@ describe('mouse-actions', () => {
                 relations: []
             };
 
-            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+            it.each(<[undefined | string | ClickOptions, undefined | ClickOptions][]>[
                 [undefined, undefined],
                 ["", undefined],
                 ["ALT", undefined],
@@ -116,16 +116,16 @@ describe('mouse-actions', () => {
                 [undefined, notForced],
                 [notForced, undefined],
                 [notForced, notForced],
-            ])("should throw when _click is called with combo keys %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+            ])("should throw when _click is called with combo keys %s and options %s", async (combo: undefined | string | ClickOptions, options: undefined | ClickOptions) => {
                 await driver.get(mockHtml(htmlSnippet));
                 const api = createApi(driver);
                 await expect(api._click(query, combo, options)).rejects.toThrowError(expect.any(ElementClickInterceptedError));
             });
 
-            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+            it.each(<[undefined | string | ClickOptions, undefined | ClickOptions][]>[
                 ["", forced],
                 ["ALT", forced]
-            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async (combo: undefined | string | ClickOptions, options: undefined | ClickOptions) => {
                 await driver.get(mockHtml(htmlSnippet));
                 const api = createApi(driver);
                 await expect(api._click(query, combo, options)).resolves.toBeUndefined();
@@ -133,11 +133,11 @@ describe('mouse-actions', () => {
                 await expect(out.getText()).resolves.toBe(`_click ${combo}`.trim());
             });
 
-            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+            it.each(<[undefined | string | ClickOptions, undefined | ClickOptions][]>[
                 [forced, undefined],
                 [forced, forced],
                 [undefined, forced]
-            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+            ])("should click on overlay when forced to click covered element with combo key %s and options %s", async (combo: undefined | string | ClickOptions, options: undefined | ClickOptions) => {
                 await driver.get(mockHtml(htmlSnippet));
                 const api = createApi(driver);
                 await expect(api._click(query, combo, options)).resolves.toBeUndefined();
@@ -145,10 +145,10 @@ describe('mouse-actions', () => {
                 await expect(out.getText()).resolves.toBe(`_click`);
             });
 
-            it.each(<[undefined|string|ClickOptions, undefined|ClickOptions][]>[
+            it.each(<[undefined | string | ClickOptions, undefined | ClickOptions][]>[
                 [forced, notForced],
                 [notForced, forced]
-            ])("should throw when different clickOptions(combo: %s, options: %s) are used", async(combo: undefined|string|ClickOptions, options: undefined|ClickOptions) => {
+            ])("should throw when different clickOptions(combo: %s, options: %s) are used", async (combo: undefined | string | ClickOptions, options: undefined | ClickOptions) => {
                 await driver.get(mockHtml(htmlSnippet));
                 const api = createApi(driver);
                 await expect(api._click(query, combo, options)).rejects.toThrowError(expect.any(Error));
@@ -183,7 +183,7 @@ describe('mouse-actions', () => {
             it.each(<[MouseMethods, string, string][]>[
                 ['_mouseUp', 'mouseup', ""],
                 ['_mouseUp', 'mouseup', "SHIFT|ALT"],
-            ])('%s should invoke native %s with %s pressed and an invoked mopusedown', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+            ])('%s should invoke native %s with \'%s\' pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
                 const api = createApi(driver);
                 await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
                 const apiMethod: any = api[method];
@@ -194,9 +194,9 @@ describe('mouse-actions', () => {
                 };
                 await api._mouseDown(query);
                 if (apiMethod.length === 2) {
-                    await apiMethod(query,combo);
+                    await apiMethod(query, combo);
                 } else {
-                    await apiMethod(query,false,combo);
+                    await apiMethod(query, false, combo);
                 }
                 const out = await driver.findElement(By.css('#out'));
                 return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
@@ -204,25 +204,34 @@ describe('mouse-actions', () => {
             it.each(<[MouseMethods, string, string][]>[
                 ['_rightClick', 'contextmenu', ""],
                 ['_mouseOver', 'mouseover', ""],
-                ['_mouseDown', 'mousedown', ""],
                 ['_rightClick', 'contextmenu', "META|ALT"],
                 ['_mouseOver', 'mouseover', "META"],
-                ['_mouseDown', 'mousedown', "ALT"],
-            ])('%s should invoke native event %s with %s pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+            ])('%s should invoke native event %s with \'%s\' pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
                 const api = createApi(driver);
                 await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
-                const apiMethod: any = api[method];
+                const apiMethod: (...args: any) => Promise<void> = api[method];
                 const query: SahiElementQuery = {
                     locator: By.css('#btn'),
                     identifier: 0,
                     relations: []
                 };
-                if (apiMethod.length === 2) {
-                    await apiMethod(query,combo);
-                } else {
-                    await apiMethod(query,false,combo);
-                }
-                //await new Promise(res => setTimeout(res, 2500));
+                await apiMethod(query, combo);
+                const out = await driver.findElement(By.css('#out'));
+                return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
+            });
+            it.each(<[MouseMethods, string, string][]>[
+                ['_mouseDown', 'mousedown', ""],
+                ['_mouseDown', 'mousedown', "ALT"],
+            ])('%s should invoke native event %s with \'%s\' pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+                const api = createApi(driver);
+                await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
+                const apiMethod: (...args: any) => Promise<void> = api[method];
+                const query: SahiElementQuery = {
+                    locator: By.css('#btn'),
+                    identifier: 0,
+                    relations: []
+                };
+                await apiMethod(query, false, combo);
                 const out = await driver.findElement(By.css('#out'));
                 return expect(out.getText()).resolves.toBe(`${method} ${combo}`.trim());
             });
@@ -230,7 +239,7 @@ describe('mouse-actions', () => {
             it.each(<[MouseMethods, string, string][]>[
                 ['_click', 'click', ""],
                 ['_click', 'click', "META|ALT"]
-            ])('%s should invoke native event %s with %s pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
+            ])('%s should invoke native event %s with \'%s\' pressed', async (method: MouseMethods, nativeEvent: string, combo: string) => {
                 const api = createApi(driver);
                 await driver.get(mockHtml(htmlSnippet(nativeEvent, method)));
                 const apiMethod: any = api[method];
@@ -239,7 +248,7 @@ describe('mouse-actions', () => {
                     identifier: 0,
                     relations: []
                 };
-                await apiMethod(query,combo);
+                await apiMethod(query, combo);
 
                 //await new Promise(res => setTimeout(res, 2500));
                 const out = await driver.findElement(By.css('#out'));
@@ -255,7 +264,7 @@ describe('mouse-actions', () => {
                 ['_uncheck', 'checkbox', '', null],
                 ['_check', 'radio', '', 'true'],
                 ['_uncheck', 'radio', 'checked', 'true'],
-            ])('should perform %s on input[type="%s"][%s] and expect state to be %s',
+            ])('should perform %s on input[type="%s"][%s] and expect state to be \'%s\'',
                 async (method: "_check" | "_uncheck", type: "checkbox" | "radio", checkedAttribute: "checked" | "", expected: "true" | null) => {
                     const api = createApi(driver);
                     const apiMethod = api[method];
