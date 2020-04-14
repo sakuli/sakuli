@@ -3,6 +3,10 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "lib": ["es6", "es2016.array.include", "dom"]
+    "lib": [
+      "es6",
+      "es2016.array.include",
+      "dom"
+    ]
   }
 }

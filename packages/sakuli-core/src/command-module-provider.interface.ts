@@ -1,8 +1,8 @@
 import {SakuliClass} from "./sakuli.class";
-import {CommandModule, Argv} from "yargs";
+import {CommandModule as YargsCommandModule, Argv as YargsArgv} from "yargs";
 
-export type CommandModule = CommandModule;
-export type Argv = Argv;
+export type CommandModule = YargsCommandModule;
+export type Argv = YargsArgv;
 export interface CommandModuleProvider {
     (sakuli: SakuliClass): CommandModule
 }

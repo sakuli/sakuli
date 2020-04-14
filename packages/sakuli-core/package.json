@@ -27,25 +27,25 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/common-tags": "^1.4.0",
-    "@types/jest": "^24.0.13",
-    "@types/mock-fs": "^3.6.30",
-    "@types/node": "^11.13.5",
+    "@types/common-tags": "1.4.0",
+    "@types/jest": "25.1.5",
+    "@types/mock-fs": "3.6.30",
+    "@types/node": "12.12.34",
     "@types/properties-reader": "0.0.1",
-    "@types/yargs": "^12.0.12",
-    "jest": "^24.7.1",
-    "mock-fs": "^4.8.0",
-    "sneer": "^1.0.1",
-    "ts-jest": "^24.0.2",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.4.3"
+    "@types/yargs": "15.0.4",
+    "jest": "25.2.7",
+    "mock-fs": "4.8.0",
+    "sneer": "1.0.1",
+    "ts-jest": "25.3.1",
+    "typedoc": "0.17.4",
+    "typescript": "3.8.3"
   },
   "dependencies": {
-    "@sakuli/commons": "^2.3.0",
-    "class-validator": "^0.9.1",
-    "common-tags": "^1.8.0",
-    "date-fns": "^1.29.0",
+    "@sakuli/commons": "2.3.0",
+    "class-validator": "0.9.1",
+    "common-tags": "1.8.0",
+    "date-fns": "1.29.0",
     "properties-reader": "0.0.16",
-    "reflect-metadata": "^0.1.12"
+    "reflect-metadata": "0.1.12"
   }
 }

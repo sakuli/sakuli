@@ -47,8 +47,8 @@ export async function runContainer(
     const Binds = localMounts.map(([local, cont]) => `${local}:${cont}`);
 
     function getMappedPort(port: number) {
-        const [_, hostPort] = portMapping.find(([container]) => port === container);
-        return hostPort;
+        const mapping = portMapping.find(([container]) => port === container);
+        return mapping?.[1]!;
     }
     try {
         const container = await docker.createContainer({
