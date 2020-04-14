@@ -297,7 +297,7 @@ describe("TestCase", () => {
             await tc.handleException(testError);
 
             // THEN
-            expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(`${tmpdir()}/UNKNOWN_TESTSUITE_testcase_1/error_UNKNOWN_TESTSUITE_testcase_1`);
+            expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(`${tmpdir()}/error_UNKNOWN_TESTSUITE_testcase_1`);
         });
     });
 
