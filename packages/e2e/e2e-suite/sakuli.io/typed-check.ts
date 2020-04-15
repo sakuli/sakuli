@@ -1,5 +1,10 @@
 (async () => {
     const testCase: TestCase = new TestCase("My Typescript based test");
+    const env = new Environment();
+
+    async function getControlKey() {
+        return await env.isDarwin() ? Key.CMD : Key.CTRL;
+    }
     try {
         await _navigateTo("https://sakuli.io");
         testCase.endOfStep("TS Open Landing Page");
@@ -12,8 +17,11 @@
         await driver.switchTo().window((await driver.getAllWindowHandles())[1]);
         await _highlight(_code("npm init"));
         testCase.endOfStep("Find npm init code sample");
+        await env.type(Key.W, await getControlKey());
+        await driver.switchTo().window((await driver.getAllWindowHandles())[0]);
+        testCase.endOfStep("Close Tab");
     } catch (e) {
-        testCase.handleException(e);
+        await testCase.handleException(e);
     } finally {
         testCase.saveResult();
     }
