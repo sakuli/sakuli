@@ -1,5 +1,5 @@
 (async () => {
-    const testCase: TestCase = new TestCase("My Typescript based test");
+    const testCase: TestCase = new TestCase("My sakuli.io Typescript test");
     try {
         await _navigateTo("https://sakuli.io");
         testCase.endOfStep("TS Open Landing Page");
