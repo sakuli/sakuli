@@ -15,7 +15,7 @@
         await driver.switchTo().window((await driver.getAllWindowHandles())[0]);
         testCase.endOfStep("Find npm init code sample");
     } catch (e) {
-        testCase.handleException(e);
+        await testCase.handleException(e);
     } finally {
         testCase.saveResult();
     }
