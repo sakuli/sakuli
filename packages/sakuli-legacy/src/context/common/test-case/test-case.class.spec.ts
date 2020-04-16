@@ -218,30 +218,7 @@ describe("TestCase", () => {
             });
         });
 
-        it("should take a screenshot and update the testcase", async () => {
-            // GIVEN
-            const testFolder = "testCaseFolder";
-            const legacyProps = new LegacyProjectProperties();
-            legacyProps.screenshotDir = tmpdir();
-            project = mockPartial<Project>({
-                objectFactory: jest.fn().mockReturnValue(legacyProps)
-            });
-            const SUT = createTestCaseClass(testExecutionContext, project, testFolder);
-            const tc = new SUT("testId", 0, 0);
-            const testError = new Error("testError");
-
-            // WHEN
-            await tc.handleException(testError);
-
-            // THEN
-            expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
-            expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
-            expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
-                error: testError
-            });
-        });
-
-        it("should take a screenshot and save it hierarchical when not explicitly specified in props", async () => {
+        it("should take a screenshot, update the testcase and save the error screenshot hierarchical when not explicitly specified", async () => {
             // GIVEN
             const testFolder = "testCaseFolder";
             const legacyProps = new LegacyProjectProperties();
@@ -258,6 +235,10 @@ describe("TestCase", () => {
 
             // THEN
             expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(`${tmpdir()}/UNKNOWN_TESTSUITE_testcase_1/error_UNKNOWN_TESTSUITE_testcase_1`);
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+            expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+                error: testError
+            });
         });
 
         it("should take a screenshot and save it hierarchical when explicitly specified in props", async () => {
