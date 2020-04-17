@@ -140,7 +140,7 @@ export class LegacyProjectProperties {
      * Sakuli click delay when clicking mouse buttons in ms
      */
     @NumberProperty('sakuli.clickDelay')
-    sikuliClickDelay: number = 0.2;
+    sikuliClickDelay: number = 200;
 
     /**
      * Overwrite this property or use the environment var `SAKULI_ENCRYPTION_KEY` as master key for en- and decryption
