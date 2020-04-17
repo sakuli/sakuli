@@ -166,4 +166,15 @@ export class LegacyProjectProperties {
     @StringProperty('sakuli.screenshot.storage')
     screenshotStorage: ScreenshotFolderStructure = "hierarchical";
 
+    /**
+     * Delay between mouse actions e.g. mouse button down, mouse button up, scroll, etc. in ms
+     */
+    @NumberProperty('sakuli.mouse.action.delay')
+    mouseActionDelay: number = 200;
+
+    /**
+     * Configures the speed in pixels/second for mouse movement
+     */
+    @NumberProperty('sakuli.mouse.movement.speed')
+    mouseSpeed: number = 1000;
 }
