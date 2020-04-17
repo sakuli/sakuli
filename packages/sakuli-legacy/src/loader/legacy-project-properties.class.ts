@@ -176,5 +176,5 @@ export class LegacyProjectProperties {
      * Configures the speed in pixels/second for mouse movement
      */
     @NumberProperty('sakuli.mouse.movement.speed')
-    mouseSpeed: number = 1000;
+    mouseSpeed: number = 3000;
 }
