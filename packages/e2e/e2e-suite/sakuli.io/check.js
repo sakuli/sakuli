@@ -1,27 +1,22 @@
 (async () => {
-    const testCase = new TestCase();
-    const url = "https://sakuli.io";
+    const testCase = new TestCase("My sakuli.io test");
     try {
-        await _navigateTo(url);
+        await _navigateTo("https://sakuli.io");
+        testCase.endOfStep("Open Landing Page");
+        await _click(_link("EXPLORE"));
+        testCase.endOfStep("Open Explore page");
         await _pageIsStable();
-        await testCase.endOfStep("Navigate to enterprise section");
-
-        const cookieBannerButton = _button("Accept all");
-        if (await _isVisible(cookieBannerButton)) {
-            await _highlight(cookieBannerButton);
-            await _click(cookieBannerButton);
-        }
-        await testCase.endOfStep("Close cookie banner");
-        await _pageIsStable(5000, 500);
-
-        await _highlight(_link("Request"));
-        await _click(_link("Request"));
-        await _pageIsStable(5000, 500);
-        await _assertEqual("M-Package", await _getSelectedText(_select("powermail_field_kundenwunsch")));
-        await testCase.endOfStep("Contact form clicked");
+        await _click(_link("Docs"));
+        testCase.endOfStep("Navigate to docs");
+        await _wait( 5000, async () => (await driver.getAllWindowHandles()).length === 2);
+        await driver.switchTo().window((await driver.getAllWindowHandles())[1]);
+        await _highlight(_code("npm init"));
+        await driver.close();
+        await driver.switchTo().window((await driver.getAllWindowHandles())[0]);
+        testCase.endOfStep("Find npm init code sample");
     } catch (e) {
         await testCase.handleException(e);
     } finally {
-        await testCase.saveResult();
+        testCase.saveResult();
     }
 })();

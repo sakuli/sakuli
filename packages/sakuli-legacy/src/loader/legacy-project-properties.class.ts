@@ -1,5 +1,6 @@
-import {BooleanProperty, NumberProperty, StringProperty, Maybe, ifPresent} from "@sakuli/commons";
-import {Browsers} from "../context/selenium-config/create-driver-from-project.function";
+import { BooleanProperty, ifPresent, Maybe, NumberProperty, StringProperty } from "@sakuli/commons";
+import { Browsers } from "../context/selenium-config/create-driver-from-project.function";
+import { ScreenshotFolderStructure } from "../context/common/test-case/screenshot-folder-structure.interface";
 
 export class LegacyProjectProperties {
     /**
@@ -83,7 +84,7 @@ export class LegacyProjectProperties {
      *
      */
     @BooleanProperty('ui-only')
-    uiOnly: Maybe<boolean>
+    uiOnly: Maybe<boolean>;
 
     /**
      * Defines the browser in witch the test suite should be executed
@@ -93,7 +94,7 @@ export class LegacyProjectProperties {
      *
      */
     @BooleanProperty('testsuite.uiOnly')
-    testSuiteUiOnly: Maybe<boolean>
+    testSuiteUiOnly: Maybe<boolean>;
 
     /**
      * Determines if a testsuite should run in ui-only mode or not
@@ -142,7 +143,7 @@ export class LegacyProjectProperties {
     sikuliClickDelay: number = 0.2;
 
     /**
-     * Overwrite this property or us the environment var `SAKULI_ENCRYPTION_KEY` as master key for en- and decryption
+     * Overwrite this property or use the environment var `SAKULI_ENCRYPTION_KEY` as master key for en- and decryption
      */
     @StringProperty('sakuli.encryption.key')
     sakuliEncryptionKey: string = "";
@@ -158,5 +159,11 @@ export class LegacyProjectProperties {
      */
     @StringProperty('sakuli.screenshot.dir')
     screenshotDir: string = "${sakuli.log.folder}/_screenshots";
+
+    /**
+     * The way error screenshots are stored on the harddrive.
+     */
+    @StringProperty('sakuli.screenshot.storage')
+    screenshotStorage: ScreenshotFolderStructure = "hierarchical";
 
 }
