@@ -1,5 +1,4 @@
-import { getTestBrowserList } from "../../__mocks__";
-import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
 import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { CommonActionsApi } from "./common-actions.interface";
@@ -152,13 +151,14 @@ describe('common-actions', () => {
             `));
 
             // WHEN
-            const start = Date.now();
+            const start = process.hrtime();
             const result = await api._pageIsStable();
-            const duration = Date.now() - start;
+            const duration = process.hrtime(start);
 
             // THEN
             expect(result).toBeFalsy();
-            expect(duration).toBeGreaterThanOrEqual(2_000);
+            expect(duration[0]).toBeGreaterThanOrEqual(2);
+            expect(duration[1]).toBeGreaterThanOrEqual(0);
         });
     })
 });
