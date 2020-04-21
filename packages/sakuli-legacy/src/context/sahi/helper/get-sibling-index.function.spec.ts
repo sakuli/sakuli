@@ -2,7 +2,7 @@ import { By } from "selenium-webdriver";
 import { getSiblingIndex } from "./get-sibling-index.function";
 import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../__mocks__";
 
-jest.setTimeout(15_000);
+jest.setTimeout(25_000);
 describe('getSiblingIndex', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
