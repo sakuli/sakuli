@@ -151,14 +151,13 @@ describe('common-actions', () => {
             `));
 
             // WHEN
-            const start = process.hrtime();
+            const start = Date.now();
             const result = await api._pageIsStable();
-            const duration = process.hrtime(start);
+            const duration = Date.now() - start;
 
             // THEN
             expect(result).toBeFalsy();
-            expect(duration[0]).toBeGreaterThanOrEqual(2);
-            expect(duration[1]).toBeGreaterThanOrEqual(0);
+            expect(duration).toBeGreaterThanOrEqual(2_000);
         });
     })
 });
