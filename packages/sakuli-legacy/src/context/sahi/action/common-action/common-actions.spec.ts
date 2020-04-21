@@ -157,7 +157,7 @@ describe('common-actions', () => {
 
             // THEN
             expect(result).toBeFalsy();
-            expect(duration).toBeGreaterThanOrEqual(2_000);
+            expect(duration).toBeGreaterThanOrEqual(1_999);
         });
     })
 });
