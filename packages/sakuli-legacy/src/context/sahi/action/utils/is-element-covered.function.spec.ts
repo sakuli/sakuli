@@ -2,6 +2,7 @@ import { isElementCovered } from "./is-element-covered.function";
 import { By } from "selenium-webdriver";
 import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
 
+jest.setTimeout(15_000);
 describe('is-element-covered', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
