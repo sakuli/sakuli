@@ -1,14 +1,14 @@
-import {By, error, ThenableWebDriver} from "selenium-webdriver";
-import {mouseActionApi} from "./mouse-actions-api.function";
-import {AccessorUtil} from "../../accessor";
-import {RelationsResolver} from "../../relations";
-import {SahiElementQuery} from "../../sahi-element.interface";
-import {createTestEnv, getTestBrowserList, mockHtml, TestEnvironment} from "../../__mocks__";
-import {createTestExecutionContextMock} from "../../../__mocks__";
-import {ClickOptions} from "./click-options.interface";
+import { By, error, ThenableWebDriver } from "selenium-webdriver";
+import { mouseActionApi } from "./mouse-actions-api.function";
+import { AccessorUtil } from "../../accessor";
+import { RelationsResolver } from "../../relations";
+import { SahiElementQuery } from "../../sahi-element.interface";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestExecutionContextMock } from "../../../__mocks__";
+import { ClickOptions } from "./click-options.interface";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
 
-jest.setTimeout(25_000);
+jest.setTimeout(60_000);
 describe('mouse-actions', () => {
 
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {

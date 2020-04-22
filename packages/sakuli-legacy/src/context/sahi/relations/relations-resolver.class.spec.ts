@@ -1,9 +1,9 @@
-import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
-import {mockPartial} from "sneer";
-import {TestExecutionContext} from "@sakuli/core";
-import {RelationsResolver} from "./relations-resolver.class";
-import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
+import { mockPartial } from "sneer";
+import { TestExecutionContext } from "@sakuli/core";
+import { RelationsResolver } from "./relations-resolver.class";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 const webElementToQuery = (elements: WebElement[]) => {
     return ({
@@ -13,7 +13,7 @@ const webElementToQuery = (elements: WebElement[]) => {
     });
 };
 
-jest.setTimeout(25_000);
+jest.setTimeout(60_000);
 describe('RelationResolver', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         const testExecutionContext = mockPartial<TestExecutionContext>({});
