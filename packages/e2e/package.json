@@ -24,16 +24,7 @@
   },
   "dependencies": {
     "@sakuli/cli": "^2.3.0",
-    "@sakuli/legacy": "^2.3.0",
-    "@sakuli/legacy-types": "^2.3.0",
-    "chromedriver": "^80.0.1",
-    "geckodriver": "^1.19.1",
-    "typescript": "3.4.3"
-  },
-  "sakuli": {
-    "presetProvider": [
-      "@sakuli/legacy"
-    ]
+    "geckodriver": "^1.19.1"
   },
   "devDependencies": {}
 }
