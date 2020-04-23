@@ -1,0 +1,76 @@
+USER_ID: 1000, GROUP_ID: 0
+nss_wrapper location: /usr/lib/libnss_wrapper.so
+
+
+------------------ IMPORT CERTIFICATES    ---------------------------
+NO CERTIFICATES PATH FOR IMPORT SET, SKIPPING
+
+
+------------------ START SAKULI CONTAINER ---------------------------
+USER_ID: 1000, GROUP_ID: 0
+nss_wrapper location: /usr/lib/libnss_wrapper.so
+
+------------------ update chromium-browser.init ------------------
+
+... set window size 1280 x 1024 as chrome window size!
+
+
+------------------ change VNC password  ------------------
+
+------------------ start noVNC  ----------------------------
+
+------------------ start VNC server ------------------------
+remove old vnc locks to be a reattachable container
+start vncserver with param: VNC_COL_DEPTH=24, VNC_RESOLUTION=1280x1024
+...
+start window manager
+...
+
+
+------------------ VNC environment started ------------------
+
+VNCSERVER started on DISPLAY= :1 
+	=> connect via VNC viewer with 192.168.19.3:5901
+
+noVNC HTML client started:
+	=> connect via http://192.168.19.3:6901/?password=...
+
+
+------------------ /headless/.vnc/*:1.log ------------------
+==> /dockerstartup/no_vnc_startup.log <==
+  - proxying from :6901 to localhost:5901
+
+
+Navigate to this URL:
+
+    http://e2e-sakuli-tests:6901/vnc.html?host=e2e-sakuli-tests&port=6901
+
+Press Ctrl-C to exit
+
+
+
+==> /dockerstartup/vnc_startup.log <==
+
+==> /dockerstartup/wm_startup.log <==
+
+------------------ startup of OpenBox window manager ------------------
+
+** (process:441): WARNING **: 17:59:19.319: xdg-autostart.vala:125: Error: Error opening directory ?/headless/.config/autostart?: No such file or directory
+
+** Message: 17:59:19.319: xdg-autostart.vala:39: Processing /etc/xdg/autostart/at-spi-dbus-bus.desktop file.
+** Message: 17:59:19.320: xdg-autostart.vala:94: Launching: /usr/lib/at-spi2-core/at-spi-bus-launcher --launch-immediately (at-spi-dbus-bus.desktop)
+** Message: 17:59:19.320: xdg-autostart.vala:39: Processing /etc/xdg/autostart/xdg-user-dirs.desktop file.
+** Message: 17:59:19.321: xdg-autostart.vala:94: Launching: xdg-user-dirs-update (xdg-user-dirs.desktop)
+Failed to launch bus: Failed to connect to session busOpenbox-Message: Unable to find a valid menu file "/var/lib/openbox/debian-menu.xml"
+
+==> /headless/.vnc/e2e-sakuli-tests:1.log <==
+[dix] Could not init font path element /usr/share/fonts/misc, removing from list!
+[dix] Could not init font path element /usr/share/fonts/75dpi, removing from list!
+[dix] Could not init font path element /usr/share/fonts/100dpi, removing from list!
+[dix] Could not init font path element /usr/share/fonts/Type1, removing from list!
+[dix] Could not init font path element /usr/share/fonts/URW, removing from list!
+[dix] Could not init font path element /usr/share/fonts/Speedo, removing from list!
+[dix] Could not init font path element /usr/share/fonts/cyrillic, removing from list!
+[dix] Could not init font path element /usr/share/fonts/truetype, removing from list!
+[dix] Could not init font path element /usr/share/fonts/misc, removing from list!
+sh: 1: /headless/.vnc/xstartup: Permission denied
