@@ -39,16 +39,23 @@
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
+    "husky": "^4.2.5",
     "jest": "25.2.7",
     "lerna": "3.13.3",
+    "lerna-audit": "1.1.1",
+    "prettier": "2.0.5",
     "ts-jest": "25.3.1",
-    "yargs": "15.3.1",
-    "lerna-audit": "1.1.1"
+    "yargs": "15.3.1"
   },
   "sharedScripts": {
     "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/{package} src/",
     "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/{package}/docs.json --out ../../docs/{package} src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
