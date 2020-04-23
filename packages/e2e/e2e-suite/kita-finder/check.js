@@ -5,6 +5,7 @@
         await _navigateTo("https://kitafinder.muenchen.de/elternportal/de/");
         await testCase.endOfStep("navigate to site");
 
+        await _wait(3000);
         await _highlight(_heading1("Jetzt Ihren Kita-Platz suchen!"));
         await _assert(_isVisible(_heading1("Jetzt Ihren Kita-Platz suchen!")));
         await testCase.endOfStep("Seite prüfen");
@@ -13,9 +14,11 @@
         await testCase.endOfStep("Fill data");
 
         await _highlight(_button("Suchen"));
+        await _wait(3000);
         await _click(_button("Suchen"));
         await testCase.endOfStep("Search");
 
+        await _wait(3000);
         await _highlight(_heading1(/\d* Einrichtungen gefunden/));
         await testCase.endOfStep("Verify");
     } catch (e) {
@@ -31,7 +34,11 @@ async function fillSearchData() {
     const searchDate = birthDate;
     const location = "Agnes-Pockels-Bogen 21, 80992 München";
 
+    await _wait(1000);
     await _setValue(_textbox("date-input-0"), searchDate);
+    await _wait(1000);
     await _setValue(_textbox("date-input-1"), birthDate);
+    await _wait(1000);
     await _setValue(_textbox("location-input-0"), location);
+    await _wait(1000);
 }
