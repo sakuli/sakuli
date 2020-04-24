@@ -1,18 +1,8 @@
-import {By, ThenableWebDriver, WebDriver, WebElement} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
 import {scrollIntoViewIfNeeded} from "./scroll-into-view-if-needed.function";
 import {TestExecutionContext} from "@sakuli/core";
 import {createTestExecutionContextMock} from "../../../__mocks__";
-import {mockPartial} from "sneer";
 import {createTestEnv, getTestBrowserList, mockHtml, TestEnvironment} from "../../__mocks__";
-
-function mockExecuteScript(promise: Promise<void>) {
-    const executeScriptFunction = jest.fn().mockResolvedValue(promise);
-    return mockPartial<WebElement>({
-        getDriver: () => mockPartial<WebDriver>({
-            executeAsyncScript: executeScriptFunction
-        })
-    });
-}
 
 describe("scroll into view if needed", () => {
 
@@ -33,37 +23,9 @@ describe("scroll into view if needed", () => {
         await expect(scrollIntoView).resolves;
         expect(ctx.logger.debug).toBeCalledWith("scroll into view failed: element was null or undefined")
     });
-
-    it("should execute script on driver", async () => {
-
-        //GIVEN
-        const webElementMock = mockExecuteScript(Promise.resolve());
-        //WHEN
-        const scrollIntoView = scrollIntoViewIfNeeded(webElementMock, ctx);
-
-        //THEN
-        await expect(scrollIntoView).resolves;
-        expect(webElementMock.getDriver().executeAsyncScript).toBeCalledWith(expect.any(String), webElementMock);
-        expect(ctx.logger.trace).toBeCalledWith(expect.stringContaining("scroll into view started with element:"));
-        expect(ctx.logger.trace).toBeCalledWith(expect.stringContaining("scroll into view finished for element:"))
-    });
-
-    it("should resolve if script execution rejects", async () => {
-
-        //GIVEN
-        const webElementMock = mockExecuteScript(Promise.reject());
-
-        //WHEN
-        const scrollIntoView = scrollIntoViewIfNeeded(webElementMock, ctx);
-
-        //THEN
-        await expect(scrollIntoView).resolves;
-        expect(webElementMock.getDriver().executeAsyncScript).toBeCalledWith(expect.any(String), webElementMock);
-        expect(ctx.logger.trace).toBeCalledWith(expect.stringContaining("scroll into view finished for element:"))
-    })
 });
 
-describe('ScrollIntoViewIfNeeded', () => {
+describe('scrollIntoViewIfNeeded', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
         let driver: ThenableWebDriver;
@@ -79,10 +41,11 @@ describe('ScrollIntoViewIfNeeded', () => {
             await env.stop();
         });
 
-        it('', async () => {
+        it('should scroll to element before resolving', async () => {
             // GIVEN
+            jest.setTimeout(15_000);
             await driver.get(mockHtml(`
-                <div id="long-scroll" style="height: 1000000px;"></div>
+                <div id="long-scroll" style="height: 100000px;"></div>
                 <button id="click-me" onclick="alert('clicked!')">Click me after scrolling!</button>
             `, {
                 additionalHeadContent: `
@@ -96,10 +59,33 @@ describe('ScrollIntoViewIfNeeded', () => {
             const element = await driver.findElement(By.id('click-me'));
 
             // WHEN
-            const scrollIntoView = scrollIntoViewIfNeeded(element, testExecutionContext);
+            const hasScrolled = await scrollIntoViewIfNeeded(element, testExecutionContext);
 
             // THEN
-            await expect(scrollIntoView).resolves;
+            expect(hasScrolled).toBeTruthy();
+        });
+
+        it('should not have to scroll if not needed', async () => {
+            // GIVEN
+            await driver.get(mockHtml(`
+                <div id="long-scroll" style="height: 100px;"></div>
+                <button id="click-me" onclick="alert('clicked!')">Click me after scrolling!</button>
+            `, {
+                additionalHeadContent: `
+                <style>
+                    html {
+                        scroll-behavior: smooth;
+                    }
+                </style>
+                `
+            }));
+            const element = await driver.findElement(By.id('click-me'));
+
+            // WHEN
+            const hasScrolled = await scrollIntoViewIfNeeded(element, testExecutionContext);
+
+            // THEN
+            expect(hasScrolled).toBeFalsy();
         });
     });
 });

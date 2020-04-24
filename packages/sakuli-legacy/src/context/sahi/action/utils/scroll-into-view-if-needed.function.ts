@@ -7,20 +7,32 @@ export async function scrollIntoViewIfNeeded(element: WebElement, ctx: TestExecu
         return Promise.resolve();
     }
     ctx.logger.trace(`scroll into view started with element: ${JSON.stringify(element)}`);
-    return element.getDriver().executeAsyncScript<void>(`
+    try {
+        const returnValue = await element.getDriver().executeAsyncScript<void>(`
         const __done__ = arguments[arguments.length - 1];
-        const skipNoScrollTimeout = setTimeout(__done__, 200);
-        let isScrollingTimeout;
-        window.addEventListener('scroll', (event) => {
-            window.clearTimeout(skipNoScrollTimeout);
+        let isScrollingTimeout = setTimeout(() => resolve(false), 66);
+        
+        const scrollEventHandler = (event) => {
+            console.log("scrolling");
             window.clearTimeout(isScrollingTimeout);
-            isScrollingTimeout = setTimeout(__done__, 200);
-        }, false);
+            isScrollingTimeout = setTimeout(() => resolve(true), 66);
+        };
+        
+        const resolve = (result) => {
+            window.removeEventListener('scroll', scrollEventHandler, false);
+            __done__(result);
+        };
+        
+        window.addEventListener('scroll', scrollEventHandler, false);
+        
         arguments[0].scrollIntoView({
             inline: "center",
             block: "center"
         });
-    `, element)
-        .then(() => ctx.logger.trace(`scroll into view finished for element: ${JSON.stringify(element)}`))
-        .catch((e) => ctx.logger.trace(`Caught ${e} when trying to scroll element: ${JSON.stringify(element)} into view`));
+    `, element);
+        ctx.logger.trace(`scroll into view finished for element: ${JSON.stringify(element)} with value ${returnValue}`);
+        return returnValue;
+    } catch (e) {
+        ctx.logger.trace(`Caught ${e} when trying to scroll element: ${JSON.stringify(element)} into view`)
+    }
 }
