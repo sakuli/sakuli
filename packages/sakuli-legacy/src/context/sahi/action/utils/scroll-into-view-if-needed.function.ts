@@ -1,14 +1,14 @@
 import {WebElement} from "selenium-webdriver";
 import {TestExecutionContext} from "@sakuli/core";
 
-export async function scrollIntoViewIfNeeded(element: WebElement, ctx: TestExecutionContext): Promise<void> {
+export async function scrollIntoViewIfNeeded(element: WebElement, ctx: TestExecutionContext): Promise<boolean> {
     if (!element) {
         ctx.logger.debug("scroll into view failed: element was null or undefined");
-        return Promise.resolve();
+        return false;
     }
     ctx.logger.trace(`scroll into view started with element: ${JSON.stringify(element)}`);
     try {
-        const returnValue = await element.getDriver().executeAsyncScript<void>(`
+        const returnValue = await element.getDriver().executeAsyncScript<boolean>(`
         const __done__ = arguments[arguments.length - 1];
         let isScrollingTimeout = setTimeout(() => resolve(false), 200);
         
@@ -32,6 +32,7 @@ export async function scrollIntoViewIfNeeded(element: WebElement, ctx: TestExecu
         ctx.logger.trace(`scroll into view finished for element: ${JSON.stringify(element)} with value ${returnValue}`);
         return returnValue;
     } catch (e) {
-        ctx.logger.trace(`Caught ${e} when trying to scroll element: ${JSON.stringify(element)} into view`)
+        ctx.logger.trace(`Caught ${e} when trying to scroll element: ${JSON.stringify(element)} into view`);
+        return false;
     }
 }
