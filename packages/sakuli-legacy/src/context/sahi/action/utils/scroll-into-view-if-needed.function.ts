@@ -13,9 +13,8 @@ export async function scrollIntoViewIfNeeded(element: WebElement, ctx: TestExecu
         let isScrollingTimeout = setTimeout(() => resolve(false), 200);
         
         const scrollEventHandler = (event) => {
-            console.log("scrolling");
             window.clearTimeout(isScrollingTimeout);
-            isScrollingTimeout = setTimeout(() => resolve(true), 100);
+            isScrollingTimeout = setTimeout(() => resolve(true), 150);
         };
         
         const resolve = (result) => {
