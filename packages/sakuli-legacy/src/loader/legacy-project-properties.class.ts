@@ -137,12 +137,6 @@ export class LegacyProjectProperties {
     typeDelay: number = 300;
 
     /**
-     * Sakuli click delay when clicking mouse buttons in ms
-     */
-    @NumberProperty('sakuli.clickDelay')
-    sikuliClickDelay: number = 0.2;
-
-    /**
      * Overwrite this property or use the environment var `SAKULI_ENCRYPTION_KEY` as master key for en- and decryption
      */
     @StringProperty('sakuli.encryption.key')
@@ -166,4 +160,16 @@ export class LegacyProjectProperties {
     @StringProperty('sakuli.screenshot.storage')
     screenshotStorage: ScreenshotFolderStructure = "hierarchical";
 
+    /**
+     * Delay between mouse actions e.g. mouse button down, mouse button up, scroll, etc. in ms
+     */
+    @NumberProperty('sakuli.mouse.action.delay')
+    @NumberProperty('sakuli.clickDelay')
+    mouseActionDelay: number = 10;
+
+    /**
+     * Configures the speed in pixels/second for mouse movement
+     */
+    @NumberProperty('sakuli.mouse.movement.speed')
+    mouseSpeed: number = 3000;
 }

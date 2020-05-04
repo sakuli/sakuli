@@ -1,9 +1,9 @@
-import {By} from "selenium-webdriver";
-import {isSibling} from "./is-sibling.function";
-import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { By } from "selenium-webdriver";
+import { isSibling } from "./is-sibling.function";
+import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(15_000);
+jest.setTimeout(60_000);
 describe('isSibling', () => {
 
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {

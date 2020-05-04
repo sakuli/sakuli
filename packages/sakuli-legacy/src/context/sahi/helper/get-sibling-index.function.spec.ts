@@ -1,22 +1,19 @@
-import {By} from "selenium-webdriver";
-import {getSiblingIndex} from "./get-sibling-index.function";
-import {createTestEnv, mockHtml, TestEnvironment} from "../__mocks__";
-import {getTestBrowserList} from "../__mocks__/get-browser-list.function";
+import { By } from "selenium-webdriver";
+import { getSiblingIndex } from "./get-sibling-index.function";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../__mocks__";
 
-jest.setTimeout(10000);
+jest.setTimeout(60_000);
 describe('getSiblingIndex', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
 
-        beforeEach(async done => {
+        beforeEach(async () => {
             env = createTestEnv(browser, local);
             await env.start();
-            done();
         });
 
-        afterEach(async (done) => {
+        afterEach(async () => {
             await env.stop();
-            done();
         });
 
         it.each(<number[]>[0, 1, 2])('should resolve #li-%i at this index', async (i: number) => {

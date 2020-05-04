@@ -1,20 +1,24 @@
-import {mouse, Point, Button as NutButton} from "@nut-tree/nut-js";
-import {MouseApi} from "./mouse.function";
-import {SakuliRegion} from "./__mocks__/sakuli-region.class";
-import {Mouse} from "@nut-tree/nut-js/dist/lib/mouse.class";
-import {MouseButton} from "../button.class";
+import { Button as NutButton, mouse, Point } from "@nut-tree/nut-js";
+import { createMouseApi } from "./mouse.function";
+import { SakuliRegion } from "./__mocks__/sakuli-region.class";
+import { Mouse } from "@nut-tree/nut-js/dist/lib/mouse.class";
+import { MouseButton } from "../button.class";
+import { mockPartial } from "sneer";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 beforeEach(() => {
     jest.resetAllMocks();
 });
 
-describe("MouseApi", () => {
+describe("mouseApi", () => {
+    const mouseApi = createMouseApi(mockPartial<LegacyProjectProperties>({}));
+
     it("should call mouse once on click", async () => {
         // GIVEN
         mouse.leftClick = jest.fn();
 
         // WHEN
-        await MouseApi.click();
+        await mouseApi.click();
 
         // THEN
         expect(mouse.leftClick).toHaveBeenCalledTimes(1);
@@ -25,7 +29,7 @@ describe("MouseApi", () => {
         mouse.leftClick = jest.fn();
 
         // WHEN
-        await MouseApi.doubleClick();
+        await mouseApi.doubleClick();
 
         // THEN
         expect(mouse.leftClick).toHaveBeenCalledTimes(2);
@@ -36,7 +40,7 @@ describe("MouseApi", () => {
         mouse.rightClick = jest.fn();
 
         // WHEN
-        await MouseApi.rightClick();
+        await mouseApi.rightClick();
 
         // THEN
         expect(mouse.rightClick).toHaveBeenCalledTimes(1);
@@ -52,8 +56,8 @@ describe("MouseApi", () => {
         mouse.releaseButton = jest.fn();
 
         // WHEN
-        await MouseApi.pressButton(actual);
-        await MouseApi.releaseButton(actual);
+        await mouseApi.pressButton(actual);
+        await mouseApi.releaseButton(actual);
 
         // THEN
         expect(mouse.pressButton).toHaveBeenCalledTimes(1);
@@ -67,7 +71,7 @@ describe("MouseApi", () => {
         mouse.scrollUp = jest.fn();
 
         // WHEN
-        await MouseApi.scrollUp(50);
+        await mouseApi.scrollUp(50);
 
         // THEN
         expect(mouse.scrollUp).toHaveBeenCalledTimes(1);
@@ -78,7 +82,7 @@ describe("MouseApi", () => {
         mouse.scrollDown = jest.fn();
 
         // WHEN
-        await MouseApi.scrollDown(50);
+        await mouseApi.scrollDown(50);
 
         // THEN
         expect(mouse.scrollDown).toHaveBeenCalledTimes(1);
@@ -89,7 +93,7 @@ describe("MouseApi", () => {
         mouse.scrollLeft = jest.fn();
 
         // WHEN
-        await MouseApi.scrollLeft(50);
+        await mouseApi.scrollLeft(50);
 
         // THEN
         expect(mouse.scrollLeft).toHaveBeenCalledTimes(1);
@@ -100,7 +104,7 @@ describe("MouseApi", () => {
         mouse.scrollRight = jest.fn();
 
         // WHEN
-        await MouseApi.scrollRight(50);
+        await mouseApi.scrollRight(50);
 
         // THEN
         expect(mouse.scrollRight).toHaveBeenCalledTimes(1);
@@ -117,7 +121,7 @@ describe("MouseApi", () => {
         });
 
         // WHEN
-        await MouseApi.dragAndDrop(source);
+        await mouseApi.dragAndDrop(source);
 
         // THEN
         expect((await capturedArgument).pop()).toEqual(target);
@@ -135,10 +139,42 @@ describe("MouseApi", () => {
         });
 
         // WHEN
-        await MouseApi.move(source);
+        await mouseApi.move(source);
 
         // THEN
         expect((await capturedArgument).pop()).toEqual(target);
         expect(mouse.move).toBeCalledTimes(1);
     });
+
+    it("should pass mouse action delay to nut-js ", async () => {
+
+        // GIVEN
+        const mouseActionDelay = getRandomInt(1000);
+
+        // WHEN
+        createMouseApi(mockPartial<LegacyProjectProperties>({
+            mouseActionDelay: mouseActionDelay
+        }));
+
+        // THEN
+        expect(mouse.config.autoDelayMs).toBe(mouseActionDelay);
+    });
+
+    it("should pass mouse speed to nut-js ", async () => {
+
+        // GIVEN
+        const mouseSpeed = getRandomInt(1000);
+
+        // WHEN
+        createMouseApi(mockPartial<LegacyProjectProperties>({
+            mouseSpeed: mouseSpeed
+        }));
+
+        // THEN
+        expect(mouse.config.mouseSpeed).toBe(mouseSpeed);
+    });
+
+    function getRandomInt(max: number) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
 });

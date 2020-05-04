@@ -2,22 +2,20 @@ import { isElementCovered } from "./is-element-covered.function";
 import { By } from "selenium-webdriver";
 import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
 
-jest.setTimeout(15_000);
+jest.setTimeout(60_000);
 describe('is-element-covered', () => {
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
         let env: TestEnvironment;
-        beforeEach(async done => {
+        beforeEach(async () => {
             env = createTestEnv(browser, local);
             await env.start();
-            done();
         });
 
-        afterEach(async done => {
+        afterEach(async () => {
             await env.stop();
-            done();
         });
 
-        it("should return false when not covered", async done => {
+        it("should return false when not covered", async () => {
             //GIVEN
             const {driver} = await env.getEnv();
             const html = mockHtml(`                                
@@ -32,10 +30,9 @@ describe('is-element-covered', () => {
 
             //THEN
             expect(result).toBe(false);
-            done();
         });
 
-        it("should return true when covered", async done => {
+        it("should return true when covered", async () => {
             //GIVEN
             const {driver} = await env.getEnv();
             const html = mockHtml(`                                
@@ -56,9 +53,6 @@ describe('is-element-covered', () => {
 
             //THEN
             expect(result).toBe(true);
-            done();
         })
-
-
     });
 });

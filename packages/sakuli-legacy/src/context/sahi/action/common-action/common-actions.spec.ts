@@ -1,5 +1,4 @@
-import { getTestBrowserList } from "../../__mocks__";
-import { createTestEnv, mockHtml, TestEnvironment } from "../../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment } from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
 import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { CommonActionsApi } from "./common-actions.interface";
@@ -158,7 +157,7 @@ describe('common-actions', () => {
 
             // THEN
             expect(result).toBeFalsy();
-            expect(duration).toBeGreaterThanOrEqual(2_000);
+            expect(duration).toBeGreaterThanOrEqual(1_999);
         });
     })
 });
