@@ -1,18 +1,28 @@
-import {By, ThenableWebDriver, WebElement} from "selenium-webdriver";
+import {By, ThenableWebDriver, WebDriver, WebElement} from "selenium-webdriver";
 import {scrollIntoViewIfNeeded} from "./scroll-into-view-if-needed.function";
 import {TestExecutionContext} from "@sakuli/core";
 import {createTestExecutionContextMock} from "../../../__mocks__";
 import {createTestEnv, getTestBrowserList, mockHtml, TestEnvironment} from "../../__mocks__";
+import {mockPartial} from "sneer";
+
+function mockExecuteScript<T>(promise: Promise<T>) {
+    const executeScriptFunction = jest.fn().mockResolvedValue(promise);
+    return mockPartial<WebElement>({
+        getDriver: () => mockPartial<WebDriver>({
+            executeAsyncScript: executeScriptFunction
+        })
+    });
+}
 
 describe("scroll into view if needed", () => {
 
     let ctx: TestExecutionContext;
 
-    beforeEach(() => {
+    beforeEach(() =>{
         ctx = createTestExecutionContextMock();
     });
 
-    it("should resolve if element is null", async () => {
+    it("should resolve to false if element is null", async () => {
 
         //GIVEN
 
@@ -20,9 +30,34 @@ describe("scroll into view if needed", () => {
         const scrollIntoView = scrollIntoViewIfNeeded((undefined as unknown) as WebElement, ctx);
 
         //THEN
-        await expect(scrollIntoView).resolves;
-        expect(ctx.logger.debug).toBeCalledWith("scroll into view failed: element was null or undefined")
+        await expect(scrollIntoView).resolves.toBeFalsy();
     });
+
+    it("should execute script on driver", async () => {
+
+        //GIVEN
+        const webElementMock = mockExecuteScript<boolean>(Promise.resolve(true));
+
+        //WHEN
+        const scrollIntoView = scrollIntoViewIfNeeded(webElementMock, ctx);
+
+        //THEN
+        await expect(scrollIntoView).resolves.toBeTruthy();
+        expect(webElementMock.getDriver().executeAsyncScript).toBeCalledWith(expect.any(String), webElementMock);
+    });
+
+    it("should resolve if script execution rejects", async () => {
+
+        //GIVEN
+        const webElementMock = mockExecuteScript(Promise.reject());
+
+        //WHEN
+        const scrollIntoView = scrollIntoViewIfNeeded(webElementMock, ctx);
+
+        //THEN
+        await expect(scrollIntoView).resolves.toBeFalsy();
+        expect(webElementMock.getDriver().executeAsyncScript).toBeCalledWith(expect.any(String), webElementMock);
+    })
 });
 
 describe('scrollIntoViewIfNeeded', () => {
