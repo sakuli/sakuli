@@ -17,7 +17,8 @@
     "sakuli",
     "e2e",
     "ui",
-    "testing"
+    "testing",
+    "sakuliPreset"
   ],
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
