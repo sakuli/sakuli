@@ -1,6 +1,6 @@
 import { MouseButton } from "../button.class";
 import { Key } from "../key.class";
-import { createKeyboardApi, MouseApi, runAsAction, ScreenApi } from "../actions";
+import { createKeyboardApi, createMouseApi, runAsAction, ScreenApi } from "../actions";
 import { Project, TestExecutionContext } from "@sakuli/core";
 
 import nutConfig from "../nut-global-config.class";
@@ -23,6 +23,7 @@ const determineResourcePath = (imageName: string) => {
 export function createRegionClass(ctx: TestExecutionContext, project: Project) {
     const props = project.objectFactory(LegacyProjectProperties);
     const keyboardApi = createKeyboardApi(props);
+    const mouseApi = createMouseApi(props);
 
     return class SakuliRegion implements Region {
         constructor(public _left?: number, public _top?: number, public _width?: number, public _height?: number) {
@@ -72,7 +73,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             return runAsAction(ctx, "click", async () => {
                 ctx.logger.debug(`Executing native click.`);
                 await this.center();
-                await MouseApi.click();
+                await mouseApi.click();
                 return this;
             })();
         }
@@ -81,7 +82,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             return runAsAction(ctx, "doubleClick", async () => {
                 ctx.logger.debug(`Executing native double click.`);
                 await this.center();
-                await MouseApi.doubleClick();
+                await mouseApi.doubleClick();
                 return this;
             })();
         }
@@ -90,7 +91,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             return runAsAction(ctx, "rightClick", async () => {
                 ctx.logger.debug(`Executing native right click.`);
                 await this.center();
-                await MouseApi.rightClick();
+                await mouseApi.rightClick();
                 return this;
             })();
         }
@@ -106,7 +107,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async mouseDown(mouseButton: MouseButton): Promise<Region> {
             return runAsAction(ctx, "mouseDown", async () => {
                 ctx.logger.debug("Mouse down");
-                await MouseApi.pressButton(mouseButton);
+                await mouseApi.pressButton(mouseButton);
                 return this;
             })();
         }
@@ -114,7 +115,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async mouseUp(mouseButton: MouseButton): Promise<Region> {
             return runAsAction(ctx, "mouseUp", async () => {
                 ctx.logger.debug("Mouse up");
-                await MouseApi.releaseButton(mouseButton);
+                await mouseApi.releaseButton(mouseButton);
                 return this;
             })();
         }
@@ -122,7 +123,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async dragAndDropTo(targetRegion: Region): Promise<Region> {
             return runAsAction(ctx, "dragAndDropTo", async () => {
                 ctx.logger.debug(`Dragging mouse to: (${await targetRegion.getX()},${await targetRegion.getY()},${await targetRegion.getW()},${await targetRegion.getH()})`);
-                await MouseApi.dragAndDrop(targetRegion);
+                await mouseApi.dragAndDrop(targetRegion);
                 return this;
             })();
         }
@@ -230,7 +231,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async mouseWheelDown(steps: number): Promise<Region> {
             return runAsAction(ctx, "mouseWheelDown", async () => {
                 ctx.logger.debug(`Scrolling down ${steps} steps`);
-                await MouseApi.scrollDown(steps);
+                await mouseApi.scrollDown(steps);
                 return this;
             })();
         }
@@ -238,7 +239,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         public async mouseWheelUp(steps: number): Promise<Region> {
             return runAsAction(ctx, "mouseWheelUp", async () => {
                 ctx.logger.debug(`Scrolling up ${steps} steps`);
-                await MouseApi.scrollUp(steps);
+                await mouseApi.scrollUp(steps);
                 return this;
             })();
         }
@@ -369,7 +370,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
 
         public async moveTo(dest?: Region) {
             const target = dest ? dest : this;
-            await MouseApi.move(target);
+            await mouseApi.move(target);
         }
 
         public toString(): string {

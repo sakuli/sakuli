@@ -2,7 +2,7 @@ import { Key } from "../key.class";
 import { CommandLineResult } from "./commandline-result.class";
 import { decrypt, getEncryptionKey } from "../secrets.function";
 import { Project, TestExecutionContext } from "@sakuli/core";
-import { ClipboardApi, createKeyboardApi, execute, MouseApi, runAsAction, ScreenApi } from "../actions";
+import { ClipboardApi, createKeyboardApi, createMouseApi, execute, runAsAction, ScreenApi } from "../actions";
 
 import nutConfig from "../nut-global-config.class";
 import { Environment } from "./environment.interface";
@@ -12,6 +12,7 @@ import { LegacyProjectProperties } from "../../../loader/legacy-project-properti
 export function createEnvironmentClass(ctx: TestExecutionContext, project: Project) {
     const props = project.objectFactory(LegacyProjectProperties);
     const keyboardApi = createKeyboardApi(props);
+    const mouseApi = createMouseApi(props);
 
     return class SakuliEnvironment implements Environment {
         constructor() {
@@ -209,7 +210,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async mouseWheelDown(steps: number): Promise<Environment> {
             return runAsAction(ctx, "mouseWheelDown", async () => {
                 ctx.logger.debug(`Scrolling down ${steps} px`);
-                await MouseApi.scrollDown(steps);
+                await mouseApi.scrollDown(steps);
                 return this;
             })();
         }
@@ -217,7 +218,7 @@ export function createEnvironmentClass(ctx: TestExecutionContext, project: Proje
         public async mouseWheelUp(steps: number): Promise<Environment> {
             return runAsAction(ctx, "mouseWheelUp", async () => {
                 ctx.logger.debug(`Scrolling up ${steps} px`);
-                await MouseApi.scrollUp(steps);
+                await mouseApi.scrollUp(steps);
                 return this;
             })();
         }

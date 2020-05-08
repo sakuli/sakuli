@@ -7,7 +7,7 @@ import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__"
 
 
-jest.setTimeout(25_000);
+jest.setTimeout(60_000);
 describe('action-api', () => {
 
     describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
