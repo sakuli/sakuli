@@ -5,8 +5,6 @@ import { Project } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import * as actions from "../actions";
 import { MouseButton } from "../button.class";
-import any = jasmine.any;
-import { Region } from "./region.interface";
 
 jest.mock("../actions");
 
@@ -21,10 +19,6 @@ describe("sakuli region class", () => {
   const sakuliRegion = new sakuliRegionClass();
 
   const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
-  actions.ScreenApi.highlight = jest.fn(
-    (regionToHighlight: Region) =>
-      new Promise<Region>((res) => res(regionToHighlight))
-  );
 
   let runAsActionSpy = jest.spyOn(actions, "runAsAction");
 
@@ -40,7 +34,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "click",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.move).toBeCalledWith(sakuliRegion);
     expect(mouseApi.click).toBeCalled();
@@ -55,7 +49,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "doubleClick",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.move).toBeCalledWith(sakuliRegion);
     expect(mouseApi.doubleClick).toBeCalled();
@@ -70,7 +64,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "rightClick",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.move).toBeCalledWith(sakuliRegion);
     expect(mouseApi.rightClick).toBeCalled();
@@ -88,7 +82,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "mouseDown",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.pressButton).toBeCalledWith(button);
     expect(region).toBeInstanceOf(sakuliRegionClass);
@@ -105,7 +99,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "mouseUp",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.releaseButton).toBeCalledWith(button);
     expect(region).toBeInstanceOf(sakuliRegionClass);
@@ -119,7 +113,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "dragAndDropTo",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.dragAndDrop).toBeCalledWith(sakuliRegion);
     expect(region).toBeInstanceOf(sakuliRegionClass);
@@ -136,7 +130,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "mouseWheelDown",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.scrollDown).toBeCalledWith(numberOfSteps);
     expect(region).toBeInstanceOf(sakuliRegionClass);
@@ -153,7 +147,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "mouseWheelUp",
-      any(Function)
+      expect.any(Function)
     );
     expect(mouseApi.scrollUp).toBeCalledWith(numberOfSteps);
     expect(region).toBeInstanceOf(sakuliRegionClass);
@@ -181,7 +175,7 @@ describe("sakuli region class", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "highlight",
-      any(Function)
+      expect.any(Function)
     );
     expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
     expect(actions.ScreenApi.highlight).toBeCalledWith(
@@ -189,5 +183,95 @@ describe("sakuli region class", () => {
       highlightDuration
     );
     expect(result).toEqual(sakuliRegion);
+  });
+
+  it("should let you update x coordinate", async () => {
+    // GIVEN
+    const newX = 42;
+
+    // WHEN
+    const result = await sakuliRegion.setX(newX);
+
+    // THEN
+    await expect(result.getX()).resolves.toBe(newX);
+  });
+
+  it("should let you update y coordinate", async () => {
+    // GIVEN
+    const newY = 23;
+
+    // WHEN
+    const result = await sakuliRegion.setY(newY);
+
+    // THEN
+    await expect(result.getY()).resolves.toBe(newY);
+  });
+
+  it("should let you update height", async () => {
+    // GIVEN
+    const newH = 123;
+
+    // WHEN
+    const result = await sakuliRegion.setH(newH);
+
+    // THEN
+    await expect(result.getH()).resolves.toBe(newH);
+  });
+
+  it("should let you update width", async () => {
+    // GIVEN
+    const newW = 815;
+
+    // WHEN
+    const result = await sakuliRegion.setW(newW);
+
+    // THEN
+    await expect(result.getW()).resolves.toBe(newW);
+  });
+
+  it("should take a screenshot with a given filename", async () => {
+    // GIVEN
+    const filename = "test_screenshot";
+
+    // WHEN
+    await sakuliRegion.takeScreenshot(filename);
+
+    // THEN
+    expect(runAsActionSpy).toBeCalledWith(
+      testExecutionContextMock,
+      "takeScreenshot",
+      expect.any(Function)
+    );
+    expect(actions.ScreenApi.takeScreenshot).toBeCalledTimes(1);
+    expect(actions.ScreenApi.takeScreenshot).toBeCalledWith(filename);
+  });
+
+  it("should take a screenshot and append a timestamp to the filename", async () => {
+    // GIVEN
+    const filename = "test_screenshot";
+
+    // WHEN
+    await sakuliRegion.takeScreenshotWithTimestamp(filename);
+
+    // THEN
+    expect(runAsActionSpy).toBeCalledWith(
+      testExecutionContextMock,
+      "takeScreenshotWithTimestamp",
+      expect.any(Function)
+    );
+    expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
+    expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(
+      filename
+    );
+  });
+
+  it("should throw on not implemented method 'extractText'", async () => {
+    //GIVEN
+
+    //WHEN
+    const SUT = sakuliRegion.extractText;
+
+    //THEN
+    await expect(SUT()).rejects.toThrowError("Not Implemented");
   });
 });
