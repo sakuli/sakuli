@@ -110,7 +110,7 @@ describe("scrollIntoViewIfNeeded", () => {
         await driver.get(
           mockHtml(
             `
-                <div id="long-scroll" style="height: 100px;"></div>
+                <div id="long-scroll" style="height: 10000000px;"></div>
                 <button id="click-me" onclick="alert('clicked!')">Click me after scrolling!</button>
             `,
             {
@@ -135,7 +135,7 @@ describe("scrollIntoViewIfNeeded", () => {
         const alertText = await getAlertText(driver);
 
         // THEN
-        expect(hasScrolled).toBeFalsy();
+        expect(hasScrolled).toBeTruthy();
         expect(alertText).toBe(expectedAlertText);
       });
 
