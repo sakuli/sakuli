@@ -17,7 +17,6 @@ describe("loadBootstrapOptions", () => {
 
   it("should return bar as bootstrapOption", async () => {
     //GIVEN
-    jest.spyOn(process, "cwd");
     (<jest.Mock>getNodeModulesPaths).mockReturnValue("foo");
     (<jest.Mock>getSakuliPresets).mockReturnValue("bar");
 
@@ -25,15 +24,11 @@ describe("loadBootstrapOptions", () => {
     const bootstrapOptions = await loadBootstrapOptions();
 
     //THEN
-    expect(process.cwd).toHaveBeenCalledTimes(1);
-    expect(getNodeModulesPaths).toHaveBeenCalledTimes(1);
-    expect(getSakuliPresets).toHaveBeenCalledWith("foo");
     expect(bootstrapOptions.presetProvider).toContain("bar");
   });
 
   it("should return SakuliBootstrapDefaults when getNodeModulesPaths throws error", async () => {
     // GIVEN
-    jest.spyOn(process, "cwd");
     (<jest.Mock>getNodeModulesPaths).mockImplementation(() => {
       throw Error();
     });
@@ -42,15 +37,11 @@ describe("loadBootstrapOptions", () => {
     const bootstrapOptions = await loadBootstrapOptions();
 
     // THEN
-    expect(process.cwd).toHaveBeenCalledTimes(1);
-    expect(getNodeModulesPaths).toThrowError();
-    expect(getSakuliPresets).not.toBeCalled();
     expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
   });
 
   it("should return SakuliBootstrapDefaults when getSakuliPresets throws error", async () => {
     // GIVEN
-    jest.spyOn(process, "cwd");
     (<jest.Mock>getSakuliPresets).mockImplementation(() => {
       throw Error();
     });
@@ -59,9 +50,6 @@ describe("loadBootstrapOptions", () => {
     const bootstrapOptions = await loadBootstrapOptions();
 
     // THEN
-    expect(process.cwd).toHaveBeenCalledTimes(1);
-    expect(getNodeModulesPaths).toBeCalledTimes(1);
-    expect(getSakuliPresets).toThrowError();
     expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
   });
 });
