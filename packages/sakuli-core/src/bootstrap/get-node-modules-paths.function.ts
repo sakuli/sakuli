@@ -2,7 +2,9 @@ import { join, resolve } from "path";
 import execa from "execa";
 import { isExistingDirectory } from "./is-existing-directory.function";
 
-export const getNodeModulesPaths = async (path: string = ".") => {
+export const getNodeModulesPaths = async (
+  path: string = "."
+): Promise<string[]> => {
   let nodeModulesPaths: string[] = [];
   let previous: string;
 
