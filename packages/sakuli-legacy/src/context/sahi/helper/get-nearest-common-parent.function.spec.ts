@@ -8,30 +8,35 @@ import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
 jest.setTimeout(50000);
 
-describe('getNearestCommonParent', () => {
-    describe.each(getTestBrowserList())('%s', (browser: "firefox" | "chrome", local: boolean) => {
-        let api: ReturnType<typeof relationsApi>;
-        const testExecutionContext = createTestExecutionContextMock();
+describe("getNearestCommonParent", () => {
+  describe.each(getTestBrowserList())(
+    "%s",
+    (browser: "firefox" | "chrome", local: boolean) => {
+      let api: ReturnType<typeof relationsApi>;
+      const testExecutionContext = createTestExecutionContextMock();
 
-        let env: TestEnvironment;
-        beforeAll(async done => {
-            env = createTestEnv(browser, local);
-            await env.start();
-            const {driver} = await env.getEnv();
-            const accessorUtil = new AccessorUtil(driver, testExecutionContext, new RelationsResolver(driver, testExecutionContext));
-            api = relationsApi(driver, accessorUtil, testExecutionContext);
-            done();
-        });
+      let env: TestEnvironment;
+      beforeAll(async (done) => {
+        env = createTestEnv(browser, local);
+        await env.start();
+        const { driver } = await env.getEnv();
+        const accessorUtil = new AccessorUtil(
+          driver,
+          testExecutionContext,
+          new RelationsResolver(driver, testExecutionContext)
+        );
+        api = relationsApi(driver, accessorUtil, testExecutionContext);
+        done();
+      });
 
-        afterAll(async done => {
-            await env.stop();
-            done();
-        });
+      afterAll(async (done) => {
+        await env.stop();
+        done();
+      });
 
-
-        it('should find a common parent', async done => {
-            const {driver} = await env.getEnv();
-            const html = mockHtml(`                                
+      it("should find a common parent", async (done) => {
+        const { driver } = await env.getEnv();
+        const html = mockHtml(`                                
           <div>       
             <ul id="parent">
               <li>
@@ -46,12 +51,13 @@ describe('getNearestCommonParent', () => {
             </ul>
           </div>
                 `);
-            await driver.get(html);
-            const a = await driver.findElement(By.css('#a'));
-            const b = await driver.findElement(By.css('#b'));
-            const ncp = await getNearestCommonParent(a, b);
-            await expect(ncp.getAttribute('id')).resolves.toBe('parent');
-            done();
-        });
-    });
+        await driver.get(html);
+        const a = await driver.findElement(By.css("#a"));
+        const b = await driver.findElement(By.css("#b"));
+        const ncp = await getNearestCommonParent(a, b);
+        await expect(ncp.getAttribute("id")).resolves.toBe("parent");
+        done();
+      });
+    }
+  );
 });

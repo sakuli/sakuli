@@ -1,7 +1,5 @@
-import {createServer} from 'http';
+import {createServer} from "http";
 
 const server = createServer(() => {});
 
-export {
-    server
-}
+export { server };

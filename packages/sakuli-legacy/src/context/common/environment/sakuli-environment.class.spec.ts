@@ -9,44 +9,50 @@ import any = jasmine.any;
 jest.mock("../actions");
 
 describe("sakuli environment", () => {
-
-    const testExecutionContextMock = createTestExecutionContextMock();
-    const sakuliEnvironmentClass = createEnvironmentClass(
-        testExecutionContextMock,
-        mockPartial<Project>({
-            objectFactory: jest.fn().mockReturnValue(new LegacyProjectProperties())
-        }));
-    const sakuliEnvironment = new sakuliEnvironmentClass();
-
-    const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
-
-    let runAsActionSpy = jest.spyOn(actions, "runAsAction");
-
-    it("should scroll down on mouseWheelDown", async () => {
-
-        //GIVEN
-        const numberOfSteps = 42;
-
-        //WHEN
-        const environment = await sakuliEnvironment.mouseWheelDown(numberOfSteps);
-
-        //THEN
-        expect(mouseApi.scrollDown).toBeCalledWith(numberOfSteps);
-        expect(environment).toBeInstanceOf(sakuliEnvironmentClass);
-        expect(runAsActionSpy).toBeCalledWith(testExecutionContextMock, "mouseWheelDown", any(Function));
+  const testExecutionContextMock = createTestExecutionContextMock();
+  const sakuliEnvironmentClass = createEnvironmentClass(
+    testExecutionContextMock,
+    mockPartial<Project>({
+      objectFactory: jest.fn().mockReturnValue(new LegacyProjectProperties()),
     })
+  );
+  const sakuliEnvironment = new sakuliEnvironmentClass();
 
-    it("should scroll up on mouseWheelUp", async () => {
+  const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
 
-        //GIVEN
-        const numberOfSteps = 42;
+  let runAsActionSpy = jest.spyOn(actions, "runAsAction");
 
-        //WHEN
-        const environment = await sakuliEnvironment.mouseWheelUp(numberOfSteps);
+  it("should scroll down on mouseWheelDown", async () => {
+    //GIVEN
+    const numberOfSteps = 42;
 
-        //THEN
-        expect(mouseApi.scrollUp).toBeCalledWith(numberOfSteps);
-        expect(environment).toBeInstanceOf(sakuliEnvironmentClass);
-        expect(runAsActionSpy).toBeCalledWith(testExecutionContextMock, "mouseWheelUp", any(Function));
-    })
-})
+    //WHEN
+    const environment = await sakuliEnvironment.mouseWheelDown(numberOfSteps);
+
+    //THEN
+    expect(mouseApi.scrollDown).toBeCalledWith(numberOfSteps);
+    expect(environment).toBeInstanceOf(sakuliEnvironmentClass);
+    expect(runAsActionSpy).toBeCalledWith(
+      testExecutionContextMock,
+      "mouseWheelDown",
+      any(Function)
+    );
+  });
+
+  it("should scroll up on mouseWheelUp", async () => {
+    //GIVEN
+    const numberOfSteps = 42;
+
+    //WHEN
+    const environment = await sakuliEnvironment.mouseWheelUp(numberOfSteps);
+
+    //THEN
+    expect(mouseApi.scrollUp).toBeCalledWith(numberOfSteps);
+    expect(environment).toBeInstanceOf(sakuliEnvironmentClass);
+    expect(runAsActionSpy).toBeCalledWith(
+      testExecutionContextMock,
+      "mouseWheelUp",
+      any(Function)
+    );
+  });
+});

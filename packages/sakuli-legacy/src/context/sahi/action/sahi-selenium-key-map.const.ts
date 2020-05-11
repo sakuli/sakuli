@@ -1,4 +1,5 @@
-import {Key} from 'selenium-webdriver';
+import { Key } from "selenium-webdriver";
+
 /**
  *
  *
@@ -9,15 +10,15 @@ import {Key} from 'selenium-webdriver';
  */
 
 const SahiSeleniumKeyMap = new Map<string, string>([
-    ["CTRL", Key.CONTROL],
-    ["SHIFT", Key.SHIFT],
-    ["ALT", Key.ALT],
-    ["META", Key.META],
+  ["CTRL", Key.CONTROL],
+  ["SHIFT", Key.SHIFT],
+  ["ALT", Key.ALT],
+  ["META", Key.META],
 ]);
 
 export function getSeleniumKeysFromComboString(combo: string): string[] {
-    const keys = combo.split('|');
-    return keys
-        .filter(k => SahiSeleniumKeyMap.has(k))
-        .map(k => SahiSeleniumKeyMap.get(k)!)
+  const keys = combo.split("|");
+  return keys
+    .filter((k) => SahiSeleniumKeyMap.has(k))
+    .map((k) => SahiSeleniumKeyMap.get(k)!);
 }

@@ -1,93 +1,93 @@
-import {MouseButton} from "../button.class";
-import {Key} from "../key.class";
+import { MouseButton } from "../button.class";
+import { Key } from "../key.class";
 
 /**
  * A Region on the screen XOXO
  */
 export interface Region {
-    find(imageName: string): Promise<Region>;
+  find(imageName: string): Promise<Region>;
 
-    findRegion(): Promise<Region>;
+  findRegion(): Promise<Region>;
 
-    exists(imageName: string, optWaitSeconds: number): Promise<Region>;
+  exists(imageName: string, optWaitSeconds: number): Promise<Region>;
 
-    click(): Promise<Region>;
+  click(): Promise<Region>;
 
-    doubleClick(): Promise<Region>;
+  doubleClick(): Promise<Region>;
 
-    rightClick(): Promise<Region>;
+  rightClick(): Promise<Region>;
 
-    mouseMove(): Promise<Region>;
+  mouseMove(): Promise<Region>;
 
-    mouseDown(mouseButton: MouseButton): Promise<Region>;
+  mouseDown(mouseButton: MouseButton): Promise<Region>;
 
-    mouseUp(mouseButton: MouseButton): Promise<Region>;
+  mouseUp(mouseButton: MouseButton): Promise<Region>;
 
-    dragAndDropTo(targetRegion: Region): Promise<Region>;
+  dragAndDropTo(targetRegion: Region): Promise<Region>;
 
-    waitForImage(imageName: string, seconds: number): Promise<Region>;
+  waitForImage(imageName: string, seconds: number): Promise<Region>;
 
-    paste(text: string): Promise<Region>;
+  paste(text: string): Promise<Region>;
 
-    pasteMasked(text: string): Promise<Region>;
+  pasteMasked(text: string): Promise<Region>;
 
-    pasteAndDecrypt(text: string): Promise<Region>;
+  pasteAndDecrypt(text: string): Promise<Region>;
 
-    type(text: string, ...optModifiers: Key[]): Promise<Region>;
+  type(text: string, ...optModifiers: Key[]): Promise<Region>;
 
-    typeMasked(text: string, ...optModifiers: Key[]): Promise<Region>;
+  typeMasked(text: string, ...optModifiers: Key[]): Promise<Region>;
 
-    typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Region>;
+  typeAndDecrypt(text: string, ...optModifiers: Key[]): Promise<Region>;
 
-    keyDown(...keys: Key[]): Promise<Region>;
+  keyDown(...keys: Key[]): Promise<Region>;
 
-    keyUp(...keys: Key[]): Promise<Region>;
+  keyUp(...keys: Key[]): Promise<Region>;
 
-    write(text: string): Promise<Region>;
+  write(text: string): Promise<Region>;
 
-    deleteChars(amountOfChars: number): Promise<Region>;
+  deleteChars(amountOfChars: number): Promise<Region>;
 
-    mouseWheelDown(steps: number): Promise<Region>;
+  mouseWheelDown(steps: number): Promise<Region>;
 
-    mouseWheelUp(steps: number): Promise<Region>;
+  mouseWheelUp(steps: number): Promise<Region>;
 
-    move(offsetX: number, offsetY: number): Promise<Region>;
+  move(offsetX: number, offsetY: number): Promise<Region>;
 
-    grow(range: number): Promise<Region>;
+  grow(range: number): Promise<Region>;
 
-    above(range: number): Promise<Region>;
+  above(range: number): Promise<Region>;
 
-    below(range: number): Promise<Region>;
+  below(range: number): Promise<Region>;
 
-    left(range: number): Promise<Region>;
+  left(range: number): Promise<Region>;
 
-    right(range: number): Promise<Region>;
+  right(range: number): Promise<Region>;
 
-    setH(height: number): Promise<Region>;
+  setH(height: number): Promise<Region>;
 
-    getH(): Promise<number | undefined>;
+  getH(): Promise<number | undefined>;
 
-    setW(width: number): Promise<Region>;
+  setW(width: number): Promise<Region>;
 
-    getW(): Promise<number | undefined>;
+  getW(): Promise<number | undefined>;
 
-    setX(x: number): Promise<Region>;
+  setX(x: number): Promise<Region>;
 
-    getX(): Promise<number | undefined>;
+  getX(): Promise<number | undefined>;
 
-    setY(y: number): Promise<Region>;
+  setY(y: number): Promise<Region>;
 
-    getY(): Promise<number | undefined>;
+  getY(): Promise<number | undefined>;
 
-    highlight(seconds: number): Promise<Region>;
+  highlight(seconds: number): Promise<Region>;
 
-    takeScreenshot(filename: string): Promise<string>;
+  takeScreenshot(filename: string): Promise<string>;
 
-    takeScreenshotWithTimestamp(filename: string): Promise<string>;
+  takeScreenshotWithTimestamp(filename: string): Promise<string>;
 
-    sleep(seconds: number): Promise<Region>;
+  sleep(seconds: number): Promise<Region>;
 
-    sleepMs(milliseconds: number): Promise<Region>;
+  sleepMs(milliseconds: number): Promise<Region>;
 
-    extractText(): Promise<Region>;
+  extractText(): Promise<Region>;
 }

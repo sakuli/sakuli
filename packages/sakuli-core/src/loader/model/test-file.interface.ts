@@ -1,3 +1,3 @@
 export interface TestFile {
-    path: string;
+  path: string;
 }
