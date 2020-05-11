@@ -14,12 +14,12 @@ describe("getPackageBootstrapTasks", () => {
   it("should return a list of three tasks", () => {
     const list = getPackageBootstrapTasks("package", {});
 
-    expect(list.length).toBe(3);
+    expect(list.length).toBe(2);
   });
 
   it("should call proper task factories", () => {
     const config = {};
-    const list = getPackageBootstrapTasks("package", config);
+    getPackageBootstrapTasks("package", config);
 
     expect(installPackageTask).toHaveBeenCalledWith("package");
     expect(configureFeatureTask).toHaveBeenCalledWith(config);
