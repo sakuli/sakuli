@@ -28,6 +28,6 @@ describe("is-sakuli-preset", () => {
       keywords: ["foo", "sakuliPreset", "bar"],
     };
 
-    expect(isSakuliPreset(info)).toBeFalsy();
+    expect(isSakuliPreset(info)).toBeTruthy();
   });
 });
