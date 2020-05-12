@@ -6,51 +6,52 @@ const execa: jest.Mock = require("execa");
 jest.mock("execa", () => jest.fn());
 describe("get-node-modules-paths", () => {
   beforeEach(() => {
-    (<jest.Mock>execa).mockReturnValueOnce({ stdout: "/execa" });
+    (<jest.Mock>execa)
+      .mockReturnValueOnce({ stdout: "/sakuli-test/node_modules" })
+      .mockReturnValueOnce({ stdout: "/npm-root/node_modules" });
   });
 
-  it("should return empty array", async () => {
+  it("should return empty array when global and package level node_modules does not exist", async () => {
     // GIVEN
-    const path = "/foo/bar";
     mockFs({
       "/mockedFileSystem": {},
     });
 
     // WHEN
-    const nodeModulesPaths = await getNodeModulesPaths(path);
+    const nodeModulesPaths = await getNodeModulesPaths();
 
     // THEN
     expect(nodeModulesPaths).toEqual([]);
   });
 
-  it("should return three module paths", async () => {
+  it("should return global and package level node_modules", async () => {
     // GIVEN
-    const path = "/foo/bar";
     mockFs({
-      "/execa": {
+      "/npm-root": {
         node_modules: {
           "@sakuli": {},
         },
       },
-      "/foo": {
-        bar: {},
+      "/sakuli-test": {
+        "test-suite": {},
         node_modules: {
           "@sakuli": {},
         },
       },
-      "/node_modules": {
-        "@sakuli": {},
+      "/another-dir": {
+        node_modules: {
+          "@sakuli": {},
+        },
       },
     });
 
     // WHEN
-    const nodeModulesPaths = await getNodeModulesPaths(path);
+    const nodeModulesPaths = await getNodeModulesPaths();
 
     // THEN
     expect(nodeModulesPaths).toEqual([
-      "/foo/node_modules/@sakuli",
-      "/node_modules/@sakuli",
-      "/execa/@sakuli",
+      "/sakuli-test/node_modules",
+      "/npm-root/node_modules",
     ]);
   });
 

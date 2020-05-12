@@ -3,7 +3,6 @@ import {
   SakuliBootstrapOptions,
 } from "./bootstrap-options.interface";
 import { ifPresent, Maybe } from "@sakuli/commons";
-import { cwd } from "process";
 import { getNodeModulesPaths } from "./get-node-modules-paths.function";
 import { getSakuliPresets } from "./get-sakuli-presets.function";
 
@@ -17,12 +16,11 @@ import { getSakuliPresets } from "./get-sakuli-presets.function";
  */
 export async function loadBootstrapOptions(): Promise<SakuliBootstrapOptions> {
   let conf: Maybe<SakuliBootstrapOptions>;
-  let path = cwd();
 
   try {
     let sakuliAutoDiscovery: SakuliBootstrapOptions = { presetProvider: [] };
 
-    const nodeModulesPaths = await getNodeModulesPaths(path);
+    const nodeModulesPaths = await getNodeModulesPaths();
     sakuliAutoDiscovery.presetProvider = getSakuliPresets(nodeModulesPaths);
     conf = sakuliAutoDiscovery;
   } catch (e) {}

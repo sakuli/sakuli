@@ -1,26 +1,27 @@
-import { join, resolve } from "path";
 import execa from "execa";
 import { isExistingDirectory } from "./is-existing-directory.function";
 
-export const getNodeModulesPaths = async (
-  path: string = "."
-): Promise<string[]> => {
+export const getNodeModulesPaths = async (): Promise<string[]> => {
   let nodeModulesPaths: string[] = [];
-  let previous: string;
+  let candidates: string[] = [];
 
-  do {
-    const modules = join(path, "node_modules/@sakuli");
-    if (isExistingDirectory(modules)) {
-      nodeModulesPaths.push(modules);
+  candidates.push(await getPackageNodeModules());
+  candidates.push(await getGlobalNodeModules());
+
+  for (const candidate of candidates) {
+    if (isExistingDirectory(candidate)) {
+      nodeModulesPaths.push(candidate);
     }
-
-    previous = path;
-    path = resolve(join(previous, ".."));
-  } while (previous !== path);
-
-  let { stdout } = await execa("npm", ["root", "-g"]);
-  if (isExistingDirectory(stdout)) {
-    nodeModulesPaths.push(`${stdout}/@sakuli`);
   }
   return nodeModulesPaths;
+};
+
+const getPackageNodeModules = async (): Promise<string> => {
+  const { stdout } = await execa("npm", ["root"]);
+  return stdout;
+};
+
+const getGlobalNodeModules = async (): Promise<string> => {
+  const { stdout } = await execa("npm", ["root", "-g"]);
+  return stdout;
 };

@@ -2,23 +2,32 @@ import mockFs from "mock-fs";
 import { getSakuliPresets } from "./get-sakuli-presets.function";
 
 describe("get-sakuli-presets", () => {
-  it("should return execa package name", () => {
+  it("should return @sakuli/legacy as sakuli preset", () => {
     mockFs({
-      "/base": {
-        execa: {
-          "package.json":
-            '{ "name": "sakuli", "keywords": [ "sakuliPreset" ] }',
+      node_modules: {
+        "@custom": {
+          preset: {
+            "package.json":
+              '{ "name": "@custom/preset", "keywords": [ "sakuliPreset" ] }',
+          },
         },
-        foo: {
-          "package.json": '{ "name": "just another package json" }',
+        "@sakuli": {
+          cli: {
+            "package.json":
+              '{ "name": "@sakuli/cli", "keywords": [ "e2e", "sakuli" ] }',
+          },
+          legacy: {
+            "package.json":
+              '{ "name": "@sakuli/legacy", "keywords": [ "sakuliPreset" ] }',
+          },
+          "empty-dir": {},
         },
-        "empty-dir": {},
       },
     });
 
-    const sakuliPresets = getSakuliPresets(["/base"]);
+    const sakuliPresets = getSakuliPresets(["node_modules"]);
 
-    expect(sakuliPresets).toEqual(["sakuli"]);
+    expect(sakuliPresets).toEqual(["@sakuli/legacy"]);
   });
 
   afterEach(() => {
