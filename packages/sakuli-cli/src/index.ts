@@ -11,11 +11,12 @@ import { cli } from "./cli-utils/command-line.class";
 
 declare function require(id: string): any;
 
-require("yargonaut").helpStyle("green").errorsStyle("red.bold");
-
 (async () => {
   const options = await loadBootstrapOptions();
   const sakuli = await bootstrap(options, loadPresets);
+  const yargonaut = require("yargonaut");
+
+  yargonaut.helpStyle("green").errorsStyle("red.bold");
   cli()
     .savePosition()
     .write(
