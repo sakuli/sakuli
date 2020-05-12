@@ -11,14 +11,14 @@ export function getSakuliPresets(nodeModulesPaths: string[]): string[] {
       candidates.push(name);
     });
     candidates.forEach((name) => {
-      const infoFile = join(basePath, name, "package.json");
-      if (!existsSync(infoFile)) {
+      const dependencyInfoFile = join(basePath, name, "package.json");
+      if (!existsSync(dependencyInfoFile)) {
         return;
       }
 
-      const info = JSON.parse(readFileSync(infoFile, "utf-8"));
-      if (isSakuliPreset(info) && !sakuliPresets.includes(info)) {
-        sakuliPresets.push(info.name);
+      const dependency = JSON.parse(readFileSync(dependencyInfoFile, "utf-8"));
+      if (isSakuliPreset(dependency) && !sakuliPresets.includes(dependency)) {
+        sakuliPresets.push(dependency.name);
       }
     });
   }
