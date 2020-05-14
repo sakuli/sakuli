@@ -1,6 +1,6 @@
 (async () => {
     const testCase = new TestCase("Fry a typed egg");
-    const url = "https://codepen.io/naturalhanglider/full/jQMWoq";
+    const url = "https://sakuli.io/e2e-pages/fryed-egg";
     const screen = new Region();
     const env = new Environment();
     try {
