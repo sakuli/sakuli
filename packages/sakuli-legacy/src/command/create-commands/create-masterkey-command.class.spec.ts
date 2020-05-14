@@ -6,9 +6,9 @@ describe("encrypt-command", () => {
   let mockExit: any;
 
   beforeEach(() => {
-    // @ts-ignore
     mockExit = jest
       .spyOn(process, "exit")
+      // @ts-ignore
       .mockImplementation((code?: number | undefined) => {});
   });
 
