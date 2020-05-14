@@ -1,11 +1,11 @@
 import { Argv } from "yargs";
 import {
-    createPackageJson,
-    createTestcaseDirectory,
-    createTestcaseFile,
-    createTestsuiteDirectory,
-    createTestsuiteProperties,
-    createTestsuiteSuite,
+  createPackageJson,
+  createTestcaseDirectory,
+  createTestcaseFile,
+  createTestsuiteDirectory,
+  createTestsuiteProperties,
+  createTestsuiteSuite,
 } from "../../init-command/create-structure";
 import chalk from "chalk";
 import { existsSync, readdirSync } from "fs";

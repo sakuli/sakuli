@@ -1,12 +1,12 @@
 import { TestSuiteContext } from "./test-suite-context.class";
 import { Maybe, SimpleLogger, throwIfAbsent } from "@sakuli/commons";
 import {
-    FinishedMeasurable,
-    getDuration,
-    isFinished,
-    isStarted,
-    Measurable,
-    StartedMeasurable,
+  FinishedMeasurable,
+  getDuration,
+  isFinished,
+  isStarted,
+  Measurable,
+  StartedMeasurable,
 } from "./measureable.interface";
 import { TestCaseContext } from "./test-case-context.class";
 import { TestStepContext } from "./test-step-context.class";
@@ -16,29 +16,29 @@ import { TestExecutionContextRaw } from "./test-execution-context-raw.interface"
 import { TestContextEntityState } from "./test-context-entity-state.class";
 import { EventEmitter } from "events";
 import {
-    END_EXECUTION,
-    END_TESTACTION,
-    END_TESTCASE,
-    END_TESTSTEP,
-    END_TESTSUITE,
-    START_EXECUTION,
-    START_TESTACTION,
-    START_TESTCASE,
-    START_TESTSTEP,
-    START_TESTSUITE,
-    TestActionChangeListener,
-    TestActionEndListener,
-    TestCaseChangeListener,
-    TestCaseEndListener,
-    TestExecutionContextEventTypes,
-    TestStepChangeListener,
-    TestStepEndListener,
-    TestSuiteChangeListener,
-    TestSuiteEndListener,
-    UPDATE_TESTACTION,
-    UPDATE_TESTCASE,
-    UPDATE_TESTSTEP,
-    UPDATE_TESTSUITE,
+  END_EXECUTION,
+  END_TESTACTION,
+  END_TESTCASE,
+  END_TESTSTEP,
+  END_TESTSUITE,
+  START_EXECUTION,
+  START_TESTACTION,
+  START_TESTCASE,
+  START_TESTSTEP,
+  START_TESTSUITE,
+  TestActionChangeListener,
+  TestActionEndListener,
+  TestCaseChangeListener,
+  TestCaseEndListener,
+  TestExecutionContextEventTypes,
+  TestStepChangeListener,
+  TestStepEndListener,
+  TestSuiteChangeListener,
+  TestSuiteEndListener,
+  UPDATE_TESTACTION,
+  UPDATE_TESTCASE,
+  UPDATE_TESTSTEP,
+  UPDATE_TESTSUITE,
 } from "./test-execution-context.events";
 
 export type TestExecutionChangeListener = (state: TestExecutionContext) => void;

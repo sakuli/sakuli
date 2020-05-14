@@ -3,21 +3,21 @@ import { TestSuiteContext } from "./test-suite-context.class";
 import { mockPartial } from "sneer";
 import { SimpleLogger } from "@sakuli/commons";
 import {
-    END_EXECUTION,
-    END_TESTACTION,
-    END_TESTCASE,
-    END_TESTSTEP,
-    END_TESTSUITE,
-    START_EXECUTION,
-    START_TESTACTION,
-    START_TESTCASE,
-    START_TESTSTEP,
-    START_TESTSUITE,
-    TestExecutionContextEventTypes,
-    UPDATE_TESTACTION,
-    UPDATE_TESTCASE,
-    UPDATE_TESTSTEP,
-    UPDATE_TESTSUITE,
+  END_EXECUTION,
+  END_TESTACTION,
+  END_TESTCASE,
+  END_TESTSTEP,
+  END_TESTSUITE,
+  START_EXECUTION,
+  START_TESTACTION,
+  START_TESTCASE,
+  START_TESTSTEP,
+  START_TESTSUITE,
+  TestExecutionContextEventTypes,
+  UPDATE_TESTACTION,
+  UPDATE_TESTCASE,
+  UPDATE_TESTSTEP,
+  UPDATE_TESTSUITE,
 } from "./test-execution-context.events";
 
 describe("TestExecutionContext", () => {

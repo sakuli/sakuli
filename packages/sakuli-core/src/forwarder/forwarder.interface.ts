@@ -1,10 +1,10 @@
 import {
-    FinishedMeasurable,
-    TestActionContext,
-    TestCaseContext,
-    TestExecutionContext,
-    TestStepContext,
-    TestSuiteContext,
+  FinishedMeasurable,
+  TestActionContext,
+  TestCaseContext,
+  TestExecutionContext,
+  TestStepContext,
+  TestSuiteContext,
 } from "../runner/test-execution-context";
 import { Project } from "../loader";
 import { SimpleLogger } from "@sakuli/commons";

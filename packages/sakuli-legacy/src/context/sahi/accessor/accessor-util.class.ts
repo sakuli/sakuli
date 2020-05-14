@@ -1,25 +1,34 @@
-import { Locator, ThenableWebDriver, until, WebElement, } from "selenium-webdriver";
+import {
+  Locator,
+  ThenableWebDriver,
+  until,
+  WebElement,
+} from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
 import { types } from "util";
 import {
-    AccessorIdentifierAttributes,
-    AccessorIdentifierAttributesWithClassName,
-    AccessorIdentifierAttributesWithSahiIndex,
-    isAccessorIdentifierAttributes,
-    isAccessorIdentifierAttributesWithClassName,
-    isAccessorIdentifierAttributesWithSahiIndex,
-    isAccessorIdentifierAttributesWithText,
+  AccessorIdentifierAttributes,
+  AccessorIdentifierAttributesWithClassName,
+  AccessorIdentifierAttributesWithSahiIndex,
+  isAccessorIdentifierAttributes,
+  isAccessorIdentifierAttributesWithClassName,
+  isAccessorIdentifierAttributesWithSahiIndex,
+  isAccessorIdentifierAttributesWithText,
 } from "./accessor-model.interface";
 import { RelationsResolver } from "../relations";
 import {
-    isSahiElementQuery,
-    SahiElementQuery,
-    SahiElementQueryOrWebElement,
-    sahiQueryToString,
+  isSahiElementQuery,
+  SahiElementQuery,
+  SahiElementQueryOrWebElement,
+  sahiQueryToString,
 } from "../sahi-element.interface";
 import { ifPresent } from "@sakuli/commons";
 import { AccessorIdentifier } from "../api";
-import { CHECK_OPEN_REQUESTS, INJECT_SAKULI_HOOK, RESET_OPEN_REQUESTS, } from "../action/inject.const";
+import {
+  CHECK_OPEN_REQUESTS,
+  INJECT_SAKULI_HOOK,
+  RESET_OPEN_REQUESTS,
+} from "../action/inject.const";
 
 export class AccessorUtil {
   constructor(

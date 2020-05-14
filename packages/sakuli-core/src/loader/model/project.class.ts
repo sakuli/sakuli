@@ -1,11 +1,11 @@
 import { TestFile } from "./test-file.interface";
 import {
-    CascadingPropertyMap,
-    createPropertyObjectFactory,
-    PropertyMap,
-    PropertySource,
-    TemplatedPropertyMap,
-    Type,
+  CascadingPropertyMap,
+  createPropertyObjectFactory,
+  PropertyMap,
+  PropertySource,
+  TemplatedPropertyMap,
+  Type,
 } from "@sakuli/commons";
 
 export class Project implements PropertyMap {

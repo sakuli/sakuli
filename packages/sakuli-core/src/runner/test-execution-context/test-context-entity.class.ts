@@ -1,14 +1,17 @@
 import { ifPresent, Maybe } from "@sakuli/commons";
 import {
-    FinishedMeasurable,
-    getDuration,
-    isFinished,
-    isStarted,
-    Measurable,
-    StartedMeasurable,
+  FinishedMeasurable,
+  getDuration,
+  isFinished,
+  isStarted,
+  Measurable,
+  StartedMeasurable,
 } from "./measureable.interface";
 import { IsDate, IsNumber, validateSync } from "class-validator";
-import { TestContextEntityState, TestContextEntityStates, } from "./test-context-entity-state.class";
+import {
+  TestContextEntityState,
+  TestContextEntityStates,
+} from "./test-context-entity-state.class";
 import { isBefore, isEqual } from "date-fns";
 
 export type TestContextKindSuite = "suite";

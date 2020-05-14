@@ -1,12 +1,12 @@
 import { mockPartial } from "sneer";
 import { Project } from "@sakuli/core";
 import {
-    decrypt,
-    getEncryptionKey,
-    MASTERKEY_CLI_KEY,
-    MASTERKEY_ENV_KEY,
-    MASTERKEY_PROPERTY_KEY,
-    withEncryption,
+  decrypt,
+  getEncryptionKey,
+  MASTERKEY_CLI_KEY,
+  MASTERKEY_ENV_KEY,
+  MASTERKEY_PROPERTY_KEY,
+  withEncryption,
 } from "./secrets.function";
 
 describe("secrets", () => {

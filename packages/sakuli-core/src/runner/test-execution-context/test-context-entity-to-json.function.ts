@@ -3,11 +3,11 @@ import { TestSuiteContext } from "./test-suite-context.class";
 import { TestStepContext } from "./test-step-context.class";
 import { TestContextEntity } from "./test-context-entity.class";
 import {
-    SakuliContextEntityRaw,
-    SakuliContextTestActionRaw,
-    SakuliContextTestCaseRaw,
-    SakuliContextTestStepRaw,
-    SakuliContextTestSuiteRaw,
+  SakuliContextEntityRaw,
+  SakuliContextTestActionRaw,
+  SakuliContextTestCaseRaw,
+  SakuliContextTestStepRaw,
+  SakuliContextTestSuiteRaw,
 } from "./test-context-entity-raw.interface";
 import { TestActionContext } from "./test-action-context.class";
 import { stripIndents } from "common-tags";
