@@ -6,10 +6,11 @@ describe("encrypt-command", () => {
   let mockExit: any;
 
   beforeEach(() => {
-    // @ts-ignore
     mockExit = jest
       .spyOn(process, "exit")
-      .mockImplementation((code?: number | undefined) => {});
+      .mockImplementation((code?: number | undefined) => {
+        return undefined as never;
+      });
   });
 
   afterEach(() => {
