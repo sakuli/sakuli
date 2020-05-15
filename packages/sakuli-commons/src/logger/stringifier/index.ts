@@ -1,1 +1,1 @@
-export * from './default-stringifier.function';
+export * from "./default-stringifier.function";

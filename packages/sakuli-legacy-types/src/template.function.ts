@@ -1,4 +1,4 @@
-import {DeclarationReflection} from "typedoc";
+import { DeclarationReflection } from "typedoc";
 
 export const renderDeclaration = (reflections: DeclarationReflection[]) => `
 import {
@@ -41,8 +41,10 @@ declare global {
     function done():void;
 
     ${reflections
-        .map(reflection => `const ${reflection.name}: typeof api.${reflection.name};`)
-        .join('\n    ')
-    }
+      .map(
+        (reflection) =>
+          `const ${reflection.name}: typeof api.${reflection.name};`
+      )
+      .join("\n    ")}
 }
 `;

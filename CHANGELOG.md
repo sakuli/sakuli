@@ -3,8 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## v2.3.0
-- Bugfix: Incomplete support for button elements [(#275)](https://github.com/sakuli/sakuli/issues/275) 
-- Enhancement: _highlight doesn't "scroll intoview" [(#274)](https://github.com/sakuli/sakuli/issues/274)
+
+- Bugfix: Incomplete support for button elements [(#275)](https://github.com/sakuli/sakuli/issues/275)
+- Enhancement: \_highlight doesn't "scroll intoview" [(#274)](https://github.com/sakuli/sakuli/issues/274)
 - Bugfix: @sakuli/legacy-types are not published [(#253)](https://github.com/sakuli/sakuli/issues/253)
 - Bugfix: `enable-typescript` command should install @sakuli packages with the same version as in project [(#254)](https://github.com/sakuli/sakuli/issues/254)
 - Enhancement: Error Messages to CLI output in multiple testcase scenarios [(#234)](https://github.com/sakuli/sakuli/issues/234)
@@ -29,10 +30,10 @@ All notable changes to this project will be documented in this file.
 - Bugfix: Error messages from test failures are not propagated to CLI [(#353)](https://github.com/sakuli/sakuli/issues/353)
 - Bugfix: `testsuite.warningTime` and `testsuite.criticalTime` do not affect suite result [(#371)](https://github.com/sakuli/sakuli/issues/371)
 
-
 ## v2.2.0
-- Enhancement: Fetch Retry Performance [(#251)](https://github.com/sakuli/sakuli/issues/251) 
-- Enhancement: Add Typescript support [(#245)](https://github.com/sakuli/sakuli/issues/245) 
+
+- Enhancement: Fetch Retry Performance [(#251)](https://github.com/sakuli/sakuli/issues/251)
+- Enhancement: Add Typescript support [(#245)](https://github.com/sakuli/sakuli/issues/245)
 - Enhancement: CLI - Sakuli enterprise project bootstrap [(#242)](https://github.com/sakuli/sakuli/issues/242)
 - Enhancement: Enhance documentation for Action-API and Fetch-API [(#241)](https://github.com/sakuli/sakuli/issues/241)
 - Enhancement: Add Apache License [(#240)](https://github.com/sakuli/sakuli/issues/240)
@@ -47,6 +48,7 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Legacy testsuite generator [(#22)](https://github.com/sakuli/sakuli/issues/22)
 
 ## v2.1.3
+
 - Bugfix: Sakuli Errors are not forwarded to log-file [(#232)](https://github.com/sakuli/sakuli/issues/232)
 - Bugfix: Data object are not logged properly [(#230)](https://github.com/sakuli/sakuli/issues/230)
 - Bugfix: Wrong log level for failing matches [(#227)](https://github.com/sakuli/sakuli/issues/227)
@@ -64,10 +66,12 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Remove unused properties from `LegacyProjectProperties` class [(#146)](https://github.com/sakuli/sakuli/issues/146)
 
 ## v2.1.2
+
 - Bugfix: Error screenshots on Windows not working [(#183)](https://github.com/sakuli/sakuli/issues/183)
 - Bugfix: TeststepsCache should check for errors in current step [(#184)](https://github.com/sakuli/sakuli/issues/184)
 
 ## v2.1.1
+
 - Enhancement: Publish API docs [(#57)](https://github.com/sakuli/sakuli/issues/57)
 - Enhancement: Updated Sonar config [(#102)](https://github.com/sakuli/sakuli/issues/102)
 - Bugfix: Wrong timestamp in log files [(#147)](https://github.com/sakuli/sakuli/issues/147)
@@ -80,9 +84,10 @@ All notable changes to this project will be documented in this file.
 - Bugfix: Warning and critical thresholds have no effect on TestCase [(#182)](https://github.com/sakuli/sakuli/issues/182)
 
 ## v2.1.0
+
 - Enhancement: Provide TestExecutionContext to Forwarder [(#143)](https://github.com/sakuli/sakuli/issues/143)
 - Bugfix: Missing possibility to configure masterkey via properties or CLI [(#138)](https://github.com/sakuli/sakuli/issues/138)
-- Bugfix: _textbox ignores inputs without explicit type attribute [(#135)](https://github.com/sakuli/sakuli/issues/135)
+- Bugfix: \_textbox ignores inputs without explicit type attribute [(#135)](https://github.com/sakuli/sakuli/issues/135)
 - Bugfix: /usr/bin/env: ‘node --no-warnings’: No such file or directory [(#127)](https://github.com/sakuli/sakuli/issues/127)
 - Maintenance: Remove Winston workaround [(#122)](https://github.com/sakuli/sakuli/issues/122)
 - Bugfix: Testsuite UNNAMED [(#121)](https://github.com/sakuli/sakuli/issues/121)
@@ -95,7 +100,7 @@ All notable changes to this project will be documented in this file.
 
 ## v2.0.1
 
-- Bugfix: _setValue doesnt delete previous values from element [(#82)](https://github.com/sakuli/sakuli/issues/82)
+- Bugfix: \_setValue doesnt delete previous values from element [(#82)](https://github.com/sakuli/sakuli/issues/82)
 - Enhancement: Provide default node globals for tests execution [(#86)](https://github.com/sakuli/sakuli/issues/86)
 - Bugfix: RegEx with indexes is broken [(#97)](https://github.com/sakuli/sakuli/issues/97)
 - Bugfix: `mouseUp` and `mouseDown` methods non-functional on `Region` [(#105)](https://github.com/sakuli/sakuli/issues/105)

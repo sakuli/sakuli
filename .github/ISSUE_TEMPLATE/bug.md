@@ -12,4 +12,5 @@ about: Create a bug report to help us enhance Sakuli
 **Steps to reproduce error**
 
 **Additional content**
+
 > Please provide any (mandatory) additional data to reproduce the error (Code, Config, Dockerfiles etc.)

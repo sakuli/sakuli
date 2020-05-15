@@ -1,36 +1,35 @@
-import {cwd} from "process";
+import { cwd } from "process";
 
 class NutGlobalConfig {
-    constructor(
-        private _confidence: number = 0.99,
-        private _imagePaths: string[] = [cwd()],
-        private readonly defaultConfidence: number = 0.99,
-    ) {
-    }
+  constructor(
+    private _confidence: number = 0.99,
+    private _imagePaths: string[] = [cwd()],
+    private readonly defaultConfidence: number = 0.99
+  ) {}
 
-    get confidence(): number {
-        return this._confidence;
-    }
+  get confidence(): number {
+    return this._confidence;
+  }
 
-    set confidence(value: number) {
-        this._confidence = value;
-    }
+  set confidence(value: number) {
+    this._confidence = value;
+  }
 
-    resetConfidence() {
-        this.confidence = this.defaultConfidence;
-    }
+  resetConfidence() {
+    this.confidence = this.defaultConfidence;
+  }
 
-    get imagePaths(): string[] {
-        return this._imagePaths;
-    }
+  get imagePaths(): string[] {
+    return this._imagePaths;
+  }
 
-    set imagePaths(value: string[]) {
-        this._imagePaths = value;
-    }
+  set imagePaths(value: string[]) {
+    this._imagePaths = value;
+  }
 
-    addImagePath(...newPath: string[]) {
-        this._imagePaths = this._imagePaths.concat(newPath);
-    }
+  addImagePath(...newPath: string[]) {
+    this._imagePaths = this._imagePaths.concat(newPath);
+  }
 }
 
 const theConfig = new NutGlobalConfig();

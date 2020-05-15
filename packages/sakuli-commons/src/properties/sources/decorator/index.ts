@@ -1,1 +1,1 @@
-export * from './decorated-class-defaults-source.class'
+export * from "./decorated-class-defaults-source.class";

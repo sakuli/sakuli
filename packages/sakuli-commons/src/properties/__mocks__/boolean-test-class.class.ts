@@ -1,6 +1,6 @@
-import {BooleanProperty} from "../decorator";
+import { BooleanProperty } from "../decorator";
 
 export class DecoratedBooleanTestClass {
-    @BooleanProperty('boolean.prop')
-    booleanProp: boolean = false;
+  @BooleanProperty("boolean.prop")
+  booleanProp: boolean = false;
 }

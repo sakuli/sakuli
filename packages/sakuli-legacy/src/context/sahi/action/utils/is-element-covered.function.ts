@@ -1,7 +1,11 @@
 import { WebDriver, WebElement } from "selenium-webdriver";
 
-export async function isElementCovered(elem: WebElement, driver: WebDriver): Promise<boolean>{
-    return driver.executeScript(`
+export async function isElementCovered(
+  elem: WebElement,
+  driver: WebDriver
+): Promise<boolean> {
+  return driver.executeScript(
+    `
     // get the outermost ancestor of the element. This will be either the document
     // or a shadow root.
     let owner = arguments[0]
@@ -16,5 +20,7 @@ export async function isElementCovered(elem: WebElement, driver: WebDriver): Pro
     let elemAtPoint = owner.elementFromPoint(x, y);
     
     return elemAtPoint !== arguments[0]
-    `, elem)
+    `,
+    elem
+  );
 }

@@ -1,1 +1,1 @@
-export {AssertionApi} from './assertion-api.interface';
+export { AssertionApi } from "./assertion-api.interface";

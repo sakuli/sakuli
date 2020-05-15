@@ -1,7 +1,7 @@
 export interface SakuliRunOptions {
-    path: string;
-    preHook: string[]
-    postHook: string[]
-    loop: number
-    masterkey: string
+  path: string;
+  preHook: string[];
+  postHook: string[];
+  loop: number;
+  masterkey: string;
 }

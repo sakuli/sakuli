@@ -1,38 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-</head>
-<body>
-<form id="login-form">
-  <label>
-    <span>Name:</span>
-    <input type="text" name="username">
-  </label>
-  <label>
-    <span>Password:</span>
-    <input type="password" name="password">
-  </label>
-  <button id="login">Login</button>
-</form>
-<div id="user-info"></div>
-<script>
-  const $ = document.querySelector.bind(document);
-  const form = $('#login-form');
-  const userInfo = $('#user-info');
-  console.log($);
-  form.addEventListener('submit', e => {
-      e.preventDefault();
-      form.style.display = 'none';
-      const username = form.elements.item(0).value;
-      const password = form.elements.item(1).value;
-      userInfo.innerHTML = `Logged in as ${username} with ${password}`;
-      return false;
-  });
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="login-form">
+      <label>
+        <span>Name:</span>
+        <input type="text" name="username" />
+      </label>
+      <label>
+        <span>Password:</span>
+        <input type="password" name="password" />
+      </label>
+      <button id="login">Login</button>
+    </form>
+    <div id="user-info"></div>
+    <script>
+      const $ = document.querySelector.bind(document);
+      const form = $("#login-form");
+      const userInfo = $("#user-info");
+      console.log($);
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        form.style.display = "none";
+        const username = form.elements.item(0).value;
+        const password = form.elements.item(1).value;
+        userInfo.innerHTML = `Logged in as ${username} with ${password}`;
+        return false;
+      });
+    </script>
+  </body>
 </html>

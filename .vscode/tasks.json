@@ -1,28 +1,28 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "npm",
-            "script": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "sakuli-core test watch",
-            "type": "npm",
-            "script": "test",
-            "path": "packages/sakuli-core/",
-            "problemMatcher": [],
-            "group": "test"
-        },
-        {
-            "label": "sakuli-legacy test watch",
-            "type": "npm",
-            "script": "test:watch",
-            "path": "packages/sakuli-commons/",
-            "problemMatcher": [],
-            "group": "test"
-        }
-    ]
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "sakuli-core test watch",
+      "type": "npm",
+      "script": "test",
+      "path": "packages/sakuli-core/",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "sakuli-legacy test watch",
+      "type": "npm",
+      "script": "test:watch",
+      "path": "packages/sakuli-commons/",
+      "problemMatcher": [],
+      "group": "test"
+    }
+  ]
 }

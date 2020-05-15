@@ -1,2 +1,3 @@
 export default jest.fn();
-export const pluginToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzYWt1bGkuaW8iLCJzdWIiOiJzYWt1bGlfcGx1Z2luIiwiY2F0ZWdvcnkiOjR9.Uir5hLbI-eUtTTA_M1JE8oAr0rDRQCg6UEDlvraaDKZbLJWvpH-Jw9arx7X99NYgJFXNcPwAPDvYurxTiyGvuw";
+export const pluginToken =
+  "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzYWt1bGkuaW8iLCJzdWIiOiJzYWt1bGlfcGx1Z2luIiwiY2F0ZWdvcnkiOjR9.Uir5hLbI-eUtTTA_M1JE8oAr0rDRQCg6UEDlvraaDKZbLJWvpH-Jw9arx7X99NYgJFXNcPwAPDvYurxTiyGvuw";

@@ -1,7 +1,7 @@
 export type ClickOptions = {
-    force: boolean
-}
+  force: boolean;
+};
 
 export const isClickOptions = (options: any): options is ClickOptions => {
-    return (options as ClickOptions).force !== undefined;
+  return (options as ClickOptions).force !== undefined;
 };

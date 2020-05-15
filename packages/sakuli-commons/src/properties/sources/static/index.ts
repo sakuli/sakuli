@@ -1,1 +1,1 @@
-export * from './static-property-source.class'
+export * from "./static-property-source.class";

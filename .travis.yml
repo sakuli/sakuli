@@ -71,4 +71,3 @@ jobs:
           keep_history: true
           on:
             tags: true
-

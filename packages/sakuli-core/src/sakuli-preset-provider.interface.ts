@@ -1,5 +1,5 @@
 import { SakuliPresetRegistry } from "./sakuli-preset-registry.class";
 
 export interface SakuliPresetProvider {
-    (registry: SakuliPresetRegistry): void
+  (registry: SakuliPresetRegistry): void;
 }
