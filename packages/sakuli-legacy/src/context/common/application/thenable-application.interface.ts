@@ -2,28 +2,28 @@ import { Application } from "./application.interface";
 import { ThenableRegion } from "../region";
 
 export interface NewableThenableApplication {
-    new(name: string): ThenableApplication;
+  new (name: string): ThenableApplication;
 }
 
 export interface ThenableApplication extends PromiseLike<Application> {
-    readonly name: string;
-    readonly application: Promise<Application>;
+  readonly name: string;
+  readonly application: Promise<Application>;
 
-    close(optSilent?: boolean): ThenableApplication;
+  close(optSilent?: boolean): ThenableApplication;
 
-    focus(): ThenableApplication;
+  focus(): ThenableApplication;
 
-    focusWindow(windowNumber: number): ThenableApplication;
+  focusWindow(windowNumber: number): ThenableApplication;
 
-    getName(): string;
+  getName(): string;
 
-    getRegion(): ThenableRegion;
+  getRegion(): ThenableRegion;
 
-    getRegionForWindow(windowNumber: number): ThenableRegion;
+  getRegionForWindow(windowNumber: number): ThenableRegion;
 
-    kill(optSilent?: boolean): ThenableApplication;
+  kill(optSilent?: boolean): ThenableApplication;
 
-    open(): ThenableApplication;
+  open(): ThenableApplication;
 
-    setSleepTime(seconds: number): ThenableApplication;
+  setSleepTime(seconds: number): ThenableApplication;
 }

@@ -4,26 +4,30 @@ import { RelationApi } from "./relations";
 import { FetchApi } from "./fetch";
 import { AssertionApi } from "./assertion";
 
-export interface SahiApi extends ActionApi, AccessorApi, RelationApi, FetchApi, AssertionApi {
+export interface SahiApi
+  extends ActionApi,
+    AccessorApi,
+    RelationApi,
+    FetchApi,
+    AssertionApi {
+  /**
+   * A relic from Sakuli v1, that was used load
+   *
+   * @deprecated
+   *
+   */
+  _dynamicInclude(): Promise<void>;
 
-    /**
-     * A relic from Sakuli v1, that was used load
-     *
-     * @deprecated
-     *
-     */
-    _dynamicInclude(): Promise<void>;
+  /**
+   * Sets the maximum time Sakuli will try to find an element on dom.
+   *
+   * @param timeOutMs - Timeout in milliseconds
+   */
+  _setFetchTimeout(timeOutMs: number): void;
 
-    /**
-     * Sets the maximum time Sakuli will try to find an element on dom.
-     *
-     * @param timeOutMs - Timeout in milliseconds
-     */
-    _setFetchTimeout(timeOutMs: number): void;
-
-    /**
-     * Gets the maximum time Sakuli will try to find an element on dom.
-     *
-     */
-    _getFetchTimeout(): number;
+  /**
+   * Gets the maximum time Sakuli will try to find an element on dom.
+   *
+   */
+  _getFetchTimeout(): number;
 }

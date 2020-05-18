@@ -1,96 +1,96 @@
 import { licenseGlobalTask } from "./license-tasks.function";
-import { promises as fs } from 'fs';
+import { promises as fs } from "fs";
 import { join, sep } from "path";
 import { homedir } from "os";
 import execa = require("execa");
 import rimraf = require("rimraf");
 
-jest.mock('execa', () => jest.fn());
-jest.mock('os', () => ({
-    homedir: jest.fn()
+jest.mock("execa", () => jest.fn());
+jest.mock("os", () => ({
+  homedir: jest.fn(),
 }));
-const { tmpdir } = jest.requireActual('os');
+const { tmpdir } = jest.requireActual("os");
 
-describe('licenseGlobalTask', () => {
+describe("licenseGlobalTask", () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  describe("on win", () => {
+    let platform: string;
+    beforeEach(() => {
+      platform = process.platform;
+      Object.defineProperty(process, "platform", {
+        value: "win32",
+      });
+    });
+
+    it("should use setX command to set env var", async () => {
+      // GIVEN
+      const task = licenseGlobalTask("abcdefg");
+
+      // WHEN
+      await task();
+
+      // THEN
+      expect(execa).toHaveBeenCalledWith("setx", [
+        "SAKULI_LICENSE_KEY=abcdefg",
+      ]);
+    });
 
     afterEach(() => {
-        jest.resetAllMocks();
+      Object.defineProperty(process, "platform", {
+        value: platform,
+      });
+    });
+  });
+  describe("on unix", () => {
+    let platform: string;
+    let tmpHomeDirMock: string;
+    beforeEach(async () => {
+      platform = process.platform;
+      Object.defineProperty(process, "platform", {
+        value: "linux",
+      });
+      tmpHomeDirMock = await fs.mkdtemp(`${tmpdir()}${sep}`);
+      (<jest.Mock>homedir).mockReturnValue(tmpHomeDirMock);
     });
 
-    describe('on win', () => {
+    it("should use add license env var to .bashrc", async () => {
+      // GIVEN
+      const task = licenseGlobalTask("abcdefg");
 
-        let platform: string;
-        beforeEach(() => {
-            platform = process.platform;
-            Object.defineProperty(process, 'platform', {
-                value: 'win32'
-            })
-        });
+      // WHEN
+      await task();
 
-        it('should use setX command to set env var', async () => {
-            // GIVEN
-            const task = licenseGlobalTask('abcdefg');
-
-            // WHEN
-            await task();
-
-            // THEN
-            expect(execa).toHaveBeenCalledWith('setx', ['SAKULI_LICENSE_KEY=abcdefg'])
-
-        });
-
-        afterEach(() => {
-            Object.defineProperty(process, 'platform', {
-                value: platform
-            })
-        })
-
+      // THEN
+      const bashRcContent = await fs
+        .readFile(join(tmpHomeDirMock, ".bashrc"))
+        .then((buf) => buf.toString());
+      expect(bashRcContent).toContain("export SAKULI_LICENSE_KEY=abcdefg");
     });
-    describe('on unix', () => {
 
-        let platform: string;
-        let tmpHomeDirMock: string;
-        beforeEach(async () => {
-            platform = process.platform;
-            Object.defineProperty(process, 'platform', {
-                value: 'linux'
-            });
-            tmpHomeDirMock = await fs.mkdtemp(`${tmpdir()}${sep}`);
-            (<jest.Mock>homedir).mockReturnValue(tmpHomeDirMock);
-        });
+    it("should use append license env var to .bashrc", async () => {
+      // GIVEN
+      await fs.writeFile(join(tmpHomeDirMock, ".bashrc"), "# something here");
+      const task = licenseGlobalTask("abcdefg");
 
-        it('should use add license env var to .bashrc', async () => {
-            // GIVEN
-            const task = licenseGlobalTask('abcdefg');
+      // WHEN
+      await task();
 
-            // WHEN
-            await task();
+      // THEN
+      const bashRcContent = await fs
+        .readFile(join(tmpHomeDirMock, ".bashrc"))
+        .then((buf) => buf.toString());
+      expect(bashRcContent).toContain("# something here");
+      expect(bashRcContent).toContain("export SAKULI_LICENSE_KEY=abcdefg");
+    });
 
-            // THEN
-            const bashRcContent = await fs.readFile(join(tmpHomeDirMock, '.bashrc')).then(buf => buf.toString());
-            expect(bashRcContent).toContain('export SAKULI_LICENSE_KEY=abcdefg');
-        });
-
-        it('should use append license env var to .bashrc', async () => {
-            // GIVEN
-            await fs.writeFile(join(tmpHomeDirMock, '.bashrc'), '# something here');
-            const task = licenseGlobalTask('abcdefg');
-
-            // WHEN
-            await task();
-
-            // THEN
-            const bashRcContent = await fs.readFile(join(tmpHomeDirMock, '.bashrc')).then(buf => buf.toString());
-            expect(bashRcContent).toContain('# something here');
-            expect(bashRcContent).toContain('export SAKULI_LICENSE_KEY=abcdefg');
-        });
-
-        afterEach(() => {
-            Object.defineProperty(process, 'platform', {
-                value: platform
-            });
-            rimraf.sync(tmpHomeDirMock);
-        })
-
-    })
+    afterEach(() => {
+      Object.defineProperty(process, "platform", {
+        value: platform,
+      });
+      rimraf.sync(tmpHomeDirMock);
+    });
+  });
 });

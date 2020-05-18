@@ -1,9 +1,12 @@
-import { TestContextEntity, TestContextEntityKind } from "./test-context-entity.class";
+import {
+  TestContextEntity,
+  TestContextEntityKind,
+} from "./test-context-entity.class";
 
 export class TestActionContext extends TestContextEntity {
-    kind: TestContextEntityKind = 'action';
+  kind: TestContextEntityKind = "action";
 
-    getChildren(): TestContextEntity[] {
-        return [];
-    }
+  getChildren(): TestContextEntity[] {
+    return [];
+  }
 }

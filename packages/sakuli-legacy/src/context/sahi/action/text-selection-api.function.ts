@@ -1,20 +1,24 @@
-import {ThenableWebDriver} from "selenium-webdriver";
-import {AccessorUtil} from "../accessor";
-import {TestExecutionContext} from "@sakuli/core";
-import {SahiElementQueryOrWebElement} from "../sahi-element.interface";
-import {stripIndent} from "common-tags";
+import { ThenableWebDriver } from "selenium-webdriver";
+import { AccessorUtil } from "../accessor";
+import { TestExecutionContext } from "@sakuli/core";
+import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import { stripIndent } from "common-tags";
 
 export type TextSelectionApi = ReturnType<typeof textSelectionApi>;
 
 export function textSelectionApi(
-    driver: ThenableWebDriver,
-    accessorUtil: AccessorUtil,
-    ctx: TestExecutionContext
+  driver: ThenableWebDriver,
+  accessorUtil: AccessorUtil,
+  ctx: TestExecutionContext
 ) {
-
-    async function _selectRange(query: SahiElementQueryOrWebElement, start: number, end: number) {
-        const e = accessorUtil.fetchElement(query);
-        return driver.executeScript(stripIndent`
+  async function _selectRange(
+    query: SahiElementQueryOrWebElement,
+    start: number,
+    end: number
+  ) {
+    const e = accessorUtil.fetchElement(query);
+    return driver.executeScript(
+      stripIndent`
             const e = arguments[0];
             const start = arguments[1];
             const end = arguments[2];
@@ -25,12 +29,20 @@ export function textSelectionApi(
             
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range); 
-        `, e, start, end)
-    }
-    
-    async function _selectTextRange(query: SahiElementQueryOrWebElement, searchText: string) {
-        const e = accessorUtil.fetchElement(query);
-        return driver.executeScript(stripIndent`
+        `,
+      e,
+      start,
+      end
+    );
+  }
+
+  async function _selectTextRange(
+    query: SahiElementQueryOrWebElement,
+    searchText: string
+  ) {
+    const e = accessorUtil.fetchElement(query);
+    return driver.executeScript(
+      stripIndent`
             const e = arguments[0];
             const searchText = arguments[1];
             const content = e.innerText;
@@ -43,12 +55,14 @@ export function textSelectionApi(
             
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
-        `, e, searchText)
-    }
+        `,
+      e,
+      searchText
+    );
+  }
 
-    return ({
-        _selectRange,
-        _selectTextRange
-    })
-
+  return {
+    _selectRange,
+    _selectTextRange,
+  };
 }
