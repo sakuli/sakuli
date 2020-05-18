@@ -4,6 +4,7 @@ import { mockPartial } from "sneer";
 import { Project } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import * as actions from "../actions";
+import { runAsAction } from "../actions";
 import { MouseButton } from "../button.class";
 
 jest.mock("../actions");
@@ -229,49 +230,218 @@ describe("sakuli region class", () => {
     await expect(result.getW()).resolves.toBe(newW);
   });
 
-  it("should take a screenshot with a given filename", async () => {
-    // GIVEN
-    const filename = "test_screenshot";
+  describe("takeScreenShot", () => {
+    it("should take a screenshot with a given filename", async () => {
+      // GIVEN
+      const filename = "test_screenshot";
 
-    // WHEN
-    await sakuliRegion.takeScreenshot(filename);
+      // WHEN
+      await sakuliRegion.takeScreenshot(filename);
 
-    // THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "takeScreenshot",
-      expect.any(Function)
-    );
-    expect(actions.ScreenApi.takeScreenshot).toBeCalledTimes(1);
-    expect(actions.ScreenApi.takeScreenshot).toBeCalledWith(filename);
+      // THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "takeScreenshot",
+        expect.any(Function)
+      );
+      expect(actions.ScreenApi.takeScreenshot).toBeCalledTimes(1);
+      expect(actions.ScreenApi.takeScreenshot).toBeCalledWith(filename);
+    });
+
+    it("should take a screenshot and append a timestamp to the filename", async () => {
+      // GIVEN
+      const filename = "test_screenshot";
+
+      // WHEN
+      await sakuliRegion.takeScreenshotWithTimestamp(filename);
+
+      // THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "takeScreenshotWithTimestamp",
+        expect.any(Function)
+      );
+      expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
+      expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(
+        filename
+      );
+    });
   });
 
-  it("should take a screenshot and append a timestamp to the filename", async () => {
-    // GIVEN
-    const filename = "test_screenshot";
+  describe("extractText", () => {
+    it("should throw on not implemented method 'extractText'", async () => {
+      //GIVEN
 
-    // WHEN
-    await sakuliRegion.takeScreenshotWithTimestamp(filename);
+      //WHEN
+      const SUT = sakuliRegion.extractText;
 
-    // THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "takeScreenshotWithTimestamp",
-      expect.any(Function)
-    );
-    expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
-    expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(
-      filename
-    );
+      //THEN
+      await expect(SUT()).rejects.toThrowError("Not Implemented");
+    });
   });
 
-  it("should throw on not implemented method 'extractText'", async () => {
-    //GIVEN
+  describe("resizing / moving", () => {
+    describe("move", () => {
+      it("should move a region by an offset in x direction", async () => {
+        //GIVEN
 
-    //WHEN
-    const SUT = sakuliRegion.extractText;
+        //WHEN
+        const SUT = sakuliRegion.extractText;
 
-    //THEN
-    await expect(SUT()).rejects.toThrowError("Not Implemented");
+        //THEN
+        await expect(SUT()).rejects.toThrowError("Not Implemented");
+      });
+      it("should move a region by an offset in y direction", async () => {
+        //GIVEN
+
+        //WHEN
+        const SUT = sakuliRegion.extractText;
+
+        //THEN
+        await expect(SUT()).rejects.toThrowError("Not Implemented");
+      });
+      it("should move a region by an offset in x and y direction", async () => {
+        //GIVEN
+
+        //WHEN
+        const SUT = sakuliRegion.extractText;
+
+        //THEN
+        await expect(SUT()).rejects.toThrowError("Not Implemented");
+      });
+    });
+  });
+
+  describe("resize", () => {
+    describe("grow", () => {
+      it("should grow a region to all sides by given range", async () => {
+        //GIVEN
+        const initialX = 30;
+        const initialY = 300;
+        const initialW = 84;
+        const initialH = 98;
+        const growRange = 100;
+
+        const initialRegion = new sakuliRegionClass(
+          initialX,
+          initialY,
+          initialW,
+          initialH
+        );
+
+        //WHEN
+        const SUT = await initialRegion.grow(growRange);
+
+        //THEN
+        expect(await SUT.getX()).toBe(initialX - growRange);
+        expect(await SUT.getY()).toBe(initialY - growRange);
+        expect(await SUT.getW()).toBe(initialW + 2 * growRange);
+        expect(await SUT.getH()).toBe(initialH + 2 * growRange);
+      });
+    });
+    describe("above", () => {
+      it("should return a region above a given region with specified height", async () => {
+        //GIVEN
+        const initialX = 30;
+        const initialY = 300;
+        const initialW = 84;
+        const initialH = 98;
+        const aboveHeight = 100;
+
+        const initialRegion = new sakuliRegionClass(
+          initialX,
+          initialY,
+          initialW,
+          initialH
+        );
+
+        //WHEN
+        const SUT = await initialRegion.above(aboveHeight);
+
+        //THEN
+        expect(await SUT.getX()).toBe(initialX);
+        expect(await SUT.getY()).toBe(initialY - aboveHeight);
+        expect(await SUT.getW()).toBe(initialW);
+        expect(await SUT.getH()).toBe(aboveHeight);
+      });
+    });
+    describe("below", () => {
+      it("should return a region below a given region with specified height", async () => {
+        //GIVEN
+        const initialX = 20;
+        const initialY = 67;
+        const initialW = 100;
+        const initialH = 100;
+        const belowHeight = 50;
+
+        const initialRegion = new sakuliRegionClass(
+          initialX,
+          initialY,
+          initialW,
+          initialH
+        );
+
+        //WHEN
+        const SUT = await initialRegion.below(belowHeight);
+
+        //THEN
+        expect(await SUT.getX()).toBe(initialX);
+        expect(await SUT.getY()).toBe(initialY + initialH);
+        expect(await SUT.getW()).toBe(initialW);
+        expect(await SUT.getH()).toBe(belowHeight);
+      });
+    });
+    describe("left", () => {
+      it("should return a region left of a given region with specified width", async () => {
+        //GIVEN
+        const initialX = 0;
+        const initialY = 0;
+        const initialW = 100;
+        const initialH = 100;
+        const leftWidth = 85;
+
+        const initialRegion = new sakuliRegionClass(
+          initialX,
+          initialY,
+          initialW,
+          initialH
+        );
+
+        //WHEN
+        const SUT = await initialRegion.left(leftWidth);
+
+        //THEN
+        expect(await SUT.getX()).toBe(initialX - leftWidth);
+        expect(await SUT.getY()).toBe(initialY);
+        expect(await SUT.getW()).toBe(leftWidth);
+        expect(await SUT.getH()).toBe(initialH);
+      });
+    });
+    describe("right", () => {
+      it("should return a region right of a given region with specified width", async () => {
+        //GIVEN
+        const initialX = 0;
+        const initialY = 0;
+        const initialW = 100;
+        const initialH = 100;
+        const rightWidth = 350;
+
+        const initialRegion = new sakuliRegionClass(
+          initialX,
+          initialY,
+          initialW,
+          initialH
+        );
+
+        //WHEN
+        const SUT = await initialRegion.right(350);
+
+        //THEN
+        expect(await SUT.getX()).toBe(initialX + initialW);
+        expect(await SUT.getY()).toBe(initialY);
+        expect(await SUT.getW()).toBe(rightWidth);
+        expect(await SUT.getH()).toBe(initialH);
+      });
+    });
   });
 });
