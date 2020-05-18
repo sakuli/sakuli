@@ -348,8 +348,8 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         const region = new SakuliRegion(
           (this._left || 0) - range,
           (this._top || 0) - range,
-          (this._width || 0) + range,
-          (this._height || 0) + range
+          (this._width || 0) + 2 * range,
+          (this._height || 0) + 2 * range
         );
         ctx.logger.debug(`Grew region. New dimensions: ${region.toString()}`);
         return region;
