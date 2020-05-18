@@ -1,25 +1,25 @@
 import { stripIndent } from "common-tags";
 
 export const packageJson = (suiteName: string) => {
-    const json = {
-        name: suiteName,
-        version: "1.0.0",
-        description: "",
-        main: "index.js",
-        scripts: {
-            test: `sakuli run ${suiteName}`
-        },
-        author: "",
-        license: "ISC",
-        dependencies: {
-            "@sakuli/cli": "^2.1.3",
-        },
-    };
-    return JSON.stringify(json, null, 4);
+  const json = {
+    name: suiteName,
+    version: "1.0.0",
+    description: "",
+    main: "index.js",
+    scripts: {
+      test: `sakuli run ${suiteName}`,
+    },
+    author: "",
+    license: "ISC",
+    dependencies: {
+      "@sakuli/cli": "^2.1.3",
+    },
+  };
+  return JSON.stringify(json, null, 4);
 };
 
 export const testsuiteProperties = (suiteName: string) => {
-    return stripIndent`
+  return stripIndent`
         testsuite.id=${suiteName}
         testsuite.browser=chrome
         #testsuite.name=\${testsuite.id}

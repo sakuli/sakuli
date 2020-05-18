@@ -1,4 +1,4 @@
-import {stripIndent} from "common-tags";
+import { stripIndent } from "common-tags";
 
 export const INJECT_SAKULI_HOOK = stripIndent`
 if (!("sakuliHookEnabled" in window) || !window.sakuliHookEnabled) {

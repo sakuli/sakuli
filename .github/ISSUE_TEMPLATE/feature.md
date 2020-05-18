@@ -10,4 +10,5 @@ about: Open a feature request for Sakuli
 **Detailed feature description**
 
 **Additional content**
+
 > Please provide any (mandatory) additional data for your desired feature

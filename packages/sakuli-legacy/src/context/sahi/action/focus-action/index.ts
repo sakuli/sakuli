@@ -1,2 +1,2 @@
-export * from './focus-actions.function'
-export * from './focus-actions.interface'
+export * from "./focus-actions.function";
+export * from "./focus-actions.interface";

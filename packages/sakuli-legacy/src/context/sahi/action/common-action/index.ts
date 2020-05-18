@@ -1,2 +1,2 @@
-export * from './common-actions.function'
-export * from './common-actions.interface'
+export * from "./common-actions.function";
+export * from "./common-actions.interface";

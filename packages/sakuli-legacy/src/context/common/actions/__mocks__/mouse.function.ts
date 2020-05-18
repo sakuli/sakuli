@@ -13,15 +13,15 @@ const scrollDownMock = jest.fn();
 const scrollUpMock = jest.fn();
 
 export const createMouseApi = (_: LegacyProjectProperties) => {
-    return mockPartial<ReturnType<typeof createMouseApiImpl>>({
-        click: clickMock,
-        doubleClick: doubleClickMock,
-        rightClick: rightClickMock,
-        move: moveMock,
-        pressButton: pressButtonMock,
-        releaseButton: releaseButtonMock,
-        dragAndDrop: dragAndDropMock,
-        scrollDown: scrollDownMock,
-        scrollUp: scrollUpMock
-    });
-}
+  return mockPartial<ReturnType<typeof createMouseApiImpl>>({
+    click: clickMock,
+    doubleClick: doubleClickMock,
+    rightClick: rightClickMock,
+    move: moveMock,
+    pressButton: pressButtonMock,
+    releaseButton: releaseButtonMock,
+    dragAndDrop: dragAndDropMock,
+    scrollDown: scrollDownMock,
+    scrollUp: scrollUpMock,
+  });
+};

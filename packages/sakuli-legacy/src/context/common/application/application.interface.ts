@@ -1,4 +1,4 @@
-import {Region} from "../region";
+import { Region } from "../region";
 
 /**
  * Application interface
@@ -26,48 +26,48 @@ import {Region} from "../region";
  * ```
  */
 export interface Application {
-    /**
-     * Opens the application
-     */
-    open(): Promise<Application>;
+  /**
+   * Opens the application
+   */
+  open(): Promise<Application>;
 
-    /**
-     * Not yet implemented
-     */
-    focus(): Promise<Application>;
+  /**
+   * Not yet implemented
+   */
+  focus(): Promise<Application>;
 
-    /**
-     * Not yet implemented
-     */
-    focusWindow(windowNumber: number): Promise<Application>;
+  /**
+   * Not yet implemented
+   */
+  focusWindow(windowNumber: number): Promise<Application>;
 
-    /**
-     * Closes the application
-     */
-    close(optSilent?: boolean): Promise<Application>;
+  /**
+   * Closes the application
+   */
+  close(optSilent?: boolean): Promise<Application>;
 
-    /**
-     * Force closes the application
-     */
-    kill(optSilent?: boolean): Promise<Application>;
+  /**
+   * Force closes the application
+   */
+  kill(optSilent?: boolean): Promise<Application>;
 
-    /**
-     * Configures an initial startup delay in seconds. Used to wait for applications which might require some time to start.
-     */
-    setSleepTime(seconds: number): Application;
+  /**
+   * Configures an initial startup delay in seconds. Used to wait for applications which might require some time to start.
+   */
+  setSleepTime(seconds: number): Application;
 
-    /**
-     * Not yet implemented
-     */
-    getRegion(): Promise<Region>;
+  /**
+   * Not yet implemented
+   */
+  getRegion(): Promise<Region>;
 
-    /**
-     * Not yet implemented
-     */
-    getRegionForWindow(windowNumber: number): Promise<Region>;
+  /**
+   * Not yet implemented
+   */
+  getRegionForWindow(windowNumber: number): Promise<Region>;
 
-    /**
-     * Returns the application name passed to the constructor
-     */
-    getName(): string;
+  /**
+   * Returns the application name passed to the constructor
+   */
+  getName(): string;
 }

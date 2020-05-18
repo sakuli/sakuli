@@ -1,4 +1,3 @@
-import {readFileSync} from "fs";
-import {server} from './native-http';
+import { readFileSync } from "fs";
 
-const c = readFileSync('');
+const c = readFileSync("");

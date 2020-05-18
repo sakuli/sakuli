@@ -11,13 +11,13 @@ import chalk from "chalk";
  * @param task -
  */
 export const oraTask = (title: string, task: Task): Task => {
-    return async () => {
-        const spinner = ora(title).start();
-        try {
-            await task();
-            spinner.succeed();
-        } catch (e) {
-            spinner.fail(chalk`${title} \n{red ${e.message}}`);
-        }
+  return async () => {
+    const spinner = ora(title).start();
+    try {
+      await task();
+      spinner.succeed();
+    } catch (e) {
+      spinner.fail(chalk`${title} \n{red ${e.message}}`);
     }
-}
+  };
+};

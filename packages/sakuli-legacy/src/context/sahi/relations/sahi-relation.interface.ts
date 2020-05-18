@@ -1,4 +1,7 @@
-import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.interface";
+import {
+  SahiElementQuery,
+  SahiElementQueryOrWebElement,
+} from "../sahi-element.interface";
 
 /**
  * A Sahi relation is basically a mapping operation between two WebElement-Arrays
@@ -11,7 +14,14 @@ import {SahiElementQuery, SahiElementQueryOrWebElement} from "../sahi-element.in
  *     }
  * </code>
  */
-export type SahiRelation = (elements: SahiElementQuery) => Promise<SahiElementQuery>;
+export type SahiRelation = (
+  elements: SahiElementQuery
+) => Promise<SahiElementQuery>;
 
-export type RelationProducer = (anchorElement: SahiElementQueryOrWebElement) => SahiRelation;
-export type RelationProducerWithOffset = (anchorElement: SahiElementQueryOrWebElement, offset?: number) => SahiRelation;
+export type RelationProducer = (
+  anchorElement: SahiElementQueryOrWebElement
+) => SahiRelation;
+export type RelationProducerWithOffset = (
+  anchorElement: SahiElementQueryOrWebElement,
+  offset?: number
+) => SahiRelation;

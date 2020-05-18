@@ -1,21 +1,12 @@
 {
   "version": "2.3.0",
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "command": {
     "publish": {
-      "ignoreChanges": [
-        "*.md",
-        "*.txt",
-        "packages/integration-tests/"
-      ]
+      "ignoreChanges": ["*.md", "*.txt", "packages/integration-tests/"]
     },
     "version": {
-      "allowBranch": [
-        "release/*",
-        "develop"
-      ]
+      "allowBranch": ["release/*", "develop"]
     }
   }
 }

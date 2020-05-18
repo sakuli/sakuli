@@ -1,2 +1,2 @@
-export * from './properties.decorator';
-export * from './create-property-object-factory.function'
+export * from "./properties.decorator";
+export * from "./create-property-object-factory.function";

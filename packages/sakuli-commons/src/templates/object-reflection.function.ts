@@ -1,5 +1,5 @@
-import {Reflection} from "./reflection.type";
-import {createLens} from "../properties/sources/create-lens.function";
+import { Reflection } from "./reflection.type";
+import { createLens } from "../properties/sources/create-lens.function";
 
 /**
  * Utility function for more declarative use of template function
@@ -13,7 +13,10 @@ import {createLens} from "../properties/sources/create-lens.function";
  * @param v
  * @param separator
  */
-export const objectReflection = (v: object, separator: string = '.'): Reflection => {
-    const lens = createLens(v);
-    return (key: string) => lens(key.split(separator));
-}
+export const objectReflection = (
+  v: object,
+  separator: string = "."
+): Reflection => {
+  const lens = createLens(v);
+  return (key: string) => lens(key.split(separator));
+};
