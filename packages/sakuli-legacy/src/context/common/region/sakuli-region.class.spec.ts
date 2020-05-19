@@ -6,6 +6,9 @@ import { LegacyProjectProperties } from "../../../loader/legacy-project-properti
 import * as actions from "../actions";
 import { runAsAction } from "../actions";
 import { MouseButton } from "../button.class";
+import nutConfig from "../nut-global-config.class";
+import { join } from "path";
+import { Region } from "./region.interface";
 
 jest.mock("../actions");
 
@@ -22,6 +25,12 @@ describe("sakuli region class", () => {
   const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
 
   let runAsActionSpy = jest.spyOn(actions, "runAsAction");
+
+  const resourceDirectory = join(__dirname, "__mocks__");
+
+  beforeAll(() => {
+    nutConfig.imagePaths.push(resourceDirectory);
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -167,12 +176,25 @@ describe("sakuli region class", () => {
 
   describe("screen content", () => {
     describe("find", () => {
-      it("should call ScreenApi to search for given image", async () => {
+      it("should throw on invalid image", async () => {
         //GIVEN
-        const imageFileToSearch = "./test/file.png";
+        const imageFileToSearch = "file.png";
 
         //WHEN
-        await sakuliRegion.find(imageFileToSearch);
+        const SUT = sakuliRegion.find;
+
+        //THEN
+        await expect(SUT(imageFileToSearch)).rejects.toThrow(
+          `Failed to locate ${imageFileToSearch} in directories [${nutConfig.imagePaths}]`
+        );
+      });
+      it("should call ScreenApi.find", async () => {
+        //GIVEN
+        const imageFileToSearch = "sakuli.png";
+        const expectedRegion = new sakuliRegionClass(0, 0, 100, 100);
+
+        //WHEN
+        const result = await sakuliRegion.find(imageFileToSearch);
 
         //THEN
         expect(runAsActionSpy).toBeCalledWith(
@@ -182,54 +204,120 @@ describe("sakuli region class", () => {
         );
         expect(actions.ScreenApi.find).toBeCalledTimes(1);
         expect(actions.ScreenApi.find).toBeCalledWith(
-          sakuliRegion,
-          highlightDuration
+          imageFileToSearch,
+          resourceDirectory,
+          nutConfig.confidence,
+          expect.any(sakuliRegionClass)
         );
-        expect(result).toEqual(sakuliRegion);
+        expect(result).toEqual(expectedRegion);
       });
     });
     describe("exists", () => {
-      it("should highlight a specified region", async () => {
+      it("should throw on invalid image", async () => {
         //GIVEN
-        const highlightDuration = 3;
+        const imageFileToSearch = "file.png";
 
         //WHEN
-        const result = await sakuliRegion.highlight(highlightDuration);
+        const SUT = sakuliRegion.exists;
+
+        //THEN
+        await expect(SUT(imageFileToSearch)).rejects.toThrow(
+          `Failed to locate ${imageFileToSearch} in directories [${nutConfig.imagePaths}]`
+        );
+      });
+      it("should call ScreenApi.waitForImage with default timeout 0", async () => {
+        //GIVEN
+        const imageFileToSearch = "sakuli.png";
+        const expectedRegion = new sakuliRegionClass(0, 0, 100, 100);
+
+        //WHEN
+        const result = await sakuliRegion.exists(imageFileToSearch);
 
         //THEN
         expect(runAsActionSpy).toBeCalledWith(
           testExecutionContextMock,
-          "highlight",
+          "exists",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
-        expect(actions.ScreenApi.highlight).toBeCalledWith(
-          sakuliRegion,
-          highlightDuration
+        expect(actions.ScreenApi.waitForImage).toBeCalledTimes(1);
+        expect(actions.ScreenApi.waitForImage).toBeCalledWith(
+          imageFileToSearch,
+          resourceDirectory,
+          nutConfig.confidence,
+          0,
+          expect.any(sakuliRegionClass)
         );
-        expect(result).toEqual(sakuliRegion);
+        expect(result).toEqual(expectedRegion);
+      });
+      it("should call ScreenApi.waitForImage with configured timeout", async () => {
+        //GIVEN
+        const imageFileToSearch = "sakuli.png";
+        const expectedRegion = new sakuliRegionClass(0, 0, 100, 100);
+        const timeoutInSeconds = 3;
+
+        //WHEN
+        const result = await sakuliRegion.exists(
+          imageFileToSearch,
+          timeoutInSeconds
+        );
+
+        //THEN
+        expect(runAsActionSpy).toBeCalledWith(
+          testExecutionContextMock,
+          "exists",
+          expect.any(Function)
+        );
+        expect(actions.ScreenApi.waitForImage).toBeCalledTimes(1);
+        expect(actions.ScreenApi.waitForImage).toBeCalledWith(
+          imageFileToSearch,
+          resourceDirectory,
+          nutConfig.confidence,
+          timeoutInSeconds * 1000,
+          expect.any(sakuliRegionClass)
+        );
+        expect(result).toEqual(expectedRegion);
       });
     });
     describe("waitForImage", () => {
-      it("should highlight a specified region", async () => {
+      it("should throw on invalid image", async () => {
         //GIVEN
-        const highlightDuration = 3;
+        const imageFileToSearch = "file.png";
 
         //WHEN
-        const result = await sakuliRegion.highlight(highlightDuration);
+        const SUT = sakuliRegion.waitForImage;
+
+        //THEN
+        await expect(SUT(imageFileToSearch, 5000)).rejects.toThrow(
+          `Failed to locate ${imageFileToSearch} in directories [${nutConfig.imagePaths}]`
+        );
+      });
+      it("should call ScreenApi.waitForImage", async () => {
+        //GIVEN
+        const imageFileToSearch = "sakuli.png";
+        const expectedRegion = new sakuliRegionClass(0, 0, 100, 100);
+        const timeoutInSeconds = 5;
+
+        //WHEN
+        const result = await sakuliRegion.waitForImage(
+          imageFileToSearch,
+          timeoutInSeconds
+        );
 
         //THEN
         expect(runAsActionSpy).toBeCalledWith(
           testExecutionContextMock,
-          "highlight",
+          "waitForImage",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
-        expect(actions.ScreenApi.highlight).toBeCalledWith(
-          sakuliRegion,
-          highlightDuration
+        expect(actions.ScreenApi.waitForImage).toBeCalledTimes(1);
+        expect(actions.ScreenApi.waitForImage).toBeCalledWith(
+          imageFileToSearch,
+          resourceDirectory,
+          nutConfig.confidence,
+          timeoutInSeconds * 1000,
+          expect.any(sakuliRegionClass)
         );
-        expect(result).toEqual(sakuliRegion);
+        expect(result).toEqual(expectedRegion);
       });
     });
     describe("highlight", () => {
@@ -511,42 +599,6 @@ describe("sakuli region class", () => {
         expect(await SUT.getY()).toBe(initialY);
         expect(await SUT.getW()).toBe(rightWidth);
         expect(await SUT.getH()).toBe(initialH);
-      });
-    });
-  });
-
-  describe("find / exists", () => {
-    describe("find", () => {
-      it("should move a region by an offset in x direction", async () => {
-        //GIVEN
-
-        //WHEN
-        const SUT = sakuliRegion.extractText;
-
-        //THEN
-        await expect(SUT()).rejects.toThrowError("Not Implemented");
-      });
-    });
-    describe("findRegion", () => {
-      it("should move a region by an offset in x direction", async () => {
-        //GIVEN
-
-        //WHEN
-        const SUT = sakuliRegion.extractText;
-
-        //THEN
-        await expect(SUT()).rejects.toThrowError("Not Implemented");
-      });
-    });
-    describe("exists", () => {
-      it("should move a region by an offset in x direction", async () => {
-        //GIVEN
-
-        //WHEN
-        const SUT = sakuliRegion.extractText;
-
-        //THEN
-        await expect(SUT()).rejects.toThrowError("Not Implemented");
       });
     });
   });
