@@ -1,6 +1,11 @@
 import { EnterpriseAnswers } from "./enterprise-answers.interface";
 import { getBootstrapTasks } from "./get-bootstrap-tasks.function";
-import { ConfigurationRecord, getPackageBootstrapTasks, licenseGlobalTask, npmGlobalTask, } from "./tasks";
+import {
+  ConfigurationRecord,
+  getPackageBootstrapTasks,
+  licenseGlobalTask,
+  npmGlobalTask,
+} from "./tasks";
 import { FeatureChoices } from "./feature-choices.const";
 
 jest.mock("./tasks", () => ({

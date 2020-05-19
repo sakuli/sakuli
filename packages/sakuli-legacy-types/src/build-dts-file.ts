@@ -3,7 +3,10 @@ import { join } from "path";
 import { renderDeclaration } from "./template.function";
 import { mkdirSync, writeFileSync } from "fs";
 import { throwIfAbsent } from "@sakuli/commons";
-import { Reflection, TraverseProperty, } from "typedoc/dist/lib/models/reflections/abstract";
+import {
+  Reflection,
+  TraverseProperty,
+} from "typedoc/dist/lib/models/reflections/abstract";
 import { ScriptTarget } from "typescript";
 
 const outDir = "dist";

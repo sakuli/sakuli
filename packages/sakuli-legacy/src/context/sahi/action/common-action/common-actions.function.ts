@@ -1,6 +1,10 @@
 import { ThenableWebDriver, WebElement } from "selenium-webdriver";
 import { AccessorUtil } from "../../accessor";
-import { isSahiElementQuery, SahiElementQueryOrWebElement, sahiQueryToString, } from "../../sahi-element.interface";
+import {
+  isSahiElementQuery,
+  SahiElementQueryOrWebElement,
+  sahiQueryToString,
+} from "../../sahi-element.interface";
 import { stripIndents } from "common-tags";
 import { timeout } from "../poll-action.function";
 import { INJECT_SAKULI_HOOK } from "../inject.const";

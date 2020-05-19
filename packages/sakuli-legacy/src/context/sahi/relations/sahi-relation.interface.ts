@@ -1,4 +1,7 @@
-import { SahiElementQuery, SahiElementQueryOrWebElement, } from "../sahi-element.interface";
+import {
+  SahiElementQuery,
+  SahiElementQueryOrWebElement,
+} from "../sahi-element.interface";
 
 /**
  * A Sahi relation is basically a mapping operation between two WebElement-Arrays

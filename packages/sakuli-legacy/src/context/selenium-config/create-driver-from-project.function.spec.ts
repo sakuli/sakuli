@@ -3,7 +3,10 @@ import { Type } from "@sakuli/commons";
 import { Project } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../loader/legacy-project-properties.class";
 import { SeleniumProperties } from "./selenium-properties.class";
-import { Browsers, createDriverFromProject, } from "./create-driver-from-project.function";
+import {
+  Browsers,
+  createDriverFromProject,
+} from "./create-driver-from-project.function";
 import { Builder } from "selenium-webdriver";
 import { FirefoxProperties } from "./firefox-properties.class";
 import { IeProperties } from "./ie-properties.class";

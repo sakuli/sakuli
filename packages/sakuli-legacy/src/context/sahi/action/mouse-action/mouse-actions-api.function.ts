@@ -1,4 +1,11 @@
-import { Button, By, error, ILocation, ThenableWebDriver, WebElement, } from "selenium-webdriver";
+import {
+  Button,
+  By,
+  error,
+  ILocation,
+  ThenableWebDriver,
+  WebElement,
+} from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
 import { stripIndents } from "common-tags";
 

@@ -1,4 +1,9 @@
-import { Project, TestExecutionContext, TestExecutionLifecycleHooks, TestFile, } from "@sakuli/core";
+import {
+  Project,
+  TestExecutionContext,
+  TestExecutionLifecycleHooks,
+  TestFile,
+} from "@sakuli/core";
 import { Plugin, rollup } from "rollup";
 import rollupTsPlugin from "rollup-plugin-typescript2";
 import { extname, isAbsolute, join } from "path";

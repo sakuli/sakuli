@@ -2,7 +2,14 @@ import { Key } from "../key.class";
 import { CommandLineResult } from "./commandline-result.class";
 import { decrypt, getEncryptionKey } from "../secrets.function";
 import { Project, TestExecutionContext } from "@sakuli/core";
-import { ClipboardApi, createKeyboardApi, createMouseApi, execute, runAsAction, ScreenApi, } from "../actions";
+import {
+  ClipboardApi,
+  createKeyboardApi,
+  createMouseApi,
+  execute,
+  runAsAction,
+  ScreenApi,
+} from "../actions";
 
 import nutConfig from "../nut-global-config.class";
 import { Environment } from "./environment.interface";

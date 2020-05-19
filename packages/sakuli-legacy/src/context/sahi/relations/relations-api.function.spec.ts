@@ -2,7 +2,10 @@ import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { relationsApi } from "./relations-api.function";
 import { AccessorUtil } from "../accessor";
 import { RelationsResolver } from "./relations-resolver.class";
-import { SahiElementQuery, SahiElementQueryOrWebElement, } from "../sahi-element.interface";
+import {
+  SahiElementQuery,
+  SahiElementQueryOrWebElement,
+} from "../sahi-element.interface";
 import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";

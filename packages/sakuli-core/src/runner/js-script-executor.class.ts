@@ -1,4 +1,7 @@
-import { TestScriptExecutor, TestScriptExecutorOptions, } from "./test-script-executor.interface";
+import {
+  TestScriptExecutor,
+  TestScriptExecutorOptions,
+} from "./test-script-executor.interface";
 import { createContext, RunningScriptOptions, Script } from "vm";
 import { isPromise } from "./is-promise.function";
 

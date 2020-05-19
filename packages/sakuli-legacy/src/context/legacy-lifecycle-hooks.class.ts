@@ -3,7 +3,11 @@ import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
 import { createTestCaseClass } from "./common/test-case";
 import { Key, MouseButton } from "./common";
 import { sahiApi } from "./sahi/api";
-import { Project, TestExecutionContext, TestExecutionLifecycleHooks, } from "@sakuli/core";
+import {
+  Project,
+  TestExecutionContext,
+  TestExecutionLifecycleHooks,
+} from "@sakuli/core";
 import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
 import { basename, dirname, join, parse, sep } from "path";
 import { createLoggerObject } from "./common/logger";

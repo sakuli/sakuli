@@ -1,5 +1,9 @@
 import { createWithTryAcrossFrames } from "./create-with-try-across-frames.function";
-import { error as SeleniumErrors, TargetLocator, ThenableWebDriver, } from "selenium-webdriver";
+import {
+  error as SeleniumErrors,
+  TargetLocator,
+  ThenableWebDriver,
+} from "selenium-webdriver";
 import { mockPartial } from "sneer";
 import { TestExecutionContext } from "@sakuli/core";
 import { createTestExecutionContextMock } from "../../../__mocks__";

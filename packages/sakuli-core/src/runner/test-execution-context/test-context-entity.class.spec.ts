@@ -1,4 +1,7 @@
-import { TestContextEntity, TestContextEntityKind, } from "./test-context-entity.class";
+import {
+  TestContextEntity,
+  TestContextEntityKind,
+} from "./test-context-entity.class";
 import { TestContextEntityStates } from "./test-context-entity-state.class";
 import { addSeconds } from "date-fns";
 

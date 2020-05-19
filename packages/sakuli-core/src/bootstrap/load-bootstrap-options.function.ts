@@ -1,4 +1,7 @@
-import { SakuliBootstrapDefaults, SakuliBootstrapOptions, } from "./bootstrap-options.interface";
+import {
+  SakuliBootstrapDefaults,
+  SakuliBootstrapOptions,
+} from "./bootstrap-options.interface";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import { promises as fs } from "fs";
 import { join } from "path";

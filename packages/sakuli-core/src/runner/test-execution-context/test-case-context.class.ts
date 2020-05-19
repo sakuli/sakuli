@@ -1,4 +1,7 @@
-import { TestContextEntity, TestContextKindCase, } from "./test-context-entity.class";
+import {
+  TestContextEntity,
+  TestContextKindCase,
+} from "./test-context-entity.class";
 import { TestStepContext } from "./test-step-context.class";
 
 export class TestCaseContext extends TestContextEntity {

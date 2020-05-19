@@ -1,4 +1,10 @@
-import { BooleanProperty, ListProperty, Maybe, NumberProperty, Property, } from "@sakuli/commons";
+import {
+  BooleanProperty,
+  ListProperty,
+  Maybe,
+  NumberProperty,
+  Property,
+} from "@sakuli/commons";
 import { IPerfLoggingPrefs } from "selenium-webdriver/chrome";
 
 export class ChromeProperties {

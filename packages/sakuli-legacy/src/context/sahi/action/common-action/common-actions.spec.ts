@@ -1,4 +1,9 @@
-import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
 import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { CommonActionsApi } from "./common-actions.interface";

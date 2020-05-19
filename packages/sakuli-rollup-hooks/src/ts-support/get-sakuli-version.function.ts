@@ -1,6 +1,9 @@
 import { join } from "path";
 import { readJson } from "../read-json.function";
-import { Dependency, JSONSchemaForNPMPackageJsonFiles, } from "@schemastore/package";
+import {
+  Dependency,
+  JSONSchemaForNPMPackageJsonFiles,
+} from "@schemastore/package";
 import { ifPresent, throwIfAbsent } from "@sakuli/commons";
 import execa = require("execa");
 

@@ -1,4 +1,8 @@
-import { By, error as SeleniumErrors, ThenableWebDriver, } from "selenium-webdriver";
+import {
+  By,
+  error as SeleniumErrors,
+  ThenableWebDriver,
+} from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
 
 export function createWithTryAcrossFrames(

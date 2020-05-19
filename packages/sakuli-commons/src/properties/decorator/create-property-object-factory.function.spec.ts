@@ -1,5 +1,9 @@
 import { PropertyMap } from "../model";
-import { createPropertyMapMock, DecoratedBooleanTestClass, DecoratedTestClass, } from "../__mocks__";
+import {
+  createPropertyMapMock,
+  DecoratedBooleanTestClass,
+  DecoratedTestClass,
+} from "../__mocks__";
 import { createPropertyObjectFactory } from "./create-property-object-factory.function";
 
 describe("createPropertyMap", () => {

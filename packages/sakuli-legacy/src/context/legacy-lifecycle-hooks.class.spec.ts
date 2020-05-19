@@ -1,5 +1,11 @@
 import { LegacyLifecycleHooks } from "./legacy-lifecycle-hooks.class";
-import { Builder, Capabilities, Options, ThenableWebDriver, Window, } from "selenium-webdriver";
+import {
+  Builder,
+  Capabilities,
+  Options,
+  ThenableWebDriver,
+  Window,
+} from "selenium-webdriver";
 import { mockPartial } from "sneer";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
 import { Project, TestExecutionContext } from "@sakuli/core";

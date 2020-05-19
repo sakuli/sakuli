@@ -1,4 +1,10 @@
-import { BooleanProperty, ifPresent, Maybe, NumberProperty, StringProperty, } from "@sakuli/commons";
+import {
+  BooleanProperty,
+  ifPresent,
+  Maybe,
+  NumberProperty,
+  StringProperty,
+} from "@sakuli/commons";
 import { Browsers } from "../context/selenium-config/create-driver-from-project.function";
 import { ScreenshotFolderStructure } from "../context/common/test-case/screenshot-folder-structure.interface";
 

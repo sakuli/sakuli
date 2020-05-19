@@ -1,7 +1,10 @@
 import { ThenableWebDriver, WebElement } from "selenium-webdriver";
 import { AccessorUtil } from "../accessor";
 import { TestExecutionContext } from "@sakuli/core";
-import { isSahiElementQuery, SahiElementQueryOrWebElement, } from "../sahi-element.interface";
+import {
+  isSahiElementQuery,
+  SahiElementQueryOrWebElement,
+} from "../sahi-element.interface";
 import { getParent } from "../helper/get-parent.function";
 import { isPresent } from "@sakuli/commons";
 import { ParentApi } from "./parent-api.interface";

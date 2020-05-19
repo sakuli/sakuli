@@ -1,4 +1,8 @@
-import { createCombinedLogConsumer, createFileLogConsumer, SimpleLogger, } from "@sakuli/commons";
+import {
+  createCombinedLogConsumer,
+  createFileLogConsumer,
+  SimpleLogger,
+} from "@sakuli/commons";
 
 export function createLogConsumer(logger: SimpleLogger, path: string) {
   const logConsumer = createCombinedLogConsumer(

@@ -1,13 +1,13 @@
 import { EnterpriseAnswers, hasLicense } from "./enterprise-answers.interface";
 import { FeatureChoices } from "./feature-choices.const";
 import {
-    commentValue,
-    configValue,
-    getPackageBootstrapTasks,
-    licenseGlobalTask,
-    npmGlobalTask,
-    oraTask,
-    Task,
+  commentValue,
+  configValue,
+  getPackageBootstrapTasks,
+  licenseGlobalTask,
+  npmGlobalTask,
+  oraTask,
+  Task,
 } from "./tasks";
 
 export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {

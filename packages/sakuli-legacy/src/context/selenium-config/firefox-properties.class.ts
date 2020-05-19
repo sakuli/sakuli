@@ -1,4 +1,9 @@
-import { BooleanProperty, Maybe, Property, StringProperty, } from "@sakuli/commons";
+import {
+  BooleanProperty,
+  Maybe,
+  Property,
+  StringProperty,
+} from "@sakuli/commons";
 import { ProxyConfig } from "selenium-webdriver";
 
 export class FirefoxProperties {

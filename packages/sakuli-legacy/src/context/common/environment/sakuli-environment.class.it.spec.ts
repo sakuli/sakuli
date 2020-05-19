@@ -1,4 +1,8 @@
-import { MASTERKEY_CLI_KEY, MASTERKEY_ENV_KEY, MASTERKEY_PROPERTY_KEY, } from "../secrets.function";
+import {
+  MASTERKEY_CLI_KEY,
+  MASTERKEY_ENV_KEY,
+  MASTERKEY_PROPERTY_KEY,
+} from "../secrets.function";
 import { createEnvironmentClass } from "./sakuli-environment.class";
 import { PropertyMap, SimpleLogger } from "@sakuli/commons";
 import { Project, TestExecutionContext } from "@sakuli/core";

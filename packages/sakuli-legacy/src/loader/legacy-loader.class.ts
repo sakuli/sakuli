@@ -2,7 +2,12 @@ import { Project, ProjectLoader } from "@sakuli/core";
 import { join } from "path";
 import { readdirSync, readFileSync } from "fs";
 import { parseSahiTestsuiteDefiniton } from "./parse-sahi-testsuite-definition.function";
-import { DecoratedClassDefaultsSource, ifPresent, JavaPropertiesFileSource, throwIfAbsent, } from "@sakuli/commons";
+import {
+  DecoratedClassDefaultsSource,
+  ifPresent,
+  JavaPropertiesFileSource,
+  throwIfAbsent,
+} from "@sakuli/commons";
 import { LegacyProjectProperties } from "./legacy-project-properties.class";
 
 export class LegacyLoader implements ProjectLoader {

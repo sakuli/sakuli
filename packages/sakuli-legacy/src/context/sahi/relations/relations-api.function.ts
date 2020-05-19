@@ -1,11 +1,18 @@
 import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
-import { RelationProducer, RelationProducerWithOffset, SahiRelation, } from "./sahi-relation.interface";
+import {
+  RelationProducer,
+  RelationProducerWithOffset,
+  SahiRelation,
+} from "./sahi-relation.interface";
 import { ifPresent, mapAsync } from "@sakuli/commons";
 import { edges } from "./edges.function";
 import { isLeftOf, isRightOf } from "./vector2.type";
 import { AccessorUtil } from "../accessor";
-import { SahiElementQuery, SahiElementQueryOrWebElement, } from "../sahi-element.interface";
+import {
+  SahiElementQuery,
+  SahiElementQueryOrWebElement,
+} from "../sahi-element.interface";
 import { isChildOf } from "../helper/is-child-of.function";
 import { distanceBetween } from "../helper/distance-between.function";
 import { getSiblingIndex } from "../helper/get-sibling-index.function";

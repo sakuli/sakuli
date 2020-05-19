@@ -1,6 +1,9 @@
 import { PropertyMap } from "../model";
 import { Type } from "../../type.interface";
-import { getPropertyDecoratorDefinitions, PropertyDecoratorDefinition, } from "./properties.decorator";
+import {
+  getPropertyDecoratorDefinitions,
+  PropertyDecoratorDefinition,
+} from "./properties.decorator";
 
 /**
  *

@@ -1,6 +1,11 @@
 import { isElementCovered } from "./is-element-covered.function";
 import { By } from "selenium-webdriver";
-import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../../__mocks__";
 
 jest.setTimeout(60_000);
 describe("is-element-covered", () => {

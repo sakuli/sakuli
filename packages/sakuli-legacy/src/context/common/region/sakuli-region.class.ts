@@ -1,6 +1,11 @@
 import { MouseButton } from "../button.class";
 import { Key } from "../key.class";
-import { createKeyboardApi, createMouseApi, runAsAction, ScreenApi, } from "../actions";
+import {
+  createKeyboardApi,
+  createMouseApi,
+  runAsAction,
+  ScreenApi,
+} from "../actions";
 import { Project, TestExecutionContext } from "@sakuli/core";
 
 import nutConfig from "../nut-global-config.class";
@@ -343,8 +348,8 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
         const region = new SakuliRegion(
           (this._left || 0) - range,
           (this._top || 0) - range,
-          (this._width || 0) + range,
-          (this._height || 0) + range
+          (this._width || 0) + 2 * range,
+          (this._height || 0) + 2 * range
         );
         ctx.logger.debug(`Grew region. New dimensions: ${region.toString()}`);
         return region;
@@ -448,7 +453,10 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
     }
 
     public async highlight(seconds: number): Promise<Region> {
-      throw new Error("Not Implemented");
+      return runAsAction(ctx, "highlight", () => {
+        ctx.logger.debug(`Highlighting for ${seconds} seconds`);
+        return ScreenApi.highlight(this, seconds);
+      })();
     }
 
     public async takeScreenshot(filename: string): Promise<string> {

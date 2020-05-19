@@ -6,6 +6,7 @@ import { SimpleLogger } from "@sakuli/commons";
 import { FileType } from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import { cwd } from "process";
 import { join } from "path";
+import { toNutRegion } from "./converter.function";
 
 let ctx: TestExecutionContext;
 let project: Project;
@@ -60,6 +61,36 @@ describe("ScreenApi", () => {
       confidence: testConfidence,
       searchRegion: expectedRegion,
     });
+  });
+
+  it("should call `screen.highlight` with suitable Region and timeout", async () => {
+    // GIVEN
+    const TestRegion = createRegionClass(ctx, project);
+    const testRegion = new TestRegion(0, 0, 100, 100);
+    const expectedRegion = await toNutRegion(testRegion);
+    const testHighlightDuration = 5;
+    screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
+
+    // WHEN
+    await ScreenApi.highlight(testRegion, testHighlightDuration);
+
+    // THEN
+    expect(screen.highlight).toBeCalledTimes(1);
+    expect(screen.highlight).toBeCalledWith(expectedRegion);
+  });
+
+  it("should return passed region after calling highlight for method chaining", async () => {
+    // GIVEN
+    const TestRegion = createRegionClass(ctx, project);
+    const testRegion = new TestRegion(0, 0, 100, 100);
+    const testHighlightDuration = 5;
+    screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
+
+    // WHEN
+    const result = await ScreenApi.highlight(testRegion, testHighlightDuration);
+
+    // THEN
+    expect(result).toEqual(testRegion);
   });
 });
 

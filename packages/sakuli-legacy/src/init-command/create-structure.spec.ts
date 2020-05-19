@@ -1,12 +1,20 @@
 import {
-    createPackageJson,
-    createTestcaseDirectory,
-    createTestcaseFile,
-    createTestsuiteDirectory,
-    createTestsuiteProperties,
-    createTestsuiteSuite,
+  createPackageJson,
+  createTestcaseDirectory,
+  createTestcaseFile,
+  createTestsuiteDirectory,
+  createTestsuiteProperties,
+  createTestsuiteSuite,
 } from "./create-structure";
-import { existsSync, lstatSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, unlinkSync, } from "fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmdirSync,
+  unlinkSync,
+} from "fs";
 import { stripIndents } from "common-tags";
 import { join } from "path";
 import { tmpdir } from "os";

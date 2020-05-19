@@ -1,5 +1,9 @@
 import { ThenableWebDriver, WebElement } from "selenium-webdriver";
-import { accessorApi as createAccessorApi, AccessorFunctions, AccessorUtil, } from "../accessor";
+import {
+  accessorApi as createAccessorApi,
+  AccessorFunctions,
+  AccessorUtil,
+} from "../accessor";
 import { TestExecutionContext } from "@sakuli/core";
 import { SahiRelation } from "../relations/sahi-relation.interface";
 import { AccessorIdentifier } from "../api";

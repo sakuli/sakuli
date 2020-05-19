@@ -1,4 +1,8 @@
-import { TestContextEntity, TestContextEntityState, TestExecutionContext, } from "@sakuli/core";
+import {
+  TestContextEntity,
+  TestContextEntityState,
+  TestExecutionContext,
+} from "@sakuli/core";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import chalk from "chalk";
 import * as ansiEscapes from "ansi-escapes";

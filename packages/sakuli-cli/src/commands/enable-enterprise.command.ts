@@ -1,6 +1,9 @@
 import { Argv, CommandModule } from "yargs";
 import inquirer from "inquirer";
-import { EnterpriseAnswers, hasLicense, } from "./enable-enterprise/enterprise-answers.interface";
+import {
+  EnterpriseAnswers,
+  hasLicense,
+} from "./enable-enterprise/enterprise-answers.interface";
 import { AllFeatureChoices } from "./enable-enterprise/feature-choices.const";
 import { getBootstrapTasks } from "./enable-enterprise/get-bootstrap-tasks.function";
 

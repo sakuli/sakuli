@@ -1,4 +1,11 @@
-import { BooleanProperty, ListProperty, Maybe, NumberProperty, Property, StringProperty, } from "@sakuli/commons";
+import {
+  BooleanProperty,
+  ListProperty,
+  Maybe,
+  NumberProperty,
+  Property,
+  StringProperty,
+} from "@sakuli/commons";
 import { ProxyConfig } from "selenium-webdriver";
 
 export class IeProperties {

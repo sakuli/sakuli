@@ -3,7 +3,12 @@ import { mouseActionApi } from "./mouse-actions-api.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQuery } from "../../sahi-element.interface";
-import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
 import { ClickOptions } from "./click-options.interface";
 import ElementClickInterceptedError = error.ElementClickInterceptedError;
