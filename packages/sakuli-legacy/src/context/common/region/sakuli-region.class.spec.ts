@@ -165,25 +165,95 @@ describe("sakuli region class", () => {
     expect(mouseApi.move).toBeCalledWith(destination);
   });
 
-  it("should highlight a specified region", async () => {
-    //GIVEN
-    const highlightDuration = 3;
+  describe("screen content", () => {
+    describe("find", () => {
+      it("should call ScreenApi to search for given image", async () => {
+        //GIVEN
+        const imageFileToSearch = "./test/file.png";
 
-    //WHEN
-    const result = await sakuliRegion.highlight(highlightDuration);
+        //WHEN
+        await sakuliRegion.find(imageFileToSearch);
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "highlight",
-      expect.any(Function)
-    );
-    expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
-    expect(actions.ScreenApi.highlight).toBeCalledWith(
-      sakuliRegion,
-      highlightDuration
-    );
-    expect(result).toEqual(sakuliRegion);
+        //THEN
+        expect(runAsActionSpy).toBeCalledWith(
+          testExecutionContextMock,
+          "find",
+          expect.any(Function)
+        );
+        expect(actions.ScreenApi.find).toBeCalledTimes(1);
+        expect(actions.ScreenApi.find).toBeCalledWith(
+          sakuliRegion,
+          highlightDuration
+        );
+        expect(result).toEqual(sakuliRegion);
+      });
+    });
+    describe("exists", () => {
+      it("should highlight a specified region", async () => {
+        //GIVEN
+        const highlightDuration = 3;
+
+        //WHEN
+        const result = await sakuliRegion.highlight(highlightDuration);
+
+        //THEN
+        expect(runAsActionSpy).toBeCalledWith(
+          testExecutionContextMock,
+          "highlight",
+          expect.any(Function)
+        );
+        expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
+        expect(actions.ScreenApi.highlight).toBeCalledWith(
+          sakuliRegion,
+          highlightDuration
+        );
+        expect(result).toEqual(sakuliRegion);
+      });
+    });
+    describe("waitForImage", () => {
+      it("should highlight a specified region", async () => {
+        //GIVEN
+        const highlightDuration = 3;
+
+        //WHEN
+        const result = await sakuliRegion.highlight(highlightDuration);
+
+        //THEN
+        expect(runAsActionSpy).toBeCalledWith(
+          testExecutionContextMock,
+          "highlight",
+          expect.any(Function)
+        );
+        expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
+        expect(actions.ScreenApi.highlight).toBeCalledWith(
+          sakuliRegion,
+          highlightDuration
+        );
+        expect(result).toEqual(sakuliRegion);
+      });
+    });
+    describe("highlight", () => {
+      it("should highlight a specified region", async () => {
+        //GIVEN
+        const highlightDuration = 3;
+
+        //WHEN
+        const result = await sakuliRegion.highlight(highlightDuration);
+
+        //THEN
+        expect(runAsActionSpy).toBeCalledWith(
+          testExecutionContextMock,
+          "highlight",
+          expect.any(Function)
+        );
+        expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
+        expect(actions.ScreenApi.highlight).toBeCalledWith(
+          sakuliRegion,
+          highlightDuration
+        );
+        expect(result).toEqual(sakuliRegion);
+      });
+    });
   });
 
   it("should let you update x coordinate", async () => {
@@ -441,6 +511,42 @@ describe("sakuli region class", () => {
         expect(await SUT.getY()).toBe(initialY);
         expect(await SUT.getW()).toBe(rightWidth);
         expect(await SUT.getH()).toBe(initialH);
+      });
+    });
+  });
+
+  describe("find / exists", () => {
+    describe("find", () => {
+      it("should move a region by an offset in x direction", async () => {
+        //GIVEN
+
+        //WHEN
+        const SUT = sakuliRegion.extractText;
+
+        //THEN
+        await expect(SUT()).rejects.toThrowError("Not Implemented");
+      });
+    });
+    describe("findRegion", () => {
+      it("should move a region by an offset in x direction", async () => {
+        //GIVEN
+
+        //WHEN
+        const SUT = sakuliRegion.extractText;
+
+        //THEN
+        await expect(SUT()).rejects.toThrowError("Not Implemented");
+      });
+    });
+    describe("exists", () => {
+      it("should move a region by an offset in x direction", async () => {
+        //GIVEN
+
+        //WHEN
+        const SUT = sakuliRegion.extractText;
+
+        //THEN
+        await expect(SUT()).rejects.toThrowError("Not Implemented");
       });
     });
   });
