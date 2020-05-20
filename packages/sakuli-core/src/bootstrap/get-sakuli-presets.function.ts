@@ -28,7 +28,11 @@ export function getSakuliPresets(nodeModulesPaths: string[]): string[] {
       }
 
       const dependency = JSON.parse(readFileSync(dependencyInfoFile, "utf-8"));
-      if (isSakuliPreset(dependency) && !sakuliPresets.includes(dependency)) {
+      if (
+        isSakuliPreset(dependency) &&
+        !sakuliPresets.includes(dependency) &&
+        dependency?.name
+      ) {
         sakuliPresets.push(dependency.name);
       }
     });
