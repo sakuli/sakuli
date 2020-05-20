@@ -2,22 +2,12 @@ import {
   Button as NutButton,
   centerOf,
   mouse,
-  Region as NutRegion,
   straightTo,
 } from "@nut-tree/nut-js";
-import { ScreenApi } from "./screen.function";
 import { MouseButton } from "../button.class";
 import { Region } from "../region";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
-
-const toNutRegion = async (region: Region): Promise<NutRegion> => {
-  return new NutRegion(
-    (await region.getX()) || 0,
-    (await region.getY()) || 0,
-    (await region.getW()) || (await ScreenApi.width()),
-    (await region.getH()) || (await ScreenApi.height())
-  );
-};
+import { toNutRegion } from "./converter.function";
 
 export const createMouseApi = (props: LegacyProjectProperties) => {
   mouse.config.autoDelayMs = props.mouseActionDelay;

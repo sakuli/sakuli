@@ -26,7 +26,7 @@
     "@sakuli/cli": "2.3.0",
     "@sakuli/legacy": "2.3.0",
     "@sakuli/legacy-types": "2.3.0",
-    "chromedriver": "80.0.2",
+    "chromedriver": "83.0.0",
     "geckodriver": "1.19.1",
     "typescript": "3.8.3"
   },

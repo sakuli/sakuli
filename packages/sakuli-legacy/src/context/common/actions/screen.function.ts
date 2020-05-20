@@ -3,6 +3,7 @@ import { FileType } from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import { parse } from "path";
 import { cwd } from "process";
 import { Region } from "../region";
+import { toNutRegion } from "./converter.function";
 
 const getCoordinates = async (region: Region) => {
   return {
@@ -90,6 +91,20 @@ export const ScreenApi = {
           width: result.width,
           height: result.height,
         });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  },
+  async highlight(
+    regionToHighlight: Region,
+    duration: number
+  ): Promise<Region> {
+    return new Promise<Region>(async (resolve, reject) => {
+      try {
+        screen.config.highlightDurationMs = duration * 1000;
+        await screen.highlight(await toNutRegion(regionToHighlight));
+        resolve(regionToHighlight);
       } catch (e) {
         reject(e);
       }
