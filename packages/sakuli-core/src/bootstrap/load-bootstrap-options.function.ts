@@ -35,7 +35,9 @@ export async function loadBootstrapOptions(): Promise<SakuliBootstrapOptions> {
     }
 
     conf = sakuliBootstrapOptions;
-  } catch (e) {}
+  } catch (e) {
+    console.warn(`Could not load bootstrap options, because: ${e}`);
+  }
 
   return ifPresent(
     conf,

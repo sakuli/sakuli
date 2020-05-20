@@ -4,6 +4,7 @@ import { getNodeModulesPaths } from "./get-node-modules-paths.function";
 import { SakuliBootstrapDefaults } from "./bootstrap-options.interface";
 import { getPresetDeclarationFromFile } from "./get-preset-declaration-from-file.function";
 import { cwd } from "process";
+import { mockPartial } from "sneer";
 
 jest.mock("./get-node-modules-paths.function", () => ({
   getNodeModulesPaths: jest.fn(),
@@ -17,6 +18,8 @@ jest.mock("./get-preset-declaration-from-file.function", () => ({
 jest.mock("process", () => ({
   cwd: jest.fn(),
 }));
+
+global.console = mockPartial<Console>({ warn: jest.fn() });
 
 describe("loadBootstrapOptions", () => {
   beforeEach(() => {
@@ -80,6 +83,7 @@ describe("loadBootstrapOptions", () => {
 
     // THEN
     expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
+    expect(console.warn).toBeCalled();
   });
 
   it("should return SakuliBootstrapDefaults when getSakuliPresets throws error", async () => {
@@ -93,6 +97,7 @@ describe("loadBootstrapOptions", () => {
 
     // THEN
     expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
+    expect(console.warn).toBeCalled();
   });
 
   it("should return SakuliBootstrapDefaults when getPresetFromFile throws error", async () => {
@@ -106,5 +111,6 @@ describe("loadBootstrapOptions", () => {
 
     // THEN
     expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
+    expect(console.warn).toBeCalled();
   });
 });
