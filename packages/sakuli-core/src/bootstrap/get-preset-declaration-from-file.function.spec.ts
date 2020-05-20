@@ -1,12 +1,11 @@
 import mockFs from "mock-fs";
-import { getPresetFromFile } from "./get-preset-from-file.function";
+import { getPresetDeclarationFromFile } from "./get-preset-declaration-from-file.function";
 import { mockPartial } from "sneer";
 
 global.console = mockPartial<Console>({ warn: jest.fn() });
 
 describe("get-preset-from-package-json", () => {
-  const path = "root";
-  const file = "package.json";
+  const packageJsonPath = "root/package.json";
 
   it("should load from package json file", async () => {
     //GIVEN
@@ -21,7 +20,7 @@ describe("get-preset-from-package-json", () => {
     });
 
     //WHEN
-    const presets = await getPresetFromFile(path, file);
+    const presets = await getPresetDeclarationFromFile(packageJsonPath);
 
     //THEN
     expect(presets.length).toBe(2);
@@ -36,7 +35,7 @@ describe("get-preset-from-package-json", () => {
     });
 
     //WHEN
-    const presets = await getPresetFromFile(path, file);
+    const presets = await getPresetDeclarationFromFile(packageJsonPath);
 
     //THEN
     expect(presets.length).toBe(0);
@@ -51,7 +50,7 @@ describe("get-preset-from-package-json", () => {
     });
 
     //WHEN
-    const presets = await getPresetFromFile(path, file);
+    const presets = await getPresetDeclarationFromFile(packageJsonPath);
 
     //THEN
     expect(presets.length).toBe(0);
@@ -68,15 +67,18 @@ describe("get-preset-from-package-json", () => {
     });
 
     //WHEN
-    const presets = await getPresetFromFile(path, file);
+    const presets = await getPresetDeclarationFromFile(packageJsonPath);
 
     //THEN
     expect(presets.length).toBe(0);
   });
 
   it("should log a warning message an return default value in case preset loading fails", async () => {
+    //GIVEN
+    mockFs();
+
     //WHEN
-    const presets = await getPresetFromFile(path, file);
+    const presets = await getPresetDeclarationFromFile(packageJsonPath);
 
     //THEN
     expect(console.warn).toBeCalled();

@@ -4,9 +4,10 @@ import {
 } from "./bootstrap-options.interface";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import { getNodeModulesPaths } from "./get-node-modules-paths.function";
-import { getSakuliPresets } from "./get-sakuli-presets.function";
+import { findSakuliPresets } from "./find-sakuli-presets.function";
 import { cwd } from "process";
-import { getPresetFromFile } from "./get-preset-from-file.function";
+import { getPresetDeclarationFromFile } from "./get-preset-declaration-from-file.function";
+import { join } from "path";
 
 /**
  * Reads sakuli bootconfiguration from a json file. The configuration is considered under a sakuli wich must implement the {@see SakuliBootstrapOptions} interface.*
@@ -23,12 +24,12 @@ export async function loadBootstrapOptions(): Promise<SakuliBootstrapOptions> {
     let sakuliBootstrapOptions: SakuliBootstrapOptions = { presetProvider: [] };
 
     const nodeModulesPaths = await getNodeModulesPaths();
-    sakuliBootstrapOptions.presetProvider = getSakuliPresets(nodeModulesPaths);
+    sakuliBootstrapOptions.presetProvider = findSakuliPresets(nodeModulesPaths);
 
-    const path = cwd();
-    const packagePresets = await getPresetFromFile(path, "package.json");
+    const packageJsonPath = join(cwd(), "package.json");
+    const packagePresets = await getPresetDeclarationFromFile(packageJsonPath);
     for (const packagePreset of packagePresets) {
-      if (sakuliBootstrapOptions.presetProvider.indexOf(packagePreset) < 0) {
+      if (!sakuliBootstrapOptions.presetProvider.includes(packagePreset)) {
         sakuliBootstrapOptions.presetProvider.push(packagePreset);
       }
     }

@@ -1,11 +1,8 @@
 import { promises as fs } from "fs";
-import { join } from "path";
 
-export async function getPresetFromFile(
-  path: string = ".",
-  file: string = "package.json"
+export async function getPresetDeclarationFromFile(
+  packageJsonPath: string
 ): Promise<string[]> {
-  const packageJsonPath = join(path, file);
   try {
     const packageJsonContent = await fs.readFile(packageJsonPath);
     const packageJson = JSON.parse(packageJsonContent.toString());

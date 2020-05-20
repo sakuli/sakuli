@@ -3,7 +3,7 @@ import { join } from "path";
 import { isSakuliPreset } from "./is-sakuli-preset.function";
 import { isExistingDirectory } from "./is-existing-directory.function";
 
-export function getSakuliPresets(nodeModulesPaths: string[]): string[] {
+export function findSakuliPresets(nodeModulesPaths: string[]): string[] {
   let sakuliPresets: string[] = [];
 
   for (const nodeModulesPath of nodeModulesPaths) {

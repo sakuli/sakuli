@@ -1,5 +1,5 @@
 import mockFs from "mock-fs";
-import { getSakuliPresets } from "./get-sakuli-presets.function";
+import { findSakuliPresets } from "./find-sakuli-presets.function";
 
 describe("get-sakuli-presets", () => {
   it("should return @sakuli/legacy as sakuli preset", () => {
@@ -27,7 +27,7 @@ describe("get-sakuli-presets", () => {
     });
 
     //WHEN
-    const sakuliPresets = getSakuliPresets(["node_modules"]);
+    const sakuliPresets = findSakuliPresets(["node_modules"]);
 
     //THEN
     expect(sakuliPresets).toEqual(["@sakuli/legacy"]);
@@ -46,7 +46,7 @@ describe("get-sakuli-presets", () => {
     });
 
     //WHEN
-    const sakuliPresets = getSakuliPresets(["node_modules"]);
+    const sakuliPresets = findSakuliPresets(["node_modules"]);
 
     //THEN
     expect(sakuliPresets).toEqual([]);
