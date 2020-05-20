@@ -1,11 +1,18 @@
 import { getNodeModulesPaths } from "./get-node-modules-paths.function";
-import mockFs from "mock-fs";
+import * as isExistingDirectoryDependency from "./is-existing-directory.function";
 
 const execa: jest.Mock = require("execa");
 
 jest.mock("execa", () => jest.fn());
+jest.mock("./is-existing-directory.function");
+
 describe("get-node-modules-paths", () => {
+  const isExistingDirectory = <jest.Mock<boolean>>(
+    isExistingDirectoryDependency.isExistingDirectory
+  );
+
   beforeEach(() => {
+    jest.resetAllMocks();
     (<jest.Mock>execa)
       .mockReturnValueOnce({ stdout: "/sakuli-test/node_modules" })
       .mockReturnValueOnce({ stdout: "/npm-root/node_modules" });
@@ -13,9 +20,7 @@ describe("get-node-modules-paths", () => {
 
   it("should return empty array when global and package level node_modules does not exist", async () => {
     // GIVEN
-    mockFs({
-      "/mockedFileSystem": {},
-    });
+    isExistingDirectory.mockReturnValue(false);
 
     // WHEN
     const nodeModulesPaths = await getNodeModulesPaths();
@@ -26,24 +31,7 @@ describe("get-node-modules-paths", () => {
 
   it("should return global and package level node_modules", async () => {
     // GIVEN
-    mockFs({
-      "/npm-root": {
-        node_modules: {
-          "@sakuli": {},
-        },
-      },
-      "/sakuli-test": {
-        "test-suite": {},
-        node_modules: {
-          "@sakuli": {},
-        },
-      },
-      "/another-dir": {
-        node_modules: {
-          "@sakuli": {},
-        },
-      },
-    });
+    isExistingDirectory.mockReturnValue(true);
 
     // WHEN
     const nodeModulesPaths = await getNodeModulesPaths();
@@ -53,10 +41,5 @@ describe("get-node-modules-paths", () => {
       "/sakuli-test/node_modules",
       "/npm-root/node_modules",
     ]);
-  });
-
-  afterEach(() => {
-    mockFs.restore();
-    jest.restoreAllMocks();
   });
 });
