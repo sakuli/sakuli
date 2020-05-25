@@ -3,7 +3,10 @@ import {
   SakuliBootstrapOptions,
 } from "./bootstrap-options.interface";
 import { ifPresent, Maybe } from "@sakuli/commons";
-import { promises as fs } from "fs";
+import { getNodeModulesPaths } from "./get-node-modules-paths.function";
+import { findSakuliPresets } from "./find-sakuli-presets.function";
+import { cwd } from "process";
+import { getPresetDeclarationFromFile } from "./get-preset-declaration-from-file.function";
 import { join } from "path";
 
 /**
@@ -13,24 +16,28 @@ import { join } from "path";
  *
  * If no there is neither a readable file nor the corresponding key in the file the function will return an empty default config.
  *
- * @param path the path to the file
- * @param file the actual filename if not <code>package.json</code>
  */
-export async function loadBootstrapOptions(
-  path: string = ".",
-  file: string = "package.json"
-): Promise<SakuliBootstrapOptions> {
+export async function loadBootstrapOptions(): Promise<SakuliBootstrapOptions> {
   let conf: Maybe<SakuliBootstrapOptions>;
 
   try {
-    //const packageJson = await readJsonSync(join(path, file)) as any;
-    const packageJsonContent = await fs.readFile(join(path, file));
-    const packageJson = JSON.parse(packageJsonContent.toString());
+    let sakuliBootstrapOptions: SakuliBootstrapOptions = { presetProvider: [] };
 
-    if (packageJson && packageJson.sakuli) {
-      conf = packageJson.sakuli;
+    const nodeModulesPaths = await getNodeModulesPaths();
+    sakuliBootstrapOptions.presetProvider = findSakuliPresets(nodeModulesPaths);
+
+    const packageJsonPath = join(cwd(), "package.json");
+    const packagePresets = await getPresetDeclarationFromFile(packageJsonPath);
+    for (const packagePreset of packagePresets) {
+      if (!sakuliBootstrapOptions.presetProvider.includes(packagePreset)) {
+        sakuliBootstrapOptions.presetProvider.push(packagePreset);
+      }
     }
-  } catch (e) {}
+
+    conf = sakuliBootstrapOptions;
+  } catch (e) {
+    console.warn(`Could not load bootstrap options, because: ${e}`);
+  }
 
   return ifPresent(
     conf,

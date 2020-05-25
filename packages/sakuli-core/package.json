@@ -45,6 +45,7 @@
     "class-validator": "0.9.1",
     "common-tags": "1.8.0",
     "date-fns": "1.29.0",
+    "execa": "^4.0.0",
     "properties-reader": "0.0.16",
     "reflect-metadata": "0.1.12"
   }

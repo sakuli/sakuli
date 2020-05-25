@@ -7,16 +7,14 @@ import chalk from "chalk";
 import { runCommand } from "./commands/run-command.function";
 
 import { loadPresets } from "./load-presets.function";
-import { cwd } from "process";
 import { cli } from "./cli-utils/command-line.class";
-
-declare function require(id: string): any;
 
 require("yargonaut").helpStyle("green").errorsStyle("red.bold");
 
 (async () => {
-  const options = await loadBootstrapOptions(cwd());
+  const options = await loadBootstrapOptions();
   const sakuli = await bootstrap(options, loadPresets);
+
   cli()
     .savePosition()
     .write(

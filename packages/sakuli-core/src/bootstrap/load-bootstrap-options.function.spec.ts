@@ -1,35 +1,116 @@
-import mockFs from "mock-fs";
 import { loadBootstrapOptions } from "./load-bootstrap-options.function";
+import { findSakuliPresets } from "./find-sakuli-presets.function";
+import { getNodeModulesPaths } from "./get-node-modules-paths.function";
+import { SakuliBootstrapDefaults } from "./bootstrap-options.interface";
+import { getPresetDeclarationFromFile } from "./get-preset-declaration-from-file.function";
+import { cwd } from "process";
+import { mockPartial } from "sneer";
+
+jest.mock("./get-node-modules-paths.function", () => ({
+  getNodeModulesPaths: jest.fn(),
+}));
+jest.mock("./find-sakuli-presets.function", () => ({
+  findSakuliPresets: jest.fn(),
+}));
+jest.mock("./get-preset-declaration-from-file.function", () => ({
+  getPresetDeclarationFromFile: jest.fn(),
+}));
+jest.mock("process", () => ({
+  cwd: jest.fn(),
+}));
+
+global.console = mockPartial<Console>({ warn: jest.fn() });
 
 describe("loadBootstrapOptions", () => {
-  it("should load from package json file", async (done) => {
-    mockFs({
-      root: {
-        "package.json": JSON.stringify({
-          sakuli: {
-            presetProvider: ["p1", "p2"],
-          },
-        }),
-      },
-    });
-    const opts = await loadBootstrapOptions("root/");
-    expect(opts.presetProvider.length).toBe(2);
-    expect(opts.presetProvider).toContain("p1");
-    expect(opts.presetProvider).toContain("p2");
-    done();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("should load defaults when missing config", async (done) => {
-    mockFs({
-      root: {},
-    });
-    const opts = await loadBootstrapOptions("root/");
-    expect(opts.presetProvider.length).toBe(1);
-    expect(opts.presetProvider[0]).toBe("@sakuli/legacy");
-    done();
+  it("should return @sakuli/legacy from node_modules as bootstrapOption", async () => {
+    //GIVEN
+    (<jest.Mock>getNodeModulesPaths).mockReturnValue("./node_modules");
+    (<jest.Mock>findSakuliPresets).mockReturnValue(["@sakuli/legacy"]);
+    (<jest.Mock>cwd).mockReturnValueOnce("just-a-path");
+    (<jest.Mock>getPresetDeclarationFromFile).mockReturnValueOnce([]);
+
+    //WHEN
+    const bootstrapOptions = await loadBootstrapOptions();
+
+    //THEN
+    expect(bootstrapOptions.presetProvider).toEqual(["@sakuli/legacy"]);
   });
 
-  afterEach(() => {
-    mockFs.restore();
+  it("should return @sakuli/legacy from file as bootstrapOption", async () => {
+    //GIVEN
+    (<jest.Mock>getNodeModulesPaths).mockReturnValue("foo");
+    (<jest.Mock>findSakuliPresets).mockReturnValue("[]");
+    (<jest.Mock>cwd).mockReturnValueOnce("just-a-path");
+    (<jest.Mock>getPresetDeclarationFromFile).mockReturnValueOnce([
+      "@sakuli/legacy",
+    ]);
+
+    //WHEN
+    const bootstrapOptions = await loadBootstrapOptions();
+
+    //THEN
+    expect(bootstrapOptions.presetProvider).toEqual(["@sakuli/legacy"]);
+  });
+
+  it("should return @sakuli/legacy only once as bootstrapOption", async () => {
+    //GIVEN
+    (<jest.Mock>getNodeModulesPaths).mockReturnValue("foo");
+    (<jest.Mock>findSakuliPresets).mockReturnValue(["@sakuli/legacy"]);
+    (<jest.Mock>cwd).mockReturnValueOnce("just-a-path");
+    (<jest.Mock>getPresetDeclarationFromFile).mockReturnValueOnce([
+      "@sakuli/legacy",
+    ]);
+
+    //WHEN
+    const bootstrapOptions = await loadBootstrapOptions();
+
+    //THEN
+    expect(bootstrapOptions.presetProvider).toEqual(["@sakuli/legacy"]);
+  });
+
+  it("should return SakuliBootstrapDefaults when getNodeModulesPaths throws error", async () => {
+    // GIVEN
+    (<jest.Mock>getNodeModulesPaths).mockImplementation(() => {
+      throw Error();
+    });
+
+    // WHEN
+    const bootstrapOptions = await loadBootstrapOptions();
+
+    // THEN
+    expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
+    expect(console.warn).toBeCalled();
+  });
+
+  it("should return SakuliBootstrapDefaults when getSakuliPresets throws error", async () => {
+    // GIVEN
+    (<jest.Mock>findSakuliPresets).mockImplementation(() => {
+      throw Error();
+    });
+
+    // WHEN
+    const bootstrapOptions = await loadBootstrapOptions();
+
+    // THEN
+    expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
+    expect(console.warn).toBeCalled();
+  });
+
+  it("should return SakuliBootstrapDefaults when getPresetFromFile throws error", async () => {
+    // GIVEN
+    (<jest.Mock>getPresetDeclarationFromFile).mockImplementation(() => {
+      throw Error();
+    });
+
+    // WHEN
+    const bootstrapOptions = await loadBootstrapOptions();
+
+    // THEN
+    expect(bootstrapOptions).toBe(SakuliBootstrapDefaults);
+    expect(console.warn).toBeCalled();
   });
 });
