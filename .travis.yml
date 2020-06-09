@@ -37,6 +37,8 @@ stages:
   - test
   - name: deploy
     if: (branch = develop) OR (tag IS present)
+  - name: trigger-image-build
+    if: (branch = develop)
 
 jobs:
   include:
@@ -71,3 +73,13 @@ jobs:
           keep_history: true
           on:
             tags: true
+
+    - stage: trigger-image-build
+      os: linux
+      dist: bionic
+      language: node_js
+      node_js: lts/erbium
+
+      install: true
+      script:
+        - "bash ./.build/trigger-image-build.sh"
