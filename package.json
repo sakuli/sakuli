@@ -39,9 +39,9 @@
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
-    "husky": "^4.2.5",
+    "husky": "4.2.5",
     "jest": "25.2.7",
-    "lerna": "3.13.3",
+    "lerna": "3.22.1",
     "lerna-audit": "1.1.1",
     "prettier": "2.0.5",
     "pretty-quick": "2.0.1",
