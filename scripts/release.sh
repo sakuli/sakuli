@@ -20,9 +20,9 @@ printf "\n%s\n" "Create new branch release/${RELEASE_VERSION}"
 git checkout -b release/${RELEASE_VERSION} origin/develop
 
 printf "\n%s\n"  "Change Version in package.json"
-lerna version --no-git-tag-version --no-push ${RELEASE_VERSION}
+lerna version --no-git-tag-version --no-push -y --exact ${RELEASE_VERSION}
 printf "\n%s\n"  "Update @sakuli/plugin-validator"
-lerna add @sakuli/plugin-validator@${RELEASE_VERSION} -E --scope=sakuli-cli --no-bootstrap
+lerna add @sakuli/plugin-validator@${RELEASE_VERSION} -E --scope=@sakuli/cli --no-bootstrap
 
 printf "\n%s\n" "Run npm i"
 npm run rebuild
