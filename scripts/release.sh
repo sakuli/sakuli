@@ -18,3 +18,28 @@ RELEASE_VERSION=${1}
 git fetch
 printf "\n%s\n" "Create new branch release/${RELEASE_VERSION}"
 git checkout -b release/${RELEASE_VERSION} origin/develop
+
+printf "\n%s\n"  "Change Version in package.json"
+lerna version --no-git-tag-version --no-push ${RELEASE_VERSION}
+printf "\n%s\n"  "Update @sakuli/plugin-validator"
+lerna add @sakuli/plugin-validator@${RELEASE_VERSION} -E --scope=sakuli-cli --no-bootstrap
+
+printf "\n%s\n" "Run npm i"
+npm run rebuild
+
+printf "\n%s\n"  "Run npm audit fix"
+npm audit fix
+
+printf "\n\n%s "  "Please update the changelog before continuing. Would you like to commit and push these changes? (y/n)"
+read CHANGE_CONFIRMATION
+[[ ! "${CHANGE_CONFIRMATION}" == "y" ]] && exit 1
+
+printf "\n%s\n"  "Committing changes"
+git commit -am "Release ${RELEASE_VERSION}"
+printf "\n%s\n" "Pushing changes"
+git push --set-upstream origin release/${RELEASE_VERSION}
+
+printf "\n\n%s\n" "Verify successful builds on Travis before continuing."
+echo "To to release the plugin-validator use following commands:"
+printf "%s\n" "git tag -a v${RELEASE_VERSION} -m \"Release ${RELEASE_VERSION}\""
+echo "git push --tags"
