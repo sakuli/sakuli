@@ -44,4 +44,31 @@ describe("default-stringifier", () => {
         false
         { foo: 'bar' }`);
   });
+
+  it("should display log output with a succeeding newline when data is given", () => {
+    const log: LogEvent = {
+      level: LogLevel.DEBUG,
+      message: "Test",
+      time: new Date(),
+      data: [{ foo: "test1" }, { bar: "test2" }, { baz: "test3" }],
+    };
+    expect(defaultStringifier(log)).toBe(
+      `[${log.time}] ${LogLevel[log.level]}: ${log.message}${EOL}` +
+        `{ foo: 'test1' }${EOL}` +
+        `{ bar: 'test2' }${EOL}` +
+        `{ baz: 'test3' }${EOL}`
+    );
+  });
+
+  it("should display log output with a succeeding newline when no data is given", () => {
+    const log: LogEvent = {
+      level: LogLevel.DEBUG,
+      message: "Test",
+      time: new Date(),
+      data: [],
+    };
+    expect(defaultStringifier(log)).toBe(
+      `[${log.time}] ${LogLevel[log.level]}: ${log.message}${EOL}`
+    );
+  });
 });
