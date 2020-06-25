@@ -37,8 +37,8 @@ stages:
   - test
   - name: deploy
     if: (branch = develop) OR (tag IS present)
-  - name: trigger-image-build
-    if: (branch = develop)
+  - name: trigger-image-builds
+    if: (branch = develop) OR (tag IS present)
 
 jobs:
   include:
@@ -74,7 +74,7 @@ jobs:
           on:
             tags: true
 
-    - stage: trigger-image-build
+    - stage: trigger-image-builds
       os: linux
       dist: bionic
       language: node_js
@@ -82,4 +82,7 @@ jobs:
 
       install: true
       script:
-        - "bash ./.build/trigger-image-build.sh"
+        - "bash ./.build/trigger-latest-image-build.sh"
+        - if [[ $TRAVIS_TAG != "" ]]; then
+          bash ./.build/trigger-release-image-build.sh
+          fi
