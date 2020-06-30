@@ -36,13 +36,12 @@ describe("default-stringifier", () => {
       data: ["Simple String", 30, false, { foo: "bar" }],
     };
 
-    expect(defaultStringifier(log)).toContain(stripIndents`${
-      LogLevel[LogLevel.DEBUG]
-    }: Test
-        Simple String
-        30
-        false
-        { foo: 'bar' }`);
+    expect(defaultStringifier(log)).toContain(
+      `${LogLevel[LogLevel.DEBUG]}: Test${EOL}`+
+        `Simple String${EOL}`+
+        `30${EOL}`+
+        `false${EOL}`+
+        `{ foo: 'bar' }${EOL}`);
   });
 
   it("should display log output with a succeeding newline when data is given", () => {
