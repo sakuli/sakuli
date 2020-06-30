@@ -20,5 +20,6 @@ const stringifyData = (data: string | number | object) => {
 export const defaultStringifier: LogEventStringifier = (e: LogEvent) => {
   return `[${e.time}] ${LogLevel[e.level]}: ${e.message}${EOL}${e.data
     .map(stringifyData)
-    .join(EOL)}`;
-};
+    .join(EOL)
+    .concat(`${e.data.length ? EOL : ''}`)}`;
+  }
