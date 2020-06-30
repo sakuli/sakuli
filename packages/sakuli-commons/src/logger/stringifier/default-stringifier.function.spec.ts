@@ -3,7 +3,6 @@ import { defaultStringifier } from "./default-stringifier.function";
 import { EOL } from "os";
 import { inspect } from "util";
 import { LogEvent } from "../log-event.interface";
-import { stripIndents } from "common-tags";
 
 describe("default-stringifier", () => {
   it("should stringify log events", () => {
