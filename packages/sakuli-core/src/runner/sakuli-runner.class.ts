@@ -5,6 +5,7 @@ import { readFile } from "fs";
 import { JsScriptExecutor } from "./js-script-executor.class";
 import { join, resolve } from "path";
 import { TestExecutionContext } from "./test-execution-context";
+import Signals = NodeJS.Signals;
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
   constructor(
@@ -22,11 +23,20 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
    */
   async execute(project: Project): Promise<any> {
     this.testExecutionContext.startExecution();
+
     const handleError = (e: any) => {
       this.testExecutionContext.error = e;
     };
+    const handleSignals = (signal: Signals) => {
+      this.testExecutionContext.logger.info(
+        `Received signal ${signal}, aborting execution`
+      );
+      process.exit(130);
+    };
     process.on("unhandledRejection", handleError);
     process.on("uncaughtException", handleError);
+    process.on("SIGTERM", handleSignals);
+    process.on("SIGINT", handleSignals);
     // onProject Phase
     await this.onProject(project, this.testExecutionContext);
     let result = {};
@@ -49,6 +59,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
           {
             filename: resolve(join(project.rootDir, testFile.path)),
             waitUntilDone: true,
+            breakOnSigint: true,
           }
         );
         await this.afterRunFile(testFile, project, this.testExecutionContext);
