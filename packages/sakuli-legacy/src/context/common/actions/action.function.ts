@@ -7,7 +7,7 @@ export function runAsAction<
     ctx.startTestAction({
       id: name,
     });
-    ctx.logger.info(`Start action ${name}`);
+    ctx.logger.trace(`Start action ${name}`);
     let res: any;
     try {
       res = await fn(...args);
@@ -24,7 +24,7 @@ export function runAsAction<
           }s`
         );
       }
-      ctx.logger.info(log.join(" "));
+      ctx.logger.trace(log.join(" "));
       ctx.endTestAction();
     }
     return res;
