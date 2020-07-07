@@ -30,6 +30,15 @@ const stateNameMap: Record<TestContextEntityState, string> = {
   "3": chalk.grey.bold("Unknown"),
   "4": chalk.red.bold("Error"),
 };
+
+const stateNameMapLog: Record<TestContextEntityState, string> = {
+  "0": "Ok",
+  "1": "Warning",
+  "2": "Critical",
+  "3": "Unknown",
+  "4": "Error",
+};
+
 const repeatString = (length: number, char: string = " ") =>
   Array.from({ length }, () => char).reduce((a, b) => a + b, "");
 
@@ -75,14 +84,34 @@ const renderEntityOnEnd = (
   return padBetween(prefix, suffix, 180, chalk.grey("."));
 };
 
+const logEntityOnEnd = (e: TestContextEntity, name: string) => {
+  const state = stateNameMap[e.state].length
+    ? `with state ${stateNameMapLog[e.state]}`
+    : ``;
+  return `Finished ${name} ${ensureName(e.id)} ${state} ${e.duration}`;
+};
+
+const logEntityOnStart = (e: TestContextEntity, name: string) => {
+  return `Started ${name} ${ensureName(e.id)}`;
+};
+
 export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
   new Promise((res) => {
     const l = console.log.bind(console);
 
     ctx
-      .on("START_EXECUTION", (_) => l(`Started execution`))
-      .on("START_TESTSUITE", (s) => l(renderEntityOnStart(s, "Testsuite")))
-      .on("START_TESTCASE", (s) => l(renderEntityOnStart(s, "Testcase", 2)))
+      .on("START_EXECUTION", (_) => {
+        l(`Started execution`);
+        ctx.logger.info("Started execution");
+      })
+      .on("START_TESTSUITE", (s) => {
+        l(renderEntityOnStart(s, "Testsuite"));
+        ctx.logger.info(logEntityOnStart(s, "Testsuite"));
+      })
+      .on("START_TESTCASE", (s) => {
+        l(renderEntityOnStart(s, "Testcase", 2));
+        ctx.logger.info(logEntityOnStart(s, "Testcase"));
+      })
       .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
       .on("END_TESTSTEP", (s) => {
         l(
@@ -90,11 +119,19 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
             ansiEscapes.eraseLine +
             renderEntityOnEnd(s, "Step", 3)
         );
+        ctx.logger.info(logEntityOnEnd(s, "Step"));
       })
-      .on("END_TESTCASE", (s) => l(renderEntityOnEnd(s, "Testcase", 2)))
-      .on("END_TESTSUITE", (s) => l(renderEntityOnEnd(s, "Testsuite")))
+      .on("END_TESTCASE", (s) => {
+        l(renderEntityOnEnd(s, "Testcase", 2));
+        ctx.logger.info(logEntityOnEnd(s, "Testcase"));
+      })
+      .on("END_TESTSUITE", (s) => {
+        l(renderEntityOnEnd(s, "Testsuite"));
+        ctx.logger.info(logEntityOnEnd(s, "Testsuite"));
+      })
       .on("END_EXECUTION", (_) => {
         l(`End execution`);
+        ctx.logger.info("End execution");
         res();
       });
   });
