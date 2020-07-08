@@ -102,7 +102,6 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
     ctx
       .on("START_EXECUTION", (_) => {
         l(`Started execution`);
-        ctx.logger.info("Started execution");
       })
       .on("START_TESTSUITE", (s) => {
         l(renderEntityOnStart(s, "Testsuite"));
@@ -110,7 +109,6 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       })
       .on("START_TESTCASE", (s) => {
         l(renderEntityOnStart(s, "Testcase", 2));
-        ctx.logger.info(logEntityOnStart(s, "Testcase"));
       })
       .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
       .on("END_TESTSTEP", (s) => {
@@ -131,7 +129,6 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       })
       .on("END_EXECUTION", (_) => {
         l(`End execution`);
-        ctx.logger.info("End execution");
         res();
       });
   });
