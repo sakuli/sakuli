@@ -84,14 +84,14 @@ const renderEntityOnEnd = (
   return padBetween(prefix, suffix, 180, chalk.grey("."));
 };
 
-const logEntityOnEnd = (e: TestContextEntity, name: string) => {
-  const state = stateNameMap[e.state].length
+export const logEntityOnEnd = (e: TestContextEntity, name: string) => {
+  const state = stateNameMapLog[e.state].length
     ? `with state ${stateNameMapLog[e.state]}`
     : ``;
-  return `Finished ${name} ${ensureName(e.id)} ${state} ${e.duration}`;
+  return `Finished ${name} ${ensureName(e.id)} ${state} ${e.duration}s`;
 };
 
-const logEntityOnStart = (e: TestContextEntity, name: string) => {
+export const logEntityOnStart = (e: TestContextEntity, name: string) => {
   return `Started ${name} ${ensureName(e.id)}`;
 };
 
