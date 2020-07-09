@@ -28,7 +28,6 @@ export function createTestCaseClass(
       readonly criticalTime: number = 0,
       public _imagePaths: string[] = []
     ) {
-      ctx.logger.info(`Start Testcase ${caseId}`);
       ctx.startTestCase({ id: caseId, warningTime, criticalTime });
       ctx.startTestStep({});
       nutConfig.imagePaths = [cwd()];
