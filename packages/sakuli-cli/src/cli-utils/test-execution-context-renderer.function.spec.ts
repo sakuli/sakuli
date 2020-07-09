@@ -32,18 +32,18 @@ describe("testExecutionContextRenderer", () => {
     expect(logger.info).toHaveBeenNthCalledWith(3, "Started Testcase Testcase");
     expect(logger.info).toHaveBeenNthCalledWith(
       4,
-      expect.stringMatching(/Finished Step Teststep with state Ok \d.\d{3}s/)
+      expect.stringMatching(/Finished Step Teststep with state Ok \d.\d{1,3}s/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(
       5,
       expect.stringMatching(
-        /Finished Testcase Testcase with state Ok \d.\d{3}s/
+        /Finished Testcase Testcase with state Ok \d.\d{1,3}s/
       )
     );
     expect(logger.info).toHaveBeenNthCalledWith(
       6,
       expect.stringMatching(
-        /Finished Testsuite Testsuite with state Ok \d.\d{3}s/
+        /Finished Testsuite Testsuite with state Ok \d.\d{1,3}s/
       )
     );
     expect(logger.info).toHaveBeenNthCalledWith(7, "Finished Execution");
