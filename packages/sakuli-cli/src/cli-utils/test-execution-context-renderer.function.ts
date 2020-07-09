@@ -84,14 +84,14 @@ const renderEntityOnEnd = (
   return padBetween(prefix, suffix, 180, chalk.grey("."));
 };
 
-export const logEntityOnEnd = (e: TestContextEntity, name: string) => {
+export const entityOnEndLogMessage = (e: TestContextEntity, name: string) => {
   const state = stateNameMapLog[e.state].length
     ? `with state ${stateNameMapLog[e.state]}`
     : ``;
   return `Finished ${name} ${ensureName(e.id)} ${state} ${e.duration}s`;
 };
 
-export const logEntityOnStart = (e: TestContextEntity, name: string) => {
+export const entityOnStartLogMessage = (e: TestContextEntity, name: string) => {
   return `Started ${name} ${ensureName(e.id)}`;
 };
 
@@ -105,10 +105,11 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       })
       .on("START_TESTSUITE", (s) => {
         l(renderEntityOnStart(s, "Testsuite"));
-        ctx.logger.info(logEntityOnStart(s, "Testsuite"));
+        ctx.logger.info(entityOnStartLogMessage(s, "Testsuite"));
       })
       .on("START_TESTCASE", (s) => {
         l(renderEntityOnStart(s, "Testcase", 2));
+        ctx.logger.info(entityOnStartLogMessage(s, "Testcase"));
       })
       .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
       .on("END_TESTSTEP", (s) => {
@@ -117,15 +118,15 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
             ansiEscapes.eraseLine +
             renderEntityOnEnd(s, "Step", 3)
         );
-        ctx.logger.info(logEntityOnEnd(s, "Step"));
+        ctx.logger.info(entityOnEndLogMessage(s, "Step"));
       })
       .on("END_TESTCASE", (s) => {
         l(renderEntityOnEnd(s, "Testcase", 2));
-        ctx.logger.info(logEntityOnEnd(s, "Testcase"));
+        ctx.logger.info(entityOnEndLogMessage(s, "Testcase"));
       })
       .on("END_TESTSUITE", (s) => {
         l(renderEntityOnEnd(s, "Testsuite"));
-        ctx.logger.info(logEntityOnEnd(s, "Testsuite"));
+        ctx.logger.info(entityOnEndLogMessage(s, "Testsuite"));
       })
       .on("END_EXECUTION", (_) => {
         l(`End execution`);
