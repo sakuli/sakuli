@@ -99,34 +99,43 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
   new Promise((res) => {
     const l = console.log.bind(console);
 
+    const logEntityOnStart = (
+      s: TestContextEntity,
+      name: string,
+      indent: number = 0
+    ) => {
+      l(renderEntityOnStart(s, name, indent));
+      ctx.logger.info(entityOnStartLogMessage(s, name));
+    };
+    const logEntityOnEnd = (
+      s: TestContextEntity,
+      name: string,
+      indent: number = 0
+    ) => {
+      l(renderEntityOnEnd(s, name, indent));
+      ctx.logger.info(entityOnEndLogMessage(s, name));
+    };
+
     ctx
       .on("START_EXECUTION", (_) => {
         l(`Started execution`);
       })
       .on("START_TESTSUITE", (s) => {
-        l(renderEntityOnStart(s, "Testsuite"));
-        ctx.logger.info(entityOnStartLogMessage(s, "Testsuite"));
+        logEntityOnStart(s, "Testsuite");
       })
       .on("START_TESTCASE", (s) => {
-        l(renderEntityOnStart(s, "Testcase", 2));
-        ctx.logger.info(entityOnStartLogMessage(s, "Testcase"));
+        logEntityOnStart(s, "Testcase", 2);
       })
       .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
       .on("END_TESTSTEP", (s) => {
-        l(
-          ansiEscapes.cursorUp(1) +
-            ansiEscapes.eraseLine +
-            renderEntityOnEnd(s, "Step", 3)
-        );
-        ctx.logger.info(entityOnEndLogMessage(s, "Step"));
+        l(ansiEscapes.cursorUp(1) + ansiEscapes.eraseLine);
+        logEntityOnEnd(s, "Step", 3);
       })
       .on("END_TESTCASE", (s) => {
-        l(renderEntityOnEnd(s, "Testcase", 2));
-        ctx.logger.info(entityOnEndLogMessage(s, "Testcase"));
+        logEntityOnEnd(s, "Testcase", 2);
       })
       .on("END_TESTSUITE", (s) => {
-        l(renderEntityOnEnd(s, "Testsuite"));
-        ctx.logger.info(entityOnEndLogMessage(s, "Testsuite"));
+        logEntityOnEnd(s, "Testsuite");
       })
       .on("END_EXECUTION", (_) => {
         l(`End execution`);
