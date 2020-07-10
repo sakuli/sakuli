@@ -16,6 +16,7 @@ export function findSakuliPresets(nodeModulesPaths: string[]): string[] {
     );
   }
 
+  console.debug(`Sakuli presets found: ${sakuliPresets}`);
   return sakuliPresets;
 }
 
