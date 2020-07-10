@@ -128,7 +128,11 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       })
       .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
       .on("END_TESTSTEP", (s) => {
-        l(ansiEscapes.cursorUp(1) + ansiEscapes.eraseLine);
+        l(
+          ansiEscapes.cursorUp(1) +
+            ansiEscapes.eraseLine +
+            ansiEscapes.cursorUp(1)
+        );
         logEntityOnEnd(s, "Step", 3);
       })
       .on("END_TESTCASE", (s) => {
