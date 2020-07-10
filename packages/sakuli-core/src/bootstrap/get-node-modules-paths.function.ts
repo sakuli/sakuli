@@ -13,7 +13,9 @@ export const getNodeModulesPaths = async (): Promise<string[]> => {
       nodeModulesPaths.push(candidate);
     }
   }
-  console.debug(`node_modules found: ${nodeModulesPaths}`);
+  nodeModulesPaths.length
+    ? console.debug(`node_modules found: ${nodeModulesPaths}`)
+    : console.debug("node_modules not found");
   return nodeModulesPaths;
 };
 

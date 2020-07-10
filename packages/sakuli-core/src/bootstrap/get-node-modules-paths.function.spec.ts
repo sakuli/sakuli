@@ -10,6 +10,7 @@ describe("get-node-modules-paths", () => {
   const isExistingDirectory = <jest.Mock<boolean>>(
     isExistingDirectoryDependency.isExistingDirectory
   );
+  const consoleSpy = jest.spyOn(console, "debug").mockImplementation();
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -27,6 +28,7 @@ describe("get-node-modules-paths", () => {
 
     // THEN
     expect(nodeModulesPaths).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith("node_modules not found");
   });
 
   it("should return global and package level node_modules", async () => {
@@ -41,5 +43,8 @@ describe("get-node-modules-paths", () => {
       "/sakuli-test/node_modules",
       "/npm-root/node_modules",
     ]);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      `node_modules found: ${nodeModulesPaths}`
+    );
   });
 });
