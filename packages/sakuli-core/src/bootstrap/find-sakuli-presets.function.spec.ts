@@ -1,7 +1,15 @@
 import mockFs from "mock-fs";
 import { findSakuliPresets } from "./find-sakuli-presets.function";
+import { mockPartial } from "sneer";
 
+global.console = mockPartial<Console>({
+  debug: jest.fn(),
+});
 describe("get-sakuli-presets", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should return @sakuli/legacy as sakuli preset", () => {
     //GIVEN
     mockFs({
@@ -31,6 +39,9 @@ describe("get-sakuli-presets", () => {
 
     //THEN
     expect(sakuliPresets).toEqual(["@sakuli/legacy"]);
+    expect(console.debug).toHaveBeenCalledWith(
+      "Sakuli presets found during auto discovery: @sakuli/legacy"
+    );
   });
 
   it("should return empty array in case package name is missing", () => {
@@ -50,6 +61,9 @@ describe("get-sakuli-presets", () => {
 
     //THEN
     expect(sakuliPresets).toEqual([]);
+    expect(console.debug).toHaveBeenCalledWith(
+      "No Sakuli presets found during auto discovery"
+    );
   });
 
   afterEach(() => {
