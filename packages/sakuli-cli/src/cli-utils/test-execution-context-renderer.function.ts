@@ -1,11 +1,6 @@
-import {
-  TestContextEntity,
-  TestContextEntityState,
-  TestExecutionContext,
-} from "@sakuli/core";
-import { ifPresent, Maybe } from "@sakuli/commons";
+import {TestContextEntity, TestContextEntityState, TestExecutionContext,} from "@sakuli/core";
+import {ifPresent, Maybe} from "@sakuli/commons";
 import chalk from "chalk";
-import * as ansiEscapes from "ansi-escapes";
 
 const ensure = <T>(otherwiseValue: T) => (maybeValue: Maybe<T>) =>
   ifPresent(
@@ -23,14 +18,6 @@ const stateCharMap: Record<TestContextEntityState, string> = {
   "4": chalk.red.bold("⚠"),
 };
 
-const stateNameMap: Record<TestContextEntityState, string> = {
-  "0": chalk.green.bold("Ok"),
-  "1": chalk.yellow.bold("Warning"),
-  "2": chalk.red.bold("Critical"),
-  "3": chalk.grey.bold("Unknown"),
-  "4": chalk.red.bold("Error"),
-};
-
 const stateNameMapLog: Record<TestContextEntityState, string> = {
   "0": "Ok",
   "1": "Warning",
@@ -38,6 +25,16 @@ const stateNameMapLog: Record<TestContextEntityState, string> = {
   "3": "Unknown",
   "4": "Error",
 };
+
+const stateNameMapConsole: Record<TestContextEntityState, string> = {
+  "0": chalk.green.bold(stateNameMapLog["0"]),
+  "1": chalk.yellow.bold(stateNameMapLog["1"]),
+  "2": chalk.red.bold(stateNameMapLog["2"]),
+  "3": chalk.grey.bold(stateNameMapLog["3"]),
+  "4": chalk.red.bold(stateNameMapLog["4"]),
+};
+
+
 
 const repeatString = (length: number, char: string = " ") =>
   Array.from({ length }, () => char).reduce((a, b) => a + b, "");
@@ -74,8 +71,8 @@ const renderEntityOnEnd = (
 ) => {
   const indentString = repeatString(indent);
   const stateSign = stateCharMap[e.state];
-  const state = stateNameMap[e.state].length
-    ? `with state ${stateNameMap[e.state]}`
+  const state = stateNameMapConsole[e.state].length
+    ? `with state ${stateNameMapConsole[e.state]}`
     : ``;
   const prefix = `${indentString}${stateSign} Finished ${name} ${chalk.blue.bold(
     ensureName(e.id)
@@ -126,13 +123,7 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       .on("START_TESTCASE", (s) => {
         logEntityOnStart(s, "Testcase", 2);
       })
-      .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
       .on("END_TESTSTEP", (s) => {
-        l(
-          ansiEscapes.cursorUp(1) +
-            ansiEscapes.eraseLine +
-            ansiEscapes.cursorUp(1)
-        );
         logEntityOnEnd(s, "Step", 3);
       })
       .on("END_TESTCASE", (s) => {

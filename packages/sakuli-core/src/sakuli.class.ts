@@ -1,7 +1,7 @@
-import { SakuliRunOptions } from "./sakuli-run-options.interface";
-import { SakuliRunner } from "./runner";
-import { SakuliPresetProvider } from "./sakuli-preset-provider.interface";
-import { SakuliPresetRegistry } from "./sakuli-preset-registry.class";
+import {SakuliRunOptions} from "./sakuli-run-options.interface";
+import {SakuliRunner} from "./runner";
+import {SakuliPresetProvider} from "./sakuli-preset-provider.interface";
+import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
 import {
   CliArgsSource,
   DecoratedClassDefaultsSource,
@@ -11,14 +11,11 @@ import {
   SimpleLogger,
   StaticPropertySource,
 } from "@sakuli/commons";
-import { Project } from "./loader";
-import {
-  SakuliExecutionContextProvider,
-  TestExecutionContext,
-} from "./runner/test-execution-context";
-import { CommandModule } from "yargs";
-import { connectForwarderToTestExecutionContext } from "./forwarder/connect-forwarder-to-test-execution-context.function";
-import { SakuliCoreProperties } from "./sakuli-core-properties.class";
+import {Project} from "./loader";
+import {SakuliExecutionContextProvider, TestExecutionContext,} from "./runner/test-execution-context";
+import {CommandModule} from "yargs";
+import {connectForwarderToTestExecutionContext} from "./forwarder/connect-forwarder-to-test-execution-context.function";
+import {SakuliCoreProperties} from "./sakuli-core-properties.class";
 
 let sakuliInstance: Maybe<SakuliClass>;
 
@@ -39,6 +36,7 @@ export class SakuliClass {
   readonly testExecutionContext = new TestExecutionContext(this.logger);
 
   constructor(readonly presetProvider: SakuliPresetProvider[] = []) {
+    this.logger.info(`Loading Sakuli with ${this.presetProvider}`);
     this.presetProvider.forEach((provider) => {
       provider(this.presetRegistry);
     });
