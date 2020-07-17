@@ -1,9 +1,9 @@
 import {
-  testExecutionContextRenderer,
-  entityOnStartLogMessage,
   entityOnEndLogMessage,
+  entityOnStartLogMessage,
+  testExecutionContextRenderer,
 } from "./test-execution-context-renderer.function";
-import { TestExecutionContext, TestContextEntity } from "@sakuli/core";
+import { TestContextEntity, TestExecutionContext } from "@sakuli/core";
 import { SimpleLogger } from "@sakuli/commons";
 import { mockPartial } from "sneer";
 
@@ -32,19 +32,15 @@ describe("testExecutionContextRenderer", () => {
     expect(logger.info).toHaveBeenNthCalledWith(3, "Started Testcase Testcase");
     expect(logger.info).toHaveBeenNthCalledWith(
       4,
-      expect.stringMatching(/Finished Step Teststep with state Ok \d.\d{1,3}s/)
+      expect.stringMatching(/Finished Step Teststep with state Ok/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(
       5,
-      expect.stringMatching(
-        /Finished Testcase Testcase with state Ok \d.\d{1,3}s/
-      )
+      expect.stringMatching(/Finished Testcase Testcase with state Ok/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(
       6,
-      expect.stringMatching(
-        /Finished Testsuite Testsuite with state Ok \d.\d{1,3}s/
-      )
+      expect.stringMatching(/Finished Testsuite Testsuite with state Ok/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(7, "Finished Execution");
   });
