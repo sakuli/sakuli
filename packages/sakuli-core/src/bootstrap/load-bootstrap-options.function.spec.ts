@@ -19,7 +19,11 @@ jest.mock("process", () => ({
   cwd: jest.fn(),
 }));
 
-global.console = mockPartial<Console>({ warn: jest.fn() });
+global.console = mockPartial<Console>({
+  warn: jest.fn(),
+  info: jest.fn(),
+  debug: jest.fn(),
+});
 
 describe("loadBootstrapOptions", () => {
   beforeEach(() => {
@@ -38,6 +42,9 @@ describe("loadBootstrapOptions", () => {
 
     //THEN
     expect(bootstrapOptions.presetProvider).toEqual(["@sakuli/legacy"]);
+    expect(console.debug).toHaveBeenCalledWith(
+      "No sakuli preset configuration in package.json found"
+    );
   });
 
   it("should return @sakuli/legacy from file as bootstrapOption", async () => {
@@ -54,6 +61,9 @@ describe("loadBootstrapOptions", () => {
 
     //THEN
     expect(bootstrapOptions.presetProvider).toEqual(["@sakuli/legacy"]);
+    expect(console.debug).toHaveBeenCalledWith(
+      "Manual configuration in package.json found: @sakuli/legacy"
+    );
   });
 
   it("should return @sakuli/legacy only once as bootstrapOption", async () => {
@@ -70,6 +80,9 @@ describe("loadBootstrapOptions", () => {
 
     //THEN
     expect(bootstrapOptions.presetProvider).toEqual(["@sakuli/legacy"]);
+    expect(console.info).toHaveBeenCalledWith(
+      "Loading Sakuli with @sakuli/legacy"
+    );
   });
 
   it("should return SakuliBootstrapDefaults when getNodeModulesPaths throws error", async () => {
