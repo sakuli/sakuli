@@ -1,11 +1,11 @@
-import { Sakuli, SakuliClass } from "./sakuli.class";
-import { SakuliExecutionContextProvider } from "./runner/test-execution-context";
-import { SakuliPresetRegistry } from "./sakuli-preset-registry.class";
-import { Project, ProjectLoader } from "./loader";
-import { stripIndent } from "common-tags";
+import {Sakuli, SakuliClass} from "./sakuli.class";
+import {SakuliExecutionContextProvider} from "./runner/test-execution-context";
+import {SakuliPresetRegistry} from "./sakuli-preset-registry.class";
+import {Project, ProjectLoader} from "./loader";
+import {stripIndent} from "common-tags";
 import mockFs from "mock-fs";
-import { mockPartial } from "sneer";
-import { CliArgsSource } from "@sakuli/commons";
+import {mockPartial} from "sneer";
+import {CliArgsSource} from "@sakuli/commons";
 
 const installPropertySourceMock = jest.fn();
 jest.mock("./loader/model/project.class", () => ({
@@ -15,6 +15,21 @@ jest.mock("./loader/model/project.class", () => ({
   })),
 }));
 
+const logInfoMock = jest.fn();
+
+jest.mock("@sakuli/commons", () => {
+  const originalModule = jest.requireActual("@sakuli/commons");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    SimpleLogger: jest.fn(() => ({
+      info: logInfoMock
+    })),
+  };
+});
+
+
 afterEach(() => installPropertySourceMock.mockReset());
 
 describe("Sakuli", () => {
@@ -23,8 +38,10 @@ describe("Sakuli", () => {
   });
 
   describe("SakuliClass", () => {
+
     it("Should have at least the sakuli context provider", () => {
       const sakuli = new SakuliClass([]);
+      expect(logInfoMock).toHaveBeenCalled();
       expect(sakuli.lifecycleHooks.length).toBe(1);
       expect(sakuli.lifecycleHooks[0]).toBeInstanceOf(
         SakuliExecutionContextProvider

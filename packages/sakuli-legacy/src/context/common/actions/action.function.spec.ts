@@ -1,7 +1,7 @@
-import { runAsAction } from "./action.function";
-import { mockPartial } from "sneer";
-import { TestExecutionContext } from "@sakuli/core";
-import { SimpleLogger } from "@sakuli/commons";
+import {runAsAction} from "./action.function";
+import {mockPartial} from "sneer";
+import {TestExecutionContext} from "@sakuli/core";
+import {SimpleLogger} from "@sakuli/commons";
 
 function createTestExecutionContextMock() {
   return mockPartial<TestExecutionContext>({
@@ -28,6 +28,7 @@ describe("create-with-action-context", () => {
       await withActionContext();
 
       expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
+      expect(ctx.startTestAction).toHaveBeenCalled();
       expect(ctx.endTestAction).toHaveBeenCalled();
   });
 
@@ -37,6 +38,7 @@ describe("create-with-action-context", () => {
       await expect(withActionContext()).rejects.toThrow("Error in action: myAction \nmyError");
 
       expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
+      expect(ctx.startTestAction).toHaveBeenCalled();
       expect(ctx.endTestAction).toHaveBeenCalled();
   });
 
