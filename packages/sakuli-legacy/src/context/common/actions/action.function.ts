@@ -12,7 +12,7 @@ export function runAsAction<
     try {
       res = await fn(...args);
     } catch (e) {
-      throw Error(`Error in action: ${name} \n${e.message}`);
+      throw Error(`Error in action: ${name} \n${e.message || e}`);
     } finally {
       const log = [`Finish action ${name}`];
       if (ctx.getCurrentTestAction()) {
