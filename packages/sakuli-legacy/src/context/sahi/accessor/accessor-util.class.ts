@@ -130,6 +130,9 @@ export class AccessorUtil {
       WebElement,
       string[]
     ][] = await this.getStringIdentifiersForElement(elements);
+    this.testExecutionContext.logger.debug(
+      `Found ${eAndText.length} Elements for RegEx: ${regEx}`
+    );
 
     return eAndText
       .filter(([, potentialMatches]) => {
