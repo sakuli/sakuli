@@ -281,9 +281,13 @@ export class AccessorUtil {
   private stringToRegExp(str: string) {
     const isRegEx = this.isRegExpString(str);
     str = this.normaliseIdentifierString(str);
-    return new RegExp(
+    const regex = new RegExp(
       isRegEx ? str : "^s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "s*$"
     );
+    this.testExecutionContext.logger.debug(
+      `Converted string "${str}" to regex ${regex}`
+    );
+    return regex;
   }
 
   private async getElementsByAccessorIdentifier(
