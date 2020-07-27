@@ -62,6 +62,22 @@ describe("createTryAcrossFrames", () => {
     expect(frameLocatorMock).toHaveBeenNthCalledWith(2, pseudoFrames[1]);
     expect(defaultContentLocatorMock).toHaveBeenCalledTimes(2);
     expect(action).toHaveBeenCalledTimes(3);
+    expect(contextMock.logger.debug).toHaveBeenNthCalledWith(
+      1,
+      "Number of detected frames: 3"
+    );
+    expect(contextMock.logger.debug).toHaveBeenNthCalledWith(
+      2,
+      "Querying frame Nr.: 0"
+    );
+    expect(contextMock.logger.debug).toHaveBeenNthCalledWith(
+      3,
+      "Received Error in frame 0 when searching for element in frame Nr.: 0, updating error history"
+    );
+    expect(contextMock.logger.debug).toHaveBeenNthCalledWith(
+      4,
+      "Querying frame Nr.: 1"
+    );
   });
 
   it("should rethrow latest error when failing in every frame", async () => {

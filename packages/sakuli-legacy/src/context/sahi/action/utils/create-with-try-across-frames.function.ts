@@ -16,18 +16,20 @@ export function createWithTryAcrossFrames(
       return await func(...args).catch(async (originError) => {
         const frames = await driver.findElements(By.css("frame, iframe"));
         let latestError = originError;
-        for (let frame of frames) {
+        ctx.logger.debug(`Number of detected frames: ${frames.length}`);
+        for (let [idx, frame] of frames.entries()) {
+          ctx.logger.debug(`Querying frame Nr.: ${idx}`);
           try {
             await driver.switchTo().frame(frame);
             return await func(...args);
           } catch (currentError) {
             if (currentError instanceof SeleniumErrors.TimeoutError) {
-              ctx.logger.trace(
-                `Received TimoutError when searching for element in frame, not updating error history`
+              ctx.logger.debug(
+                `Received TimoutError when searching for element in frame Nr.: ${idx}, not updating error history`
               );
             } else {
-              ctx.logger.trace(
-                `Received ${currentError} when searching for element in frame, updating error history`
+              ctx.logger.debug(
+                `Received ${currentError} when searching for element in frame Nr.: ${idx}, updating error history`
               );
               latestError = currentError;
             }
