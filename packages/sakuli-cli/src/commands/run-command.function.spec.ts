@@ -1,4 +1,4 @@
-import { Project, SakuliInstance } from "@sakuli/core";
+import { Project, SakuliInstance, SakuliPresetProvider } from "@sakuli/core";
 import { mockPartial, mockRecursivePartial } from "sneer";
 import { runCommand } from "./run-command.function";
 import { Argv, CommandModule } from "yargs";
@@ -32,6 +32,7 @@ describe("runCommand", () => {
   let command: CommandModule<any, any>;
   let project: Project;
   let logLevelMock: jest.Mock;
+  let preset: SakuliPresetProvider;
   beforeEach(() => {
     argv = mockPartial<Argv>({
       positional: jest.fn().mockImplementation(() => argv),
@@ -42,14 +43,19 @@ describe("runCommand", () => {
       objectFactory: jest.fn(),
       testFiles: [{ path: "" }, { path: "" }],
     });
+    preset = mockPartial<SakuliPresetProvider>({
+      name: "sakuliPreset",
+    });
     sakuli = mockRecursivePartial<SakuliInstance>({
       testExecutionContext: {
         entities: [],
         logger: {
+          info: jest.fn(),
           logLevel: undefined,
         },
         resultState: 4,
       },
+      presetProvider: [preset],
       run: jest.fn(),
       initializeProject: jest.fn().mockImplementation(() => project),
     });
@@ -144,6 +150,9 @@ describe("runCommand", () => {
     it("should call sakuli run", async () => {
       await command.handler(runOptions);
       expect(sakuli.run).toHaveBeenCalledWith(project);
+      expect(sakuli.testExecutionContext.logger.info).toHaveBeenCalledWith(
+        `Loaded Sakuli with ${preset.name}`
+      );
     });
 
     it("should call render errors from context", async () => {
