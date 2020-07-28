@@ -1,5 +1,9 @@
-import {TestContextEntity, TestContextEntityState, TestExecutionContext,} from "@sakuli/core";
-import {ifPresent, Maybe} from "@sakuli/commons";
+import {
+  TestContextEntity,
+  TestContextEntityState,
+  TestExecutionContext,
+} from "@sakuli/core";
+import { ifPresent, Maybe } from "@sakuli/commons";
 import chalk from "chalk";
 
 const ensure = <T>(otherwiseValue: T) => (maybeValue: Maybe<T>) =>
@@ -33,8 +37,6 @@ const stateNameMapConsole: Record<TestContextEntityState, string> = {
   "3": chalk.grey.bold(stateNameMapLog["3"]),
   "4": chalk.red.bold(stateNameMapLog["4"]),
 };
-
-
 
 const repeatString = (length: number, char: string = " ") =>
   Array.from({ length }, () => char).reduce((a, b) => a + b, "");
@@ -122,6 +124,9 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       })
       .on("START_TESTCASE", (s) => {
         logEntityOnStart(s, "Testcase", 2);
+      })
+      .on("START_TESTSTEP", (s) => {
+        ctx.logger.info(entityOnStartLogMessage(s, "Step"));
       })
       .on("END_TESTSTEP", (s) => {
         logEntityOnEnd(s, "Step", 3);
