@@ -29,7 +29,7 @@
     "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-rollup-hooks src/",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
-    "prepublishOnly": "npm run build && npm test",
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && npm run build",
     "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-rollup-hooks/docs.json --out ../../docs/sakuli-rollup-hooks src/"
   },
   "bugs": {
