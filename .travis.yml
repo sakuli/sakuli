@@ -1,3 +1,6 @@
+cache:
+  npm: false
+
 os:
   - osx
   - linux
