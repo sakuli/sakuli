@@ -1,6 +1,5 @@
 import { WebElement } from "selenium-webdriver";
 import { TestExecutionContext } from "@sakuli/core";
-import { stripIndents } from "common-tags";
 
 /**
  * scrollIntoViewIfNeeded will scroll a given {@link WebElement} into view to perform further actions on it.
@@ -27,11 +26,9 @@ export async function scrollIntoViewIfNeeded(
     ctx.logger.debug("scroll into view failed: element was null or undefined");
     return false;
   }
-  ctx.logger.trace(stripIndents`scroll into view started with element: 
-      tag: ${await element.getTagName()},
-      id: ${await element.getAttribute("id")},
-      class: ${await element.getAttribute("class")},
-      text: ${await element.getText()}`);
+  ctx.logger.trace(
+    `scroll into view started with element: ${JSON.stringify(element)}`
+  );
   try {
     const returnValue = await element.getDriver().executeAsyncScript<boolean>(
       `
