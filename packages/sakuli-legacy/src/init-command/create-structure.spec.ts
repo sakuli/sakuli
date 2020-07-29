@@ -102,7 +102,18 @@ describe("Scheme test", () => {
     createTestcaseFile(CUR_DIR);
 
     // THEN
-    expect(readFileSync(`${CUR_DIR}/case1/check.js`, "utf8")).toBe("");
+    expect(readFileSync(`${CUR_DIR}/case1/check.js`, "utf8"))
+      .toBe(`(async () => {
+    const testCase = new TestCase();
+    try {
+        await _navigateTo("https://sakuli.io");               
+        testCase.endOfStep("Open Sakuli Homepage"); 
+    } catch (e) {
+        await testCase.handleException(e);
+    } finally {
+        await testCase.saveResult();
+    }
+})()`);
   });
 
   it("should create recursive directory for testsuite", () => {

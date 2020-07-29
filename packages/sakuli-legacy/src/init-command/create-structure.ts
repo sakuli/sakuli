@@ -24,7 +24,21 @@ export const createTestcaseDirectory = (path: string) => {
 };
 
 export const createTestcaseFile = (path: string) => {
-  writeFileSync(`${path}/case1/check.js`, "", { encoding: "utf8" });
+  writeFileSync(
+    `${path}/case1/check.js`,
+    `(async () => {
+    const testCase = new TestCase();
+    try {
+        await _navigateTo("https://sakuli.io");               
+        testCase.endOfStep("Open Sakuli Homepage"); 
+    } catch (e) {
+        await testCase.handleException(e);
+    } finally {
+        await testCase.saveResult();
+    }
+})()`,
+    { encoding: "utf8" }
+  );
 };
 
 export const createPackageJson = (path: string, suiteName: string) => {
