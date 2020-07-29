@@ -14,7 +14,7 @@
   "scripts": {
     "build": "ts-node -P tsconfig.json src/build-dts-file",
     "test": "(cd test && tsc -p tsconfig.test.json)",
-    "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && npm run build"
+    "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && lerna run build"
   },
   "contributors": [
     "Tim Keiner <tim.keiner@consol.de>",
