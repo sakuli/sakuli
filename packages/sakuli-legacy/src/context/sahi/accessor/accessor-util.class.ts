@@ -222,14 +222,14 @@ export class AccessorUtil {
         );
         const elements = await this.findElements(queryAfterRelation.locator);
         this.testExecutionContext.logger.trace(
-          `${elements.length} found after applying relations ${query.relations}`
+          `${elements.length} Elements found after applying relations ${query.relations}`
         );
         const elementsAfterIdentifier = await this.resolveByIdentifier(
           elements,
           queryAfterRelation.identifier
         );
         this.testExecutionContext.logger.trace(
-          `${elements.length} found after applying identifier ${query.identifier}`
+          `${elements.length} Elements found after applying identifier ${query.identifier}`
         );
         return elementsAfterIdentifier.length ? elementsAfterIdentifier : false;
       },
