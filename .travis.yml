@@ -1,5 +1,6 @@
-cache:
-  npm: false
+## clone the complete repository => preventing lerna versioning issues during next releases
+git:
+  depth: false
 
 os:
   - osx
