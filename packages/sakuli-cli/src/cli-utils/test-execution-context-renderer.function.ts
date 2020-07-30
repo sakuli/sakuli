@@ -5,7 +5,6 @@ import {
 } from "@sakuli/core";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import chalk from "chalk";
-import * as ansiEscapes from "ansi-escapes";
 
 const ensure = <T>(otherwiseValue: T) => (maybeValue: Maybe<T>) =>
   ifPresent(
@@ -23,13 +22,22 @@ const stateCharMap: Record<TestContextEntityState, string> = {
   "4": chalk.red.bold("⚠"),
 };
 
-const stateNameMap: Record<TestContextEntityState, string> = {
-  "0": chalk.green.bold("Ok"),
-  "1": chalk.yellow.bold("Warning"),
-  "2": chalk.red.bold("Critical"),
-  "3": chalk.grey.bold("Unknown"),
-  "4": chalk.red.bold("Error"),
+const stateNameMapLog: Record<TestContextEntityState, string> = {
+  "0": "Ok",
+  "1": "Warning",
+  "2": "Critical",
+  "3": "Unknown",
+  "4": "Error",
 };
+
+const stateNameMapConsole: Record<TestContextEntityState, string> = {
+  "0": chalk.green.bold(stateNameMapLog["0"]),
+  "1": chalk.yellow.bold(stateNameMapLog["1"]),
+  "2": chalk.red.bold(stateNameMapLog["2"]),
+  "3": chalk.grey.bold(stateNameMapLog["3"]),
+  "4": chalk.red.bold(stateNameMapLog["4"]),
+};
+
 const repeatString = (length: number, char: string = " ") =>
   Array.from({ length }, () => char).reduce((a, b) => a + b, "");
 
@@ -65,8 +73,8 @@ const renderEntityOnEnd = (
 ) => {
   const indentString = repeatString(indent);
   const stateSign = stateCharMap[e.state];
-  const state = stateNameMap[e.state].length
-    ? `with state ${stateNameMap[e.state]}`
+  const state = stateNameMapConsole[e.state].length
+    ? `with state ${stateNameMapConsole[e.state]}`
     : ``;
   const prefix = `${indentString}${stateSign} Finished ${name} ${chalk.blue.bold(
     ensureName(e.id)
@@ -75,24 +83,60 @@ const renderEntityOnEnd = (
   return padBetween(prefix, suffix, 180, chalk.grey("."));
 };
 
+export const entityOnEndLogMessage = (e: TestContextEntity, name: string) => {
+  const state = stateNameMapLog[e.state].length
+    ? `with state ${stateNameMapLog[e.state]}`
+    : ``;
+  return `Finished ${name} ${ensureName(e.id)} ${state} ${e.duration}s`;
+};
+
+export const entityOnStartLogMessage = (e: TestContextEntity, name: string) => {
+  return `Started ${name} ${ensureName(e.id)}`;
+};
+
 export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
   new Promise((res) => {
     const l = console.log.bind(console);
 
+    const logEntityOnStart = (
+      s: TestContextEntity,
+      name: string,
+      indent: number = 0
+    ) => {
+      l(renderEntityOnStart(s, name, indent));
+      ctx.logger.info(entityOnStartLogMessage(s, name));
+    };
+    const logEntityOnEnd = (
+      s: TestContextEntity,
+      name: string,
+      indent: number = 0
+    ) => {
+      l(renderEntityOnEnd(s, name, indent));
+      ctx.logger.info(entityOnEndLogMessage(s, name));
+    };
+
     ctx
-      .on("START_EXECUTION", (_) => l(`Started execution`))
-      .on("START_TESTSUITE", (s) => l(renderEntityOnStart(s, "Testsuite")))
-      .on("START_TESTCASE", (s) => l(renderEntityOnStart(s, "Testcase", 2)))
-      .on("START_TESTSTEP", (s) => l(renderEntityOnStart(s, "Step", 3)))
-      .on("END_TESTSTEP", (s) => {
-        l(
-          ansiEscapes.cursorUp(1) +
-            ansiEscapes.eraseLine +
-            renderEntityOnEnd(s, "Step", 3)
-        );
+      .on("START_EXECUTION", (_) => {
+        l(`Started execution`);
       })
-      .on("END_TESTCASE", (s) => l(renderEntityOnEnd(s, "Testcase", 2)))
-      .on("END_TESTSUITE", (s) => l(renderEntityOnEnd(s, "Testsuite")))
+      .on("START_TESTSUITE", (s) => {
+        logEntityOnStart(s, "Testsuite");
+      })
+      .on("START_TESTCASE", (s) => {
+        logEntityOnStart(s, "Testcase", 2);
+      })
+      .on("START_TESTSTEP", (s) => {
+        ctx.logger.info(entityOnStartLogMessage(s, "Step"));
+      })
+      .on("END_TESTSTEP", (s) => {
+        logEntityOnEnd(s, "Step", 3);
+      })
+      .on("END_TESTCASE", (s) => {
+        logEntityOnEnd(s, "Testcase", 2);
+      })
+      .on("END_TESTSUITE", (s) => {
+        logEntityOnEnd(s, "Testsuite");
+      })
       .on("END_EXECUTION", (_) => {
         l(`End execution`);
         res();

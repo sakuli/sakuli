@@ -28,10 +28,20 @@ export async function loadBootstrapOptions(): Promise<SakuliBootstrapOptions> {
 
     const packageJsonPath = join(cwd(), "package.json");
     const packagePresets = await getPresetDeclarationFromFile(packageJsonPath);
+    packagePresets.length
+      ? console.debug(
+          `Manual configuration in package.json found: ${packagePresets}`
+        )
+      : console.debug("No sakuli preset configuration in package.json found");
     for (const packagePreset of packagePresets) {
       if (!sakuliBootstrapOptions.presetProvider.includes(packagePreset)) {
         sakuliBootstrapOptions.presetProvider.push(packagePreset);
       }
+    }
+    if (sakuliBootstrapOptions.presetProvider.length) {
+      console.info(
+        `Loading Sakuli with ${sakuliBootstrapOptions.presetProvider}`
+      );
     }
 
     conf = sakuliBootstrapOptions;

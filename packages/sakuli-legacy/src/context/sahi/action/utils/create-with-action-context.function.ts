@@ -8,7 +8,7 @@ export function createWithActionContext(ctx: TestExecutionContext) {
   ): (...args: ARGS) => Promise<R> {
     return async (...args: ARGS): Promise<R> => {
       ctx.startTestAction({ id: name });
-      ctx.logger.debug(`Start action ${name}`);
+      ctx.logger.trace(`Start action ${name}`);
       let res: any;
       try {
         res = await fn(...args);
@@ -25,7 +25,7 @@ export function createWithActionContext(ctx: TestExecutionContext) {
             }s`
           );
         });
-        ctx.logger.info(log.join(" "));
+        ctx.logger.trace(log.join(" "));
         ctx.endTestAction();
       }
       return res;

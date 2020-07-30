@@ -63,6 +63,11 @@ export const runCommand: CommandModuleProvider = (
           logFile
         );
 
+        sakuli.testExecutionContext.logger.info(
+          `Loaded Sakuli with ${sakuli.presetProvider.map(
+            (preset) => preset.name
+          )}`
+        );
         await sakuli.run(project);
         await rendering;
         await ifPresent(

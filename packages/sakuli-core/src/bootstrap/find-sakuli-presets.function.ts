@@ -16,6 +16,11 @@ export function findSakuliPresets(nodeModulesPaths: string[]): string[] {
     );
   }
 
+  sakuliPresets.length
+    ? console.debug(
+        `Sakuli presets found during auto discovery: ${sakuliPresets}`
+      )
+    : console.debug("No Sakuli presets found during auto discovery");
   return sakuliPresets;
 }
 

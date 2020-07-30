@@ -28,14 +28,7 @@ describe("create-with-action-context", () => {
       expect(ctx.startTestAction).toHaveBeenCalledWith(
         expect.objectContaining({ id: "dummy" })
       );
-      expect(ctx.endTestAction).toHaveBeenCalled();
-    });
-
-    it("should start and stop an action in context", async () => {
-      await wrappedAction(1, "Test");
-      expect(ctx.startTestAction).toHaveBeenCalledWith(
-        expect.objectContaining({ id: "dummy" })
-      );
+      expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
       expect(ctx.endTestAction).toHaveBeenCalled();
     });
   });
@@ -57,6 +50,7 @@ describe("create-with-action-context", () => {
         /Error in Action/
       );
       expect(actionMock).toHaveBeenCalledWith(1, "Test");
+      expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
     });
 
     it("should start and finish an action anyway", async () => {
@@ -70,6 +64,7 @@ describe("create-with-action-context", () => {
         expect.objectContaining({ error: actionError })
       );
       expect(ctx.endTestAction).toHaveBeenCalled();
+      expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
     });
   });
 });

@@ -23,6 +23,11 @@ function mockExecuteScript<T>(promise: Promise<T>) {
       mockPartial<WebDriver>({
         executeAsyncScript: executeScriptFunction,
       }),
+    getAttribute: (attributeName: string) =>
+      Promise.resolve(`mockAttribute${attributeName}`),
+    getId: () => Promise.resolve("mockElementId"),
+    getTagName: () => Promise.resolve("mockTagName"),
+    getText: () => Promise.resolve("mockElementText"),
   });
 }
 

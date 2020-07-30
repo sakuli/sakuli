@@ -130,6 +130,9 @@ export class AccessorUtil {
       WebElement,
       string[]
     ][] = await this.getStringIdentifiersForElement(elements);
+    this.testExecutionContext.logger.debug(
+      `Found ${eAndText.length} Elements for RegEx: ${regEx}`
+    );
 
     return eAndText
       .filter(([, potentialMatches]) => {
@@ -218,9 +221,15 @@ export class AccessorUtil {
           query
         );
         const elements = await this.findElements(queryAfterRelation.locator);
+        this.testExecutionContext.logger.trace(
+          `${elements.length} Elements found after applying relations ${query.relations}`
+        );
         const elementsAfterIdentifier = await this.resolveByIdentifier(
           elements,
           queryAfterRelation.identifier
+        );
+        this.testExecutionContext.logger.trace(
+          `${elements.length} Elements found after applying identifier ${query.identifier}`
         );
         return elementsAfterIdentifier.length ? elementsAfterIdentifier : false;
       },
@@ -278,9 +287,13 @@ export class AccessorUtil {
   private stringToRegExp(str: string) {
     const isRegEx = this.isRegExpString(str);
     str = this.normaliseIdentifierString(str);
-    return new RegExp(
+    const regex = new RegExp(
       isRegEx ? str : "^s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "s*$"
     );
+    this.testExecutionContext.logger.debug(
+      `Converted string "${str}" to regex ${regex}`
+    );
+    return regex;
   }
 
   private async getElementsByAccessorIdentifier(
