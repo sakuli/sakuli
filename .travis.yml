@@ -40,7 +40,7 @@ stages:
   - name: deploy
     if: (branch = develop) OR (tag IS present)
   - name: trigger-image-build
-    if: (branch = develop)
+    if: (branch = develop) AND (env(TRAVIS_PULL_REQUEST) = false)
 
 jobs:
   include:
