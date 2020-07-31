@@ -38,7 +38,7 @@ script:
 stages:
   - test
   - name: deploy
-    if: (branch = develop) OR (tag IS present) AND (env(TRAVIS_PULL_REQUEST) = false)
+    if: ((branch = develop) OR (tag IS present)) AND (env(TRAVIS_PULL_REQUEST) = false)
   - name: trigger-image-build
     if: (branch = develop) AND (env(TRAVIS_PULL_REQUEST) = false)
 
