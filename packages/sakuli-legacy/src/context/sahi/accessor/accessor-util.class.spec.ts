@@ -31,17 +31,15 @@ describe("AccessorUtil", () => {
         await env.stop();
       });
 
-      it("should fetch an element by string", async () => {
+      it("should fetch an element by regex string", async () => {
         await driver.get(
           mockHtml(`
-             <div id="eins">
              <div id="zwei">
                 Some Text content
-                </div>
-              </div>
-              <div id="drei">
+             </div>
+             <div id="drei">
                 Some Text
-                </div>
+             </div>
             `)
         );
         const elements = await driver.findElements(By.css("div"));
@@ -49,6 +47,37 @@ describe("AccessorUtil", () => {
         return expect(
           Promise.all(elems.map((e) => e.getAttribute("id")))
         ).resolves.toEqual(["eins", "zwei"]);
+      });
+
+      it("should fetch an element by string", async () => {
+        await driver.get(
+          mockHtml(`
+             <div id="zwei">
+                Some Text content
+             </div>
+             <div id="drei">
+                Some Text
+             </div>
+            `)
+        );
+        const elements = await driver.findElements(By.css("div"));
+        const elems = await accessorUtil.getByString(elements, "Some Text");
+        return expect(
+          Promise.all(elems.map((e) => e.getAttribute("id")))
+        ).resolves.toEqual(["drei"]);
+      });
+
+      it("should fetch an element by string where element string is padded by whitespace", async () => {
+        await driver.get(
+          mockHtml(
+            "<div id='zwei'>Some Text content</div><div id='drei'> Some Text </div>"
+          )
+        );
+        const elements = await driver.findElements(By.css("div"));
+        const elems = await accessorUtil.getByString(elements, "Some Text");
+        return expect(
+          Promise.all(elems.map((e) => e.getAttribute("id")))
+        ).resolves.toEqual(["drei"]);
       });
 
       it("should fetch fuzzy matching identifiers from element", async () => {

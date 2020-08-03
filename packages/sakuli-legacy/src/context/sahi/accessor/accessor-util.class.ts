@@ -288,9 +288,7 @@ export class AccessorUtil {
     const isRegEx = this.isRegExpString(str);
     str = this.normaliseIdentifierString(str);
     const regex = new RegExp(
-      isRegEx
-        ? str
-        : "^\\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$"
+      isRegEx ? str : "^s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "s*$"
     );
     this.testExecutionContext.logger.debug(
       `Converted string "${str}" to regex ${regex}`
