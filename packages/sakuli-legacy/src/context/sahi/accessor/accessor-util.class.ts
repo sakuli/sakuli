@@ -253,16 +253,6 @@ export class AccessorUtil {
     return identifier.startsWith("/") && identifier.endsWith("/");
   }
 
-  private normaliseIdentifierString(identifier: string) {
-    if (identifier.startsWith("/")) {
-      identifier = identifier.substr(1, identifier.length);
-    }
-    if (identifier.endsWith("/")) {
-      identifier = identifier.substr(0, identifier.length - 1);
-    }
-    return identifier;
-  }
-
   async getByString(
     elements: WebElement[],
     identifier: string
@@ -286,7 +276,7 @@ export class AccessorUtil {
 
   private stringToRegExp(str: string) {
     const isRegEx = this.isRegExpString(str);
-    str = this.normaliseIdentifierString(str);
+    str = isRegEx ? str.substr(1, str.length - 2) : str;
     const regex = new RegExp(
       isRegEx ? str : "^s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "s*$"
     );

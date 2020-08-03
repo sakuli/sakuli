@@ -34,10 +34,10 @@ describe("AccessorUtil", () => {
       it("should fetch an element by regex string", async () => {
         await driver.get(
           mockHtml(`
-             <div id="zwei">
+             <div id="eins">
                 Some Text content
              </div>
-             <div id="drei">
+             <div id="zwei">
                 Some Text
              </div>
             `)
@@ -46,7 +46,7 @@ describe("AccessorUtil", () => {
         const elems = await accessorUtil.getByString(elements, "/content/");
         return expect(
           Promise.all(elems.map((e) => e.getAttribute("id")))
-        ).resolves.toEqual(["eins", "zwei"]);
+        ).resolves.toEqual(["eins"]);
       });
 
       it("should fetch an element by string", async () => {
