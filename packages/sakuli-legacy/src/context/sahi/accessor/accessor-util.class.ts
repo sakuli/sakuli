@@ -258,7 +258,7 @@ export class AccessorUtil {
       identifier = identifier.substr(1, identifier.length);
     }
     if (identifier.endsWith("/")) {
-      identifier = identifier.substr(identifier.length, 1);
+      identifier = identifier.substr(0, identifier.length - 1);
     }
     return identifier;
   }
@@ -288,7 +288,9 @@ export class AccessorUtil {
     const isRegEx = this.isRegExpString(str);
     str = this.normaliseIdentifierString(str);
     const regex = new RegExp(
-      isRegEx ? str : "^s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "s*$"
+      isRegEx
+        ? str
+        : "^\\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$"
     );
     this.testExecutionContext.logger.debug(
       `Converted string "${str}" to regex ${regex}`

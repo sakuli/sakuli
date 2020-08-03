@@ -31,6 +31,26 @@ describe("AccessorUtil", () => {
         await env.stop();
       });
 
+      it("should fetch an element by string", async () => {
+        await driver.get(
+          mockHtml(`
+             <div id="eins">
+             <div id="zwei">
+                Some Text content
+                </div>
+              </div>
+              <div id="drei">
+                Some Text
+                </div>
+            `)
+        );
+        const elements = await driver.findElements(By.css("div"));
+        const elems = await accessorUtil.getByString(elements, "/content/");
+        return expect(
+          Promise.all(elems.map((e) => e.getAttribute("id")))
+        ).resolves.toEqual(["eins", "zwei"]);
+      });
+
       it("should fetch fuzzy matching identifiers from element", async () => {
         await driver.get(
           mockHtml(`
