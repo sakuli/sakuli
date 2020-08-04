@@ -19,6 +19,9 @@ describe("AccessorUtil", () => {
         env = createTestEnv(browser, local);
         await env.start();
         driver = (await env.getEnv()).driver;
+      });
+
+      beforeEach(async () => {
         testExecutionContext = createTestExecutionContextMock();
         accessorUtil = new AccessorUtil(
           driver,
