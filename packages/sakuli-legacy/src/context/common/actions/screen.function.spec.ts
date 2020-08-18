@@ -97,6 +97,7 @@ describe("ScreenApi", () => {
 
     // THEN
     expect(nutjs.getActiveWindow).toBeCalledTimes(1);
+    expect(regionResult as nutjs.Region).toEqual(expectedRegion);
   });
 
   it("should return passed region after calling highlight for method chaining", async () => {
