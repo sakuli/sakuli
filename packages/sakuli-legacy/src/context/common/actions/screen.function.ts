@@ -1,4 +1,4 @@
-import { Region as NutRegion, screen } from "@nut-tree/nut-js";
+import { getActiveWindow, Region as NutRegion, screen } from "@nut-tree/nut-js";
 import { FileType } from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import { parse } from "path";
 import { cwd } from "process";
@@ -37,7 +37,7 @@ export const getTimestamp = (
   return timestampString.split(":").join("-");
 };
 
-export type SearchResult = {
+export type ScreenRegionResult = {
   left: number;
   top: number;
   width: number;
@@ -50,9 +50,9 @@ export const ScreenApi = {
     path: string,
     confidence: number,
     searchRegion: Region
-  ): Promise<SearchResult> {
+  ): Promise<ScreenRegionResult> {
     const { left, top, width, height } = await getCoordinates(searchRegion);
-    return new Promise<SearchResult>(async (resolve, reject) => {
+    return new Promise<ScreenRegionResult>(async (resolve, reject) => {
       try {
         screen.config.resourceDirectory = path;
         const result = await screen.find(filename, {
@@ -76,9 +76,9 @@ export const ScreenApi = {
     confidence: number,
     timeoutMs: number,
     searchRegion: Region
-  ): Promise<SearchResult> {
+  ): Promise<ScreenRegionResult> {
     const { left, top, width, height } = await getCoordinates(searchRegion);
-    return new Promise<SearchResult>(async (resolve, reject) => {
+    return new Promise<ScreenRegionResult>(async (resolve, reject) => {
       try {
         screen.config.resourceDirectory = path;
         const result = await screen.waitFor(filepath, timeoutMs, {
@@ -91,6 +91,17 @@ export const ScreenApi = {
           width: result.width,
           height: result.height,
         });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  },
+  getRegionFromFocusedWindow(): Promise<ScreenRegionResult> {
+    return new Promise<ScreenRegionResult>(async (resolve, reject) => {
+      try {
+        const focusedWindow = await getActiveWindow();
+        const focusedWindowRegion = await focusedWindow.region;
+        resolve(focusedWindowRegion as ScreenRegionResult);
       } catch (e) {
         reject(e);
       }
