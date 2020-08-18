@@ -7,6 +7,7 @@ import { tmpdir } from "os";
 import { join, sep } from "path";
 import { promises as fs } from "fs";
 import Mocked = jest.Mocked;
+import { SimpleLogger } from "@sakuli/commons";
 
 describe("SakuliRunner", () => {
   let tempDir: string;
@@ -41,6 +42,9 @@ describe("SakuliRunner", () => {
     endExecution: jest.fn(),
     getCurrentTestAction: jest.fn(),
     getCurrentTestSuite: jest.fn(),
+    logger: mockPartial<SimpleLogger>({
+      trace: jest.fn(),
+    }),
   });
 
   let sakuliRunner: SakuliRunner;
