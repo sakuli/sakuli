@@ -48,19 +48,23 @@ export const connectForwarderToTestExecutionContext = async (
     }
   });
 
-  ctx.on("END_EXECUTION", (ctx) => {
+  ctx.on("END_EXECUTION", (context) => {
     if (forwarder.forward) {
-      forwardings.push(forwarder.forward(ctx));
+      forwardings.push(forwarder.forward(context));
     }
   });
   return async () => {
+    ctx.logger.debug(`Start forwarding...`);
     for (const forwarding of forwardings) {
       try {
         await forwarding;
       } catch (e) {
-        ctx.logger.debug(`There were errors during forwarding`);
+        ctx.logger.error(
+          `There were errors during forwarding: ${JSON.stringify(e)}`
+        );
       }
     }
+    ctx.logger.debug(`Forwarding completed.`);
     if (forwarder.tearDown) {
       return forwarder.tearDown();
     } else {
