@@ -54,7 +54,7 @@ export const connectForwarderToTestExecutionContext = async (
     }
   });
   return async () => {
-    ctx.logger.debug(`Start forwarding...`);
+    ctx.logger.trace(`Start forwarding...`);
     for (const forwarding of forwardings) {
       try {
         await forwarding;
@@ -64,7 +64,7 @@ export const connectForwarderToTestExecutionContext = async (
         );
       }
     }
-    ctx.logger.debug(`Forwarding completed.`);
+    ctx.logger.trace(`Forwarding completed.`);
     if (forwarder.tearDown) {
       return forwarder.tearDown();
     } else {
