@@ -26,7 +26,6 @@ ScreenApi.takeScreenshotWithTimestamp = jest.fn(() =>
 describe("TestCase", () => {
   let testExecutionContext: TestExecutionContext;
   let project: Project;
-  let legacyProps: LegacyProjectProperties;
   beforeEach(() => {
     testExecutionContext = mockPartial<TestExecutionContext>({
       startTestStep: jest.fn(),
@@ -49,10 +48,8 @@ describe("TestCase", () => {
       }),
     });
 
-    legacyProps = new LegacyProjectProperties();
-    legacyProps.screenshotDir = tmpdir();
     project = mockPartial<Project>({
-      objectFactory: jest.fn().mockReturnValue(legacyProps),
+      objectFactory: jest.fn().mockReturnValue(new LegacyProjectProperties()),
     });
   });
 
@@ -260,6 +257,11 @@ describe("TestCase", () => {
     it("should take a screenshot, update the testcase and save the error screenshot hierarchical when not explicitly specified", async () => {
       // GIVEN
       const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      legacyProps.screenshotDir = tmpdir();
+      project = mockPartial<Project>({
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
+      });
       const SUT = createTestCaseClass(
         testExecutionContext,
         project,
@@ -284,6 +286,8 @@ describe("TestCase", () => {
     it("should take a screenshot and save it hierarchical when explicitly specified in props", async () => {
       // GIVEN
       const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      legacyProps.screenshotDir = tmpdir();
       legacyProps.screenshotStorage = "hierarchical";
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
@@ -308,6 +312,8 @@ describe("TestCase", () => {
     it("should take a screenshot and save it flat when explicitly specified in props", async () => {
       // GIVEN
       const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      legacyProps.screenshotDir = tmpdir();
       legacyProps.screenshotStorage = "flat";
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
@@ -359,6 +365,20 @@ describe("TestCase", () => {
     });
 
     it("should update last step from cache", async () => {
+      // GIVEN
+      const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      legacyProps.screenshotDir = tmpdir();
+      project = mockPartial<Project>({
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
+      });
+      const SUT = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder,
+        cacheMock
+      );
+      const tc = new SUT();
       (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
         getChildren: () => [TestStep("step-1", 100, 200), TestStep("", 0, 0)],
       });
