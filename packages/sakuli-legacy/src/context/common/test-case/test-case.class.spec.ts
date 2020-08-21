@@ -350,6 +350,11 @@ describe("TestCase", () => {
     let tc: TestCase;
     beforeEach(() => {
       const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      legacyProps.screenshotDir = tmpdir();
+      project = mockPartial<Project>({
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
+      });
       cacheMock = mockPartial<TestStepCache>({
         exists: jest.fn().mockResolvedValue(cacheData.exists),
         read: jest.fn().mockResolvedValue(cacheData.steps),
@@ -365,20 +370,6 @@ describe("TestCase", () => {
     });
 
     it("should update last step from cache", async () => {
-      // GIVEN
-      const testFolder = "testCaseFolder";
-      const legacyProps = new LegacyProjectProperties();
-      legacyProps.screenshotDir = tmpdir();
-      project = mockPartial<Project>({
-        objectFactory: jest.fn().mockReturnValue(legacyProps),
-      });
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder,
-        cacheMock
-      );
-      const tc = new SUT();
       (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
         getChildren: () => [TestStep("step-1", 100, 200), TestStep("", 0, 0)],
       });
