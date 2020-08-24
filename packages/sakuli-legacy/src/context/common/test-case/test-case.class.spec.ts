@@ -350,6 +350,11 @@ describe("TestCase", () => {
     let tc: TestCase;
     beforeEach(() => {
       const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      legacyProps.screenshotDir = tmpdir();
+      project = mockPartial<Project>({
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
+      });
       cacheMock = mockPartial<TestStepCache>({
         exists: jest.fn().mockResolvedValue(cacheData.exists),
         read: jest.fn().mockResolvedValue(cacheData.steps),
@@ -368,7 +373,11 @@ describe("TestCase", () => {
       (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
         getChildren: () => [TestStep("step-1", 100, 200), TestStep("", 0, 0)],
       });
+
+      // WHEN
       await tc.handleException(Error("Dummy"));
+
+      // THEN
       expect(testExecutionContext.updateCurrentTestStep).toHaveBeenCalledWith(
         expect.objectContaining({
           kind: "step",
