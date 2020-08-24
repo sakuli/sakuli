@@ -1,4 +1,4 @@
-import { Region, screen } from "@nut-tree/nut-js";
+import * as nutjs from "@nut-tree/nut-js";
 import { getTimestamp, ScreenApi } from "./screen.function";
 import { createRegionClass } from "../region";
 import { Project, TestExecutionContext } from "@sakuli/core";
@@ -7,6 +7,7 @@ import { FileType } from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import { cwd } from "process";
 import { join } from "path";
 import { toNutRegion } from "./converter.function";
+import { mockPartial } from "sneer";
 
 let ctx: TestExecutionContext;
 let project: Project;
@@ -15,11 +16,12 @@ const testFilename = "testfile.png";
 const testPath = "/test/path";
 const testConfidence = 0.99;
 const testTimeout = 500;
-const expectedRegion = new Region(0, 0, 100, 100);
+const expectedRegion = new nutjs.Region(0, 0, 100, 100);
 
 beforeEach(() => {
   ctx = new TestExecutionContext(new SimpleLogger());
   project = new Project("");
+  jest.resetAllMocks();
 });
 
 describe("ScreenApi", () => {
@@ -27,14 +29,14 @@ describe("ScreenApi", () => {
     // GIVEN
     const TestRegion = createRegionClass(ctx, project);
     const testRegion = new TestRegion(0, 0, 100, 100);
-    screen.find = jest.fn(() => Promise.resolve(expectedRegion));
+    nutjs.screen.find = jest.fn(() => Promise.resolve(expectedRegion));
 
     // WHEN
     await ScreenApi.find(testFilename, testPath, testConfidence, testRegion);
 
     // THEN
-    expect(screen.find).toBeCalledTimes(1);
-    expect(screen.find).toBeCalledWith(testFilename, {
+    expect(nutjs.screen.find).toBeCalledTimes(1);
+    expect(nutjs.screen.find).toBeCalledWith(testFilename, {
       confidence: testConfidence,
       searchRegion: expectedRegion,
     });
@@ -44,7 +46,7 @@ describe("ScreenApi", () => {
     // GIVEN
     const TestRegion = createRegionClass(ctx, project);
     const testRegion = new TestRegion(0, 0, 100, 100);
-    screen.waitFor = jest.fn(() => Promise.resolve(expectedRegion));
+    nutjs.screen.waitFor = jest.fn(() => Promise.resolve(expectedRegion));
 
     // WHEN
     await ScreenApi.waitForImage(
@@ -56,8 +58,8 @@ describe("ScreenApi", () => {
     );
 
     // THEN
-    expect(screen.waitFor).toBeCalledTimes(1);
-    expect(screen.waitFor).toBeCalledWith(testFilename, testTimeout, {
+    expect(nutjs.screen.waitFor).toBeCalledTimes(1);
+    expect(nutjs.screen.waitFor).toBeCalledWith(testFilename, testTimeout, {
       confidence: testConfidence,
       searchRegion: expectedRegion,
     });
@@ -69,14 +71,33 @@ describe("ScreenApi", () => {
     const testRegion = new TestRegion(0, 0, 100, 100);
     const expectedRegion = await toNutRegion(testRegion);
     const testHighlightDuration = 5;
-    screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
+    nutjs.screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
 
     // WHEN
     await ScreenApi.highlight(testRegion, testHighlightDuration);
 
     // THEN
-    expect(screen.highlight).toBeCalledTimes(1);
-    expect(screen.highlight).toBeCalledWith(expectedRegion);
+    expect(nutjs.screen.highlight).toBeCalledTimes(1);
+    expect(nutjs.screen.highlight).toBeCalledWith(expectedRegion);
+  });
+
+  it("should call `getActiveWindow`", async () => {
+    // GIVEN
+    const mock = jest.spyOn(nutjs, "getActiveWindow");
+    mock.mockResolvedValue(
+      mockPartial<nutjs.Window>({
+        get region(): Promise<nutjs.Region> {
+          return Promise.resolve(expectedRegion);
+        },
+      })
+    );
+
+    // WHEN
+    const regionResult = await ScreenApi.getRegionFromFocusedWindow();
+
+    // THEN
+    expect(nutjs.getActiveWindow).toBeCalledTimes(1);
+    expect(regionResult as nutjs.Region).toEqual(expectedRegion);
   });
 
   it("should return passed region after calling highlight for method chaining", async () => {
@@ -84,7 +105,7 @@ describe("ScreenApi", () => {
     const TestRegion = createRegionClass(ctx, project);
     const testRegion = new TestRegion(0, 0, 100, 100);
     const testHighlightDuration = 5;
-    screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
+    nutjs.screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
 
     // WHEN
     const result = await ScreenApi.highlight(testRegion, testHighlightDuration);
@@ -99,14 +120,14 @@ describe("takeScreenshot*", () => {
     // GIVEN
     const screenShotFileName = "screenshot";
     const screenShotFileExt = ".png";
-    screen.capture = jest.fn(() => Promise.resolve("filename"));
+    nutjs.screen.capture = jest.fn(() => Promise.resolve("filename"));
 
     // WHEN
     await ScreenApi.takeScreenshot(`${screenShotFileName}${screenShotFileExt}`);
 
     // THEN
-    expect(screen.capture).toBeCalledTimes(1);
-    expect(screen.capture).toBeCalledWith(
+    expect(nutjs.screen.capture).toBeCalledTimes(1);
+    expect(nutjs.screen.capture).toBeCalledWith(
       screenShotFileName,
       FileType.PNG,
       cwd()
@@ -118,7 +139,7 @@ describe("takeScreenshot*", () => {
     const screenShotPath = join("test", "path", "to");
     const screenShotFileName = "screenshot";
     const screenShotFileExt = ".png";
-    screen.capture = jest.fn(() => Promise.resolve("filename"));
+    nutjs.screen.capture = jest.fn(() => Promise.resolve("filename"));
 
     // WHEN
     await ScreenApi.takeScreenshot(
@@ -126,8 +147,8 @@ describe("takeScreenshot*", () => {
     );
 
     // THEN
-    expect(screen.capture).toBeCalledTimes(1);
-    expect(screen.capture).toBeCalledWith(
+    expect(nutjs.screen.capture).toBeCalledTimes(1);
+    expect(nutjs.screen.capture).toBeCalledWith(
       screenShotFileName,
       FileType.PNG,
       screenShotPath
@@ -138,7 +159,7 @@ describe("takeScreenshot*", () => {
     // GIVEN
     const screenShotFileName = "screenshot";
     const screenShotFileExt = ".png";
-    screen.capture = jest.fn(() => Promise.resolve("filename"));
+    nutjs.screen.capture = jest.fn(() => Promise.resolve("filename"));
 
     // WHEN
     await ScreenApi.takeScreenshotWithTimestamp(
@@ -146,8 +167,8 @@ describe("takeScreenshot*", () => {
     );
 
     // THEN
-    expect(screen.capture).toBeCalledTimes(1);
-    expect(screen.capture).toBeCalledWith(
+    expect(nutjs.screen.capture).toBeCalledTimes(1);
+    expect(nutjs.screen.capture).toBeCalledWith(
       screenShotFileName,
       FileType.PNG,
       cwd(),
@@ -161,7 +182,7 @@ describe("takeScreenshot*", () => {
     const screenShotPath = join("test", "path", "to");
     const screenShotFileName = "screenshot";
     const screenShotFileExt = ".png";
-    screen.capture = jest.fn(() => Promise.resolve("filename"));
+    nutjs.screen.capture = jest.fn(() => Promise.resolve("filename"));
 
     // WHEN
     await ScreenApi.takeScreenshotWithTimestamp(
@@ -169,8 +190,8 @@ describe("takeScreenshot*", () => {
     );
 
     // THEN
-    expect(screen.capture).toBeCalledTimes(1);
-    expect(screen.capture).toBeCalledWith(
+    expect(nutjs.screen.capture).toBeCalledTimes(1);
+    expect(nutjs.screen.capture).toBeCalledWith(
       screenShotFileName,
       FileType.PNG,
       screenShotPath,
