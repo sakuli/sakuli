@@ -85,6 +85,7 @@ export class SakuliClass {
   }
 
   async run(project: Project): Promise<TestExecutionContext> {
+    this.logger.trace("Connecting forwarder to TestExecutionContext...");
     const forwarderTearDown = await Promise.all(
       this.forwarder.map((forwarder) =>
         connectForwarderToTestExecutionContext(
@@ -94,13 +95,21 @@ export class SakuliClass {
         )
       )
     );
+    this.logger.trace("Forwarder connected to TestExecutionContext.");
     const runner = new SakuliRunner(
       this.lifecycleHooks,
       this.testExecutionContext
     );
-    await runner.execute(project);
 
+    this.logger.trace("Executing project with SakuliRunner...");
+    await runner.execute(project);
+    this.logger.trace("Project execution with SakuliRunner completed.");
+
+    this.logger.trace("Invoke teardown on registered forwarders...");
     await Promise.all(forwarderTearDown.map((teardown) => teardown()));
+    this.logger.trace(
+      "Invocation of teardown on registered forwarders completed."
+    );
 
     return this.testExecutionContext;
   }

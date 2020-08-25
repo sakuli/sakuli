@@ -30,20 +30,19 @@ describe("testExecutionContextRenderer", () => {
       "Started Testsuite Testsuite"
     );
     expect(logger.info).toHaveBeenNthCalledWith(3, "Started Testcase Testcase");
-    expect(logger.info).toHaveBeenNthCalledWith(4, "Started Step Teststep");
     expect(logger.info).toHaveBeenNthCalledWith(
-      5,
+      4,
       expect.stringMatching(/Finished Step Teststep with state Ok/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(
-      6,
+      5,
       expect.stringMatching(/Finished Testcase Testcase with state Ok/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(
-      7,
+      6,
       expect.stringMatching(/Finished Testsuite Testsuite with state Ok/)
     );
-    expect(logger.info).toHaveBeenNthCalledWith(8, "Finished Execution");
+    expect(logger.info).toHaveBeenNthCalledWith(7, "Finished Execution");
   });
 });
 

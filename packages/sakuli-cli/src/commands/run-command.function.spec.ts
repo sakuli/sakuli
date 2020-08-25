@@ -51,6 +51,7 @@ describe("runCommand", () => {
         entities: [],
         logger: {
           info: jest.fn(),
+          trace: jest.fn(),
           logLevel: undefined,
         },
         resultState: 4,
