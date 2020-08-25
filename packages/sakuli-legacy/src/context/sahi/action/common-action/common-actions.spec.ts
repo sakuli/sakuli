@@ -12,8 +12,10 @@ import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
 import * as scrollIntoViewModule from "../utils/scroll-into-view-if-needed.function";
+import * as highlightModule from "../utils/highlight.function";
 
 jest.setTimeout(15_000);
+
 describe("common-actions", () => {
   describe.each(getTestBrowserList())(
     "%s",
@@ -31,6 +33,10 @@ describe("common-actions", () => {
           new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx)),
           ctx
         );
+      });
+
+      beforeEach(() => {
+        jest.resetAllMocks();
       });
 
       afterAll(async () => {
@@ -52,6 +58,26 @@ describe("common-actions", () => {
             `)
         );
         await api._highlight(queryByLocator(By.css("#second")));
+      });
+
+      it("should highlight via highlightElement", async () => {
+        // GIVEN
+        jest.spyOn(highlightModule, "highlightElement");
+        await driver.get(
+          mockHtml(`
+                        <ul>
+                            <li>First</li>
+                            <li id="second">Second</li>
+                            <li>Last</li>
+                        </ul>
+                    `)
+        );
+
+        // WHEN
+        await api._highlight(queryByLocator(By.css("#second")));
+
+        // THEN
+        expect(highlightModule.highlightElement).toBeCalledTimes(1);
       });
 
       it("should call scrollIntoViewIfNeeded when highlighting", async () => {
