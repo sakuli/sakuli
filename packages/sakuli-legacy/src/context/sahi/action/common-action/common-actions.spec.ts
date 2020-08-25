@@ -62,7 +62,7 @@ describe("common-actions", () => {
 
       it("should highlight via highlightElement", async () => {
         // GIVEN
-        jest.spyOn(highlightModule, "highlightElement");
+        const highlightSpy = jest.spyOn(highlightModule, "highlightElement");
         await driver.get(
           mockHtml(`
                         <ul>
@@ -77,11 +77,15 @@ describe("common-actions", () => {
         await api._highlight(queryByLocator(By.css("#second")));
 
         // THEN
-        expect(highlightModule.highlightElement).toBeCalledTimes(1);
+        expect(highlightSpy).toBeCalledTimes(1);
       });
 
       it("should call scrollIntoViewIfNeeded when highlighting", async () => {
-        jest.spyOn(scrollIntoViewModule, "scrollIntoViewIfNeeded");
+        // GIVEN
+        const scrollIntoViewSpy = jest.spyOn(
+          scrollIntoViewModule,
+          "scrollIntoViewIfNeeded"
+        );
         await driver.get(
           mockHtml(`
                 <ul>
@@ -91,8 +95,12 @@ describe("common-actions", () => {
                 </ul>
             `)
         );
+
+        // WHEN
         await api._highlight(queryByLocator(By.css("#second")));
-        expect(scrollIntoViewModule.scrollIntoViewIfNeeded).toHaveBeenCalled();
+
+        // THEN
+        expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
       });
 
       it("should invoke script on the page", async () => {
