@@ -136,4 +136,20 @@ describe("JsScriptExecutor", () => {
 
     expect(context.mock).toHaveBeenCalled();
   });
+
+  it("should catch rejected promise when syntax error present", async () => {
+    //GIVEN
+    const executor = new JsScriptExecutor({});
+
+    //WHEN
+    const result = executor.execute(
+      stripIndents`
+              cons test = "Wrong const definition";
+        `,
+      {}
+    );
+
+    //THEN
+    await expect(result).rejects.toThrow("Unexpected identifier");
+  });
 });
