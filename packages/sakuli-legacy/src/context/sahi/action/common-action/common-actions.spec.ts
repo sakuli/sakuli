@@ -11,8 +11,7 @@ import { commonActionsApi } from "./common-actions.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
-import * as scrollIntoViewModule from "../utils/scroll-into-view-if-needed.function";
-import * as highlightModule from "../utils/highlight.function";
+import * as utilsModule from "../utils";
 
 jest.setTimeout(15_000);
 
@@ -62,7 +61,7 @@ describe("common-actions", () => {
 
       it("should highlight via highlightElement", async () => {
         // GIVEN
-        const highlightSpy = jest.spyOn(highlightModule, "highlightElement");
+        const highlightSpy = jest.spyOn(utilsModule, "highlightElement");
         await driver.get(
           mockHtml(`
                         <ul>
@@ -83,7 +82,7 @@ describe("common-actions", () => {
       it("should call scrollIntoViewIfNeeded when highlighting", async () => {
         // GIVEN
         const scrollIntoViewSpy = jest.spyOn(
-          scrollIntoViewModule,
+          utilsModule,
           "scrollIntoViewIfNeeded"
         );
         await driver.get(
