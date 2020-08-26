@@ -11,9 +11,11 @@ import { commonActionsApi } from "./common-actions.function";
 import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
-import * as scrollIntoViewModule from "../utils/scroll-into-view-if-needed.function";
+import * as utilsModule from "../utils";
+import { TestExecutionContext } from "@sakuli/core";
 
 jest.setTimeout(15_000);
+
 describe("common-actions", () => {
   describe.each(getTestBrowserList())(
     "%s",
@@ -21,16 +23,21 @@ describe("common-actions", () => {
       let env: TestEnvironment;
       let driver: ThenableWebDriver;
       let api: CommonActionsApi;
+      let ctx: TestExecutionContext;
       beforeAll(async () => {
         env = createTestEnv(browser, local);
         await env.start();
         driver = (await env.getEnv()).driver;
-        const ctx = createTestExecutionContextMock();
+        ctx = createTestExecutionContextMock();
         api = commonActionsApi(
           driver,
           new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx)),
           ctx
         );
+      });
+
+      beforeEach(() => {
+        jest.resetAllMocks();
       });
 
       afterAll(async () => {
@@ -54,8 +61,36 @@ describe("common-actions", () => {
         await api._highlight(queryByLocator(By.css("#second")));
       });
 
+      it("should highlight via highlightElement", async () => {
+        // GIVEN
+        const highlightSpy = jest.spyOn(utilsModule, "highlightElement");
+        await driver.get(
+          mockHtml(`
+                        <ul>
+                            <li>First</li>
+                            <li id="second">Second</li>
+                            <li>Last</li>
+                        </ul>
+                    `)
+        );
+        const targetSelector = By.css("#second");
+        const targetElement = await driver.findElement(targetSelector);
+        const highlightTimeout = 500;
+
+        // WHEN
+        await api._highlight(queryByLocator(targetSelector), highlightTimeout);
+
+        // THEN
+        expect(highlightSpy).toBeCalledTimes(1);
+        expect(highlightSpy).toBeCalledWith(targetElement, highlightTimeout);
+      });
+
       it("should call scrollIntoViewIfNeeded when highlighting", async () => {
-        jest.spyOn(scrollIntoViewModule, "scrollIntoViewIfNeeded");
+        // GIVEN
+        const scrollIntoViewSpy = jest.spyOn(
+          utilsModule,
+          "scrollIntoViewIfNeeded"
+        );
         await driver.get(
           mockHtml(`
                 <ul>
@@ -65,8 +100,15 @@ describe("common-actions", () => {
                 </ul>
             `)
         );
-        await api._highlight(queryByLocator(By.css("#second")));
-        expect(scrollIntoViewModule.scrollIntoViewIfNeeded).toHaveBeenCalled();
+        const targetSelector = By.css("#second");
+        const targetElement = await driver.findElement(targetSelector);
+
+        // WHEN
+        await api._highlight(queryByLocator(targetSelector));
+
+        // THEN
+        expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
+        expect(scrollIntoViewSpy).toBeCalledWith(targetElement, ctx);
       });
 
       it("should invoke script on the page", async () => {

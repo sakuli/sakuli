@@ -5,12 +5,11 @@ import {
   SahiElementQueryOrWebElement,
   sahiQueryToString,
 } from "../../sahi-element.interface";
-import { stripIndents } from "common-tags";
 import { timeout } from "../poll-action.function";
 import { INJECT_SAKULI_HOOK } from "../inject.const";
 import { TestExecutionContext } from "@sakuli/core";
 import { CommonActionsApi } from "./common-actions.interface";
-import { scrollIntoViewIfNeeded } from "../utils/scroll-into-view-if-needed.function";
+import { highlightElement, scrollIntoViewIfNeeded } from "../utils";
 import { wait } from "../../helper/wait.function";
 import { fetchPageSource } from "../utils/fetch-page-source.function";
 
@@ -49,34 +48,8 @@ export function commonActionsApi(
       ? await accessorUtil.fetchElement(query)
       : query;
 
-    const elementRect = await element.getRect();
     await scrollIntoViewIfNeeded(element, ctx);
-    await webDriver.executeAsyncScript(
-      stripIndents`
-            var rect = arguments[0];
-            var timeout = arguments[1];
-            var done = arguments[arguments.length -1];
-            var element = document.createElement('div');
-
-            element.style.border = '2px solid red';
-            element.style.position = 'absolute';
-            element.style.top = rect.y + 'px';
-            element.style.left = rect.x + 'px';
-            element.style.width = rect.width + 'px';
-            element.style.height = rect.height + 'px';
-            element.style.zIndex = 99999;
-            element.style.background = 'transparent';
-
-            document.body.appendChild(element);
-
-            setTimeout(function() {
-                document.body.removeChild(element);
-                done();
-            }, timeout);
-        `,
-      elementRect,
-      timeoutMs
-    );
+    await highlightElement(element, timeoutMs);
   }
 
   async function _wait(
