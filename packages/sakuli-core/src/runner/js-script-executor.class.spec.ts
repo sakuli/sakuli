@@ -1,8 +1,6 @@
 import { JsScriptExecutor } from "./js-script-executor.class";
 import { stripIndents } from "common-tags";
 
-declare function getGreeting(): void;
-
 describe("JsScriptExecutor", () => {
   it("should execute simple js code", async (done) => {
     const executor = new JsScriptExecutor({});
@@ -137,19 +135,24 @@ describe("JsScriptExecutor", () => {
     expect(context.mock).toHaveBeenCalled();
   });
 
-  it("should catch rejected promise when syntax error present", async () => {
+  it("should catch rejected promise when function is not defined", async () => {
     //GIVEN
-    const executor = new JsScriptExecutor({});
+    const executor = new JsScriptExecutor({
+      filename: "test.js",
+      waitUntilDone: true,
+    });
 
     //WHEN
     const result = executor.execute(
       stripIndents`
-              cons test = "Wrong const definition";
+        (async () => {
+             moc()
+        })()
         `,
       {}
     );
 
     //THEN
-    await expect(result).rejects.toThrow("Unexpected identifier");
+    await expect(result).rejects.toThrowError();
   });
 });
