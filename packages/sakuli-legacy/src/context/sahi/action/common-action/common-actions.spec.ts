@@ -12,6 +12,7 @@ import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
 import * as utilsModule from "../utils";
+import { TestExecutionContext } from "@sakuli/core";
 
 jest.setTimeout(15_000);
 
@@ -22,11 +23,12 @@ describe("common-actions", () => {
       let env: TestEnvironment;
       let driver: ThenableWebDriver;
       let api: CommonActionsApi;
+      let ctx: TestExecutionContext;
       beforeAll(async () => {
         env = createTestEnv(browser, local);
         await env.start();
         driver = (await env.getEnv()).driver;
-        const ctx = createTestExecutionContextMock();
+        ctx = createTestExecutionContextMock();
         api = commonActionsApi(
           driver,
           new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx)),
@@ -71,12 +73,16 @@ describe("common-actions", () => {
                         </ul>
                     `)
         );
+        const targetSelector = By.css("#second");
+        const targetElement = await driver.findElement(targetSelector);
+        const highlightTimeout = 500;
 
         // WHEN
-        await api._highlight(queryByLocator(By.css("#second")));
+        await api._highlight(queryByLocator(targetSelector), highlightTimeout);
 
         // THEN
         expect(highlightSpy).toBeCalledTimes(1);
+        expect(highlightSpy).toBeCalledWith(targetElement, highlightTimeout);
       });
 
       it("should call scrollIntoViewIfNeeded when highlighting", async () => {
@@ -94,12 +100,15 @@ describe("common-actions", () => {
                 </ul>
             `)
         );
+        const targetSelector = By.css("#second");
+        const targetElement = await driver.findElement(targetSelector);
 
         // WHEN
-        await api._highlight(queryByLocator(By.css("#second")));
+        await api._highlight(queryByLocator(targetSelector));
 
         // THEN
         expect(scrollIntoViewSpy).toHaveBeenCalledTimes(1);
+        expect(scrollIntoViewSpy).toBeCalledWith(targetElement, ctx);
       });
 
       it("should invoke script on the page", async () => {
