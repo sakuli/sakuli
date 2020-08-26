@@ -7,6 +7,7 @@ import { tmpdir } from "os";
 import { join, sep } from "path";
 import { promises as fs } from "fs";
 import Mocked = jest.Mocked;
+import { SimpleLogger } from "@sakuli/commons";
 
 describe("SakuliRunner", () => {
   let tempDir: string;
@@ -41,6 +42,10 @@ describe("SakuliRunner", () => {
     endExecution: jest.fn(),
     getCurrentTestAction: jest.fn(),
     getCurrentTestSuite: jest.fn(),
+    logger: mockPartial<SimpleLogger>({
+      trace: jest.fn(),
+      warn: jest.fn(),
+    }),
   });
 
   let sakuliRunner: SakuliRunner;
@@ -198,5 +203,45 @@ describe("SakuliRunner", () => {
     expect(lifecycleHooks1.afterExecution).toBeCalledTimes(1);
     expect(lifecycleHooks2.afterExecution).toBeCalledTimes(1);
     done();
+  });
+
+  it("should update test context with error on unhandledRejection", async () => {
+    //GIVEN
+    const expectedError = Error("Whoopsi");
+
+    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
+      process.emit("unhandledRejection", expectedError, Promise.resolve());
+    });
+
+    const project = mockPartial<Project>({
+      rootDir: join(tempDir, "somedir"),
+      testFiles: [],
+    });
+
+    //WHEN
+    await sakuliRunner.execute(project);
+
+    //THEN
+    expect(testExecutionContext.error).toEqual(expectedError);
+  });
+
+  it("should update test context with error on uncaughtException", async () => {
+    //GIVEN
+    const expectedError = Error("Well yes, but actually no");
+
+    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
+      process.emit("uncaughtException", expectedError);
+    });
+
+    const project = mockPartial<Project>({
+      rootDir: join(tempDir, "somedir"),
+      testFiles: [],
+    });
+
+    //WHEN
+    await sakuliRunner.execute(project);
+
+    //THEN
+    expect(testExecutionContext.error).toEqual(expectedError);
   });
 });

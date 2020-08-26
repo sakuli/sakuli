@@ -17,15 +17,12 @@ export async function loadPresets(
   presetModuleNames: string[] = []
 ): Promise<SakuliPresetProvider[]> {
   let potentialPresetModules: any[];
-  try {
-    potentialPresetModules = await Promise.all(
-      presetModuleNames.map((name) =>
-        import(name).then((module) => [name, module])
-      )
-    );
-  } catch (e) {
-    throw e;
-  }
+
+  potentialPresetModules = await Promise.all(
+    presetModuleNames.map((name) =>
+      import(name).then((module) => [name, module])
+    )
+  );
   return potentialPresetModules
     .map(([name, module]) => {
       if (hasDefaultExport(module)) {

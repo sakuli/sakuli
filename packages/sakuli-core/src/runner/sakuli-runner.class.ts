@@ -33,8 +33,14 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
       );
       process.exit(130);
     };
-    process.on("unhandledRejection", handleError);
-    process.on("uncaughtException", handleError);
+    process.on("unhandledRejection", (e) => {
+      this.testExecutionContext.logger.warn("Caught unhandledRejection.");
+      handleError(e);
+    });
+    process.on("uncaughtException", (e) => {
+      this.testExecutionContext.logger.warn("Caught uncaughtException.");
+      handleError(e);
+    });
     process.on("SIGTERM", handleSignals);
     process.on("SIGINT", handleSignals);
     // onProject Phase
@@ -98,10 +104,16 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
+    testExecutionContext.logger.trace(
+      "Executing 'afterExecution' lifecycle hooks..."
+    );
     await Promise.all(
       this.lifecycleHooks
         .filter((hook) => "afterExecution" in hook)
         .map((hook) => hook.afterExecution!(project, testExecutionContext))
+    );
+    testExecutionContext.logger.trace(
+      "Execution of 'afterExecution' lifecycle hooks completed."
     );
   }
 

@@ -125,9 +125,6 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       .on("START_TESTCASE", (s) => {
         logEntityOnStart(s, "Testcase", 2);
       })
-      .on("START_TESTSTEP", (s) => {
-        ctx.logger.info(entityOnStartLogMessage(s, "Step"));
-      })
       .on("END_TESTSTEP", (s) => {
         logEntityOnEnd(s, "Step", 3);
       })

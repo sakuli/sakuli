@@ -68,7 +68,14 @@ export const runCommand: CommandModuleProvider = (
             (preset) => preset.name
           )}`
         );
+
+        sakuli.testExecutionContext.logger.trace(
+          `Starting project execution with Sakuli...`
+        );
         await sakuli.run(project);
+        sakuli.testExecutionContext.logger.trace(
+          `Sakuli finished project execution.`
+        );
         await rendering;
         await ifPresent(
           sakuli.testExecutionContext.error,
