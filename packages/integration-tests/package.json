@@ -27,7 +27,7 @@
     "@sakuli/cli": "2.3.0",
     "@sakuli/legacy": "2.3.0",
     "@sakuli/legacy-types": "2.3.0",
-    "chromedriver": "83.0.0",
+    "chromedriver": "84.0.1",
     "concurrently": "4.1.0",
     "execa": "1.0.0",
     "express": "4.16.4",
