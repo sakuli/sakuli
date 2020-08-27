@@ -153,6 +153,6 @@ describe("JsScriptExecutor", () => {
     );
 
     //THEN
-    await expect(result).rejects.toThrowError();
+    await expect(result).rejects.toThrowError("moc is not defined");
   });
 });
