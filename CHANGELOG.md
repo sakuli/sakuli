@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.4.0
+
+- Bugfix: \_highlight doesn't "null check" if a rect-object is obtained from element [(#434)](https://github.com/sakuli/sakuli/issues/343)
+- Bugfix: Windows: env.type with capital letters leads to hanging shift key [(#430)](https://github.com/sakuli/sakuli/issues/430)
+- Enhancement: Sakuli should gracefully exit on SIGINT and SIGTERM [(#424)](https://github.com/sakuli/sakuli/issues/424)
+- Maintenance: Code Formatting [(#422)](https://github.com/sakuli/sakuli/issues/422)
+- Enhancement: Wait for Scroll into view with Javascript [(#414)](https://github.com/sakuli/sakuli/pull/414)
+- Bugfix: cannot find element with \_under/\_above/\_underOrAbove [(#395)](https://github.com/sakuli/sakuli/issues/395)
+- Bugfix: nut.js: getRegionFromFocusedWindow(); returns whole display [(#390)](https://github.com/sakuli/sakuli/issues/390)
+- Bugfix: Type Error for Environment type/typeMasked [(#387)](https://github.com/sakuli/sakuli/issues/387)
+- Bugfix: Type Error for Application [(#386)](https://github.com/sakuli/sakuli/issues/386)
+- Bugfix: Missing newlines in logfile [(#385)](https://github.com/sakuli/sakuli/issues/385)
+- Enhancement: Update TypeScript version [(#362)](https://github.com/sakuli/sakuli/issues/362)
+- Enhancement: Make screenshot folder structure configurable [(#340)](https://github.com/sakuli/sakuli/issues/340)
+- Enhancement: Improve Logging [(#338)](https://github.com/sakuli/sakuli/issues/338)
+- Enhancement: Cryptic error message in case that an image could not be found due to the similarity [(#325)](https://github.com/sakuli/sakuli/issues/325)
+- Bugfix: Sakuli dies silently on syntax errors outside `try {} catch {}` [(#324)](https://github.com/sakuli/sakuli/issues/324)
+- Bugfix: normaliseIdentifierString eliminating regex [(#318)](https://github.com/sakuli/sakuli/issues/318)
+- Enhancement: Autodiscovery for presetprovider [(#276)](https://github.com/sakuli/sakuli/issues/276)
+- Enhancement: Boilerplate in test-casefile when using create project [(#268)](https://github.com/sakuli/sakuli/issues/268)
+- Enhancement: Configurable mouse speed [(#197)](https://github.com/sakuli/sakuli/issues/197)
+- Bugfix: Native highlight throws error [(#167)](https://github.com/sakuli/sakuli/issues/167)
+- Enhancement: pre-commit hooks for auto code formatting [(#125)](https://github.com/sakuli/sakuli/issues/125)
+
 ## v2.3.0
 
 - Bugfix: Incomplete support for button elements [(#275)](https://github.com/sakuli/sakuli/issues/275)
