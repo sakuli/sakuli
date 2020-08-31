@@ -1,7 +1,7 @@
 import { Key } from "./key.class";
 import { MouseButton } from "./button.class";
 
-interface ButtonRegistry {
+export interface ButtonRegistry {
   keyboard: Key[];
   mouse: MouseButton[];
 }
