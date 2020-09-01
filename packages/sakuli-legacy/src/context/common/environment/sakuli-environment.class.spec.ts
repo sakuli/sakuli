@@ -6,6 +6,7 @@ import * as actions from "../actions";
 import { createEnvironmentClass } from "./sakuli-environment.class";
 import { ScreenApi } from "../actions";
 import { createRegionClass } from "../region";
+import { Key } from "..";
 
 jest.mock("../actions");
 
@@ -25,6 +26,8 @@ describe("sakuli environment", () => {
   const sakuliEnvironment = new sakuliEnvironmentClass();
 
   const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
+
+  const keyboardApi = actions.createKeyboardApi(new LegacyProjectProperties());
 
   let runAsActionSpy = jest.spyOn(actions, "runAsAction");
 
@@ -75,6 +78,40 @@ describe("sakuli environment", () => {
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
       "getRegionFromFocusedWindow",
+      expect.any(Function)
+    );
+  });
+
+  it("should invoke keyboardApi on keyDown", async () => {
+    //GIVEN
+    const keysToPress = [Key.CTRL, Key.P];
+
+    //WHEN
+    const resultEnvironment = await sakuliEnvironment.keyDown(keysToPress);
+
+    //THEN
+    expect(keyboardApi.pressKey).toBeCalledWith(keysToPress);
+    expect(resultEnvironment).toEqual(sakuliEnvironment);
+    expect(runAsActionSpy).toBeCalledWith(
+      testExecutionContextMock,
+      "keyDown",
+      expect.any(Function)
+    );
+  });
+
+  it("should invoke keyboardApi on keyUp", async () => {
+    //GIVEN
+    const keysToPress = [Key.ALT, Key.P];
+
+    //WHEN
+    const resultEnvironment = await sakuliEnvironment.keyUp(keysToPress);
+
+    //THEN
+    expect(keyboardApi.releaseKey).toBeCalledWith(keysToPress);
+    expect(resultEnvironment).toEqual(sakuliEnvironment);
+    expect(runAsActionSpy).toBeCalledWith(
+      testExecutionContextMock,
+      "keyUp",
       expect.any(Function)
     );
   });
