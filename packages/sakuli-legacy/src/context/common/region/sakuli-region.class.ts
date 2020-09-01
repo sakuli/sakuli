@@ -14,6 +14,10 @@ import { join } from "path";
 import { Region } from "./region.interface";
 import { getEncryptionKey } from "../secrets.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import {
+  registerKeyboardKeyDown,
+  registerKeyboardKeyUp,
+} from "../button-registry";
 
 const determineResourcePath = (imageName: string) => {
   for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {
@@ -281,6 +285,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             .join(",")}' via native keyboard`
         );
         await keyboardApi.pressKey(...keys);
+        registerKeyboardKeyDown(...keys);
         return this;
       })();
     }
@@ -293,6 +298,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             .join(",")}' via native keyboard`
         );
         await keyboardApi.releaseKey(...keys);
+        registerKeyboardKeyUp(...keys);
         return this;
       })();
     }

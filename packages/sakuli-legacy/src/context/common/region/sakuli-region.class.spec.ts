@@ -4,13 +4,17 @@ import { mockPartial } from "sneer";
 import { Project } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import * as actions from "../actions";
-import { runAsAction } from "../actions";
 import { MouseButton } from "../button.class";
 import nutConfig from "../nut-global-config.class";
 import { join } from "path";
-import { Region } from "./region.interface";
+import { Key } from "..";
+import {
+  registerKeyboardKeyDown,
+  registerKeyboardKeyUp,
+} from "../button-registry";
 
 jest.mock("../actions");
+jest.mock("../button-registry");
 
 describe("sakuli region class", () => {
   const testExecutionContextMock = createTestExecutionContextMock();
@@ -23,6 +27,7 @@ describe("sakuli region class", () => {
   const sakuliRegion = new sakuliRegionClass();
 
   const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
+  const keyboardApi = actions.createKeyboardApi(new LegacyProjectProperties());
 
   let runAsActionSpy = jest.spyOn(actions, "runAsAction");
 
@@ -600,6 +605,44 @@ describe("sakuli region class", () => {
         expect(await SUT.getW()).toBe(rightWidth);
         expect(await SUT.getH()).toBe(initialH);
       });
+    });
+  });
+
+  describe("keys", () => {
+    it("should invoke keyboardApi and button registry on keyDown", async () => {
+      //GIVEN
+      const keysToPress = [Key.CTRL, Key.P];
+
+      //WHEN
+      const resultRegion = await sakuliRegion.keyDown(keysToPress);
+
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "keyDown",
+        expect.any(Function)
+      );
+      expect(keyboardApi.pressKey).toBeCalledWith(keysToPress);
+      expect(registerKeyboardKeyDown).toBeCalledWith(keysToPress);
+      expect(resultRegion).toEqual(sakuliRegion);
+    });
+
+    it("should invoke keyboardApi and button registry on keyUp", async () => {
+      //GIVEN
+      const keysToPress = [Key.ALT, Key.P];
+
+      //WHEN
+      const resultRegion = await sakuliRegion.keyUp(keysToPress);
+
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "keyUp",
+        expect.any(Function)
+      );
+      expect(keyboardApi.releaseKey).toBeCalledWith(keysToPress);
+      expect(registerKeyboardKeyUp).toBeCalledWith(keysToPress);
+      expect(resultRegion).toEqual(sakuliRegion);
     });
   });
 });
