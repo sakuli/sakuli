@@ -7,8 +7,13 @@ import { createEnvironmentClass } from "./sakuli-environment.class";
 import { ScreenApi } from "../actions";
 import { createRegionClass } from "../region";
 import { Key } from "..";
+import {
+  registerKeyboardKeyDown,
+  registerKeyboardKeyUp,
+} from "../button-registry";
 
 jest.mock("../actions");
+jest.mock("../button-registry");
 
 describe("sakuli environment", () => {
   const testExecutionContextMock = createTestExecutionContextMock();
@@ -82,7 +87,7 @@ describe("sakuli environment", () => {
     );
   });
 
-  it("should invoke keyboardApi on keyDown", async () => {
+  it("should invoke keyboardApi and button registry on keyDown", async () => {
     //GIVEN
     const keysToPress = [Key.CTRL, Key.P];
 
@@ -91,6 +96,7 @@ describe("sakuli environment", () => {
 
     //THEN
     expect(keyboardApi.pressKey).toBeCalledWith(keysToPress);
+    expect(registerKeyboardKeyDown).toBeCalledWith(keysToPress);
     expect(resultEnvironment).toEqual(sakuliEnvironment);
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
@@ -99,7 +105,7 @@ describe("sakuli environment", () => {
     );
   });
 
-  it("should invoke keyboardApi on keyUp", async () => {
+  it("should invoke keyboardApi and button registry on keyUp", async () => {
     //GIVEN
     const keysToPress = [Key.ALT, Key.P];
 
@@ -108,6 +114,7 @@ describe("sakuli environment", () => {
 
     //THEN
     expect(keyboardApi.releaseKey).toBeCalledWith(keysToPress);
+    expect(registerKeyboardKeyUp).toBeCalledWith(keysToPress);
     expect(resultEnvironment).toEqual(sakuliEnvironment);
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,

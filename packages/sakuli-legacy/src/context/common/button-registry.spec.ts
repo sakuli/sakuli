@@ -28,8 +28,7 @@ describe("button registry", () => {
       keyboard: [Key.SHIFT],
       mouse: [],
     };
-    ButtonRegistry.registerKeyboardKeyDown(Key.CTRL);
-    ButtonRegistry.registerKeyboardKeyDown(Key.SHIFT);
+    ButtonRegistry.registerKeyboardKeyDown(Key.CTRL, Key.SHIFT);
 
     //WHEN
     ButtonRegistry.registerKeyboardKeyUp(Key.CTRL);

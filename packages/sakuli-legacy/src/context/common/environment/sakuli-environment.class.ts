@@ -15,6 +15,10 @@ import nutConfig from "../nut-global-config.class";
 import { Environment } from "./environment.interface";
 import { createRegionClass, Region } from "../region";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import {
+  registerKeyboardKeyDown,
+  registerKeyboardKeyUp,
+} from "../button-registry";
 
 export function createEnvironmentClass(
   ctx: TestExecutionContext,
@@ -225,6 +229,7 @@ export function createEnvironmentClass(
       return runAsAction(ctx, "keyDown", async () => {
         ctx.logger.debug(`Pressing keys: ${keys}`);
         await keyboardApi.pressKey(...keys);
+        registerKeyboardKeyDown(...keys);
         return this;
       })();
     }
@@ -233,6 +238,7 @@ export function createEnvironmentClass(
       return runAsAction(ctx, "keyUp", async () => {
         ctx.logger.debug(`Releasing keys: ${keys}`);
         await keyboardApi.releaseKey(...keys);
+        registerKeyboardKeyUp(...keys);
         return this;
       })();
     }
