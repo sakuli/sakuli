@@ -19,17 +19,24 @@ describe("RollupLifecycleHooks", () => {
   });
 
   it("should create a bundle from index.js file", async () => {
+    //GIVEN
     const hooks = new RollupLifecycleHooks();
-    const o = await hooks.readFileContent(
+    const expectedFileContent =
+      "'use strict';\n\n" +
+      "const pi = 3.14159265359;\n" +
+      "\n" +
+      "console.log(pi);\n";
+
+    //WHEN
+    const fileContent = await hooks.readFileContent(
       {
         path: "index.js",
       },
       project
     );
-    expect(o.trim().startsWith("(function () {"));
-    expect(o).toContain("const pi = 3.4");
-    expect(o).toContain("console.log(pi)");
-    return expect(o.trim().endsWith("}())"));
+
+    //THEN
+    expect(fileContent).toBe(expectedFileContent);
   });
   it("should throw on parser errors", async () => {
     // GIVEN
