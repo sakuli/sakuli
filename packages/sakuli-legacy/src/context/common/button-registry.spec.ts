@@ -5,7 +5,7 @@ describe("button registry", () => {
     jest.resetModules();
   });
 
-  it("should register keyboard keydown", () => {
+  it("should register keyboard key down", () => {
     //GIVEN
     const ButtonRegistry = require("./button-registry");
     const keyboardKey = Key.SHIFT;
@@ -15,26 +15,26 @@ describe("button registry", () => {
     };
 
     //WHEN
-    ButtonRegistry.registerKeyboardKeyDown(keyboardKey);
+    ButtonRegistry.registerKeyboardPressKeys(keyboardKey);
 
     //THEN
-    expect(ButtonRegistry.getRegisteredKeys()).toEqual(expectedRegisteredKeys);
+    expect(ButtonRegistry.getActiveKeys()).toEqual(expectedRegisteredKeys);
   });
 
-  it("should register keyboard keyup", () => {
+  it("should register keyboard key up", () => {
     //GIVEN
     const ButtonRegistry = require("./button-registry");
     const expectedRegisteredKeys = {
       keyboard: [Key.SHIFT],
       mouse: [],
     };
-    ButtonRegistry.registerKeyboardKeyDown(Key.CTRL, Key.SHIFT);
+    ButtonRegistry.registerKeyboardPressKeys(Key.CTRL, Key.SHIFT);
 
     //WHEN
-    ButtonRegistry.registerKeyboardKeyUp(Key.CTRL);
+    ButtonRegistry.registerKeyboardReleaseKeys(Key.CTRL);
 
     //THEN
-    expect(ButtonRegistry.getRegisteredKeys()).toEqual(expectedRegisteredKeys);
+    expect(ButtonRegistry.getActiveKeys()).toEqual(expectedRegisteredKeys);
   });
 
   it("should register mouse down", () => {
@@ -50,7 +50,7 @@ describe("button registry", () => {
     ButtonRegistry.registerMouseDown(mousedown);
 
     //THEN
-    expect(ButtonRegistry.getRegisteredKeys()).toEqual(expectedRegisteredKeys);
+    expect(ButtonRegistry.getActiveKeys()).toEqual(expectedRegisteredKeys);
   });
 
   it("should register mouse up", () => {
@@ -67,10 +67,10 @@ describe("button registry", () => {
     ButtonRegistry.registerMouseUp(MouseButton.LEFT);
 
     //THEN
-    expect(ButtonRegistry.getRegisteredKeys()).toEqual(expectedRegisteredKeys);
+    expect(ButtonRegistry.getActiveKeys()).toEqual(expectedRegisteredKeys);
   });
 
-  it("should return registeredKeys", () => {
+  it("should return active keys", () => {
     //GIVEN
     const ButtonRegistry = require("./button-registry");
     const mousedown = MouseButton.RIGHT;
@@ -80,10 +80,10 @@ describe("button registry", () => {
       mouse: [mousedown],
     };
     ButtonRegistry.registerMouseDown(mousedown);
-    ButtonRegistry.registerKeyboardKeyDown(keyboardKey);
+    ButtonRegistry.registerKeyboardPressKeys(keyboardKey);
 
     //WHEN
-    const registeredKeys = ButtonRegistry.getRegisteredKeys();
+    const registeredKeys = ButtonRegistry.getActiveKeys();
 
     //THEN
     expect(registeredKeys).toEqual(expectedRegisteredKeys);

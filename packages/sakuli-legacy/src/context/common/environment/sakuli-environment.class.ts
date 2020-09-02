@@ -16,8 +16,8 @@ import { Environment } from "./environment.interface";
 import { createRegionClass, Region } from "../region";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import {
-  registerKeyboardKeyDown,
-  registerKeyboardKeyUp,
+  registerKeyboardPressKeys,
+  registerKeyboardReleaseKeys,
 } from "../button-registry";
 
 export function createEnvironmentClass(
@@ -229,7 +229,7 @@ export function createEnvironmentClass(
       return runAsAction(ctx, "keyDown", async () => {
         ctx.logger.debug(`Pressing keys: ${keys}`);
         await keyboardApi.pressKey(...keys);
-        registerKeyboardKeyDown(...keys);
+        registerKeyboardPressKeys(...keys);
         return this;
       })();
     }
@@ -238,7 +238,7 @@ export function createEnvironmentClass(
       return runAsAction(ctx, "keyUp", async () => {
         ctx.logger.debug(`Releasing keys: ${keys}`);
         await keyboardApi.releaseKey(...keys);
-        registerKeyboardKeyUp(...keys);
+        registerKeyboardReleaseKeys(...keys);
         return this;
       })();
     }

@@ -10,11 +10,11 @@ const buttonRegistry: ButtonRegistry = {
   mouse: [],
 };
 
-export function registerKeyboardKeyDown(...keys: Key[]) {
+export function registerKeyboardPressKeys(...keys: Key[]) {
   buttonRegistry.keyboard.push(...keys);
 }
 
-export function registerKeyboardKeyUp(...keys: Key[]) {
+export function registerKeyboardReleaseKeys(...keys: Key[]) {
   keys.forEach((key) => {
     removeFromArray(buttonRegistry.keyboard, key);
   });
@@ -28,7 +28,7 @@ export function registerMouseUp(button: MouseButton) {
   removeFromArray(buttonRegistry.mouse, button);
 }
 
-export function getRegisteredKeys(): ButtonRegistry {
+export function getActiveKeys(): ButtonRegistry {
   return buttonRegistry;
 }
 

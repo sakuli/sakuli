@@ -9,8 +9,8 @@ import nutConfig from "../nut-global-config.class";
 import { join } from "path";
 import { Key } from "..";
 import {
-  registerKeyboardKeyDown,
-  registerKeyboardKeyUp,
+  registerKeyboardPressKeys,
+  registerKeyboardReleaseKeys,
 } from "../button-registry";
 
 jest.mock("../actions");
@@ -623,7 +623,7 @@ describe("sakuli region class", () => {
         expect.any(Function)
       );
       expect(keyboardApi.pressKey).toBeCalledWith(keysToPress);
-      expect(registerKeyboardKeyDown).toBeCalledWith(keysToPress);
+      expect(registerKeyboardPressKeys).toBeCalledWith(keysToPress);
       expect(resultRegion).toEqual(sakuliRegion);
     });
 
@@ -641,7 +641,7 @@ describe("sakuli region class", () => {
         expect.any(Function)
       );
       expect(keyboardApi.releaseKey).toBeCalledWith(keysToPress);
-      expect(registerKeyboardKeyUp).toBeCalledWith(keysToPress);
+      expect(registerKeyboardReleaseKeys).toBeCalledWith(keysToPress);
       expect(resultRegion).toEqual(sakuliRegion);
     });
   });

@@ -15,8 +15,8 @@ import { Region } from "./region.interface";
 import { getEncryptionKey } from "../secrets.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import {
-  registerKeyboardKeyDown,
-  registerKeyboardKeyUp,
+  registerKeyboardPressKeys,
+  registerKeyboardReleaseKeys,
 } from "../button-registry";
 
 const determineResourcePath = (imageName: string) => {
@@ -285,7 +285,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             .join(",")}' via native keyboard`
         );
         await keyboardApi.pressKey(...keys);
-        registerKeyboardKeyDown(...keys);
+        registerKeyboardPressKeys(...keys);
         return this;
       })();
     }
@@ -298,7 +298,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             .join(",")}' via native keyboard`
         );
         await keyboardApi.releaseKey(...keys);
-        registerKeyboardKeyUp(...keys);
+        registerKeyboardReleaseKeys(...keys);
         return this;
       })();
     }

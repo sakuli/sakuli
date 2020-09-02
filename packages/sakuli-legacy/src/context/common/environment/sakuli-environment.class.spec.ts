@@ -8,8 +8,8 @@ import { ScreenApi } from "../actions";
 import { createRegionClass } from "../region";
 import { Key } from "..";
 import {
-  registerKeyboardKeyDown,
-  registerKeyboardKeyUp,
+  registerKeyboardPressKeys,
+  registerKeyboardReleaseKeys,
 } from "../button-registry";
 
 jest.mock("../actions");
@@ -96,7 +96,7 @@ describe("sakuli environment", () => {
 
     //THEN
     expect(keyboardApi.pressKey).toBeCalledWith(keysToPress);
-    expect(registerKeyboardKeyDown).toBeCalledWith(keysToPress);
+    expect(registerKeyboardPressKeys).toBeCalledWith(keysToPress);
     expect(resultEnvironment).toEqual(sakuliEnvironment);
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
@@ -114,7 +114,7 @@ describe("sakuli environment", () => {
 
     //THEN
     expect(keyboardApi.releaseKey).toBeCalledWith(keysToPress);
-    expect(registerKeyboardKeyUp).toBeCalledWith(keysToPress);
+    expect(registerKeyboardReleaseKeys).toBeCalledWith(keysToPress);
     expect(resultEnvironment).toEqual(sakuliEnvironment);
     expect(runAsActionSpy).toBeCalledWith(
       testExecutionContextMock,
