@@ -151,6 +151,11 @@ export function createTestCaseClass(
         },
         () => Promise.resolve()
       );
+      await releaseKeys(
+        getActiveKeys(),
+        createMouseApi(legacyProps),
+        createKeyboardApi(legacyProps)
+      );
     }
 
     /**
