@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/legacy",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -29,9 +29,9 @@
   "dependencies": {
     "@nut-tree/nut-js": "1.5.0",
     "@nut-tree/secrets": "4.0.2",
-    "@sakuli/commons": "2.3.0",
-    "@sakuli/core": "2.3.0",
-    "@sakuli/rollup-hooks": "2.3.0",
+    "@sakuli/commons": "2.4.0",
+    "@sakuli/core": "2.4.0",
+    "@sakuli/rollup-hooks": "2.4.0",
     "class-validator": "0.9.1",
     "common-tags": "1.8.0",
     "escodegen": "1.11.0",
