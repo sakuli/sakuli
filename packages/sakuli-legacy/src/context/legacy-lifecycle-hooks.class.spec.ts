@@ -18,8 +18,7 @@ import { createTestExecutionContextMock } from "./__mocks__";
 import Mock = jest.Mock;
 import Signals = NodeJS.Signals;
 import { releaseKeys } from "./common/release-keys.function";
-import { Key } from "../../dist/context/common";
-import { MouseButton } from "./common";
+import { Key, MouseButton } from "./common";
 import { getActiveKeys } from "./common/button-registry";
 import { nodeSignals } from "@sakuli/core/dist/node-signals";
 

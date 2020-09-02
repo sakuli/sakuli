@@ -7,9 +7,9 @@ import { tmpdir } from "os";
 import { join, sep } from "path";
 import { promises as fs } from "fs";
 import Mocked = jest.Mocked;
-import { SimpleLogger } from "@sakuli/commons";
 import { nodeSignals } from "../node-signals";
 import Signals = NodeJS.Signals;
+import { SimpleLogger } from "@sakuli/commons";
 
 describe("SakuliRunner", () => {
   let tempDir: string;
