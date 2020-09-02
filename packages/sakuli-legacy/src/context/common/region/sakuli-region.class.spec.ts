@@ -11,6 +11,8 @@ import { Key } from "..";
 import {
   registerKeyboardPressKeys,
   registerKeyboardReleaseKeys,
+  registerMouseDown,
+  registerMouseUp,
 } from "../button-registry";
 
 jest.mock("../actions");
@@ -41,142 +43,146 @@ describe("sakuli region class", () => {
     jest.clearAllMocks();
   });
 
-  it("should forward clicks to mouse api", async () => {
-    //WHEN
-    const region = await sakuliRegion.click();
+  describe("mouse integration", () => {
+    it("should forward clicks to mouse api", async () => {
+      //WHEN
+      const region = await sakuliRegion.click();
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "click",
-      expect.any(Function)
-    );
-    expect(mouseApi.move).toBeCalledWith(sakuliRegion);
-    expect(mouseApi.click).toBeCalled();
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "click",
+        expect.any(Function)
+      );
+      expect(mouseApi.move).toBeCalledWith(sakuliRegion);
+      expect(mouseApi.click).toBeCalled();
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should forward double clicks to mouse api", async () => {
-    //WHEN
-    const region = await sakuliRegion.doubleClick();
+    it("should forward double clicks to mouse api", async () => {
+      //WHEN
+      const region = await sakuliRegion.doubleClick();
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "doubleClick",
-      expect.any(Function)
-    );
-    expect(mouseApi.move).toBeCalledWith(sakuliRegion);
-    expect(mouseApi.doubleClick).toBeCalled();
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "doubleClick",
+        expect.any(Function)
+      );
+      expect(mouseApi.move).toBeCalledWith(sakuliRegion);
+      expect(mouseApi.doubleClick).toBeCalled();
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should forward right clicks to mouse api", async () => {
-    //WHEN
-    const region = await sakuliRegion.rightClick();
+    it("should forward right clicks to mouse api", async () => {
+      //WHEN
+      const region = await sakuliRegion.rightClick();
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "rightClick",
-      expect.any(Function)
-    );
-    expect(mouseApi.move).toBeCalledWith(sakuliRegion);
-    expect(mouseApi.rightClick).toBeCalled();
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "rightClick",
+        expect.any(Function)
+      );
+      expect(mouseApi.move).toBeCalledWith(sakuliRegion);
+      expect(mouseApi.rightClick).toBeCalled();
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should press given mouse button on mouseDown", async () => {
-    //GIVEN
-    const button = MouseButton.MIDDLE;
+    it("should press given mouse button on mouseDown", async () => {
+      //GIVEN
+      const button = MouseButton.MIDDLE;
 
-    //WHEN
-    const region = await sakuliRegion.mouseDown(button);
+      //WHEN
+      const region = await sakuliRegion.mouseDown(button);
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "mouseDown",
-      expect.any(Function)
-    );
-    expect(mouseApi.pressButton).toBeCalledWith(button);
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "mouseDown",
+        expect.any(Function)
+      );
+      expect(mouseApi.pressButton).toBeCalledWith(button);
+      expect(registerMouseDown).toBeCalledWith(button);
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should release given mouse button on mouseUp", async () => {
-    //GIVEN
-    const button = MouseButton.LEFT;
+    it("should release given mouse button on mouseUp", async () => {
+      //GIVEN
+      const button = MouseButton.LEFT;
 
-    //WHEN
-    const region = await sakuliRegion.mouseUp(button);
+      //WHEN
+      const region = await sakuliRegion.mouseUp(button);
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "mouseUp",
-      expect.any(Function)
-    );
-    expect(mouseApi.releaseButton).toBeCalledWith(button);
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "mouseUp",
+        expect.any(Function)
+      );
+      expect(mouseApi.releaseButton).toBeCalledWith(button);
+      expect(registerMouseUp).toBeCalledWith(button);
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should drag and drop to target region", async () => {
-    //WHEN
-    const region = await sakuliRegion.dragAndDropTo(sakuliRegion);
+    it("should drag and drop to target region", async () => {
+      //WHEN
+      const region = await sakuliRegion.dragAndDropTo(sakuliRegion);
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "dragAndDropTo",
-      expect.any(Function)
-    );
-    expect(mouseApi.dragAndDrop).toBeCalledWith(sakuliRegion);
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "dragAndDropTo",
+        expect.any(Function)
+      );
+      expect(mouseApi.dragAndDrop).toBeCalledWith(sakuliRegion);
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should scroll down on mouseWheelDown", async () => {
-    //GIVEN
-    const numberOfSteps = 42;
+    it("should scroll down on mouseWheelDown", async () => {
+      //GIVEN
+      const numberOfSteps = 42;
 
-    //WHEN
-    const region = await sakuliRegion.mouseWheelDown(numberOfSteps);
+      //WHEN
+      const region = await sakuliRegion.mouseWheelDown(numberOfSteps);
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "mouseWheelDown",
-      expect.any(Function)
-    );
-    expect(mouseApi.scrollDown).toBeCalledWith(numberOfSteps);
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "mouseWheelDown",
+        expect.any(Function)
+      );
+      expect(mouseApi.scrollDown).toBeCalledWith(numberOfSteps);
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should scroll up on mouseWheelUp", async () => {
-    //GIVEN
-    const numberOfSteps = 42;
+    it("should scroll up on mouseWheelUp", async () => {
+      //GIVEN
+      const numberOfSteps = 42;
 
-    //WHEN
-    const region = await sakuliRegion.mouseWheelUp(numberOfSteps);
+      //WHEN
+      const region = await sakuliRegion.mouseWheelUp(numberOfSteps);
 
-    //THEN
-    expect(runAsActionSpy).toBeCalledWith(
-      testExecutionContextMock,
-      "mouseWheelUp",
-      expect.any(Function)
-    );
-    expect(mouseApi.scrollUp).toBeCalledWith(numberOfSteps);
-    expect(region).toBeInstanceOf(sakuliRegionClass);
-  });
+      //THEN
+      expect(runAsActionSpy).toBeCalledWith(
+        testExecutionContextMock,
+        "mouseWheelUp",
+        expect.any(Function)
+      );
+      expect(mouseApi.scrollUp).toBeCalledWith(numberOfSteps);
+      expect(region).toBeInstanceOf(sakuliRegionClass);
+    });
 
-  it("should move to specified destination", async () => {
-    //GIVEN
-    const destination = new sakuliRegionClass(42, 84, 21, 168);
+    it("should move to specified destination", async () => {
+      //GIVEN
+      const destination = new sakuliRegionClass(42, 84, 21, 168);
 
-    //WHEN
-    await sakuliRegion.moveTo(destination);
+      //WHEN
+      await sakuliRegion.moveTo(destination);
 
-    //THEN
-    expect(mouseApi.move).toBeCalledWith(destination);
+      //THEN
+      expect(mouseApi.move).toBeCalledWith(destination);
+    });
   });
 
   describe("screen content", () => {
