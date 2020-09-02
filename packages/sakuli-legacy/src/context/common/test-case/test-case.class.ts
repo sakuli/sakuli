@@ -8,6 +8,9 @@ import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { takeErrorScreenShot } from "./take-error-screen-shot.function";
 import { existsSync } from "fs";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import { releaseKeys } from "../release-keys.function";
+import { getActiveKeys } from "../button-registry";
+import { createKeyboardApi, createMouseApi } from "../actions";
 
 export function createTestCaseClass(
   ctx: TestExecutionContext,
@@ -80,6 +83,11 @@ export function createTestCaseClass(
       ctx.updateCurrentTestStep({
         error: e,
       });
+      await releaseKeys(
+        getActiveKeys(),
+        createMouseApi(legacyProps),
+        createKeyboardApi(legacyProps)
+      );
       if (legacyProps.errorScreenshot) {
         try {
           const screenShotPath = await takeErrorScreenShot(

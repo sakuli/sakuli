@@ -1,3 +1,8 @@
+import doMock = jest.doMock;
+
+jest.mock("../button-registry");
+jest.mock("../actions/screen.function");
+
 import { cwd } from "process";
 import { Project, TestExecutionContext } from "@sakuli/core";
 import { mockPartial } from "sneer";
@@ -6,18 +11,21 @@ import { createTestCaseClass } from "./test-case.class";
 import nutConfig from "../nut-global-config.class";
 import { SimpleLogger, Type } from "@sakuli/commons";
 import { join } from "path";
-import { ScreenApi } from "../actions";
+import { KeyboardApi, ScreenApi } from "../actions";
 import { TestCase } from "./test-case.interface";
 import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { TestStep } from "./__mocks__/test-step.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import { tmpdir } from "os";
+import * as ReleaseKeysFunction from "../release-keys.function";
+import { MouseButton } from "../button.class";
+import { Key } from "..";
+import { getActiveKeys } from "../button-registry";
+import { MouseApi } from "../actions/mouse.function";
 
 beforeEach(() => {
   jest.resetAllMocks();
 });
-
-jest.mock("../actions/screen.function");
 ScreenApi.takeScreenshot = jest.fn(() => Promise.resolve(__filename));
 ScreenApi.takeScreenshotWithTimestamp = jest.fn(() =>
   Promise.resolve(__filename)
@@ -332,6 +340,40 @@ describe("TestCase", () => {
       // THEN
       expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(
         `${tmpdir()}/error_UNKNOWN_TESTSUITE_testcase_1`
+      );
+    });
+
+    it("should release all pressed keys", async () => {
+      // GIVEN
+      const testFolder = "testCaseFolder";
+      const legacyProps = new LegacyProjectProperties();
+      project = mockPartial<Project>({
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
+      });
+      const SUT = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder
+      );
+      const tc = new SUT("testId", 0, 0);
+      const testError = new Error("testError");
+      const expectedButtonRegistry = {
+        keyboard: [Key.ALT, Key.SHIFT],
+        mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+      };
+      (getActiveKeys as jest.Mock).mockImplementation(
+        () => expectedButtonRegistry
+      );
+      const releaseKeysSpy = jest.spyOn(ReleaseKeysFunction, "releaseKeys");
+
+      // WHEN
+      await tc.handleException(testError);
+
+      // THEN
+      expect(releaseKeysSpy).toBeCalledWith(
+        expectedButtonRegistry,
+        expect.objectContaining(Array<keyof MouseApi>()),
+        expect.objectContaining(Array<keyof KeyboardApi>())
       );
     });
   });
