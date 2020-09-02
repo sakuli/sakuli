@@ -41,14 +41,8 @@ export interface TestExecutionLifecycleHooks<T = any> {
     testExecutionContext: TestExecutionContext
   ): Promise<void>;
 
-  onUnhandledRejection?(
-    error: {} | null | undefined,
-    project: Project,
-    testExecutionContext: TestExecutionContext
-  ): Promise<void>;
-
-  onUncaughtException?(
-    error: {} | null | undefined,
+  onUnhandledError?(
+    error: any,
     project: Project,
     testExecutionContext: TestExecutionContext
   ): Promise<void>;

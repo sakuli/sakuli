@@ -26,8 +26,7 @@ describe("SakuliRunner", () => {
     afterRunFile: jest.fn(),
     beforeRunFile: jest.fn(),
     beforeExecution: jest.fn(),
-    onUncaughtException: jest.fn(),
-    onUnhandledRejection: jest.fn(),
+    onUnhandledError: jest.fn(),
     onSignal: jest.fn(),
   });
 
@@ -216,9 +215,11 @@ describe("SakuliRunner", () => {
     //GIVEN
     const expectedError = Error("Whoopsi");
 
-    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
-      process.emit("unhandledRejection", expectedError, Promise.resolve());
-    });
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("unhandledRejection", expectedError, Promise.resolve());
+      }
+    );
 
     const project = mockPartial<Project>({
       rootDir: join(tempDir, "somedir"),
@@ -236,9 +237,11 @@ describe("SakuliRunner", () => {
     //GIVEN
     const expectedError = Error("Well yes, but actually no");
 
-    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
-      process.emit("uncaughtException", expectedError);
-    });
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("uncaughtException", expectedError);
+      }
+    );
 
     const project = mockPartial<Project>({
       rootDir: join(tempDir, "somedir"),
@@ -252,13 +255,15 @@ describe("SakuliRunner", () => {
     expect(testExecutionContext.error).toEqual(expectedError);
   });
 
-  it("should call onUnhandledRejection on lifecycle hooks", async () => {
+  it("should call onUnhandledError for unhandledRejection on lifecycle hooks", async () => {
     //GIVEN
     const expectedError = Error("Whoopsi");
 
-    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
-      process.emit("unhandledRejection", expectedError, Promise.resolve());
-    });
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("unhandledRejection", expectedError, Promise.resolve());
+      }
+    );
 
     const project = mockPartial<Project>({
       rootDir: join(tempDir, "somedir"),
@@ -270,7 +275,7 @@ describe("SakuliRunner", () => {
 
     //THEN
     [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
-      expect(hook.onUnhandledRejection).toBeCalledWith(
+      expect(hook.onUnhandledError).toBeCalledWith(
         expectedError,
         project,
         testExecutionContext
@@ -278,13 +283,15 @@ describe("SakuliRunner", () => {
     });
   });
 
-  it("should call onUncaughtException on lifecycle hooks", async () => {
+  it("should call onUnhandledError for uncaughtException on lifecycle hooks", async () => {
     //GIVEN
     const expectedError = Error("Well yes, but actually no");
 
-    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
-      process.emit("uncaughtException", expectedError);
-    });
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("uncaughtException", expectedError);
+      }
+    );
 
     const project = mockPartial<Project>({
       rootDir: join(tempDir, "somedir"),
@@ -296,7 +303,7 @@ describe("SakuliRunner", () => {
 
     //THEN
     [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
-      expect(hook.onUncaughtException).toBeCalledWith(
+      expect(hook.onUnhandledError).toBeCalledWith(
         expectedError,
         project,
         testExecutionContext
@@ -305,15 +312,23 @@ describe("SakuliRunner", () => {
   });
 
   describe("signals", () => {
-    const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
-      return undefined as never;
+    let exitSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
+        return undefined as never;
+      });
+    });
+
+    afterEach(() => {
+      exitSpy.mockRestore();
     });
 
     it.each(nodeSignals)(
       "should forward %s to life cycle hooks",
       async (signal) => {
         //GIVEN
-        (testExecutionContext.endExecution as jest.Mock).mockImplementation(
+        (testExecutionContext.startExecution as jest.Mock).mockImplementation(
           () => {
             process.emit(signal, signal);
           }
@@ -342,7 +357,7 @@ describe("SakuliRunner", () => {
       "should abort execution on %s",
       async (signal) => {
         //GIVEN
-        (testExecutionContext.endExecution as jest.Mock).mockImplementation(
+        (testExecutionContext.startExecution as jest.Mock).mockImplementation(
           () => {
             process.emit(signal, signal);
           }
@@ -362,5 +377,29 @@ describe("SakuliRunner", () => {
         expect(testExecutionContext.logger.info).toBeCalled();
       }
     );
+
+    it.each(
+      nodeSignals.filter(
+        (signal) => signal !== "SIGINT" && signal !== "SIGTERM"
+      )
+    )("should not abort execution on %s", async (signal) => {
+      //GIVEN
+      (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+        () => {
+          process.emit(signal, signal);
+        }
+      );
+
+      const project = mockPartial<Project>({
+        rootDir: join(tempDir, "somedir"),
+        testFiles: [],
+      });
+
+      //WHEN
+      await sakuliRunner.execute(project);
+
+      //THEN
+      expect(exitSpy).not.toBeCalled();
+    });
   });
 });

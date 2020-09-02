@@ -1,3 +1,6 @@
+jest.mock("./common/button-registry");
+jest.mock("./common/release-keys.function");
+
 import { LegacyLifecycleHooks } from "./legacy-lifecycle-hooks.class";
 import {
   Builder,
@@ -13,6 +16,12 @@ import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
 import { createPropertyMapMock } from "@sakuli/commons/dist/properties/__mocks__";
 import { createTestExecutionContextMock } from "./__mocks__";
 import Mock = jest.Mock;
+import Signals = NodeJS.Signals;
+import { releaseKeys } from "./common/release-keys.function";
+import { Key } from "../../dist/context/common";
+import { MouseButton } from "./common";
+import { getActiveKeys } from "./common/button-registry";
+import { nodeSignals } from "@sakuli/core/dist/node-signals";
 
 describe("LegacyLifecycleHooks", () => {
   let builder: Builder;
@@ -24,6 +33,8 @@ describe("LegacyLifecycleHooks", () => {
   let testExecutionContext: TestExecutionContext;
   let legacyProps: LegacyProjectProperties;
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     window = mockPartial<Window>({
       maximize: jest.fn(),
     });
@@ -226,5 +237,73 @@ describe("LegacyLifecycleHooks", () => {
         context._navigateTo("");
       }).toThrowError(/_navigateTo/);
     });
+  });
+
+  describe("signals", () => {
+    it.each(["SIGINT", "SIGTERM"] as Signals[])(
+      "should release pressed keys on %s",
+      (signal) => {
+        //GIVEN
+        const expectedButtonRegistry = {
+          keyboard: [Key.ALT, Key.SHIFT],
+          mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+        };
+        (getActiveKeys as jest.Mock).mockImplementation(
+          () => expectedButtonRegistry
+        );
+
+        //WHEN
+        lcp.onSignal(signal, minimumProject, testExecutionContext);
+
+        //THEN
+        expect(releaseKeys).toBeCalledWith(
+          expectedButtonRegistry,
+          expect.anything(),
+          expect.anything()
+        );
+      }
+    );
+
+    it.each(
+      nodeSignals.filter(
+        (signal) => signal !== "SIGINT" && signal !== "SIGTERM"
+      )
+    )("should not release pressed keys on %s", (signal) => {
+      //GIVEN
+      const expectedButtonRegistry = {
+        keyboard: [Key.ALT, Key.SHIFT],
+        mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+      };
+      (getActiveKeys as jest.Mock).mockImplementation(
+        () => expectedButtonRegistry
+      );
+
+      //WHEN
+      lcp.onSignal(signal, minimumProject, testExecutionContext);
+
+      //THEN
+      expect(releaseKeys).not.toBeCalled();
+    });
+  });
+
+  it("should release pressed keys on onUnhandledError", () => {
+    //GIVEN
+    const expectedButtonRegistry = {
+      keyboard: [Key.ALT, Key.SHIFT],
+      mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+    };
+    (getActiveKeys as jest.Mock).mockImplementation(
+      () => expectedButtonRegistry
+    );
+
+    //WHEN
+    lcp.onUnhandledError(Error("foo"), minimumProject, testExecutionContext);
+
+    //THEN
+    expect(releaseKeys).toBeCalledWith(
+      expectedButtonRegistry,
+      expect.anything(),
+      expect.anything()
+    );
   });
 });
