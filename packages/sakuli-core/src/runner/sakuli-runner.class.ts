@@ -6,6 +6,7 @@ import { JsScriptExecutor } from "./js-script-executor.class";
 import { join, resolve } from "path";
 import { TestExecutionContext } from "./test-execution-context";
 import Signals = NodeJS.Signals;
+import { nodeSignals } from "../node-signals";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
   constructor(
@@ -24,25 +25,10 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
   async execute(project: Project): Promise<any> {
     this.testExecutionContext.startExecution();
 
-    const handleError = (e: any) => {
-      this.testExecutionContext.error = e;
-    };
-    const handleSignals = (signal: Signals) => {
-      this.testExecutionContext.logger.info(
-        `Received signal ${signal}, aborting execution`
-      );
-      process.exit(130);
-    };
-    process.on("unhandledRejection", (e) => {
-      this.testExecutionContext.logger.warn("Caught unhandledRejection.");
-      handleError(e);
-    });
-    process.on("uncaughtException", (e) => {
-      this.testExecutionContext.logger.warn("Caught uncaughtException.");
-      handleError(e);
-    });
-    process.on("SIGTERM", handleSignals);
-    process.on("SIGINT", handleSignals);
+    await this.registerSignalHandler(project);
+    this.handleUnhandledRejection(project);
+    this.handleUncaughtException(project);
+
     // onProject Phase
     await this.onProject(project, this.testExecutionContext);
     let result = {};
@@ -177,5 +163,60 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         });
       });
     }
+  }
+
+  private async registerSignalHandler(project: Project) {
+    const handleSignal = async (signal: Signals) => {
+      await Promise.all(
+        this.lifecycleHooks
+          .filter((hook) => "onSignal" in hook)
+          .map((hook) =>
+            hook.onSignal!(signal, project, this.testExecutionContext)
+          )
+      );
+
+      if (signal === ("SIGINT" || "SIGTERM")) {
+        this.testExecutionContext.logger.info(
+          `Received signal ${signal}, aborting execution`
+        );
+        process.exit(130);
+      }
+    };
+
+    nodeSignals.forEach((signal) => {
+      process.on(signal, handleSignal);
+    });
+  }
+
+  private handleError = (e: any) => {
+    this.testExecutionContext.error = e;
+  };
+
+  private handleUnhandledRejection(project: Project) {
+    process.on("unhandledRejection", async (e) => {
+      this.testExecutionContext.logger.warn("Caught unhandledRejection.");
+      this.handleError(e);
+      await Promise.all(
+        this.lifecycleHooks
+          .filter((hook) => "onUnhandledRejection" in hook)
+          .map((hook) =>
+            hook.onUnhandledRejection!(e, project, this.testExecutionContext)
+          )
+      );
+    });
+  }
+
+  private handleUncaughtException(project: Project) {
+    process.on("uncaughtException", async (e) => {
+      this.testExecutionContext.logger.warn("Caught uncaughtException.");
+      this.handleError(e);
+      await Promise.all(
+        this.lifecycleHooks
+          .filter((hook) => "onUncaughtException" in hook)
+          .map((hook) =>
+            hook.onUncaughtException!(e, project, this.testExecutionContext)
+          )
+      );
+    });
   }
 }

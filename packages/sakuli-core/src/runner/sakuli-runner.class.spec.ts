@@ -8,9 +8,12 @@ import { join, sep } from "path";
 import { promises as fs } from "fs";
 import Mocked = jest.Mocked;
 import { SimpleLogger } from "@sakuli/commons";
+import { nodeSignals } from "../node-signals";
+import Signals = NodeJS.Signals;
 
 describe("SakuliRunner", () => {
   let tempDir: string;
+  process.setMaxListeners(999);
   beforeEach(async () => (tempDir = await fs.mkdtemp(`${tmpdir()}${sep}`)));
   afterEach(async () => fs.unlink(tempDir).catch(() => {}));
 
@@ -23,6 +26,9 @@ describe("SakuliRunner", () => {
     afterRunFile: jest.fn(),
     beforeRunFile: jest.fn(),
     beforeExecution: jest.fn(),
+    onUncaughtException: jest.fn(),
+    onUnhandledRejection: jest.fn(),
+    onSignal: jest.fn(),
   });
 
   const createScriptExecutorMock = (): Mocked<TestScriptExecutor> =>
@@ -45,6 +51,7 @@ describe("SakuliRunner", () => {
     logger: mockPartial<SimpleLogger>({
       trace: jest.fn(),
       warn: jest.fn(),
+      info: jest.fn(),
     }),
   });
 
@@ -243,5 +250,117 @@ describe("SakuliRunner", () => {
 
     //THEN
     expect(testExecutionContext.error).toEqual(expectedError);
+  });
+
+  it("should call onUnhandledRejection on lifecycle hooks", async () => {
+    //GIVEN
+    const expectedError = Error("Whoopsi");
+
+    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
+      process.emit("unhandledRejection", expectedError, Promise.resolve());
+    });
+
+    const project = mockPartial<Project>({
+      rootDir: join(tempDir, "somedir"),
+      testFiles: [],
+    });
+
+    //WHEN
+    await sakuliRunner.execute(project);
+
+    //THEN
+    [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
+      expect(hook.onUnhandledRejection).toBeCalledWith(
+        expectedError,
+        project,
+        testExecutionContext
+      );
+    });
+  });
+
+  it("should call onUncaughtException on lifecycle hooks", async () => {
+    //GIVEN
+    const expectedError = Error("Well yes, but actually no");
+
+    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
+      process.emit("uncaughtException", expectedError);
+    });
+
+    const project = mockPartial<Project>({
+      rootDir: join(tempDir, "somedir"),
+      testFiles: [],
+    });
+
+    //WHEN
+    await sakuliRunner.execute(project);
+
+    //THEN
+    [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
+      expect(hook.onUncaughtException).toBeCalledWith(
+        expectedError,
+        project,
+        testExecutionContext
+      );
+    });
+  });
+
+  describe("signals", () => {
+    const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
+      return undefined as never;
+    });
+
+    it.each(nodeSignals)(
+      "should forward %s to life cycle hooks",
+      async (signal) => {
+        //GIVEN
+        (testExecutionContext.endExecution as jest.Mock).mockImplementation(
+          () => {
+            process.emit(signal, signal);
+          }
+        );
+
+        const project = mockPartial<Project>({
+          rootDir: join(tempDir, "somedir"),
+          testFiles: [],
+        });
+
+        //WHEN
+        await sakuliRunner.execute(project);
+
+        //THEN
+        [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
+          expect(hook.onSignal).toBeCalledWith(
+            signal,
+            project,
+            testExecutionContext
+          );
+        });
+      }
+    );
+
+    it.each(["SIGINT", "SIGTERM"] as Signals[])(
+      "should abort execution on %s",
+      async (signal) => {
+        //GIVEN
+        (testExecutionContext.endExecution as jest.Mock).mockImplementation(
+          () => {
+            process.emit(signal, signal);
+          }
+        );
+
+        const project = mockPartial<Project>({
+          rootDir: join(tempDir, "somedir"),
+          testFiles: [],
+        });
+        const expectedExitCode = 130;
+
+        //WHEN
+        await sakuliRunner.execute(project);
+
+        //THEN
+        expect(exitSpy).toBeCalledWith(expectedExitCode);
+        expect(testExecutionContext.logger.info).toBeCalled();
+      }
+    );
   });
 });
