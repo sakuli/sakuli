@@ -101,9 +101,9 @@ export function createTestCaseClass(
               screenshot: screenShotPath,
             });
           }
-        } catch (e) {
+        } catch (exception) {
           ctx.logger.warn(
-            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`
+            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${exception}`
           );
         }
       }
@@ -134,10 +134,10 @@ export function createTestCaseClass(
     async saveResult(forward: boolean = false) {
       ctx.endTestStep();
       ctx.endTestCase();
-      await ifPresent(
+      ifPresent(
         ctx.getCurrentTestCase(),
-        async (ctc) => {
-          await ifPresent(ctx.getCurrentTestStep(), async (cts) => {
+        (ctc) => {
+          ifPresent(ctx.getCurrentTestStep(), async (cts) => {
             if (!cts.error) {
               try {
                 await testStepCache.write(
@@ -189,10 +189,9 @@ export function createTestCaseClass(
             legacyProps.screenshotStorage,
             screenShotDestPath
           );
-          screenShotMessage =
-            screenshot && existsSync(screenShotOutputPath)
-              ? ` Screenshot saved to '${screenShotOutputPath}'`
-              : "";
+          screenShotMessage = existsSync(screenShotOutputPath)
+            ? ` Screenshot saved to '${screenShotOutputPath}'`
+            : "";
         } catch (e) {
           ctx.logger.warn(
             `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`
