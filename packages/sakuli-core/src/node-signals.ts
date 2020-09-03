@@ -12,7 +12,7 @@ export const nodeSignals: Signals[] = [
   "SIGINT",
   "SIGIO",
   "SIGIOT",
-  "SIGKILL",
+  // "SIGKILL", //Not allowed to be registered for listener https://github.com/nodejs/node-v0.x-archive/issues/6339
   "SIGPIPE",
   "SIGPOLL",
   "SIGPROF",
@@ -20,7 +20,7 @@ export const nodeSignals: Signals[] = [
   "SIGQUIT",
   "SIGSEGV",
   "SIGSTKFLT",
-  "SIGSTOP",
+  // "SIGSTOP", //Not allowed to be registered for listener https://github.com/nodejs/node-v0.x-archive/issues/6339
   "SIGSYS",
   "SIGTERM",
   "SIGTRAP",
