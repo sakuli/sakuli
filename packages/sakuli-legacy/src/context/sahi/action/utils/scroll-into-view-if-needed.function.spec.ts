@@ -15,6 +15,7 @@ import {
   TestEnvironment,
 } from "../../__mocks__";
 import { mockPartial } from "sneer";
+import { wait } from "../../helper/wait.function";
 
 function mockExecuteScript<T>(promise: Promise<T>) {
   const executeScriptFunction = jest.fn().mockResolvedValue(promise);
@@ -140,6 +141,7 @@ describe("scrollIntoViewIfNeeded", () => {
           element,
           testExecutionContext
         );
+        await wait(3000);
         await element.click();
         const alertText = await getAlertText(driver);
 
