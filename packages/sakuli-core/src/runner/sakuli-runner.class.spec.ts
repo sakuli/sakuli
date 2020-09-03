@@ -255,7 +255,7 @@ describe("SakuliRunner", () => {
     expect(testExecutionContext.error).toEqual(expectedError);
   });
 
-  it("should call onUnhandledError for unhandledRejection on lifecycle hooks", async () => {
+  it("should call onUnhandledError on lifecycle hooks for unhandledRejection", async () => {
     //GIVEN
     const expectedError = Error("Whoopsi");
 
@@ -283,7 +283,7 @@ describe("SakuliRunner", () => {
     });
   });
 
-  it("should call onUnhandledError for uncaughtException on lifecycle hooks", async () => {
+  it("should call onUnhandledError on lifecycle hooks for uncaughtException", async () => {
     //GIVEN
     const expectedError = Error("Well yes, but actually no");
 
