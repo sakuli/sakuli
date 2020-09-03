@@ -123,6 +123,10 @@ describe("scrollIntoViewIfNeeded", () => {
                 <style>
                     html {
                         scroll-behavior: smooth;
+                        height: 100%;
+                    }
+                    body {
+                        height: 100%;
                     }
                 </style>
                 `,
@@ -158,6 +162,10 @@ describe("scrollIntoViewIfNeeded", () => {
                 <style>
                     html {
                         scroll-behavior: smooth;
+                        height: 100%;
+                    }
+                    body {
+                        height: 100%;
                     }
                 </style>
                 `,
