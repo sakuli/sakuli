@@ -102,6 +102,27 @@ describe("AccessorUtil", () => {
         return expect(elems).toEqual([]);
       });
 
+      it("should fetch element with the exact string", async () => {
+        await driver.get(
+          mockHtml(`
+             <div id="one">
+                s123
+             </div>
+             <div id="two">
+                123s
+             </div>
+             <div id="three">
+                123
+             </div>
+            `)
+        );
+        const elements = await driver.findElements(By.css("div"));
+        const elems = await accessorUtil.getByString(elements, "123");
+        return expect(
+          Promise.all(elems.map((e) => e.getAttribute("id")))
+        ).resolves.toEqual(["three"]);
+      });
+
       it("should fetch fuzzy matching identifiers from element", async () => {
         await driver.get(
           mockHtml(`
