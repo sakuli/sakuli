@@ -78,6 +78,153 @@ describe("TestCase", () => {
     });
   });
 
+  describe("constructor typechecking", () => {
+    it.each(<[string, string, string, any[]][]>[
+      ["number passed instead of caseId", "caseId", "string", [42]],
+      [
+        "string passed instead of warningTime",
+        "warningTime",
+        "number",
+        ["caseId", "stringInsteadOfWarningTime"],
+      ],
+      [
+        "string passed instead of criticalTime",
+        "criticalTime",
+        "number",
+        ["caseId", 42, "stringInsteadOfCriticalTime"],
+      ],
+      [
+        "non string passed as imagepath",
+        "_imagePaths",
+        "string",
+        ["caseId", 42, 23, [123]],
+      ],
+    ])(
+      "should throw a TypeError on %s",
+      (
+        description: string,
+        faultyParameter: string,
+        expectedType: string,
+        parameters: any[]
+      ) => {
+        // GIVEN
+        const testFolder = "testCaseFolder";
+        const testCase = createTestCaseClass(
+          testExecutionContext,
+          project,
+          testFolder
+        );
+        const expectedError = `Parameter ${faultyParameter} is invalid, ${expectedType} expected.`;
+
+        // WHEN
+        const SUT = () =>
+          new testCase(
+            parameters[0],
+            parameters[1],
+            parameters[2],
+            parameters[3]
+          );
+
+        // THEN
+        try {
+          SUT();
+        } catch (e) {
+          expect(e).toBeInstanceOf(TypeError);
+          expect(e.message).toContain(expectedError);
+        }
+      }
+    );
+
+    it("should be constructible with just a caseId", () => {
+      // GIVEN
+      const testFolder = "testCaseFolder";
+      const testCase = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder
+      );
+      const caseId = "caseId";
+
+      // WHEN
+      const SUT = () => new testCase(caseId);
+      const tc = SUT();
+
+      // THEN
+      expect(tc.caseId).toBe(caseId);
+      expect(tc.warningTime).toBe(0);
+      expect(tc.criticalTime).toBe(0);
+    });
+
+    it("should be constructible with a caseId and warningTime", () => {
+      // GIVEN
+      const testFolder = "testCaseFolder";
+      const testCase = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder
+      );
+      const caseId = "caseId";
+      const warningTime = 123;
+
+      // WHEN
+      const SUT = () => new testCase(caseId, warningTime);
+      const tc = SUT();
+
+      // THEN
+      expect(tc.caseId).toBe(caseId);
+      expect(tc.warningTime).toBe(warningTime);
+      expect(tc.criticalTime).toBe(0);
+    });
+
+    it("should be constructible with a caseId, warningTime and criticalTime", () => {
+      // GIVEN
+      const testFolder = "testCaseFolder";
+      const testCase = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder
+      );
+      const caseId = "caseId";
+      const warningTime = 123;
+      const criticalTime = 456;
+
+      // WHEN
+      const SUT = () => new testCase(caseId, warningTime, criticalTime);
+      const tc = SUT();
+
+      // THEN
+      expect(tc.caseId).toBe(caseId);
+      expect(tc.warningTime).toBe(warningTime);
+      expect(tc.criticalTime).toBe(criticalTime);
+    });
+
+    it("should be constructible with a caseId, warningTime, criticalTime and imagePaths", () => {
+      // GIVEN
+      const testFolder = "testCaseFolder";
+      const testCase = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder
+      );
+      const caseId = "caseId";
+      const warningTime = 123;
+      const criticalTime = 456;
+      const imagePath = "testImagePath";
+
+      // WHEN
+      const SUT = () =>
+        new testCase(caseId, warningTime, criticalTime, [imagePath]);
+      const tc = SUT();
+
+      // THEN
+      expect(tc.caseId).toBe(caseId);
+      expect(tc.warningTime).toBe(warningTime);
+      expect(tc.criticalTime).toBe(criticalTime);
+      expect(tc._imagePaths.length).toBe(1);
+      expect(tc._imagePaths).toContain(imagePath);
+    });
+  });
+
   describe("image path", () => {
     it("should throw on missing testcasefolder", () => {
       // GIVEN

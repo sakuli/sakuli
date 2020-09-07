@@ -1,7 +1,13 @@
 import { cwd } from "process";
 import { Project, TestExecutionContext, TestStepContext } from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
-import { ensure, ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
+import {
+  ensure,
+  ifPresent,
+  Maybe,
+  throwIfAbsent,
+  throwOnRuntimeTypeMissmatch,
+} from "@sakuli/commons";
 import { isAbsolute, join } from "path";
 import { TestCase } from "./test-case.interface";
 import { TestStepCache } from "./steps-cache/test-step-cache.class";
@@ -28,6 +34,29 @@ export function createTestCaseClass(
       readonly criticalTime: number = 0,
       public _imagePaths: string[] = []
     ) {
+      throwOnRuntimeTypeMissmatch(
+        caseId,
+        "String",
+        `Parameter caseId is invalid, string expected. Value: ${caseId}`
+      );
+      throwOnRuntimeTypeMissmatch(
+        warningTime,
+        "Number",
+        `Parameter warningTime is invalid, number expected. Value: ${warningTime}`
+      );
+      throwOnRuntimeTypeMissmatch(
+        criticalTime,
+        "Number",
+        `Parameter criticalTime is invalid, number expected. Value: ${criticalTime}`
+      );
+      for (const imagePath of _imagePaths) {
+        throwOnRuntimeTypeMissmatch(
+          imagePath,
+          "String",
+          `Parameter _imagePaths is invalid, string expected. Value: ${imagePath}`
+        );
+      }
+
       ctx.startTestCase({ id: caseId, warningTime, criticalTime });
       ctx.startTestStep({});
       nutConfig.imagePaths = [cwd()];
