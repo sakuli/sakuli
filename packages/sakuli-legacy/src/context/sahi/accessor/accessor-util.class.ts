@@ -274,6 +274,20 @@ export class AccessorUtil {
     );
   }
 
+  /**
+   * Converts the string into a regular expression
+   *
+   * If the string contains a regular expression with '/' delimiters at the start/end of the string,
+   * it will be returned as a RegExp object, e.g.
+   * "/abc.*foo/" -> new RegExp("abc.*foo")
+   *
+   * If the string does not contain a regular expression but is just a string, it will also be returned as a RegExp object but modified.
+   * Anchors and whitespace matchers will be added to the start/end of the string and
+   * all POSIX basic and extended metacharacters will be escaped.
+   *
+   * "abc" -> new RegExp("^\s*abcs*$")
+   * "2 * 2" -> new RegExp("^\s*2 \* 2s*$")
+   */
   private stringToRegExp(str: string) {
     const isRegEx = this.isRegExpString(str);
     str = isRegEx ? str.substr(1, str.length - 2) : str;
