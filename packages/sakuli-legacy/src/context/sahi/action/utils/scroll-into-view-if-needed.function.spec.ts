@@ -135,13 +135,13 @@ describe("scrollIntoViewIfNeeded", () => {
           )
         );
         const element = await driver.findElement(By.id("click-me"));
+        await wait(2000);
 
         // WHEN
         const hasScrolled = await scrollIntoViewIfNeeded(
           element,
           testExecutionContext
         );
-        await wait(3000);
         await element.click();
         const alertText = await getAlertText(driver);
 
