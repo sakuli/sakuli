@@ -6,3 +6,4 @@ export * from "./properties";
 export * from "./templates";
 export * from "./invoke-if-present.function";
 export * from "./fs";
+export * from "./runtime-typecheck.function";
