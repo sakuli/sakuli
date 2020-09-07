@@ -253,6 +253,12 @@ export class AccessorUtil {
     return identifier.startsWith("/") && identifier.endsWith("/");
   }
 
+  /**
+   * Allows the user to use an index at the end of the string, e.g.
+   *
+   * _password("shaded bigfont[1]")
+   * This matches the second password field with the css class 'shaded bigfont'.
+   */
   async getByString(
     elements: WebElement[],
     identifier: string
