@@ -292,8 +292,8 @@ export class AccessorUtil {
    * Anchors and whitespace matchers will be added to the start/end of the string and
    * all POSIX basic and extended metacharacters will be escaped.
    *
-   * "abc" -> new RegExp("^\s*abcs*$")
-   * "2 * 2" -> new RegExp("^\s*2 \* 2s*$")
+   * "abc" -> new RegExp("^\\s*abc\\s*$")
+   * "2 * 2" -> new RegExp("^\\s*2 \* 2\\s*$")
    */
   private stringToRegExp(str: string) {
     const isRegEx = this.isRegExpString(str);
