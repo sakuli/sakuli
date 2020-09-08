@@ -88,4 +88,25 @@ describe("button registry", () => {
     //THEN
     expect(registeredKeys).toEqual(expectedRegisteredKeys);
   });
+
+  it("should eliminate doubled keys", () => {
+    //GIVEN
+    const ButtonRegistry = require("./button-registry");
+    const mousedown = MouseButton.RIGHT;
+    const keyboardKey = Key.CTRL;
+    const expectedRegisteredKeys = {
+      keyboard: [keyboardKey],
+      mouse: [mousedown],
+    };
+    ButtonRegistry.registerMouseDown(mousedown);
+    ButtonRegistry.registerMouseDown(mousedown);
+    ButtonRegistry.registerKeyboardPressKeys(keyboardKey);
+    ButtonRegistry.registerKeyboardPressKeys(keyboardKey);
+
+    //WHEN
+    const registeredKeys = ButtonRegistry.getActiveKeys();
+
+    //THEN
+    expect(registeredKeys).toEqual(expectedRegisteredKeys);
+  });
 });
