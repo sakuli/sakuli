@@ -13,6 +13,7 @@ export interface TestExecutionLifecycleHooks<T = any> {
     project: Project,
     testExecutionContext: TestExecutionContext
   ): Promise<void>;
+
   afterExecution?(
     project: Project,
     testExecutionContext: TestExecutionContext
