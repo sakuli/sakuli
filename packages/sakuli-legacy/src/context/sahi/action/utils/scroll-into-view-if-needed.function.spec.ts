@@ -15,6 +15,7 @@ import {
   TestEnvironment,
 } from "../../__mocks__";
 import { mockPartial } from "sneer";
+import { wait } from "../../helper/wait.function";
 
 function mockExecuteScript<T>(promise: Promise<T>) {
   const executeScriptFunction = jest.fn().mockResolvedValue(promise);
@@ -123,6 +124,10 @@ describe("scrollIntoViewIfNeeded", () => {
                 <style>
                     html {
                         scroll-behavior: smooth;
+                        height: 100%;
+                    }
+                    body {
+                        height: 100%;
                     }
                 </style>
                 `,
@@ -130,6 +135,7 @@ describe("scrollIntoViewIfNeeded", () => {
           )
         );
         const element = await driver.findElement(By.id("click-me"));
+        await wait(2000);
 
         // WHEN
         const hasScrolled = await scrollIntoViewIfNeeded(
@@ -158,6 +164,10 @@ describe("scrollIntoViewIfNeeded", () => {
                 <style>
                     html {
                         scroll-behavior: smooth;
+                        height: 100%;
+                    }
+                    body {
+                        height: 100%;
                     }
                 </style>
                 `,

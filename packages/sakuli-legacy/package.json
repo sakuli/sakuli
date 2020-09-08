@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/legacy",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -29,9 +29,9 @@
   "dependencies": {
     "@nut-tree/nut-js": "1.5.0",
     "@nut-tree/secrets": "4.0.2",
-    "@sakuli/commons": "2.3.0",
-    "@sakuli/core": "2.3.0",
-    "@sakuli/rollup-hooks": "2.3.0",
+    "@sakuli/commons": "2.4.0",
+    "@sakuli/core": "2.4.0",
+    "@sakuli/rollup-hooks": "2.4.0",
     "class-validator": "0.9.1",
     "common-tags": "1.8.0",
     "escodegen": "1.11.0",
@@ -41,7 +41,7 @@
     "mock-fs": "4.13.0",
     "properties-reader": "0.0.16",
     "reflect-metadata": "0.1.12",
-    "selenium-webdriver": "4.0.0-alpha.4"
+    "selenium-webdriver": "4.0.0-alpha.7"
   },
   "devDependencies": {
     "@types/common-tags": "1.4.0",
@@ -56,10 +56,10 @@
     "@types/properties-reader": "0.0.1",
     "@types/selenium-webdriver": "4.0.0",
     "@types/yargs": "15.0.4",
-    "chromedriver": "83.0.0",
-    "dockerode": "2.5.8",
+    "chromedriver": "85.0.0",
+    "dockerode": "3.2.1",
     "express": "4.16.4",
-    "geckodriver": "1.19.1",
+    "geckodriver": "1.20.0",
     "jest": "25.2.7",
     "node-fetch": "2.3.0",
     "sneer": "1.0.1",

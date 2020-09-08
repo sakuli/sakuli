@@ -1,6 +1,6 @@
 {
   "name": "integration-tests",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Integration tests for Sakuli",
   "private": true,
   "contributors": [
@@ -24,11 +24,11 @@
     "postperformance-test": "kill -9 $(cat .pid) && rm .pid"
   },
   "dependencies": {
-    "@sakuli/cli": "2.3.0",
-    "@sakuli/legacy": "2.3.0",
-    "@sakuli/legacy-types": "2.3.0",
+    "@sakuli/cli": "2.4.0",
+    "@sakuli/legacy": "2.4.0",
+    "@sakuli/legacy-types": "2.4.0",
     "chromedriver": "84.0.1",
-    "concurrently": "4.1.0",
+    "concurrently": "5.3.0",
     "execa": "1.0.0",
     "express": "4.16.4",
     "geckodriver": "1.19.1",
