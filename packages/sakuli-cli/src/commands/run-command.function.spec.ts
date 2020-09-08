@@ -165,9 +165,8 @@ describe("runCommand", () => {
 
     it("should exit the process with sakulis resultState", async () => {
       await command.handler(runOptions);
-      expect(process.exit).toHaveBeenCalledWith(
-        sakuli.testExecutionContext.resultState
-      );
+      expect(process.exit).not.toHaveBeenCalled();
+      expect(process.exitCode).toBe(sakuli.testExecutionContext.resultState);
     });
 
     it("should exit with 1 when an error occurs during execution", async () => {
@@ -177,7 +176,8 @@ describe("runCommand", () => {
       });
       await command.handler(runOptions);
       expect(renderError).toHaveBeenCalledWith(dummyError);
-      expect(process.exit).toHaveBeenLastCalledWith(1);
+      expect(process.exit).not.toHaveBeenCalled();
+      expect(process.exitCode).toBe(1);
     });
   });
 });
