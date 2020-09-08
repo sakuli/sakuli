@@ -87,7 +87,10 @@ describe("SakuliRunner", () => {
   });
 
   it("should tearUp all providers for each test", async (done) => {
+    //WHEN
     await sakuliRunner.execute(projectWithThreeTestFiles);
+
+    //THEN
     expect(lifecycleHooks1.onProject).toHaveBeenCalledTimes(1);
     expect(lifecycleHooks1.onProject).toHaveBeenCalledWith(
       projectWithThreeTestFiles,
@@ -96,6 +99,18 @@ describe("SakuliRunner", () => {
 
     expect(lifecycleHooks2.onProject).toHaveBeenCalledTimes(1);
     expect(lifecycleHooks2.onProject).toHaveBeenCalledWith(
+      projectWithThreeTestFiles,
+      testExecutionContext
+    );
+
+    expect(lifecycleHooks1.beforeExecution).toHaveBeenCalledTimes(1);
+    expect(lifecycleHooks1.beforeExecution).toHaveBeenCalledWith(
+      projectWithThreeTestFiles,
+      testExecutionContext
+    );
+
+    expect(lifecycleHooks2.beforeExecution).toHaveBeenCalledTimes(1);
+    expect(lifecycleHooks2.beforeExecution).toHaveBeenCalledWith(
       projectWithThreeTestFiles,
       testExecutionContext
     );

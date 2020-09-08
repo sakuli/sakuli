@@ -7,13 +7,21 @@ import { join, resolve } from "path";
 import { TestExecutionContext } from "./test-execution-context";
 import Signals = NodeJS.Signals;
 import { nodeSignals } from "../node-signals";
+import {
+  LifecycleHookRegistry,
+  lifecycleHookRegistry,
+} from "./lifecycle-hook-registry";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
+  private hookRegistry: LifecycleHookRegistry;
+
   constructor(
     readonly lifecycleHooks: TestExecutionLifecycleHooks[],
     readonly testExecutionContext: TestExecutionContext,
     readonly testFileExecutor: TestScriptExecutor = new JsScriptExecutor()
-  ) {}
+  ) {
+    this.hookRegistry = lifecycleHookRegistry(lifecycleHooks);
+  }
 
   /**
    * Tears up all lifecycle-hooks, merges their results of getContext and pass this result to the testFile Executor
@@ -68,8 +76,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
 
   async onProject(project: Project, tec: TestExecutionContext) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "onProject" in hook)
+      this.hookRegistry
+        .getOnProjectHooks()
         .map((hook) => hook.onProject!(project, tec))
     );
   }
@@ -79,8 +87,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "beforeExecution" in hook)
+      this.hookRegistry
+        .getBeforeExecutionHooks()
         .map((hook) => hook.beforeExecution!(project, testExecutionContext))
     );
   }
@@ -93,8 +101,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
       "Executing 'afterExecution' lifecycle hooks..."
     );
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "afterExecution" in hook)
+      this.hookRegistry
+        .getAfterExecutionHooks()
         .map((hook) => hook.afterExecution!(project, testExecutionContext))
     );
     testExecutionContext.logger.trace(
@@ -108,8 +116,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "afterRunFile" in hook)
+      this.hookRegistry
+        .getAfterRunFileHooks()
         .map((hook) => hook.afterRunFile!(file, project, testExecutionContext))
     );
   }
@@ -120,8 +128,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "beforeRunFile" in hook)
+      this.hookRegistry
+        .getBeforeRunFileHooks()
         .map((hook) => hook.beforeRunFile!(file, project, testExecutionContext))
     );
   }
@@ -131,8 +139,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     project: Project
   ): Promise<any> {
     const contexts = await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "requestContext" in hook)
+      this.hookRegistry
+        .getRequestContextHooks()
         .map((hook) => hook.requestContext!(testExecutionContext, project))
     );
     return contexts.reduce((ctx, context) => ({ ...ctx, ...context }), {
@@ -145,9 +153,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     project: Project,
     context: TestExecutionContext
   ): Promise<string> {
-    const fileReaders = this.lifecycleHooks.filter(
-      (hook) => "readFileContent" in hook
-    );
+    const fileReaders = this.hookRegistry.getReadFileContentHooks();
     if (fileReaders.length >= 1) {
       const [fileReader] = fileReaders;
       return await fileReader.readFileContent!(testFile, project, context);
@@ -170,8 +176,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         `Forwarding ${signal} to lifecycle hooks...`
       );
       await Promise.all(
-        this.lifecycleHooks
-          .filter((hook) => "onSignal" in hook)
+        this.hookRegistry
+          .getOnSignalHooks()
           .map((hook) =>
             hook.onSignal!(signal, project, this.testExecutionContext)
           )
@@ -206,8 +212,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         "Forwarding unhandled error to lifecycle hooks..."
       );
       await Promise.all(
-        this.lifecycleHooks
-          .filter((hook) => "onUnhandledError" in hook)
+        this.hookRegistry
+          .getOnUnhandledErrorHooks()
           .map((hook) =>
             hook.onUnhandledError!(e, currentProject, this.testExecutionContext)
           )
