@@ -254,7 +254,7 @@ export class AccessorUtil {
   }
 
   /**
-   * Allows the user to use an index at the end of the string, e.g.
+   * Allows the user to use an index at the end of the string extracted via the capturing group ([0-9+]), e.g.
    *
    * _password("shaded bigfont[1]")
    * This matches the second password field with the css class 'shaded bigfont'.
