@@ -263,7 +263,7 @@ export class AccessorUtil {
     elements: WebElement[],
     identifier: string
   ): Promise<WebElement[]> {
-    const indexRegExp = /.*\[([0-9]+)\]$/;
+    const indexRegExp = /.*\[([0-9]+)]$/;
     const matches = identifier.match(indexRegExp);
     return ifPresent(
       matches,
@@ -281,13 +281,14 @@ export class AccessorUtil {
   }
 
   /**
-   * Converts the string into a regular expression
+   * Converts a string into a regular expression object.
    *
    * If the string contains a regular expression with '/' delimiters at the start/end of the string,
-   * it will be returned as a RegExp object, e.g.
+   * it will be returned as specified in the string, e.g.
    * "/abc.*foo/" -> new RegExp("abc.*foo")
    *
-   * If the string does not contain a regular expression but is just a string, it will also be returned as a RegExp object but modified.
+   * If the string does not contain a regular expression but is just a string, the returned regex will be modified to
+   * represent a string search.
    * Anchors and whitespace matchers will be added to the start/end of the string and
    * all POSIX basic and extended metacharacters will be escaped.
    *
