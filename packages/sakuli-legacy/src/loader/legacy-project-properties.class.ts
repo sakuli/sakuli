@@ -80,6 +80,12 @@ export class LegacyProjectProperties {
   }
 
   /**
+   * reuses a the browser session after each test suite
+   */
+  @BooleanProperty("sakuli.browser.reuse")
+  browserReuse: boolean = true;
+
+  /**
      * Determines if a testsuite should run in ui-only mode or not
      * This option is usually defined via commandline and will override [testSuiteUiOnly]{@link LegacyProjectProperties.testSuiteUiOnly}
 
