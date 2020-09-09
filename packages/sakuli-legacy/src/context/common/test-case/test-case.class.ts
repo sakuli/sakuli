@@ -15,6 +15,36 @@ import { takeErrorScreenShot } from "./take-error-screen-shot.function";
 import { existsSync } from "fs";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
+function validateArgumentTypes(
+  caseId: string,
+  warningTime: number,
+  criticalTime: number,
+  imagePaths: string[]
+) {
+  throwOnRuntimeTypeMissmatch(
+    caseId,
+    "String",
+    `Parameter caseId is invalid, string expected. Value: ${caseId}`
+  );
+  throwOnRuntimeTypeMissmatch(
+    warningTime,
+    "Number",
+    `Parameter warningTime is invalid, number expected. Value: ${warningTime}`
+  );
+  throwOnRuntimeTypeMissmatch(
+    criticalTime,
+    "Number",
+    `Parameter criticalTime is invalid, number expected. Value: ${criticalTime}`
+  );
+  for (const imagePath of imagePaths) {
+    throwOnRuntimeTypeMissmatch(
+      imagePath,
+      "String",
+      `Parameter _imagePaths is invalid, string expected. Value: ${imagePath}`
+    );
+  }
+}
+
 export function createTestCaseClass(
   ctx: TestExecutionContext,
   project: Project,
@@ -34,28 +64,7 @@ export function createTestCaseClass(
       readonly criticalTime: number = 0,
       public _imagePaths: string[] = []
     ) {
-      throwOnRuntimeTypeMissmatch(
-        caseId,
-        "String",
-        `Parameter caseId is invalid, string expected. Value: ${caseId}`
-      );
-      throwOnRuntimeTypeMissmatch(
-        warningTime,
-        "Number",
-        `Parameter warningTime is invalid, number expected. Value: ${warningTime}`
-      );
-      throwOnRuntimeTypeMissmatch(
-        criticalTime,
-        "Number",
-        `Parameter criticalTime is invalid, number expected. Value: ${criticalTime}`
-      );
-      for (const imagePath of _imagePaths) {
-        throwOnRuntimeTypeMissmatch(
-          imagePath,
-          "String",
-          `Parameter _imagePaths is invalid, string expected. Value: ${imagePath}`
-        );
-      }
+      validateArgumentTypes(caseId, warningTime, criticalTime, _imagePaths);
 
       ctx.startTestCase({ id: caseId, warningTime, criticalTime });
       ctx.startTestStep({});
