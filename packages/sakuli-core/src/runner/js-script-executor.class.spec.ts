@@ -155,4 +155,21 @@ describe("JsScriptExecutor", () => {
     //THEN
     await expect(result).rejects.toThrowError("moc is not defined");
   });
+
+  it("should resolve on non promise with waitUntilDone=true", async () => {
+    //GIVEN
+    const executor = new JsScriptExecutor({
+      filename: "test.js",
+      waitUntilDone: true,
+    });
+    const context = {
+      x: 0,
+    };
+
+    //WHEN
+    const resultCtx = await executor.execute("x = 41 + 1", context);
+
+    //THEN
+    await expect(resultCtx.x).toBe(42);
+  });
 });
