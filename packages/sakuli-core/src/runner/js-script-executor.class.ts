@@ -35,9 +35,7 @@ export class JsScriptExecutor implements TestScriptExecutor {
 
       if (isPromise(result)) {
         result.then(res).catch(rej);
-      }
-
-      if (!options.waitUntilDone) {
+      } else {
         res(sandbox);
       }
     });
