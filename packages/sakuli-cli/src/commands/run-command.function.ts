@@ -87,10 +87,10 @@ export const runCommand: CommandModuleProvider = (
         );
 
         await renderErrorsFromContext(sakuli.testExecutionContext);
-        process.exit(sakuli.testExecutionContext.resultState);
+        process.exitCode = sakuli.testExecutionContext.resultState;
       } catch (e) {
         await renderError(e);
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         invokeIfPresent(cleanLogConsumer);
       }
