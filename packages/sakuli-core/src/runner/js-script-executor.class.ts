@@ -1,17 +1,14 @@
-import {
-  TestScriptExecutor,
-  TestScriptExecutorOptions,
-} from "./test-script-executor.interface";
+import { TestScriptExecutor } from "./test-script-executor.interface";
 import { createContext, RunningScriptOptions, Script } from "vm";
 import { isPromise } from "./is-promise.function";
 
 export class JsScriptExecutor implements TestScriptExecutor {
-  constructor(readonly options: TestScriptExecutorOptions = {}) {}
+  constructor(readonly options: RunningScriptOptions = {}) {}
 
   async execute<T = {}>(
     source: string,
     context: T,
-    _options: TestScriptExecutorOptions = {}
+    _options: RunningScriptOptions = {}
   ): Promise<T> {
     const options = { ...this.options, ..._options };
     const script = new Script(source, {
