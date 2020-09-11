@@ -14,6 +14,7 @@ describe("createPropertyMap", () => {
       "my.property.path": "foo",
       "property.alt": "foobar",
       "read.as.number": "3",
+      "read.as.object": { a: "foo" },
       "my.little.list": "a, b, c",
       "my.real.list": ["a", "b", "c"],
     });
@@ -30,6 +31,7 @@ describe("createPropertyMap", () => {
         simpleProperty: "",
         neverMapped: "default",
         readAsNumber: 3,
+        readAsObject: expect.objectContaining({ a: "foo" }),
         myLittleList: expect.arrayContaining(["a", "b", "c"]),
         myRealList: expect.arrayContaining(["a", "b", "c"]),
       })

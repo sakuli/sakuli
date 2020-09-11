@@ -1,4 +1,9 @@
-import { ListProperty, NumberProperty, Property } from "../decorator";
+import {
+  ListProperty,
+  NumberProperty,
+  ObjectProperty,
+  Property,
+} from "../decorator";
 import { Maybe } from "../../maybe";
 
 export class DecoratedTestClass {
@@ -16,6 +21,9 @@ export class DecoratedTestClass {
 
   @NumberProperty("read.as.number")
   readAsNumber: number = 0;
+
+  @ObjectProperty("read.as.object")
+  readAsObject: Object = { a: "foo" };
 
   @ListProperty("my.little.list")
   myLittleList: Maybe<string[]>;
