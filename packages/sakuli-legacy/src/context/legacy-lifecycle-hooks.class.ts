@@ -7,8 +7,8 @@ import {
   Project,
   TestExecutionContext,
   TestExecutionLifecycleHooks,
+  TestFile,
 } from "@sakuli/core";
-import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
 import { basename, dirname, join, parse, sep } from "path";
 import { createLoggerObject } from "./common/logger";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
@@ -30,13 +30,15 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
    */
   currentTest: Maybe<string> = null;
   uiOnly = false;
+  browserReuse = true;
 
   constructor(readonly builder: Builder) {}
 
   async onProject(project: Project) {
     const properties = project.objectFactory(LegacyProjectProperties);
     this.uiOnly = properties.isUiOnly();
-    if (!this.uiOnly && properties.browserReuse) {
+    this.browserReuse = properties.isBrowserReuse();
+    if (!this.uiOnly && this.browserReuse) {
       await this.createDriver(project);
     }
   }
@@ -52,9 +54,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   }
 
   async afterExecution(project: Project, ctx: TestExecutionContext) {
-    const properties = project.objectFactory(LegacyProjectProperties);
     ctx.endTestSuite();
-    if (properties.browserReuse) {
+    if (this.browserReuse) {
       await this.quitDriver(ctx);
     }
   }
@@ -66,12 +67,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     ctx: TestExecutionContext
   ) {
-    const properties = project.objectFactory(LegacyProjectProperties);
     this.currentFile = file.path;
     this.currentTest = dirname(
       await fs.realpath(join(project.rootDir, file.path))
     );
-    if (!properties.browserReuse) {
+    if (!this.browserReuse) {
       await this.createDriver(project);
     }
   }
@@ -82,13 +82,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     ctx: TestExecutionContext
   ) {
     const { name } = parse(file.path);
-    const properties = project.objectFactory(LegacyProjectProperties);
     ifPresent(ctx.getCurrentTestCase(), (ctc) => {
       if (!ctc.id) {
         ctx.updateCurrentTestCase({ id: name });
       }
     });
-    if (!properties.browserReuse) {
+    if (!this.browserReuse) {
       await this.quitDriver(ctx);
     }
   }

@@ -3,6 +3,7 @@ import {
   ifPresent,
   Maybe,
   NumberProperty,
+  ObjectProperty,
   StringProperty,
 } from "@sakuli/commons";
 import { Browsers } from "../context/selenium-config/create-driver-from-project.function";
@@ -51,7 +52,7 @@ export class LegacyProjectProperties {
    * Possible values are defined in [Browsers]{@link Browsers} type
    *
    */
-  @StringProperty("browser")
+  @ObjectProperty("browser")
   browser: Maybe<Browsers>;
 
   /**
@@ -63,7 +64,7 @@ export class LegacyProjectProperties {
    * Possible values are defined in [Browsers]{@link Browsers} type
    *
    */
-  @StringProperty("testsuite.browser")
+  @ObjectProperty("testsuite.browser")
   testsuiteBrowser: Maybe<Browsers>;
 
   /**
@@ -80,10 +81,29 @@ export class LegacyProjectProperties {
   }
 
   /**
-   * reuses a the browser session after each test suite
+   * reuses the browser session after each test suite
    */
-  @BooleanProperty("sakuli.browser.reuse")
-  browserReuse: boolean = true;
+  @BooleanProperty("browser.reuse")
+  browserReuse: Maybe<boolean>;
+
+  /**
+   * reuses the browser session after each test suite
+   */
+  @BooleanProperty("testsuite.browser.reuse")
+  testsuiteBrowserReuse: Maybe<boolean>;
+
+  isBrowserReuse(): boolean {
+    return ifPresent(
+      this.browserReuse,
+      (browserReuse) => browserReuse,
+      () =>
+        ifPresent(
+          this.testsuiteBrowserReuse,
+          (browserReuse) => browserReuse,
+          () => false
+        )
+    );
+  }
 
   /**
      * Determines if a testsuite should run in ui-only mode or not
