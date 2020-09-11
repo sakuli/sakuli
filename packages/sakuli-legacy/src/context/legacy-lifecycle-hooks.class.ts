@@ -41,32 +41,25 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
   }
 
-  async beforeExecution(
-    project: Project,
-    testExecutionContext: TestExecutionContext
-  ) {
+  async beforeExecution(project: Project, ctx: TestExecutionContext) {
     const properties = project.objectFactory(LegacyProjectProperties);
     const id = properties.testsuiteId
       ? properties.testsuiteId
       : project.rootDir.split(sep).pop();
     const warningTime = properties.testsuiteWarningTime || 0;
     const criticalTime = properties.testsuiteCriticalTime || 0;
-    testExecutionContext.startTestSuite({ id, warningTime, criticalTime });
+    ctx.startTestSuite({ id, warningTime, criticalTime });
   }
 
-  async afterExecution(
-    project: Project,
-    testExecutionContext: TestExecutionContext
-  ) {
+  async afterExecution(project: Project, ctx: TestExecutionContext) {
     const properties = project.objectFactory(LegacyProjectProperties);
-    testExecutionContext.endTestSuite();
+    ctx.endTestSuite();
     if (properties.browserReuse) {
-      await this.quitDriver(testExecutionContext);
+      await this.quitDriver(ctx);
     }
   }
 
   private currentFile: string = "";
-  private currentProject: Maybe<Project>;
 
   async beforeRunFile(
     file: TestFile,
@@ -75,7 +68,6 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   ) {
     const properties = project.objectFactory(LegacyProjectProperties);
     this.currentFile = file.path;
-    this.currentProject = project;
     this.currentTest = dirname(
       await fs.realpath(join(project.rootDir, file.path))
     );
