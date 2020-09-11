@@ -36,9 +36,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   async onProject(project: Project) {
     const properties = project.objectFactory(LegacyProjectProperties);
     this.uiOnly = properties.isUiOnly();
-    if (!this.uiOnly) {
-      this.driver = createDriverFromProject(project, this.builder);
-      await this.driver.manage().window().maximize();
+    if (!this.uiOnly && properties.browserReuse) {
+      await this.createDriver(project);
     }
   }
 
@@ -59,22 +58,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
+    const properties = project.objectFactory(LegacyProjectProperties);
     testExecutionContext.endTestSuite();
-    await ifPresent(
-      this.driver,
-      async (driver) => {
-        try {
-          await driver.quit();
-          testExecutionContext.logger.debug("Closed webdriver");
-        } catch (e) {
-          testExecutionContext.logger.warn(
-            `Webdriver doesn't quit reliably`,
-            e
-          );
-        }
-      },
-      () => Promise.resolve()
-    );
+    if (properties.browserReuse) {
+      await this.quitDriver(testExecutionContext);
+    }
   }
 
   private currentFile: string = "";
@@ -85,11 +73,15 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     ctx: TestExecutionContext
   ) {
+    const properties = project.objectFactory(LegacyProjectProperties);
     this.currentFile = file.path;
     this.currentProject = project;
     this.currentTest = dirname(
       await fs.realpath(join(project.rootDir, file.path))
     );
+    if (!properties.browserReuse) {
+      await this.createDriver(project);
+    }
   }
 
   async afterRunFile(
@@ -98,11 +90,15 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     ctx: TestExecutionContext
   ) {
     const { name } = parse(file.path);
+    const properties = project.objectFactory(LegacyProjectProperties);
     ifPresent(ctx.getCurrentTestCase(), (ctc) => {
       if (!ctc.id) {
         ctx.updateCurrentTestCase({ id: name });
       }
     });
+    if (!properties.browserReuse) {
+      await this.quitDriver(ctx);
+    }
   }
 
   async requestContext(
@@ -133,5 +129,25 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
       $includeFolder: "",
       ...sahi,
     });
+  }
+
+  private async createDriver(project: Project) {
+    this.driver = createDriverFromProject(project, this.builder);
+    await this.driver.manage().window().maximize();
+  }
+
+  private async quitDriver(ctx: TestExecutionContext) {
+    await ifPresent(
+      this.driver,
+      async (driver) => {
+        try {
+          await driver.quit();
+          ctx.logger.debug("Closed webdriver");
+        } catch (e) {
+          ctx.logger.warn(`Webdriver doesn't quit reliably`, e);
+        }
+      },
+      () => Promise.resolve()
+    );
   }
 }

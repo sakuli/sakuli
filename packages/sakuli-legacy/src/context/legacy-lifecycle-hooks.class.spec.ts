@@ -14,6 +14,18 @@ import { createPropertyMapMock } from "@sakuli/commons/dist/properties/__mocks__
 import { createTestExecutionContextMock } from "./__mocks__";
 import Mock = jest.Mock;
 
+jest.mock("fs", () => {
+  const originalModule = jest.requireActual("fs");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    promises: {
+      realpath: jest.fn().mockImplementation(() => "dirname"),
+    },
+  };
+});
+
 describe("LegacyLifecycleHooks", () => {
   let builder: Builder;
   let lcp: LegacyLifecycleHooks;
@@ -225,6 +237,63 @@ describe("LegacyLifecycleHooks", () => {
       expect(() => {
         context._navigateTo("");
       }).toThrowError(/_navigateTo/);
+    });
+  });
+
+  describe("browser reuse is deactivated", () => {
+    let browserReuseProps = new LegacyProjectProperties();
+    browserReuseProps.browserReuse = false;
+    let browserReuseProject = mockPartial<Project>({
+      rootDir: "",
+      testFiles: [],
+      objectFactory: jest.fn().mockReturnValue(browserReuseProps),
+      ...createPropertyMapMock({}),
+    });
+    const file: TestFile = {
+      path: "my-suite/my-case/case1.js",
+    };
+
+    it("should not build webdriver onProject", async () => {
+      // GIVEN
+
+      // WHEN
+      await lcp.onProject(browserReuseProject);
+
+      // THEN
+      expect(builder.build).not.toHaveBeenCalled();
+      expect(lcp.driver).toBeNull();
+    });
+
+    it("should build webdriver beforeRunFile", async () => {
+      // GIVEN
+
+      // WHEN
+      await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(builder.build).toHaveBeenCalled();
+    });
+
+    it("should quit webdriver afterRunFile", async () => {
+      // GIVEN
+      await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
+
+      // WHEN
+      await lcp.afterRunFile(file, browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(driver.quit).toHaveBeenCalled();
+    });
+
+    it("should not quit webdriver afterExecution", async () => {
+      // GIVEN
+      await lcp.onProject(browserReuseProject);
+
+      // WHEN
+      await lcp.afterExecution(browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(driver.quit).not.toHaveBeenCalled();
     });
   });
 });
