@@ -3,7 +3,6 @@ import {
   ifPresent,
   Maybe,
   NumberProperty,
-  ObjectProperty,
   StringProperty,
 } from "@sakuli/commons";
 import { Browsers } from "../context/selenium-config/create-driver-from-project.function";
@@ -52,7 +51,7 @@ export class LegacyProjectProperties {
    * Possible values are defined in [Browsers]{@link Browsers} type
    *
    */
-  @ObjectProperty("browser")
+  @StringProperty("browser")
   browser: Maybe<Browsers>;
 
   /**
@@ -64,7 +63,7 @@ export class LegacyProjectProperties {
    * Possible values are defined in [Browsers]{@link Browsers} type
    *
    */
-  @ObjectProperty("testsuite.browser")
+  @StringProperty("testsuite.browser")
   testsuiteBrowser: Maybe<Browsers>;
 
   /**
@@ -85,7 +84,7 @@ export class LegacyProjectProperties {
    *
    * To access the actual set browser within Sakuli use [isBrowserReuse()]{@link LegacyProjectProperties.isBrowserReuse}
    */
-  @BooleanProperty("browser.reuse")
+  @BooleanProperty("reuseBrowser")
   browserReuse: Maybe<boolean>;
 
   /**
@@ -93,7 +92,7 @@ export class LegacyProjectProperties {
    *
    * To access the actual set browser within Sakuli use [isBrowserReuse()]{@link LegacyProjectProperties.isBrowserReuse}
    */
-  @BooleanProperty("testsuite.browser.reuse")
+  @BooleanProperty("testsuite.reuseBrowser")
   testsuiteBrowserReuse: Maybe<boolean>;
 
   isBrowserReuse(): boolean {

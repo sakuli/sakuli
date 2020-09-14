@@ -77,14 +77,6 @@ export const NumberProperty = (path: string) =>
 export const StringProperty = (path: string) =>
   Property(path, onlyValue(String));
 
-/**
- * Converts value to Object if present
- * @param path
- * @constructor
- */
-export const ObjectProperty = (path: string) =>
-  Property(path, onlyValue(Object));
-
 export interface ListPropertyOptions {
   delimiter: string;
   mapper: ReadMap<string, any>;
