@@ -104,7 +104,7 @@ export class LegacyProjectProperties {
         ifPresent(
           this.testsuiteBrowserReuse,
           (browserReuse) => browserReuse,
-          () => false
+          () => true
         )
     );
   }

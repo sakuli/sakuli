@@ -49,4 +49,26 @@ describe("LegacyProjectProperties", () => {
       expect(props.isUiOnly()).toBe(true);
     });
   });
+
+  describe("isBrowserReuse", () => {
+    it("should return true by default", () => {
+      expect(props.isBrowserReuse()).toBe(true);
+    });
+
+    it("should return browserReuse when set", () => {
+      props.browserReuse = true;
+      expect(props.isBrowserReuse()).toBe(true);
+    });
+
+    it("should return browserReuse if set even testsuiteBrowserReuse is set", () => {
+      props.browserReuse = false;
+      props.testsuiteBrowserReuse = true;
+      expect(props.isBrowserReuse()).toBe(false);
+    });
+
+    it("should return testsuiteBrowserReuse", () => {
+      props.testsuiteBrowserReuse = true;
+      expect(props.isBrowserReuse()).toBe(true);
+    });
+  });
 });
