@@ -57,7 +57,6 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
           context,
           {
             filename: resolve(join(project.rootDir, testFile.path)),
-            waitUntilDone: true,
             breakOnSigint: true,
           }
         );

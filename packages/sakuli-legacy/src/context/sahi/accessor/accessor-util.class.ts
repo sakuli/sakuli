@@ -253,11 +253,17 @@ export class AccessorUtil {
     return identifier.startsWith("/") && identifier.endsWith("/");
   }
 
+  /**
+   * Allows the user to use an index at the end of the string extracted via the capturing group ([0-9+]), e.g.
+   *
+   * _password("shaded bigfont[1]")
+   * This matches the second password field with the css class 'shaded bigfont'.
+   */
   async getByString(
     elements: WebElement[],
     identifier: string
   ): Promise<WebElement[]> {
-    const indexRegExp = /.*\[([0-9]+)\]$/;
+    const indexRegExp = /.*\[([0-9]+)]$/;
     const matches = identifier.match(indexRegExp);
     return ifPresent(
       matches,
@@ -274,11 +280,28 @@ export class AccessorUtil {
     );
   }
 
+  /**
+   * Converts a string into a regular expression object.
+   *
+   * If the string contains a regular expression with '/' delimiters at the start/end of the string,
+   * it will be returned as specified in the string, e.g.
+   * "/abc.*foo/" -> new RegExp("abc.*foo")
+   *
+   * If the string does not contain a regular expression but is just a string, the returned regex will be modified to
+   * represent a string search.
+   * Anchors and whitespace matchers will be added to the start/end of the string and
+   * all POSIX basic and extended metacharacters will be escaped.
+   *
+   * "abc" -> new RegExp("^\\s*abc\\s*$")
+   * "2 * 2" -> new RegExp("^\\s*2 \* 2\\s*$")
+   */
   private stringToRegExp(str: string) {
     const isRegEx = this.isRegExpString(str);
     str = isRegEx ? str.substr(1, str.length - 2) : str;
     const regex = new RegExp(
-      isRegEx ? str : "^s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "s*$"
+      isRegEx
+        ? str
+        : "^\\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$"
     );
     this.testExecutionContext.logger.debug(
       `Converted string "${str}" to regex ${regex}`
