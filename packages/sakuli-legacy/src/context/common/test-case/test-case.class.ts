@@ -1,13 +1,52 @@
 import { cwd } from "process";
 import { Project, TestExecutionContext, TestStepContext } from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
-import { ensure, ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
+import {
+  ensure,
+  ifPresent,
+  Maybe,
+  throwIfAbsent,
+  throwOnRuntimeTypeMissmatch,
+} from "@sakuli/commons";
 import { isAbsolute, join } from "path";
 import { TestCase } from "./test-case.interface";
 import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { takeErrorScreenShot } from "./take-error-screen-shot.function";
 import { existsSync } from "fs";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import { releaseKeys } from "../release-keys.function";
+import { getActiveKeys } from "../button-registry";
+import { createKeyboardApi, createMouseApi } from "../actions";
+
+function validateArgumentTypes(
+  caseId: string,
+  warningTime: number,
+  criticalTime: number,
+  imagePaths: string[]
+) {
+  throwOnRuntimeTypeMissmatch(
+    caseId,
+    "String",
+    `Parameter caseId is invalid, string expected. Value: ${caseId}`
+  );
+  throwOnRuntimeTypeMissmatch(
+    warningTime,
+    "Number",
+    `Parameter warningTime is invalid, number expected. Value: ${warningTime}`
+  );
+  throwOnRuntimeTypeMissmatch(
+    criticalTime,
+    "Number",
+    `Parameter criticalTime is invalid, number expected. Value: ${criticalTime}`
+  );
+  for (const imagePath of imagePaths) {
+    throwOnRuntimeTypeMissmatch(
+      imagePath,
+      "String",
+      `Parameter _imagePaths is invalid, string expected. Value: ${imagePath}`
+    );
+  }
+}
 
 export function createTestCaseClass(
   ctx: TestExecutionContext,
@@ -28,6 +67,8 @@ export function createTestCaseClass(
       readonly criticalTime: number = 0,
       public _imagePaths: string[] = []
     ) {
+      validateArgumentTypes(caseId, warningTime, criticalTime, _imagePaths);
+
       ctx.startTestCase({ id: caseId, warningTime, criticalTime });
       ctx.startTestStep({});
       nutConfig.imagePaths = [cwd()];
@@ -80,6 +121,11 @@ export function createTestCaseClass(
       ctx.updateCurrentTestStep({
         error: e,
       });
+      await releaseKeys(
+        getActiveKeys(),
+        createMouseApi(legacyProps),
+        createKeyboardApi(legacyProps)
+      );
       if (legacyProps.errorScreenshot) {
         try {
           const screenShotPath = await takeErrorScreenShot(
@@ -93,9 +139,9 @@ export function createTestCaseClass(
               screenshot: screenShotPath,
             });
           }
-        } catch (e) {
+        } catch (exception) {
           ctx.logger.warn(
-            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`
+            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${exception}`
           );
         }
       }
@@ -126,10 +172,10 @@ export function createTestCaseClass(
     async saveResult(forward: boolean = false) {
       ctx.endTestStep();
       ctx.endTestCase();
-      await ifPresent(
+      ifPresent(
         ctx.getCurrentTestCase(),
-        async (ctc) => {
-          await ifPresent(ctx.getCurrentTestStep(), async (cts) => {
+        (ctc) => {
+          ifPresent(ctx.getCurrentTestStep(), async (cts) => {
             if (!cts.error) {
               try {
                 await testStepCache.write(
@@ -142,6 +188,11 @@ export function createTestCaseClass(
           });
         },
         () => Promise.resolve()
+      );
+      await releaseKeys(
+        getActiveKeys(),
+        createMouseApi(legacyProps),
+        createKeyboardApi(legacyProps)
       );
     }
 
@@ -181,10 +232,9 @@ export function createTestCaseClass(
             legacyProps.screenshotStorage,
             screenShotDestPath
           );
-          screenShotMessage =
-            screenshot && existsSync(screenShotOutputPath)
-              ? ` Screenshot saved to '${screenShotOutputPath}'`
-              : "";
+          screenShotMessage = existsSync(screenShotOutputPath)
+            ? ` Screenshot saved to '${screenShotOutputPath}'`
+            : "";
         } catch (e) {
           ctx.logger.warn(
             `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`

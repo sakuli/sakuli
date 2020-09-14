@@ -14,6 +14,12 @@ import { join } from "path";
 import { Region } from "./region.interface";
 import { getEncryptionKey } from "../secrets.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import {
+  registerKeyboardPressKeys,
+  registerKeyboardReleaseKeys,
+  registerMouseDown,
+  registerMouseUp,
+} from "../button-registry";
 
 const determineResourcePath = (imageName: string) => {
   for (let idx = 0; idx < nutConfig.imagePaths.length; ++idx) {
@@ -155,6 +161,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
       return runAsAction(ctx, "mouseDown", async () => {
         ctx.logger.debug("Mouse down");
         await mouseApi.pressButton(mouseButton);
+        registerMouseDown(mouseButton);
         return this;
       })();
     }
@@ -163,6 +170,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
       return runAsAction(ctx, "mouseUp", async () => {
         ctx.logger.debug("Mouse up");
         await mouseApi.releaseButton(mouseButton);
+        registerMouseUp(mouseButton);
         return this;
       })();
     }
@@ -281,6 +289,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             .join(",")}' via native keyboard`
         );
         await keyboardApi.pressKey(...keys);
+        registerKeyboardPressKeys(...keys);
         return this;
       })();
     }
@@ -293,6 +302,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
             .join(",")}' via native keyboard`
         );
         await keyboardApi.releaseKey(...keys);
+        registerKeyboardReleaseKeys(...keys);
         return this;
       })();
     }
