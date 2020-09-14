@@ -30,15 +30,15 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
    */
   currentTest: Maybe<string> = null;
   uiOnly = false;
-  browserReuse = true;
+  reuseBrowser = true;
 
   constructor(readonly builder: Builder) {}
 
   async onProject(project: Project) {
     const properties = project.objectFactory(LegacyProjectProperties);
     this.uiOnly = properties.isUiOnly();
-    this.browserReuse = properties.isBrowserReuse();
-    if (!this.uiOnly && this.browserReuse) {
+    this.reuseBrowser = properties.isReuseBrowser();
+    if (!this.uiOnly && this.reuseBrowser) {
       await this.createDriver(project);
     }
   }
@@ -55,7 +55,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
   async afterExecution(project: Project, ctx: TestExecutionContext) {
     ctx.endTestSuite();
-    if (this.browserReuse) {
+    if (this.reuseBrowser) {
       await this.quitDriver(ctx);
     }
   }
@@ -71,7 +71,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     this.currentTest = dirname(
       await fs.realpath(join(project.rootDir, file.path))
     );
-    if (!this.browserReuse) {
+    if (!this.reuseBrowser) {
       await this.createDriver(project);
     }
   }
@@ -87,7 +87,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
         ctx.updateCurrentTestCase({ id: name });
       }
     });
-    if (!this.browserReuse) {
+    if (!this.reuseBrowser) {
       await this.quitDriver(ctx);
     }
   }

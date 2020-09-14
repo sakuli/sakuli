@@ -242,7 +242,7 @@ describe("LegacyLifecycleHooks", () => {
 
   describe("browser reuse is deactivated", () => {
     let browserReuseProps = new LegacyProjectProperties();
-    browserReuseProps.browserReuse = false;
+    browserReuseProps.reuseBrowser = false;
     let browserReuseProject = mockPartial<Project>({
       rootDir: "",
       testFiles: [],
