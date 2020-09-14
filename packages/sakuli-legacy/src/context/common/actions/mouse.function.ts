@@ -9,7 +9,21 @@ import { Region } from "../region";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import { toNutRegion } from "./converter.function";
 
-export const createMouseApi = (props: LegacyProjectProperties) => {
+export interface MouseApi {
+  click: () => Promise<void>;
+  doubleClick: () => Promise<void>;
+  rightClick: () => Promise<void>;
+  pressButton: (btn: MouseButton) => Promise<void>;
+  releaseButton: (btn: MouseButton) => Promise<void>;
+  dragAndDrop: (region: Region) => Promise<void>;
+  move: (region: Region) => Promise<void>;
+  scrollUp: (amount: number) => Promise<void>;
+  scrollDown: (amount: number) => Promise<void>;
+  scrollLeft: (amount: number) => Promise<void>;
+  scrollRight: (amount: number) => Promise<void>;
+}
+
+export const createMouseApi = (props: LegacyProjectProperties): MouseApi => {
   mouse.config.autoDelayMs = props.mouseActionDelay;
   mouse.config.mouseSpeed = props.mouseSpeed;
   return {

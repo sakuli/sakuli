@@ -1,3 +1,7 @@
+jest.mock("../button-registry");
+jest.mock("../actions/screen.function");
+jest.mock("../release-keys.function");
+
 import { cwd } from "process";
 import { Project, TestExecutionContext } from "@sakuli/core";
 import { mockPartial } from "sneer";
@@ -12,12 +16,14 @@ import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { TestStep } from "./__mocks__/test-step.function";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import { tmpdir } from "os";
+import { MouseButton } from "../button.class";
+import { Key } from "..";
+import { getActiveKeys } from "../button-registry";
+import { releaseKeys } from "../release-keys.function";
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  jest.clearAllMocks();
 });
-
-jest.mock("../actions/screen.function");
 ScreenApi.takeScreenshot = jest.fn(() => Promise.resolve(__filename));
 ScreenApi.takeScreenshotWithTimestamp = jest.fn(() =>
   Promise.resolve(__filename)
@@ -26,6 +32,8 @@ ScreenApi.takeScreenshotWithTimestamp = jest.fn(() =>
 describe("TestCase", () => {
   let testExecutionContext: TestExecutionContext;
   let project: Project;
+  const testFolder = "testCaseFolder";
+  let SUT: Type<TestCase>;
   beforeEach(() => {
     testExecutionContext = mockPartial<TestExecutionContext>({
       startTestStep: jest.fn(),
@@ -51,20 +59,16 @@ describe("TestCase", () => {
     project = mockPartial<Project>({
       objectFactory: jest.fn().mockReturnValue(new LegacyProjectProperties()),
     });
+
+    SUT = createTestCaseClass(testExecutionContext, project, testFolder);
   });
 
   describe("initialisation", () => {
     it("should pass constructor params to testExecutionContext", () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const testCaseId = "testCase";
       const warningTime = 100;
       const criticalTime = 200;
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
 
       // WHEN
       new SUT(testCaseId, warningTime, criticalTime);
@@ -228,24 +232,20 @@ describe("TestCase", () => {
   describe("image path", () => {
     it("should throw on missing testcasefolder", () => {
       // GIVEN
-      const SUT = createTestCaseClass(testExecutionContext, project, null);
+      const BrokenSUT = createTestCaseClass(
+        testExecutionContext,
+        project,
+        null
+      );
       // WHEN
 
       // THEN
-      expect(() => new SUT("testId", 0, 0)).toThrowError(
+      expect(() => new BrokenSUT("testId", 0, 0)).toThrowError(
         "No testcase folder provided"
       );
     });
 
     it("should use the CWD and the testcase folder for image search by default", () => {
-      // GIVEN
-      const testFolder = "testCaseFolder";
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
-
       // WHEN
       new SUT("testId", 0, 0);
 
@@ -257,13 +257,7 @@ describe("TestCase", () => {
 
     it("should treat relative path relative to testcase folder", () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const additionalRelativePath = "test1";
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
 
       // WHEN
       new SUT("testId", 0, 0, [additionalRelativePath]);
@@ -279,13 +273,7 @@ describe("TestCase", () => {
 
     it("should not modify absolute path", () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const additionalAbsolutePath = "/test1";
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
 
       // WHEN
       new SUT("testId", 0, 0, [additionalAbsolutePath]);
@@ -301,12 +289,6 @@ describe("TestCase", () => {
   describe("steps", () => {
     it("should properly update, stop and start", () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
       const tc = new SUT("testId", 0, 0);
 
       const testStepName = "testStep1";
@@ -329,39 +311,50 @@ describe("TestCase", () => {
   });
 
   describe("saveResult", () => {
-    it("should stop and start a teststep", async () => {
+    it("should stop and start a teststep", () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
       const tc = new SUT("testId", 0, 0);
 
       // WHEN
-      await tc.saveResult();
+      tc.saveResult();
 
       // THEN
       expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
       expect(testExecutionContext.startTestStep).toBeCalledTimes(1);
+    });
+
+    it("should release all pressed keys", () => {
+      // GIVEN
+      const tc = new SUT("testId", 0, 0);
+
+      const expectedButtonRegistry = {
+        keyboard: [Key.ALT, Key.SHIFT],
+        mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+      };
+      (getActiveKeys as jest.Mock).mockImplementation(
+        () => expectedButtonRegistry
+      );
+
+      // WHEN
+      tc.saveResult();
+
+      // THEN
+      expect(releaseKeys).toBeCalledWith(
+        expectedButtonRegistry,
+        expect.anything(),
+        expect.anything()
+      );
     });
   });
 
   describe("handleException", () => {
     it("should log error message", async () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const legacyProps = new LegacyProjectProperties();
       legacyProps.errorScreenshot = false;
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
-      const SUT = createTestCaseClass(
-        testExecutionContext,
-        project,
-        testFolder
-      );
       const tc = new SUT("testId", 0, 0);
       const testError = new Error("testError");
 
@@ -376,18 +369,17 @@ describe("TestCase", () => {
 
     it("should skip screenshots when disabled via props", async () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const legacyProps = new LegacyProjectProperties();
       legacyProps.errorScreenshot = false;
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
-      const SUT = createTestCaseClass(
+      const skipScreenshotSUT = createTestCaseClass(
         testExecutionContext,
         project,
         testFolder
       );
-      const tc = new SUT("testId", 0, 0);
+      const tc = new skipScreenshotSUT("testId", 0, 0);
       const testError = new Error("testError");
 
       // WHEN
@@ -403,18 +395,17 @@ describe("TestCase", () => {
 
     it("should take a screenshot, update the testcase and save the error screenshot hierarchical when not explicitly specified", async () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const legacyProps = new LegacyProjectProperties();
       legacyProps.screenshotDir = tmpdir();
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
-      const SUT = createTestCaseClass(
+      const takeScreenshotSUT = createTestCaseClass(
         testExecutionContext,
         project,
         testFolder
       );
-      const tc = new SUT("testId", 0, 0);
+      const tc = new takeScreenshotSUT("testId", 0, 0);
       const testError = new Error("testError");
 
       // WHEN
@@ -424,7 +415,7 @@ describe("TestCase", () => {
       expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(
         `${tmpdir()}/UNKNOWN_TESTSUITE_testcase_1/error_UNKNOWN_TESTSUITE_testcase_1`
       );
-      expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+      expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(2);
       expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
         error: testError,
       });
@@ -432,19 +423,18 @@ describe("TestCase", () => {
 
     it("should take a screenshot and save it hierarchical when explicitly specified in props", async () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const legacyProps = new LegacyProjectProperties();
       legacyProps.screenshotDir = tmpdir();
       legacyProps.screenshotStorage = "hierarchical";
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
-      const SUT = createTestCaseClass(
+      const takeScreenshotSUT = createTestCaseClass(
         testExecutionContext,
         project,
         testFolder
       );
-      const tc = new SUT("testId", 0, 0);
+      const tc = new takeScreenshotSUT("testId", 0, 0);
       const testError = new Error("testError");
 
       // WHEN
@@ -458,19 +448,18 @@ describe("TestCase", () => {
 
     it("should take a screenshot and save it flat when explicitly specified in props", async () => {
       // GIVEN
-      const testFolder = "testCaseFolder";
       const legacyProps = new LegacyProjectProperties();
       legacyProps.screenshotDir = tmpdir();
       legacyProps.screenshotStorage = "flat";
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
-      const SUT = createTestCaseClass(
+      const takeScreenshotSUT = createTestCaseClass(
         testExecutionContext,
         project,
         testFolder
       );
-      const tc = new SUT("testId", 0, 0);
+      const tc = new takeScreenshotSUT("testId", 0, 0);
       const testError = new Error("testError");
 
       // WHEN
@@ -481,10 +470,42 @@ describe("TestCase", () => {
         `${tmpdir()}/error_UNKNOWN_TESTSUITE_testcase_1`
       );
     });
+
+    it("should release all pressed keys", async () => {
+      // GIVEN
+      const legacyProps = new LegacyProjectProperties();
+      project = mockPartial<Project>({
+        objectFactory: jest.fn().mockReturnValue(legacyProps),
+      });
+      const takeScreenshotSUT = createTestCaseClass(
+        testExecutionContext,
+        project,
+        testFolder
+      );
+      const tc = new takeScreenshotSUT("testId", 0, 0);
+      const testError = new Error("testError");
+      const expectedButtonRegistry = {
+        keyboard: [Key.ALT, Key.SHIFT],
+        mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+      };
+      (getActiveKeys as jest.Mock).mockImplementation(
+        () => expectedButtonRegistry
+      );
+
+      // WHEN
+      await tc.handleException(testError);
+
+      // THEN
+      expect(releaseKeys).toBeCalledWith(
+        expectedButtonRegistry,
+        expect.anything(),
+        expect.anything()
+      );
+    });
   });
 
   describe("caching", () => {
-    let SUT: Type<TestCase>;
+    let CachingSUT: Type<TestCase>;
     const cacheData = {
       exists: true,
       steps: [
@@ -496,7 +517,6 @@ describe("TestCase", () => {
     let cacheMock: TestStepCache;
     let tc: TestCase;
     beforeEach(() => {
-      const testFolder = "testCaseFolder";
       const legacyProps = new LegacyProjectProperties();
       legacyProps.screenshotDir = tmpdir();
       project = mockPartial<Project>({
@@ -507,13 +527,13 @@ describe("TestCase", () => {
         read: jest.fn().mockResolvedValue(cacheData.steps),
         write: jest.fn().mockResolvedValue(void 0),
       });
-      SUT = createTestCaseClass(
+      CachingSUT = createTestCaseClass(
         testExecutionContext,
         project,
         testFolder,
         cacheMock
       );
-      tc = new SUT();
+      tc = new CachingSUT();
     });
 
     it("should update last step from cache", async () => {
@@ -535,7 +555,7 @@ describe("TestCase", () => {
       );
     });
 
-    it("should write the cache on successful testcase", async () => {
+    it("should write the cache on successful testcase", () => {
       const steps = [
         TestStep("step-1", 100, 200),
         TestStep("step-2", 100, 200),
@@ -547,11 +567,11 @@ describe("TestCase", () => {
       (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
         getChildren: () => steps,
       });
-      await tc.saveResult();
+      tc.saveResult();
       expect(cacheMock.write).toHaveBeenCalledWith(steps);
     });
 
-    it("should not write the cache on error testcase", async () => {
+    it("should not write the cache on error testcase", () => {
       const steps = [
         TestStep("step-1", 100, 200),
         TestStep("step-2", 100, 200),
@@ -563,7 +583,7 @@ describe("TestCase", () => {
       (<jest.Mock>testExecutionContext.getCurrentTestCase).mockReturnValue({
         getChildren: () => steps,
       });
-      await tc.saveResult();
+      tc.saveResult();
       expect(cacheMock.write).not.toHaveBeenCalled();
     });
   });

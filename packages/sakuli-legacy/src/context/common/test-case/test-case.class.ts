@@ -14,6 +14,9 @@ import { TestStepCache } from "./steps-cache/test-step-cache.class";
 import { takeErrorScreenShot } from "./take-error-screen-shot.function";
 import { existsSync } from "fs";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import { releaseKeys } from "../release-keys.function";
+import { getActiveKeys } from "../button-registry";
+import { createKeyboardApi, createMouseApi } from "../actions";
 
 function validateArgumentTypes(
   caseId: string,
@@ -118,6 +121,11 @@ export function createTestCaseClass(
       ctx.updateCurrentTestStep({
         error: e,
       });
+      await releaseKeys(
+        getActiveKeys(),
+        createMouseApi(legacyProps),
+        createKeyboardApi(legacyProps)
+      );
       if (legacyProps.errorScreenshot) {
         try {
           const screenShotPath = await takeErrorScreenShot(
@@ -131,9 +139,9 @@ export function createTestCaseClass(
               screenshot: screenShotPath,
             });
           }
-        } catch (e) {
+        } catch (exception) {
           ctx.logger.warn(
-            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`
+            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${exception}`
           );
         }
       }
@@ -164,10 +172,10 @@ export function createTestCaseClass(
     async saveResult(forward: boolean = false) {
       ctx.endTestStep();
       ctx.endTestCase();
-      await ifPresent(
+      ifPresent(
         ctx.getCurrentTestCase(),
-        async (ctc) => {
-          await ifPresent(ctx.getCurrentTestStep(), async (cts) => {
+        (ctc) => {
+          ifPresent(ctx.getCurrentTestStep(), async (cts) => {
             if (!cts.error) {
               try {
                 await testStepCache.write(
@@ -180,6 +188,11 @@ export function createTestCaseClass(
           });
         },
         () => Promise.resolve()
+      );
+      await releaseKeys(
+        getActiveKeys(),
+        createMouseApi(legacyProps),
+        createKeyboardApi(legacyProps)
       );
     }
 
@@ -219,10 +232,9 @@ export function createTestCaseClass(
             legacyProps.screenshotStorage,
             screenShotDestPath
           );
-          screenShotMessage =
-            screenshot && existsSync(screenShotOutputPath)
-              ? ` Screenshot saved to '${screenShotOutputPath}'`
-              : "";
+          screenShotMessage = existsSync(screenShotOutputPath)
+            ? ` Screenshot saved to '${screenShotOutputPath}'`
+            : "";
         } catch (e) {
           ctx.logger.warn(
             `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${e}`

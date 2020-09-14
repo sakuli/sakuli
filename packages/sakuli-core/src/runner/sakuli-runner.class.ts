@@ -6,13 +6,22 @@ import { JsScriptExecutor } from "./js-script-executor.class";
 import { join, resolve } from "path";
 import { TestExecutionContext } from "./test-execution-context";
 import Signals = NodeJS.Signals;
+import { nodeSignals } from "../node-signals";
+import {
+  LifecycleHookRegistry,
+  lifecycleHookRegistry,
+} from "./lifecycle-hook-registry";
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
+  private hookRegistry: LifecycleHookRegistry;
+
   constructor(
     readonly lifecycleHooks: TestExecutionLifecycleHooks[],
     readonly testExecutionContext: TestExecutionContext,
     readonly testFileExecutor: TestScriptExecutor = new JsScriptExecutor()
-  ) {}
+  ) {
+    this.hookRegistry = lifecycleHookRegistry(lifecycleHooks);
+  }
 
   /**
    * Tears up all lifecycle-hooks, merges their results of getContext and pass this result to the testFile Executor
@@ -22,27 +31,11 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
    * @returns a merged object from all provided contexts after their execution
    */
   async execute(project: Project): Promise<any> {
+    this.registerSignalHandler(project);
+    this.registerUnhandledErrorNotifier(project);
+
     this.testExecutionContext.startExecution();
 
-    const handleError = (e: any) => {
-      this.testExecutionContext.error = e;
-    };
-    const handleSignals = (signal: Signals) => {
-      this.testExecutionContext.logger.info(
-        `Received signal ${signal}, aborting execution`
-      );
-      process.exit(130);
-    };
-    process.on("unhandledRejection", (e) => {
-      this.testExecutionContext.logger.warn("Caught unhandledRejection.");
-      handleError(e);
-    });
-    process.on("uncaughtException", (e) => {
-      this.testExecutionContext.logger.warn("Caught uncaughtException.");
-      handleError(e);
-    });
-    process.on("SIGTERM", handleSignals);
-    process.on("SIGINT", handleSignals);
     // onProject Phase
     await this.onProject(project, this.testExecutionContext);
     let result = {};
@@ -82,8 +75,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
 
   async onProject(project: Project, tec: TestExecutionContext) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "onProject" in hook)
+      this.hookRegistry
+        .getOnProjectHooks()
         .map((hook) => hook.onProject!(project, tec))
     );
   }
@@ -93,8 +86,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "beforeExecution" in hook)
+      this.hookRegistry
+        .getBeforeExecutionHooks()
         .map((hook) => hook.beforeExecution!(project, testExecutionContext))
     );
   }
@@ -107,8 +100,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
       "Executing 'afterExecution' lifecycle hooks..."
     );
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "afterExecution" in hook)
+      this.hookRegistry
+        .getAfterExecutionHooks()
         .map((hook) => hook.afterExecution!(project, testExecutionContext))
     );
     testExecutionContext.logger.trace(
@@ -122,8 +115,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "afterRunFile" in hook)
+      this.hookRegistry
+        .getAfterRunFileHooks()
         .map((hook) => hook.afterRunFile!(file, project, testExecutionContext))
     );
   }
@@ -134,8 +127,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "beforeRunFile" in hook)
+      this.hookRegistry
+        .getBeforeRunFileHooks()
         .map((hook) => hook.beforeRunFile!(file, project, testExecutionContext))
     );
   }
@@ -145,8 +138,8 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     project: Project
   ): Promise<any> {
     const contexts = await Promise.all(
-      this.lifecycleHooks
-        .filter((hook) => "requestContext" in hook)
+      this.hookRegistry
+        .getRequestContextHooks()
         .map((hook) => hook.requestContext!(testExecutionContext, project))
     );
     return contexts.reduce((ctx, context) => ({ ...ctx, ...context }), {
@@ -159,9 +152,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     project: Project,
     context: TestExecutionContext
   ): Promise<string> {
-    const fileReaders = this.lifecycleHooks.filter(
-      (hook) => "readFileContent" in hook
-    );
+    const fileReaders = this.hookRegistry.getReadFileContentHooks();
     if (fileReaders.length >= 1) {
       const [fileReader] = fileReaders;
       return await fileReader.readFileContent!(testFile, project, context);
@@ -176,5 +167,73 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         });
       });
     }
+  }
+
+  private registerSignalHandler(project: Project) {
+    const handleSignal = async (signal: Signals) => {
+      this.testExecutionContext.logger.trace(
+        `Forwarding ${signal} to lifecycle hooks...`
+      );
+      await Promise.all(
+        this.hookRegistry
+          .getOnSignalHooks()
+          .map((hook) =>
+            hook.onSignal!(signal, project, this.testExecutionContext)
+          )
+      );
+      this.testExecutionContext.logger.trace(
+        `Forwarding of Signal ${signal} to lifecycle hooks completed`
+      );
+
+      if (signal === "SIGINT" || signal === "SIGTERM") {
+        this.testExecutionContext.logger.info(
+          `Received signal ${signal}, aborting execution`
+        );
+        process.exit(130);
+      }
+    };
+
+    this.testExecutionContext.logger.trace(
+      "Registering process signal handler"
+    );
+    nodeSignals.forEach((signal) => {
+      process.on(signal, handleSignal);
+    });
+  }
+
+  private registerUnhandledErrorNotifier(project: Project) {
+    this.testExecutionContext.logger.trace(
+      "Registering uncaughtException handler"
+    );
+
+    const notifyOfUnhandledError = async (currentProject: Project, e: any) => {
+      this.testExecutionContext.logger.trace(
+        "Forwarding unhandled error to lifecycle hooks..."
+      );
+      await Promise.all(
+        this.hookRegistry
+          .getOnUnhandledErrorHooks()
+          .map((hook) =>
+            hook.onUnhandledError!(e, currentProject, this.testExecutionContext)
+          )
+      );
+      this.testExecutionContext.logger.trace(
+        "Forwarding of unhandled error to lifecycle hooks completed"
+      );
+    };
+
+    process.on("uncaughtException", async (e) => {
+      this.testExecutionContext.logger.warn("Caught uncaughtException.");
+      this.testExecutionContext.error = e;
+      await notifyOfUnhandledError(project, e);
+    });
+    this.testExecutionContext.logger.trace(
+      "Registering unhandledRejection handler"
+    );
+    process.on("unhandledRejection", async (e) => {
+      this.testExecutionContext.logger.warn("Caught unhandledRejection.");
+      this.testExecutionContext.error = e as Error;
+      await notifyOfUnhandledError(project, e);
+    });
   }
 }

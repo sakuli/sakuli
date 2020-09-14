@@ -1,7 +1,7 @@
 import { Builder, ThenableWebDriver } from "selenium-webdriver";
 import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
 import { createTestCaseClass } from "./common/test-case";
-import { Key, MouseButton } from "./common";
+import { createKeyboardApi, createMouseApi, Key, MouseButton } from "./common";
 import { sahiApi } from "./sahi/api";
 import {
   Project,
@@ -21,6 +21,9 @@ import { createDriverFromProject } from "./selenium-config/create-driver-from-pr
 import { TestStepCache } from "./common/test-case/steps-cache/test-step-cache.class";
 import { NoopSahiApi } from "./noop-sahi-api.const";
 import { SahiApi } from "./sahi/sahi-api.interface";
+import Signals = NodeJS.Signals;
+import { getActiveKeys } from "./common/button-registry";
+import { releaseKeys } from "./common/release-keys.function";
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   driver: Maybe<ThenableWebDriver> = null;
@@ -133,5 +136,27 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
       $includeFolder: "",
       ...sahi,
     });
+  }
+
+  async onUnhandledError(
+    error: any,
+    project: Project,
+    _: TestExecutionContext
+  ) {
+    await this.releaseKeys(project);
+  }
+
+  async onSignal(signal: Signals, project: Project, _: TestExecutionContext) {
+    if (signal === "SIGINT" || signal === "SIGTERM") {
+      await this.releaseKeys(project);
+    }
+  }
+
+  private async releaseKeys(project: Project) {
+    const properties = project.objectFactory(LegacyProjectProperties);
+    const keyboardApi = createKeyboardApi(properties);
+    const mouseApi = createMouseApi(properties);
+    const buttonRegistry = getActiveKeys();
+    await releaseKeys(buttonRegistry, mouseApi, keyboardApi);
   }
 }

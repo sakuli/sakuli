@@ -4,7 +4,18 @@ import { withEncryption } from "../secrets.function";
 import { Key } from "../key.class";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
-export const createKeyboardApi = (props: LegacyProjectProperties) => {
+export interface KeyboardApi {
+  paste: (text: string) => Promise<void>;
+  pasteAndDecrypt: (key: string, text: string) => any;
+  type: (text: string | Key, ...optModifiers: Key[]) => any;
+  typeAndDecrypt: (key: string, text: string, ...optModifiers: Key[]) => any;
+  pressKey: (...keys: Key[]) => any;
+  releaseKey: (...keys: Key[]) => Promise<void>;
+}
+
+export const createKeyboardApi = (
+  props: LegacyProjectProperties
+): KeyboardApi => {
   keyboard.config.autoDelayMs = props.typeDelay;
   return {
     async paste(text: string) {
