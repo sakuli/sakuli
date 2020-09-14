@@ -4,7 +4,7 @@ import { DecoratedBooleanTestClass, DecoratedTestClass } from "../__mocks__";
 describe("Property decorator", () => {
   it("should get defined properties", () => {
     const jpDef = getPropertyDecoratorDefinitions(DecoratedTestClass);
-    expect(jpDef.length).toBe(7);
+    expect(jpDef.length).toBe(9);
     expect(jpDef).toContainEqual({
       path: "my.property.path",
       property: "property",

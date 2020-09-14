@@ -25,6 +25,9 @@ export class DecoratedTestClass {
   @ObjectProperty("read.as.object")
   readAsObject: Object = { a: "foo" };
 
+  @ObjectProperty("read.as.object.string")
+  readAsObjectString: Object = "bar";
+
   @ListProperty("my.little.list")
   myLittleList: Maybe<string[]>;
 
