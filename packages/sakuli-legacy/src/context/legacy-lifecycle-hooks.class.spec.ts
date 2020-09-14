@@ -266,23 +266,25 @@ describe("LegacyLifecycleHooks", () => {
 
     it("should build webdriver beforeRunFile", async () => {
       // GIVEN
+      await lcp.onProject(browserReuseProject);
 
       // WHEN
       await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
 
       // THEN
-      expect(builder.build).toHaveBeenCalled();
+      expect(builder.build).toHaveBeenCalledTimes(1);
     });
 
     it("should quit webdriver afterRunFile", async () => {
       // GIVEN
+      await lcp.onProject(browserReuseProject);
       await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
 
       // WHEN
       await lcp.afterRunFile(file, browserReuseProject, testExecutionContext);
 
       // THEN
-      expect(driver.quit).toHaveBeenCalled();
+      expect(driver.quit).toHaveBeenCalledTimes(1);
     });
 
     it("should not quit webdriver afterExecution", async () => {
