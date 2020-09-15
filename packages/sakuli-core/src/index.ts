@@ -7,3 +7,4 @@ export * from "./bootstrap";
 export * from "./sakuli-preset-provider.interface";
 export * from "./command-module-provider.interface";
 export * from "./sakuli-core-properties.class";
+export * from "./node-signals";
