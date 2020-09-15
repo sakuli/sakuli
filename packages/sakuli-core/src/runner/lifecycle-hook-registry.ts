@@ -41,36 +41,32 @@ export function lifecycleHookRegistry(
   };
 
   hooks.forEach((hook) => {
-    for (const hookKey in hook) {
-      switch (hookKey) {
-        case "onProject":
-          registryContent.onProject.push(hook);
-          break;
-        case "beforeExecution":
-          registryContent.beforeExecution.push(hook);
-          break;
-        case "afterExecution":
-          registryContent.afterExecution.push(hook);
-          break;
-        case "readFileContent":
-          registryContent.readFileContent.push(hook);
-          break;
-        case "requestContext":
-          registryContent.requestContext.push(hook);
-          break;
-        case "beforeRunFile":
-          registryContent.beforeRunFile.push(hook);
-          break;
-        case "afterRunFile":
-          registryContent.afterRunFile.push(hook);
-          break;
-        case "onUnhandledError":
-          registryContent.onUnhandledError.push(hook);
-          break;
-        case "onSignal":
-          registryContent.onSignal.push(hook);
-          break;
-      }
+    if (hook.onProject) {
+      registryContent.onProject.push(hook);
+    }
+    if (hook.beforeExecution) {
+      registryContent.beforeExecution.push(hook);
+    }
+    if (hook.afterExecution) {
+      registryContent.afterExecution.push(hook);
+    }
+    if (hook.readFileContent) {
+      registryContent.readFileContent.push(hook);
+    }
+    if (hook.requestContext) {
+      registryContent.requestContext.push(hook);
+    }
+    if (hook.beforeRunFile) {
+      registryContent.beforeRunFile.push(hook);
+    }
+    if (hook.afterRunFile) {
+      registryContent.afterRunFile.push(hook);
+    }
+    if (hook.onUnhandledError) {
+      registryContent.onUnhandledError.push(hook);
+    }
+    if (hook.onSignal) {
+      registryContent.onSignal.push(hook);
     }
   });
 
