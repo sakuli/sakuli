@@ -3,6 +3,8 @@ import {
   lifecycleHookRegistry,
   LifecycleHookRegistryContent,
 } from "./lifecycle-hook-registry";
+import { Project } from "../loader/model";
+import { TestExecutionContext } from "./test-execution-context";
 
 describe("lifecycle hook registry", () => {
   const onProjectHook: TestExecutionLifecycleHooks = { onProject: jest.fn() };
@@ -57,6 +59,37 @@ describe("lifecycle hook registry", () => {
 
     //WHEN
     const hookRegistry = lifecycleHookRegistry(hookArray);
+
+    //THEN
+    let registeredHooks = hookRegistry.getRegisteredLifecycleHooks();
+    expect(registeredHooks).toEqual(expectedHooks);
+  });
+
+  it("should accept classes extending TestExecutionLifecycleHooks", () => {
+    //GIVEN
+    const hook = new (class implements TestExecutionLifecycleHooks {
+      onProject(
+        project: Project,
+        testExecutionContext: TestExecutionContext
+      ): Promise<void> {
+        return Promise.resolve();
+      }
+    })();
+
+    const expectedHooks: LifecycleHookRegistryContent = {
+      onProject: [hook],
+      beforeExecution: [],
+      afterExecution: [],
+      readFileContent: [],
+      requestContext: [],
+      beforeRunFile: [],
+      afterRunFile: [],
+      onUnhandledError: [],
+      onSignal: [],
+    };
+
+    //WHEN
+    const hookRegistry = lifecycleHookRegistry([hook]);
 
     //THEN
     let registeredHooks = hookRegistry.getRegisteredLifecycleHooks();
