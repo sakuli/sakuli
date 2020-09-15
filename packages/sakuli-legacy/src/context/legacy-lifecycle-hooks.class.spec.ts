@@ -12,18 +12,20 @@ import {
 import { mockPartial } from "sneer";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
 import {
+  nodeSignals,
   Project,
   TestExecutionContext,
-  nodeSignals,
   TestFile,
 } from "@sakuli/core";
-import { createPropertyMapMock } from "@sakuli/commons";
-import { createTestExecutionContextMock } from "./__mocks__";
-import Mock = jest.Mock;
-import Signals = NodeJS.Signals;
+import {
+  createPropertyMapMock,
+  createTestExecutionContextMock,
+} from "./__mocks__";
 import { releaseKeys } from "./common/release-keys.function";
 import { Key, MouseButton } from "./common";
 import { getActiveKeys } from "./common/button-registry";
+import Mock = jest.Mock;
+import Signals = NodeJS.Signals;
 
 jest.mock("fs", () => {
   const originalModule = jest.requireActual("fs");
