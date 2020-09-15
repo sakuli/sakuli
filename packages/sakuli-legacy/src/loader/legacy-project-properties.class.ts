@@ -82,7 +82,7 @@ export class LegacyProjectProperties {
   /**
    * Defines whether the browser should be reused after a test suite or a new browser session should be created
    *
-   * To access the actual set browser within Sakuli use [isBrowserReuse()]{@link LegacyProjectProperties.isReuseBrowser}
+   * To access the actual set browser within Sakuli use [isReuseBrowser()]{@link LegacyProjectProperties.isReuseBrowser}
    */
   @BooleanProperty("reuseBrowser")
   reuseBrowser: Maybe<boolean>;
@@ -90,11 +90,20 @@ export class LegacyProjectProperties {
   /**
    * Defines whether the browser should be reused after a test suite or a new browser session should be created
    *
-   * To access the actual set browser within Sakuli use [isBrowserReuse()]{@link LegacyProjectProperties.isReuseBrowser}
+   * To access the actual set browser within Sakuli use [isReuseBrowser()]{@link LegacyProjectProperties.isReuseBrowser}
    */
   @BooleanProperty("testsuite.reuseBrowser")
   testsuiteReuseBrowser: Maybe<boolean>;
 
+  /**
+   * Determines if a testsuite should reuse the browser session between testcases
+   *
+   * - [`reuseBrowser`]{@link LegacyProjectProperties.reuseBrowser} property if set
+   * - otherwise [`testsuite.reuseBrowser`]{@link LegacyProjectProperties.testsuiteReuseBrowser} if set
+   * - other `true`
+   *
+   * @return boolean
+   */
   isReuseBrowser(): boolean {
     return ifPresent(
       this.reuseBrowser,
