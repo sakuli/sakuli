@@ -79,7 +79,7 @@ describe("LegacyLifecycleHooks", () => {
 
   describe("Sahi Api", () => {
     it("should init webdriver with builder", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       expect(builder.forBrowser).toHaveBeenCalledWith("chrome");
       await expect(builder.withCapabilities).toHaveBeenCalledWith(
         Capabilities.chrome()
@@ -87,12 +87,12 @@ describe("LegacyLifecycleHooks", () => {
     });
 
     it("should maximize browser after init", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       expect(window.maximize).toHaveBeenCalled();
     });
 
     it("should publish sahi function into context", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       lcp.currentTest = "/some/where/over/the/rainbow";
       const context = await lcp.requestContext(
         testExecutionContext,
@@ -102,7 +102,7 @@ describe("LegacyLifecycleHooks", () => {
     });
 
     it("should quit the webdriver in teardown", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       await expect(lcp.driver).toBeDefined();
       jest.spyOn(lcp.driver!, "quit");
       await lcp.afterExecution(minimumProject, testExecutionContext);
@@ -114,7 +114,7 @@ describe("LegacyLifecycleHooks", () => {
 
     it("should log in case the webdriver in teardown errored", async () => {
       //GIVEN
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       await expect(lcp.driver).toBeDefined();
       const expectedError = Error("Oh no! Quit did some fuxi wuxi =/");
       lcp.driver!.quit = jest.fn().mockRejectedValue(expectedError);
@@ -224,14 +224,14 @@ describe("LegacyLifecycleHooks", () => {
       ...createPropertyMapMock({}),
     });
     it("should prepare context for UI-Only test", async () => {
-      await lcp.onProject(uiOnlyProject);
+      await lcp.onProject(uiOnlyProject, testExecutionContext);
       expect(lcp.uiOnly).toBeTruthy();
       expect(builder.build).toHaveBeenCalledTimes(0);
       expect(lcp.driver).toBeNull();
     });
 
     it("should create a context without sahi api", async () => {
-      await lcp.onProject(uiOnlyProject);
+      await lcp.onProject(uiOnlyProject, testExecutionContext);
       lcp.currentTest = "";
       const context = await lcp.requestContext(
         testExecutionContext,
@@ -330,9 +330,13 @@ describe("LegacyLifecycleHooks", () => {
       },
     });
 
+    afterAll(() => {
+      mockFs.restore();
+    });
+
     it("should not build webdriver onProject", async () => {
       // WHEN
-      await lcp.onProject(browserReuseProject);
+      await lcp.onProject(browserReuseProject, testExecutionContext);
 
       // THEN
       expect(builder.build).not.toHaveBeenCalled();
@@ -341,7 +345,7 @@ describe("LegacyLifecycleHooks", () => {
 
     it("should build webdriver beforeRunFile", async () => {
       // GIVEN
-      await lcp.onProject(browserReuseProject);
+      await lcp.onProject(browserReuseProject, testExecutionContext);
 
       // WHEN
       await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
@@ -352,7 +356,7 @@ describe("LegacyLifecycleHooks", () => {
 
     it("should quit webdriver afterRunFile", async () => {
       // GIVEN
-      await lcp.onProject(browserReuseProject);
+      await lcp.onProject(browserReuseProject, testExecutionContext);
       await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
 
       // WHEN
@@ -364,7 +368,7 @@ describe("LegacyLifecycleHooks", () => {
 
     it("should not quit webdriver afterExecution", async () => {
       // GIVEN
-      await lcp.onProject(browserReuseProject);
+      await lcp.onProject(browserReuseProject, testExecutionContext);
 
       // WHEN
       await lcp.afterExecution(browserReuseProject, testExecutionContext);

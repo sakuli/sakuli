@@ -37,12 +37,15 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
 
   constructor(readonly builder: Builder) {}
 
-  async onProject(project: Project) {
+  async onProject(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
     const properties = project.objectFactory(LegacyProjectProperties);
     this.uiOnly = properties.isUiOnly();
     this.reuseBrowser = properties.isReuseBrowser();
     if (!this.uiOnly && this.reuseBrowser) {
-      await this.createDriver(project);
+      await this.createDriver(project, testExecutionContext);
     }
   }
 
@@ -81,7 +84,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
       await fs.realpath(join(project.rootDir, file.path))
     );
     if (!this.reuseBrowser) {
-      await this.createDriver(project);
+      await this.createDriver(project, testExecutionContext);
     }
   }
 
@@ -144,9 +147,13 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     });
   }
 
-  private async createDriver(project: Project) {
+  private async createDriver(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
     this.driver = createDriverFromProject(project, this.builder);
     await this.driver.manage().window().maximize();
+    testExecutionContext.logger.debug("Created webdriver");
   }
 
   private async quitDriver(testExecutionContext: TestExecutionContext) {
