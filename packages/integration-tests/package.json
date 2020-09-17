@@ -28,20 +28,13 @@
     "@sakuli/legacy": "2.4.0",
     "@sakuli/legacy-types": "2.4.0",
     "chromedriver": "84.0.1",
-    "concurrently": "5.3.0",
     "execa": "1.0.0",
     "express": "4.16.4",
     "geckodriver": "1.19.1",
-    "parcel-bundler": "1.12.4",
     "selenium-webdriver": "4.0.0-alpha.1"
   },
   "bugs": {
     "url": "https://github.com/sakuli/sakuli/issues"
-  },
-  "sakuli": {
-    "presetProvider": [
-      "@sakuli/legacy"
-    ]
   },
   "devDependencies": {
     "fastify": "2.15.1"
