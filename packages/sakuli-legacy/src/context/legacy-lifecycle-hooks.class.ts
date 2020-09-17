@@ -21,9 +21,9 @@ import { createDriverFromProject } from "./selenium-config/create-driver-from-pr
 import { TestStepCache } from "./common/test-case/steps-cache/test-step-cache.class";
 import { NoopSahiApi } from "./noop-sahi-api.const";
 import { SahiApi } from "./sahi/sahi-api.interface";
-import Signals = NodeJS.Signals;
 import { getActiveKeys } from "./common/button-registry";
 import { releaseKeys } from "./common/release-keys.function";
+import Signals = NodeJS.Signals;
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   driver: Maybe<ThenableWebDriver> = null;
@@ -46,20 +46,26 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     }
   }
 
-  async beforeExecution(project: Project, ctx: TestExecutionContext) {
+  async beforeExecution(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
     const properties = project.objectFactory(LegacyProjectProperties);
     const id = properties.testsuiteId
       ? properties.testsuiteId
       : project.rootDir.split(sep).pop();
     const warningTime = properties.testsuiteWarningTime || 0;
     const criticalTime = properties.testsuiteCriticalTime || 0;
-    ctx.startTestSuite({ id, warningTime, criticalTime });
+    testExecutionContext.startTestSuite({ id, warningTime, criticalTime });
   }
 
-  async afterExecution(project: Project, ctx: TestExecutionContext) {
-    ctx.endTestSuite();
+  async afterExecution(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
+    testExecutionContext.endTestSuite();
     if (this.reuseBrowser) {
-      await this.quitDriver(ctx);
+      await this.quitDriver(testExecutionContext);
     }
   }
 
@@ -68,7 +74,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   async beforeRunFile(
     file: TestFile,
     project: Project,
-    ctx: TestExecutionContext
+    testExecutionContext: TestExecutionContext
   ) {
     this.currentFile = file.path;
     this.currentTest = dirname(
@@ -82,24 +88,26 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   async afterRunFile(
     file: TestFile,
     project: Project,
-    ctx: TestExecutionContext
+    testExecutionContext: TestExecutionContext
   ) {
     const { name } = parse(file.path);
-    ifPresent(ctx.getCurrentTestCase(), (ctc) => {
+    ifPresent(testExecutionContext.getCurrentTestCase(), (ctc) => {
       if (!ctc.id) {
-        ctx.updateCurrentTestCase({ id: name });
+        testExecutionContext.updateCurrentTestCase({ id: name });
       }
     });
     if (!this.reuseBrowser) {
-      await this.quitDriver(ctx);
+      await this.quitDriver(testExecutionContext);
     }
   }
 
   async requestContext(
-    ctx: TestExecutionContext,
+    testExecutionContext: TestExecutionContext,
     project: Project
   ): Promise<LegacyApi> {
-    const sahi: SahiApi = this.driver ? sahiApi(this.driver, ctx) : NoopSahiApi;
+    const sahi: SahiApi = this.driver
+      ? sahiApi(this.driver, testExecutionContext)
+      : NoopSahiApi;
     const currentTestFolder = throwIfAbsent(
       this.currentTest,
       Error(
@@ -112,14 +120,25 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     );
     return Promise.resolve({
       driver: this.driver!,
-      context: ctx,
-      TestCase: createTestCaseClass(ctx, project, this.currentTest, stepsCache),
-      Application: createThenableApplicationClass(ctx, project),
+      context: testExecutionContext,
+      TestCase: createTestCaseClass(
+        testExecutionContext,
+        project,
+        this.currentTest,
+        stepsCache
+      ),
+      Application: createThenableApplicationClass(
+        testExecutionContext,
+        project
+      ),
       Key,
       MouseButton,
-      Environment: createThenableEnvironmentClass(ctx, project),
-      Region: createThenableRegionClass(ctx, project),
-      Logger: createLoggerObject(ctx),
+      Environment: createThenableEnvironmentClass(
+        testExecutionContext,
+        project
+      ),
+      Region: createThenableRegionClass(testExecutionContext, project),
+      Logger: createLoggerObject(testExecutionContext),
       $includeFolder: "",
       ...sahi,
     });
@@ -130,15 +149,18 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     await this.driver.manage().window().maximize();
   }
 
-  private async quitDriver(ctx: TestExecutionContext) {
+  private async quitDriver(testExecutionContext: TestExecutionContext) {
     await ifPresent(
       this.driver,
       async (driver) => {
         try {
           await driver.quit();
-          ctx.logger.debug("Closed webdriver");
+          testExecutionContext.logger.debug("Closed webdriver");
         } catch (e) {
-          ctx.logger.warn(`Webdriver doesn't quit reliably`, e);
+          testExecutionContext.logger.warn(
+            `Webdriver doesn't quit reliably`,
+            e
+          );
         }
       },
       () => Promise.resolve()
