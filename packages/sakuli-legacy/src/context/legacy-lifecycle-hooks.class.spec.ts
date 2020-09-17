@@ -24,20 +24,9 @@ import {
 import { releaseKeys } from "./common/release-keys.function";
 import { Key, MouseButton } from "./common";
 import { getActiveKeys } from "./common/button-registry";
+import mockFs from "mock-fs";
 import Mock = jest.Mock;
 import Signals = NodeJS.Signals;
-
-jest.mock("fs", () => {
-  const originalModule = jest.requireActual("fs");
-
-  return {
-    __esModule: true,
-    ...originalModule,
-    promises: {
-      realpath: jest.fn().mockImplementation(() => "dirname"),
-    },
-  };
-});
 
 describe("LegacyLifecycleHooks", () => {
   let builder: Builder;
@@ -335,6 +324,11 @@ describe("LegacyLifecycleHooks", () => {
     const file: TestFile = {
       path: "my-suite/my-case/case1.js",
     };
+    mockFs({
+      "my-suite/my-case": {
+        "case1.js": {},
+      },
+    });
 
     it("should not build webdriver onProject", async () => {
       // WHEN
