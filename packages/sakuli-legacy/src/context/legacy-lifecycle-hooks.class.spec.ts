@@ -337,8 +337,6 @@ describe("LegacyLifecycleHooks", () => {
     };
 
     it("should not build webdriver onProject", async () => {
-      // GIVEN
-
       // WHEN
       await lcp.onProject(browserReuseProject);
 
