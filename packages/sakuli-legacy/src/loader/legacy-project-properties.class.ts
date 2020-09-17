@@ -81,6 +81,7 @@ export class LegacyProjectProperties {
 
   /**
    * Defines whether the browser should be reused after a test suite or a new browser session should be created
+   * This option is usually defined via commandline and will override [testsuiteReuseBrowser]{@link LegacyProjectProperties.testsuiteReuseBrowser}
    *
    * To access the actual set browser within Sakuli use [isReuseBrowser()]{@link LegacyProjectProperties.isReuseBrowser}
    */
@@ -89,6 +90,7 @@ export class LegacyProjectProperties {
 
   /**
    * Defines whether the browser should be reused after a test suite or a new browser session should be created
+   * This option is usually defined in `sakuli.properties` or `testsuite.properties` file and can be overridden by [reuseBrowser]{@link LegacyProjectProperties.reuseBrowser}
    *
    * To access the actual set browser within Sakuli use [isReuseBrowser()]{@link LegacyProjectProperties.isReuseBrowser}
    */
