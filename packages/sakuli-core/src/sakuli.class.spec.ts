@@ -5,7 +5,12 @@ import { Project, ProjectLoader } from "./loader";
 import { stripIndent } from "common-tags";
 import mockFs from "mock-fs";
 import { mockPartial } from "sneer";
-import { CliArgsSource } from "@sakuli/commons";
+import {
+  CliArgsSource,
+  DecoratedClassDefaultsSource,
+  EnvironmentSource,
+  StaticPropertySource,
+} from "@sakuli/commons";
 
 const installPropertySourceMock = jest.fn();
 jest.mock("./loader/model/project.class", () => ({
@@ -34,6 +39,32 @@ describe("Sakuli", () => {
     it("should have no loaders", () => {
       const sakuli = new SakuliClass([]);
       expect(sakuli.loader.length).toBe(0);
+    });
+
+    it("should initialize project in right order", async () => {
+      //GIVEN
+      const sakuli = new SakuliClass([]);
+
+      //THEN
+      await sakuli.initializeProject("dummy/path");
+
+      //THEN
+      expect(installPropertySourceMock).toHaveBeenNthCalledWith(
+        1,
+        expect.any(StaticPropertySource)
+      );
+      expect(installPropertySourceMock).toHaveBeenNthCalledWith(
+        2,
+        expect.any(DecoratedClassDefaultsSource)
+      );
+      expect(installPropertySourceMock).toHaveBeenNthCalledWith(
+        3,
+        expect.any(EnvironmentSource)
+      );
+      expect(installPropertySourceMock).toHaveBeenNthCalledWith(
+        4,
+        expect.any(CliArgsSource)
+      );
     });
 
     it("should create a Project", async () => {
