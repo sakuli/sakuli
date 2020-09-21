@@ -56,7 +56,7 @@ jobs:
       script: true
       before_deploy:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
-        - lerna run typedoc
+        - npm ci && lerna run typedoc
       deploy:
         - provider: script
           skip_cleanup: false
