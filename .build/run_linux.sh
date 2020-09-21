@@ -11,4 +11,3 @@ if [[ $TRAVIS_NODE_VERSION = "lts/erbium" ]]; then
 fi
 npm run test:it
 npm run test:e2e
-lerna run typedoc
