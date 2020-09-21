@@ -18,7 +18,7 @@ export interface MultipleElementApi {
    * ```typescript
    *     const cities = await _collect('_div', 'city');
    *
-   *     await _highlight(cities[0]);
+   *     await _highlight(cities[1]);
    * ```
    *
    *
