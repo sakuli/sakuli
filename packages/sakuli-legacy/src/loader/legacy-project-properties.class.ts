@@ -80,6 +80,46 @@ export class LegacyProjectProperties {
   }
 
   /**
+   * Defines whether the browser should be reused after a test suite or a new browser session should be created
+   * This option is usually defined via commandline and will override [testsuiteReuseBrowser]{@link LegacyProjectProperties.testsuiteReuseBrowser}
+   *
+   * To access the actual set browser within Sakuli use [isReuseBrowser()]{@link LegacyProjectProperties.isReuseBrowser}
+   */
+  @BooleanProperty("reuseBrowser")
+  reuseBrowser: Maybe<boolean>;
+
+  /**
+   * Defines whether the browser should be reused after a test suite or a new browser session should be created
+   * This option is usually defined in `sakuli.properties` or `testsuite.properties` file and can be overridden by [reuseBrowser]{@link LegacyProjectProperties.reuseBrowser}
+   *
+   * To access the actual set browser within Sakuli use [isReuseBrowser()]{@link LegacyProjectProperties.isReuseBrowser}
+   */
+  @BooleanProperty("testsuite.reuseBrowser")
+  testsuiteReuseBrowser: Maybe<boolean>;
+
+  /**
+   * Determines if a testsuite should reuse the browser session between testcases
+   *
+   * - [`reuseBrowser`]{@link LegacyProjectProperties.reuseBrowser} property if set
+   * - otherwise [`testsuite.reuseBrowser`]{@link LegacyProjectProperties.testsuiteReuseBrowser} if set
+   * - other `true`
+   *
+   * @return boolean
+   */
+  isReuseBrowser(): boolean {
+    return ifPresent(
+      this.reuseBrowser,
+      (reuseBrowser) => reuseBrowser,
+      () =>
+        ifPresent(
+          this.testsuiteReuseBrowser,
+          (reuseBrowser) => reuseBrowser,
+          () => true
+        )
+    );
+  }
+
+  /**
      * Determines if a testsuite should run in ui-only mode or not
      * This option is usually defined via commandline and will override [testSuiteUiOnly]{@link LegacyProjectProperties.testSuiteUiOnly}
 

@@ -7,8 +7,8 @@ import {
   Project,
   TestExecutionContext,
   TestExecutionLifecycleHooks,
+  TestFile,
 } from "@sakuli/core";
-import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
 import { basename, dirname, join, parse, sep } from "path";
 import { createLoggerObject } from "./common/logger";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
@@ -21,9 +21,9 @@ import { createDriverFromProject } from "./selenium-config/create-driver-from-pr
 import { TestStepCache } from "./common/test-case/steps-cache/test-step-cache.class";
 import { NoopSahiApi } from "./noop-sahi-api.const";
 import { SahiApi } from "./sahi/sahi-api.interface";
-import Signals = NodeJS.Signals;
 import { getActiveKeys } from "./common/button-registry";
 import { releaseKeys } from "./common/release-keys.function";
+import Signals = NodeJS.Signals;
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   driver: Maybe<ThenableWebDriver> = null;
@@ -33,15 +33,19 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
    */
   currentTest: Maybe<string> = null;
   uiOnly = false;
+  reuseBrowser = true;
 
   constructor(readonly builder: Builder) {}
 
-  async onProject(project: Project) {
+  async onProject(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
     const properties = project.objectFactory(LegacyProjectProperties);
     this.uiOnly = properties.isUiOnly();
-    if (!this.uiOnly) {
-      this.driver = createDriverFromProject(project, this.builder);
-      await this.driver.manage().window().maximize();
+    this.reuseBrowser = properties.isReuseBrowser();
+    if (!this.uiOnly && this.reuseBrowser) {
+      await this.createDriver(project, testExecutionContext);
     }
   }
 
@@ -63,6 +67,96 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext
   ) {
     testExecutionContext.endTestSuite();
+    if (this.reuseBrowser) {
+      await this.quitDriver(testExecutionContext);
+    }
+  }
+
+  private currentFile: string = "";
+
+  async beforeRunFile(
+    file: TestFile,
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
+    this.currentFile = file.path;
+    this.currentTest = dirname(
+      await fs.realpath(join(project.rootDir, file.path))
+    );
+    if (!this.reuseBrowser) {
+      await this.createDriver(project, testExecutionContext);
+    }
+  }
+
+  async afterRunFile(
+    file: TestFile,
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
+    const { name } = parse(file.path);
+    ifPresent(testExecutionContext.getCurrentTestCase(), (ctc) => {
+      if (!ctc.id) {
+        testExecutionContext.updateCurrentTestCase({ id: name });
+      }
+    });
+    if (!this.reuseBrowser) {
+      await this.quitDriver(testExecutionContext);
+    }
+  }
+
+  async requestContext(
+    testExecutionContext: TestExecutionContext,
+    project: Project
+  ): Promise<LegacyApi> {
+    const sahi: SahiApi = this.driver
+      ? sahiApi(this.driver, testExecutionContext)
+      : NoopSahiApi;
+    const currentTestFolder = throwIfAbsent(
+      this.currentTest,
+      Error(
+        "Could not initialize LegacyDslContext because no test folder was found / provided"
+      )
+    );
+    const stepCacheFileName = basename(this.currentFile);
+    const stepsCache = new TestStepCache(
+      join(currentTestFolder, `.${stepCacheFileName}.steps.cache`)
+    );
+    return Promise.resolve({
+      driver: this.driver!,
+      context: testExecutionContext,
+      TestCase: createTestCaseClass(
+        testExecutionContext,
+        project,
+        this.currentTest,
+        stepsCache
+      ),
+      Application: createThenableApplicationClass(
+        testExecutionContext,
+        project
+      ),
+      Key,
+      MouseButton,
+      Environment: createThenableEnvironmentClass(
+        testExecutionContext,
+        project
+      ),
+      Region: createThenableRegionClass(testExecutionContext, project),
+      Logger: createLoggerObject(testExecutionContext),
+      $includeFolder: "",
+      ...sahi,
+    });
+  }
+
+  private async createDriver(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
+    this.driver = createDriverFromProject(project, this.builder);
+    await this.driver.manage().window().maximize();
+    testExecutionContext.logger.debug("Created webdriver");
+  }
+
+  private async quitDriver(testExecutionContext: TestExecutionContext) {
     await ifPresent(
       this.driver,
       async (driver) => {
@@ -78,64 +172,6 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
       },
       () => Promise.resolve()
     );
-  }
-
-  private currentFile: string = "";
-  private currentProject: Maybe<Project>;
-
-  async beforeRunFile(
-    file: TestFile,
-    project: Project,
-    ctx: TestExecutionContext
-  ) {
-    this.currentFile = file.path;
-    this.currentProject = project;
-    this.currentTest = dirname(
-      await fs.realpath(join(project.rootDir, file.path))
-    );
-  }
-
-  async afterRunFile(
-    file: TestFile,
-    project: Project,
-    ctx: TestExecutionContext
-  ) {
-    const { name } = parse(file.path);
-    ifPresent(ctx.getCurrentTestCase(), (ctc) => {
-      if (!ctc.id) {
-        ctx.updateCurrentTestCase({ id: name });
-      }
-    });
-  }
-
-  async requestContext(
-    ctx: TestExecutionContext,
-    project: Project
-  ): Promise<LegacyApi> {
-    const sahi: SahiApi = this.driver ? sahiApi(this.driver, ctx) : NoopSahiApi;
-    const currentTestFolder = throwIfAbsent(
-      this.currentTest,
-      Error(
-        "Could not initialize LegacyDslContext because no test folder was found / provided"
-      )
-    );
-    const stepCacheFileName = basename(this.currentFile);
-    const stepsCache = new TestStepCache(
-      join(currentTestFolder, `.${stepCacheFileName}.steps.cache`)
-    );
-    return Promise.resolve({
-      driver: this.driver!,
-      context: ctx,
-      TestCase: createTestCaseClass(ctx, project, this.currentTest, stepsCache),
-      Application: createThenableApplicationClass(ctx, project),
-      Key,
-      MouseButton,
-      Environment: createThenableEnvironmentClass(ctx, project),
-      Region: createThenableRegionClass(ctx, project),
-      Logger: createLoggerObject(ctx),
-      $includeFolder: "",
-      ...sahi,
-    });
   }
 
   async onUnhandledError(
