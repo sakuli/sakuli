@@ -2,7 +2,7 @@ import { CommandModuleProvider } from "@sakuli/core";
 import chalk from "chalk";
 import { Argv, CommandModule } from "yargs";
 import { Algorithm, secret } from "@nut-tree/secrets";
-import { MASTERKEY_ENV_KEY } from "../context/common";
+import { parseMasterKey } from "../cryptic-commons/parse-master-key.function";
 
 export const decryptCommand: CommandModuleProvider = (): CommandModule => {
   return {
@@ -19,17 +19,14 @@ export const decryptCommand: CommandModuleProvider = (): CommandModule => {
         .demandOption("secret");
     },
     async handler(opts: any) {
-      const key = opts.masterkey || process.env[MASTERKEY_ENV_KEY];
-      if (!key) {
-        console.log(
-          chalk`{red.bold Missing master key.} Please export a master key to $${MASTERKEY_ENV_KEY} or provide it via --masterkey option`
-        );
+      const masterKey = parseMasterKey(opts);
+      if (!masterKey) {
         process.exit(-1);
       }
       try {
         const decrypted = await secret.decrypt(
           opts.secret,
-          key || "",
+          masterKey || "",
           Algorithm.AES128CBC
         );
         console.log(chalk`{green Decrypted secret:} ${decrypted}`);
