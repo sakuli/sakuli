@@ -4,17 +4,17 @@ import { Argv, CommandModule } from "yargs";
 import { Algorithm, secret } from "@nut-tree/secrets";
 import { parseMasterKey } from "../cryptic-commons/parse-master-key.function";
 
-export const encryptCommand: CommandModuleProvider = (): CommandModule => {
+export const decryptCommand: CommandModuleProvider = (): CommandModule => {
   return {
-    command: "encrypt [secret]",
-    describe: `Encrypts a secret via provided masterkey`,
+    command: "decrypt [secret]",
+    describe: `Decrypts a secret via provided masterkey`,
     builder(argv: Argv) {
       return argv
         .positional("secret", {
-          describe: "The secret to encrypt",
+          describe: "The secret to decrypt",
         })
         .option("masterkey", {
-          describe: "The masterkey used for encryption",
+          describe: "The masterkey used for decryption",
         })
         .demandOption("secret");
     },
@@ -24,12 +24,12 @@ export const encryptCommand: CommandModuleProvider = (): CommandModule => {
         process.exit(-1);
       }
       try {
-        const encrypted = await secret.encrypt(
+        const decrypted = await secret.decrypt(
           opts.secret,
           masterKey || "",
           Algorithm.AES128CBC
         );
-        console.log(chalk`{green Encrypted secret:} ${encrypted}`);
+        console.log(chalk`{green Decrypted secret:} ${decrypted}`);
         process.exit(0);
       } catch (e) {
         console.log(chalk`{red.bold An error occured}: ${e}`);
