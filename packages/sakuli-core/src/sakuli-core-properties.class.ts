@@ -8,6 +8,12 @@ export class SakuliCoreProperties {
   logLevel: string = "INFO";
 
   /**
+   * Defines where the log output is written to
+   */
+  @StringProperty("log.mode")
+  logMode: string = "";
+
+  /**
    * Deletes all files that are older than the defined days in the folder `sakuli.log.folder`
    *
    * DEFAULT: 14 days
