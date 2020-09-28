@@ -60,7 +60,8 @@ export const runCommand: CommandModuleProvider = (
         console.log(chalk`Writing logs to: {bold.gray ${logFile}}`);
         cleanLogConsumer = createLogConsumer(
           sakuli.testExecutionContext.logger,
-          logFile
+          logFile,
+          coreProps
         );
 
         sakuli.testExecutionContext.logger.info(
