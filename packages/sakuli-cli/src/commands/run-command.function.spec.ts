@@ -1,4 +1,9 @@
-import { Project, SakuliInstance, SakuliPresetProvider } from "@sakuli/core";
+import {
+  Project,
+  SakuliCoreProperties,
+  SakuliInstance,
+  SakuliPresetProvider,
+} from "@sakuli/core";
 import { mockPartial, mockRecursivePartial } from "sneer";
 import { runCommand } from "./run-command.function";
 import { Argv, CommandModule } from "yargs";
@@ -9,6 +14,7 @@ import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 import { renderError } from "./run-command/render-error.function";
+import any = jasmine.any;
 
 jest.mock("../cli-utils/test-execution-context-renderer.function", () => ({
   testExecutionContextRenderer: jest.fn(),
@@ -138,13 +144,21 @@ describe("runCommand", () => {
     });
 
     it("should initialize a logConsumer", async () => {
-      await command.handler(runOptions);
-      (<jest.Mock>project.objectFactory).mockReturnValue({
+      //GIVEN
+      const sakuliCoreProperties = mockPartial<SakuliCoreProperties>({
         sakuliLogFolder: "sakuli/log/folder",
       });
+      (<jest.Mock<SakuliCoreProperties>>project.objectFactory).mockReturnValue(
+        sakuliCoreProperties
+      );
+
+      //WHEN
+      await command.handler(runOptions);
+
+      //THEN
       expect(createLogConsumer).toHaveBeenCalledWith(
         sakuli.testExecutionContext.logger,
-        "sakuli/log/folder/sakuli.log"
+        sakuliCoreProperties
       );
     });
 

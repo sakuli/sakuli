@@ -15,7 +15,6 @@ import {
 import chalk from "chalk";
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
 import { createLogConsumer } from "../create-log-consumer.function";
-import { join } from "path";
 import { renderError } from "./run-command/render-error.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 
@@ -56,11 +55,9 @@ export const runCommand: CommandModuleProvider = (
         );
         const logPath = ensure<string>(coreProps.sakuliLogFolder, "");
         await ensurePath(logPath);
-        const logFile = join(logPath, "sakuli.log");
-        console.log(chalk`Writing logs to: {bold.gray ${logFile}}`);
+
         cleanLogConsumer = createLogConsumer(
           sakuli.testExecutionContext.logger,
-          logFile,
           coreProps
         );
 
