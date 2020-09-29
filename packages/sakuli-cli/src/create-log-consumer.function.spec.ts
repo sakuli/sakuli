@@ -29,7 +29,9 @@ describe("create log consumer function", () => {
   it("should create file logger by default", () => {
     //GIVEN
     const simpleLogger = mockPartial<SimpleLogger>({});
-    const path = "/path/to/log/file";
+    const coreProperties = mockPartial<SakuliCoreProperties>({
+      sakuliLogFolder: "/path/to/log",
+    });
 
     const logConsumerMock = jest.fn();
     createCombinedLogConsumerMock.mockImplementation(() => {
@@ -37,18 +39,20 @@ describe("create log consumer function", () => {
     });
 
     //WHEN
-    createLogConsumer(simpleLogger, path, mockPartial({}));
+    createLogConsumer(simpleLogger, coreProperties);
 
     //THEN
-    expect(createFileLogConsumer).toBeCalledWith({ path });
+    expect(createFileLogConsumer).toBeCalledWith({
+      path: `${coreProperties.sakuliLogFolder}/sakuli.log`,
+    });
     expect(logConsumerMock).toBeCalledWith(simpleLogger);
   });
 
   it("should create file logger by config", () => {
     //GIVEN
     const simpleLogger = mockPartial<SimpleLogger>({});
-    const path = "/path/to/log/file";
-    const properties = mockPartial<SakuliCoreProperties>({
+    const coreProperties = mockPartial<SakuliCoreProperties>({
+      sakuliLogFolder: "/path/to/log",
       logMode: "logfile",
     });
 
@@ -58,18 +62,20 @@ describe("create log consumer function", () => {
     });
 
     //WHEN
-    createLogConsumer(simpleLogger, path, properties);
+    createLogConsumer(simpleLogger, coreProperties);
 
     //THEN
-    expect(createFileLogConsumer).toBeCalledWith({ path });
+    expect(createFileLogConsumer).toBeCalledWith({
+      path: `${coreProperties.sakuliLogFolder}/sakuli.log`,
+    });
     expect(logConsumerMock).toBeCalledWith(simpleLogger);
   });
 
   it("should create cli logger by config", () => {
     //GIVEN
     const simpleLogger = mockPartial<SimpleLogger>({});
-    const path = "/path/to/log/file";
     const properties = mockPartial<SakuliCoreProperties>({
+      sakuliLogFolder: "/path/to/log",
       logMode: "ci",
     });
 
@@ -79,10 +85,10 @@ describe("create log consumer function", () => {
     });
 
     //WHEN
-    createLogConsumer(simpleLogger, path, properties);
+    createLogConsumer(simpleLogger, properties);
 
     //THEN
-    expect(createFileLogConsumer).not.toBeCalledWith({ path });
+    expect(createFileLogConsumer).not.toBeCalled();
     expect(createCiLogConsumer).toBeCalled();
     expect(logConsumerMock).toBeCalledWith(simpleLogger);
   });
