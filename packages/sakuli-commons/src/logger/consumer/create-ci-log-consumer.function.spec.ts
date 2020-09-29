@@ -1,19 +1,21 @@
 import { createCiLogConsumer } from "./create-ci-log-consumer.function";
 import { SimpleLogger } from "../simple-logger.class";
+import {mockPartial} from "sneer";
 
 describe("create-ci-log-consumer", () => {
-  /*  it("should log to stdout", () => {
-    logger= mockPartial(<SimpleLogger>{
-      info: jest.fn(),
-      debug: jest.fn(),
-      error: jest.fn(),
+    it("should subscribe ci logger on log events", () => {
+
+    //GIVEN
+    const logger = mockPartial<SimpleLogger>({
+      onEvent: jest.fn()
     });
-    //WHEN
-    const logger = ;
     const logConsumer = createCiLogConsumer();
+
+    //WHEN
     logConsumer(logger);
 
     //THEN
+    expect(logger.onEvent).toHaveBeenCalled();
 
-  });*/
+  });
 });
