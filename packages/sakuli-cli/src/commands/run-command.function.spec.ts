@@ -14,7 +14,6 @@ import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 import { renderError } from "./run-command/render-error.function";
-import any = jasmine.any;
 
 jest.mock("../cli-utils/test-execution-context-renderer.function", () => ({
   testExecutionContextRenderer: jest.fn(),
