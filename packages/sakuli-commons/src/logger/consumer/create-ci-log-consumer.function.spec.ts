@@ -3,7 +3,7 @@ import { SimpleLogger } from "../simple-logger.class";
 import { mockPartial } from "sneer";
 import { LogEvent } from "../log-event.interface";
 
-global.console = mockPartial<Console>({ log: jest.fn() });
+global.process.stdout.write = jest.fn();
 
 describe("create-ci-log-consumer", () => {
   beforeEach(() => {
@@ -44,6 +44,6 @@ describe("create-ci-log-consumer", () => {
 
     //THEN
     expect(stringifier).toHaveBeenCalledWith(logEvent);
-    expect(console.log).toBeCalledWith(expectedLogOutput);
+    expect(process.stdout.write).toBeCalledWith(expectedLogOutput);
   });
 });
