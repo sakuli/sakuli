@@ -16,6 +16,13 @@ export class SakuliCoreProperties {
   logMode: logModes = "logfile";
 
   /**
+   * Defines where the log output is written to.
+   * Just as log.mode property but for environment variable.
+   */
+  @StringProperty("LOG_MODE")
+  logModeEnv: string = "";
+
+  /**
    * Deletes all files that are older than the defined days in the folder `sakuli.log.folder`
    *
    * DEFAULT: 14 days
@@ -28,4 +35,8 @@ export class SakuliCoreProperties {
    */
   @StringProperty("sakuli.log.folder")
   sakuliLogFolder: string = "${sakuli.testsuite.folder}/_logs";
+
+  getLogMode() {
+    return this.logModeEnv || this.logMode;
+  }
 }
