@@ -147,13 +147,21 @@ describe("runCommand", () => {
     });
 
     it("should initialize a logConsumer", async () => {
-      await command.handler(runOptions);
-      (<jest.Mock>project.objectFactory).mockReturnValue({
+      //GIVEN
+      const sakuliCoreProperties = mockPartial<SakuliCoreProperties>({
         sakuliLogFolder: "sakuli/log/folder",
       });
+      (<jest.Mock<SakuliCoreProperties>>project.objectFactory).mockReturnValue(
+        sakuliCoreProperties
+      );
+
+      //WHEN
+      await command.handler(runOptions);
+
+      //THEN
       expect(createLogConsumer).toHaveBeenCalledWith(
         sakuli.testExecutionContext.logger,
-        "sakuli/log/folder/sakuli.log"
+        sakuliCoreProperties
       );
     });
 
