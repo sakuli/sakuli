@@ -3,25 +3,43 @@ import {
   entityOnStartLogMessage,
   testExecutionContextRenderer,
 } from "./test-execution-context-renderer.function";
-import { TestContextEntity, TestExecutionContext } from "@sakuli/core";
+import {
+  SakuliCoreProperties,
+  TestContextEntity,
+  TestExecutionContext,
+} from "@sakuli/core";
 import { SimpleLogger } from "@sakuli/commons";
 import { mockPartial } from "sneer";
 
 describe("testExecutionContextRenderer", () => {
+  let logger = mockPartial<SimpleLogger>({
+    info: jest.fn(),
+  });
+  let ctx: TestExecutionContext;
+
+  function simulateTestExecution(executionContext: TestExecutionContext) {
+    executionContext.startExecution();
+    executionContext.startTestSuite({ id: "Testsuite" });
+    executionContext.startTestCase({ id: "Testcase" });
+    executionContext.startTestStep({ id: "Teststep" });
+    executionContext.endTestStep();
+    executionContext.endTestCase();
+    executionContext.endTestSuite();
+    executionContext.endExecution();
+  }
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
+    ctx = new TestExecutionContext(logger);
+  });
+
   it("should log info about starting tests", async () => {
-    const logger = mockPartial<SimpleLogger>({
-      info: jest.fn(),
-    });
-    const ctx = new TestExecutionContext(logger);
-    const rendering = testExecutionContextRenderer(ctx);
-    ctx.startExecution();
-    ctx.startTestSuite({ id: "Testsuite" });
-    ctx.startTestCase({ id: "Testcase" });
-    ctx.startTestStep({ id: "Teststep" });
-    ctx.endTestStep();
-    ctx.endTestCase();
-    ctx.endTestSuite();
-    ctx.endExecution();
+    const rendering = testExecutionContextRenderer(
+      ctx,
+      mockPartial<SakuliCoreProperties>({})
+    );
+    simulateTestExecution(ctx);
     await rendering;
 
     expect(logger.info).toHaveBeenNthCalledWith(1, "Started Execution");
@@ -43,6 +61,55 @@ describe("testExecutionContextRenderer", () => {
       expect.stringMatching(/Finished Testsuite Testsuite with state Ok/)
     );
     expect(logger.info).toHaveBeenNthCalledWith(7, "Finished Execution");
+  });
+
+  it("should not log to console if log mode is ci", async () => {
+    //GIVEN
+    const properties = mockPartial<SakuliCoreProperties>({
+      logMode: "ci",
+    });
+    const rendering = testExecutionContextRenderer(ctx, properties);
+    jest.spyOn(console, "log");
+
+    //WHEN
+    simulateTestExecution(ctx);
+    await rendering;
+
+    //THEN
+    expect(logger.info).toBeCalledTimes(7);
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  it("should log to console if log mode is logfile", async () => {
+    //GIVEN
+    const properties = mockPartial<SakuliCoreProperties>({
+      logMode: "logfile",
+    });
+    const rendering = testExecutionContextRenderer(ctx, properties);
+    jest.spyOn(console, "log");
+
+    //WHEN
+    simulateTestExecution(ctx);
+    await rendering;
+
+    //THEN
+    expect(logger.info).toBeCalledTimes(7);
+    expect(console.log).toBeCalledTimes(7);
+  });
+
+  it("should log to console if log mode is undefined", async () => {
+    //GIVEN
+    const properties = mockPartial<SakuliCoreProperties>({});
+    const rendering = testExecutionContextRenderer(ctx, properties);
+    jest.spyOn(console, "log");
+
+    //WHEN
+    simulateTestExecution(ctx);
+    await rendering;
+
+    //THEN
+    expect(logger.info).toBeCalledTimes(7);
+    expect(console.log).toBeCalledTimes(7);
   });
 });
 

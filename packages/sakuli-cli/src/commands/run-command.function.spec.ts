@@ -84,17 +84,16 @@ describe("runCommand", () => {
   describe("handler", () => {
     const runOptions = Symbol("run-options-placeholder");
     let processExitMock: jest.Mock;
+    const properties = mockPartial<SakuliCoreProperties>({
+      sakuliLogFolder: "sakuli/log/folder",
+      logMode: "logfile",
+    });
     beforeEach(async () => {
       processExitMock = jest
         .spyOn(process, "exit")
         .mockImplementation((() => {}) as any) as any;
       jest.spyOn(commons, "ensurePath").mockImplementation(async () => {});
-      (<jest.Mock>project.objectFactory).mockReturnValue(
-        mockPartial<SakuliCoreProperties>({
-          sakuliLogFolder: "sakuli/log/folder",
-          logMode: "logfile",
-        })
-      );
+      (<jest.Mock>project.objectFactory).mockReturnValue(properties);
     });
 
     afterEach(() => {
@@ -104,7 +103,8 @@ describe("runCommand", () => {
     it("should init renderer with sakuli context", async () => {
       await command.handler(runOptions);
       expect(testExecutionContextRenderer).toHaveBeenCalledWith(
-        sakuli.testExecutionContext
+        sakuli.testExecutionContext,
+        properties
       );
     });
 
@@ -187,36 +187,6 @@ describe("runCommand", () => {
       expect(renderError).toHaveBeenCalledWith(dummyError);
       expect(process.exit).not.toHaveBeenCalled();
       expect(process.exitCode).toBe(1);
-    });
-
-    it("should not init renderer when log mode is set on ci", async () => {
-      //GIVEN
-      (<jest.Mock>project.objectFactory).mockReturnValue(
-        mockPartial<SakuliCoreProperties>({
-          logMode: "ci",
-        })
-      );
-
-      //WHEN
-      await command.handler(runOptions);
-
-      //THEN
-      expect(testExecutionContextRenderer).not.toHaveBeenCalled();
-    });
-
-    it("should init renderer when log mode is undefined", async () => {
-      //GIVEN
-      (<jest.Mock>project.objectFactory).mockReturnValue(
-        mockPartial<SakuliCoreProperties>({})
-      );
-
-      //WHEN
-      await command.handler(runOptions);
-
-      //THEN
-      expect(testExecutionContextRenderer).toHaveBeenCalledWith(
-        sakuli.testExecutionContext
-      );
     });
   });
 });
