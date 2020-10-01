@@ -1,4 +1,9 @@
-import {Project, SakuliCoreProperties, SakuliInstance, SakuliPresetProvider} from "@sakuli/core";
+import {
+  Project,
+  SakuliCoreProperties,
+  SakuliInstance,
+  SakuliPresetProvider,
+} from "@sakuli/core";
 import { mockPartial, mockRecursivePartial } from "sneer";
 import { runCommand } from "./run-command.function";
 import { Argv, CommandModule } from "yargs";
@@ -34,7 +39,7 @@ describe("runCommand", () => {
   let logLevelMock: jest.Mock;
   let preset: SakuliPresetProvider;
   beforeEach(() => {
-    (<jest.Mock>testExecutionContextRenderer).mockReset();
+    jest.resetAllMocks();
     argv = mockPartial<Argv>({
       positional: jest.fn().mockImplementation(() => argv),
       demandOption: jest.fn().mockImplementation(() => argv),
@@ -80,15 +85,16 @@ describe("runCommand", () => {
     const runOptions = Symbol("run-options-placeholder");
     let processExitMock: jest.Mock;
     beforeEach(async () => {
-      (<jest.Mock>project.objectFactory).mockReset();
       processExitMock = jest
         .spyOn(process, "exit")
         .mockImplementation((() => {}) as any) as any;
       jest.spyOn(commons, "ensurePath").mockImplementation(async () => {});
-      (<jest.Mock>project.objectFactory).mockReturnValue(mockPartial<SakuliCoreProperties>({
-        sakuliLogFolder: "sakuli/log/folder",
-        logMode: "logfile"
-      }));
+      (<jest.Mock>project.objectFactory).mockReturnValue(
+        mockPartial<SakuliCoreProperties>({
+          sakuliLogFolder: "sakuli/log/folder",
+          logMode: "logfile",
+        })
+      );
     });
 
     afterEach(() => {
@@ -183,30 +189,34 @@ describe("runCommand", () => {
       expect(process.exitCode).toBe(1);
     });
 
-    it("should not init renderer when log mode is set on ci" , async() => {
+    it("should not init renderer when log mode is set on ci", async () => {
       //GIVEN
-      (<jest.Mock>project.objectFactory).mockReturnValue(mockPartial<SakuliCoreProperties>({
-        logMode: "ci"
-      }));
+      (<jest.Mock>project.objectFactory).mockReturnValue(
+        mockPartial<SakuliCoreProperties>({
+          logMode: "ci",
+        })
+      );
 
       //WHEN
       await command.handler(runOptions);
 
       //THEN
       expect(testExecutionContextRenderer).not.toHaveBeenCalled();
-    })
+    });
 
     it("should init renderer when log mode is undefined", async () => {
       //GIVEN
-      (<jest.Mock>project.objectFactory).mockReturnValue(mockPartial<SakuliCoreProperties>({}));
+      (<jest.Mock>project.objectFactory).mockReturnValue(
+        mockPartial<SakuliCoreProperties>({})
+      );
 
       //WHEN
       await command.handler(runOptions);
 
       //THEN
-      expect(testExecutionContextRenderer).toHaveBeenCalledWith(sakuli.testExecutionContext);
-
-    })
+      expect(testExecutionContextRenderer).toHaveBeenCalledWith(
+        sakuli.testExecutionContext
+      );
+    });
   });
-
 });
