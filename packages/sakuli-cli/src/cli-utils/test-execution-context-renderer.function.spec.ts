@@ -10,6 +10,7 @@ import {
 } from "@sakuli/core";
 import { SimpleLogger } from "@sakuli/commons";
 import { mockPartial } from "sneer";
+import { LogMode } from "@sakuli/core/dist/log-mode";
 
 describe("testExecutionContextRenderer", () => {
   let logger = mockPartial<SimpleLogger>({
@@ -66,7 +67,7 @@ describe("testExecutionContextRenderer", () => {
   it("should not log to console if log mode is ci", async () => {
     //GIVEN
     const properties = mockPartial<SakuliCoreProperties>({
-      logMode: "ci",
+      logMode: LogMode.CI,
     });
     const rendering = testExecutionContextRenderer(ctx, properties);
     jest.spyOn(console, "log");
@@ -83,7 +84,7 @@ describe("testExecutionContextRenderer", () => {
   it("should log to console if log mode is logfile", async () => {
     //GIVEN
     const properties = mockPartial<SakuliCoreProperties>({
-      logMode: "logfile",
+      logMode: LogMode.LOG_FILE,
     });
     const rendering = testExecutionContextRenderer(ctx, properties);
     jest.spyOn(console, "log");

@@ -8,13 +8,14 @@ import {
 import { SakuliCoreProperties } from "@sakuli/core";
 import { join } from "path";
 import chalk from "chalk";
+import { LogMode } from "@sakuli/core/dist/log-mode";
 
 export function createLogConsumer(
   logger: SimpleLogger,
   properties: SakuliCoreProperties
 ) {
   let logConsumerAdapter: LogConsumerAdapter;
-  if (properties?.logMode === "ci") {
+  if (properties?.getLogMode() === LogMode.CI) {
     logConsumerAdapter = createCiLogConsumer();
   } else {
     const path = join(properties.sakuliLogFolder, "sakuli.log");
