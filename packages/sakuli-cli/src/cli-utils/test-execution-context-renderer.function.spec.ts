@@ -7,10 +7,10 @@ import {
   SakuliCoreProperties,
   TestContextEntity,
   TestExecutionContext,
+  LogMode,
 } from "@sakuli/core";
 import { SimpleLogger } from "@sakuli/commons";
 import { mockPartial } from "sneer";
-import { LogMode } from "@sakuli/core/dist/log-mode";
 
 describe("testExecutionContextRenderer", () => {
   let logger = mockPartial<SimpleLogger>({

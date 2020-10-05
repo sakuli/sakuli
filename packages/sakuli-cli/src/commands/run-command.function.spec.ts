@@ -14,7 +14,7 @@ import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 import { renderError } from "./run-command/render-error.function";
-import { LogMode } from "@sakuli/core/dist/log-mode";
+import { LogMode } from "@sakuli/core";
 
 jest.mock("../cli-utils/test-execution-context-renderer.function", () => ({
   testExecutionContextRenderer: jest.fn(),

@@ -5,10 +5,9 @@ import {
   LogConsumerAdapter,
   SimpleLogger,
 } from "@sakuli/commons";
-import { SakuliCoreProperties } from "@sakuli/core";
+import { SakuliCoreProperties, LogMode } from "@sakuli/core";
 import { join } from "path";
 import chalk from "chalk";
-import { LogMode } from "@sakuli/core/dist/log-mode";
 
 export function createLogConsumer(
   logger: SimpleLogger,

@@ -1,13 +1,3 @@
-import { SakuliCoreProperties } from "@sakuli/core";
-import { createLogConsumer } from "./create-log-consumer.function";
-import { mockPartial } from "sneer";
-import {
-  createCiLogConsumer,
-  createFileLogConsumer,
-  SimpleLogger,
-} from "@sakuli/commons";
-import { LogMode } from "@sakuli/core/dist/log-mode";
-
 let createCombinedLogConsumerMock = jest.fn();
 let fileLogConsumerMock = jest.fn();
 let createCiLogConsumerMock = jest.fn();
@@ -21,6 +11,15 @@ jest.mock("@sakuli/commons", () => {
   };
 });
 
+import { LogMode, SakuliCoreProperties } from "@sakuli/core";
+import { createLogConsumer } from "./create-log-consumer.function";
+import { mockPartial } from "sneer";
+import {
+  createCiLogConsumer,
+  createFileLogConsumer,
+  SimpleLogger,
+} from "@sakuli/commons";
+
 describe("create log consumer function", () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -31,6 +30,7 @@ describe("create log consumer function", () => {
     const simpleLogger = mockPartial<SimpleLogger>({});
     const coreProperties = mockPartial<SakuliCoreProperties>({
       sakuliLogFolder: "/path/to/log",
+      getLogMode: () => LogMode.LOG_FILE,
     });
 
     const logConsumerMock = jest.fn();
@@ -53,7 +53,7 @@ describe("create log consumer function", () => {
     const simpleLogger = mockPartial<SimpleLogger>({});
     const coreProperties = mockPartial<SakuliCoreProperties>({
       sakuliLogFolder: "/path/to/log",
-      logMode: LogMode.LOG_FILE,
+      getLogMode: () => LogMode.LOG_FILE,
     });
 
     const logConsumerMock = jest.fn();
@@ -76,7 +76,7 @@ describe("create log consumer function", () => {
     const simpleLogger = mockPartial<SimpleLogger>({});
     const properties = mockPartial<SakuliCoreProperties>({
       sakuliLogFolder: "/path/to/log",
-      logMode: LogMode.CI,
+      getLogMode: () => LogMode.CI,
     });
 
     const logConsumerMock = jest.fn();

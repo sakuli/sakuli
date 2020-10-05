@@ -3,10 +3,10 @@ import {
   TestContextEntity,
   TestContextEntityState,
   TestExecutionContext,
+  LogMode,
 } from "@sakuli/core";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import chalk from "chalk";
-import { LogMode } from "@sakuli/core/dist/log-mode";
 
 const ensure = <T>(otherwiseValue: T) => (maybeValue: Maybe<T>) =>
   ifPresent(
