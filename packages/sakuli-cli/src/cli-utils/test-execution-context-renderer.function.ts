@@ -102,10 +102,7 @@ export const testExecutionContextRenderer = (
 ) =>
   new Promise((res) => {
     function logToConsole(message: string) {
-      if (
-        !properties.getLogMode() ||
-        properties.getLogMode() === LogMode.LOG_FILE
-      ) {
+      if (properties.getLogMode() === LogMode.LOG_FILE) {
         console.log(message);
       }
     }
