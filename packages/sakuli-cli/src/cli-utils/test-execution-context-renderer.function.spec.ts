@@ -4,10 +4,10 @@ import {
   testExecutionContextRenderer,
 } from "./test-execution-context-renderer.function";
 import {
+  LogMode,
   SakuliCoreProperties,
   TestContextEntity,
   TestExecutionContext,
-  LogMode,
 } from "@sakuli/core";
 import { SimpleLogger } from "@sakuli/commons";
 import { mockPartial } from "sneer";
@@ -38,7 +38,9 @@ describe("testExecutionContextRenderer", () => {
   it("should log info about starting tests", async () => {
     const rendering = testExecutionContextRenderer(
       ctx,
-      mockPartial<SakuliCoreProperties>({})
+      mockPartial<SakuliCoreProperties>({
+        getLogMode: () => LogMode.LOG_FILE,
+      })
     );
     simulateTestExecution(ctx);
     await rendering;
@@ -67,7 +69,7 @@ describe("testExecutionContextRenderer", () => {
   it("should not log to console if log mode is ci", async () => {
     //GIVEN
     const properties = mockPartial<SakuliCoreProperties>({
-      logMode: LogMode.CI,
+      getLogMode: () => LogMode.CI,
     });
     const rendering = testExecutionContextRenderer(ctx, properties);
     jest.spyOn(console, "log");
@@ -84,23 +86,8 @@ describe("testExecutionContextRenderer", () => {
   it("should log to console if log mode is logfile", async () => {
     //GIVEN
     const properties = mockPartial<SakuliCoreProperties>({
-      logMode: LogMode.LOG_FILE,
+      getLogMode: () => LogMode.LOG_FILE,
     });
-    const rendering = testExecutionContextRenderer(ctx, properties);
-    jest.spyOn(console, "log");
-
-    //WHEN
-    simulateTestExecution(ctx);
-    await rendering;
-
-    //THEN
-    expect(logger.info).toBeCalledTimes(7);
-    expect(console.log).toBeCalledTimes(7);
-  });
-
-  it("should log to console if log mode is undefined", async () => {
-    //GIVEN
-    const properties = mockPartial<SakuliCoreProperties>({});
     const rendering = testExecutionContextRenderer(ctx, properties);
     jest.spyOn(console, "log");
 
