@@ -1,5 +1,7 @@
 import { StringProperty } from "@sakuli/commons";
 
+export type logModes = "logfile" | "ci";
+
 export class SakuliCoreProperties {
   /**
    * For usage see SimpleLogger
@@ -11,7 +13,7 @@ export class SakuliCoreProperties {
    * Defines where the log output is written to
    */
   @StringProperty("log.mode")
-  logMode: string = "";
+  logMode: logModes = "logfile";
 
   /**
    * Deletes all files that are older than the defined days in the folder `sakuli.log.folder`
