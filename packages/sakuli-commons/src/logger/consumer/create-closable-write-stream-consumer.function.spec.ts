@@ -1,4 +1,4 @@
-import { createWriteStreamConsumer } from "./create-write-stream-consumer.function";
+import { createClosableWriteStreamConsumer } from "./create-closable-write-stream-consumer.function";
 import { mockPartial } from "sneer";
 import { SimpleLogger } from "../simple-logger.class";
 import { LogEvent } from "../log-event.interface";
@@ -20,7 +20,9 @@ describe("create write stream consumer", () => {
       }),
     });
 
-    const writeStreamConsumer = createWriteStreamConsumer(writeStreamMock);
+    const writeStreamConsumer = createClosableWriteStreamConsumer(
+      writeStreamMock
+    );
 
     //WHEN
     writeStreamConsumer(logger, sampleStringifier);
@@ -46,7 +48,9 @@ describe("create write stream consumer", () => {
       }),
     });
 
-    const writeStreamConsumer = createWriteStreamConsumer(writeStreamMock);
+    const writeStreamConsumer = createClosableWriteStreamConsumer(
+      writeStreamMock
+    );
 
     //WHEN
     const cleanup = writeStreamConsumer(logger, sampleStringifier);

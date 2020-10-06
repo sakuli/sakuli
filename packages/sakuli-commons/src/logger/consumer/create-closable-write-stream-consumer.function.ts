@@ -3,7 +3,7 @@ import { defaultStringifier } from "../stringifier";
 import { LogConsumerAdapter } from "../log-consumer-adapter.interface";
 import WriteStream = NodeJS.WritableStream;
 
-export function createWriteStreamConsumer(
+export function createClosableWriteStreamConsumer(
   stream: WriteStream
 ): LogConsumerAdapter {
   return (logger: SimpleLogger, stringifier = defaultStringifier) => {
