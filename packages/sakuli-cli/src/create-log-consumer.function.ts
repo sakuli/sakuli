@@ -13,14 +13,18 @@ export function createLogConsumer(
   logger: SimpleLogger,
   properties: SakuliCoreProperties
 ) {
-  let logConsumerAdapter: LogConsumerAdapter;
+  const path = join(properties.sakuliLogFolder, "sakuli.log");
+  console.log(chalk`Writing logs to: {bold.gray ${path}}`);
+  const fileLogConsumerAdapter = createFileLogConsumer({ path });
+
+  let logConsumer: LogConsumerAdapter;
   if (properties?.getLogMode() === LogMode.CI) {
-    logConsumerAdapter = createCiLogConsumer();
+    logConsumer = createCombinedLogConsumer(
+      fileLogConsumerAdapter,
+      createCiLogConsumer()
+    );
   } else {
-    const path = join(properties.sakuliLogFolder, "sakuli.log");
-    console.log(chalk`Writing logs to: {bold.gray ${path}}`);
-    logConsumerAdapter = createFileLogConsumer({ path });
+    logConsumer = createCombinedLogConsumer(fileLogConsumerAdapter);
   }
-  const logConsumer = createCombinedLogConsumer(logConsumerAdapter);
   return logConsumer(logger);
 }

@@ -71,7 +71,7 @@ describe("create log consumer function", () => {
     expect(logConsumerMock).toBeCalledWith(simpleLogger);
   });
 
-  it("should create cli logger by config", () => {
+  it("should create cli and file logger by config", () => {
     //GIVEN
     const simpleLogger = mockPartial<SimpleLogger>({});
     const properties = mockPartial<SakuliCoreProperties>({
@@ -88,7 +88,9 @@ describe("create log consumer function", () => {
     createLogConsumer(simpleLogger, properties);
 
     //THEN
-    expect(createFileLogConsumer).not.toBeCalled();
+    expect(createFileLogConsumer).toBeCalledWith({
+      path: `${properties.sakuliLogFolder}/sakuli.log`,
+    });
     expect(createCiLogConsumer).toBeCalled();
     expect(logConsumerMock).toBeCalledWith(simpleLogger);
   });
