@@ -1,15 +1,18 @@
 import { SimpleLogger } from "../simple-logger.class";
-import { defaultStringifier } from "../stringifier/default-stringifier.function";
+import { defaultStringifier } from "../stringifier";
 import { LogConsumerAdapter } from "../log-consumer-adapter.interface";
 import WriteStream = NodeJS.WritableStream;
 
-export const createWriteStreamConsumer = (
+export function createWriteStreamConsumer(
   stream: WriteStream
-): LogConsumerAdapter => {
+): LogConsumerAdapter {
   return (logger: SimpleLogger, stringifier = defaultStringifier) => {
-    logger.onEvent((e) => {
-      stream.write(stringifier(e));
+    let streamIsOpen = true;
+    logger.onEvent((logEvent) => {
+      if (streamIsOpen) {
+        stream.write(stringifier(logEvent));
+      }
     });
-    return () => {};
+    return () => (streamIsOpen = false);
   };
-};
+}
