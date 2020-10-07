@@ -33,14 +33,14 @@ export const runCommand: CommandModuleProvider = (
     },
 
     async handler(runOptions: any) {
-      const rendering = testExecutionContextRenderer(
-        sakuli.testExecutionContext
-      );
       let cleanLogConsumer: Maybe<() => void>;
       try {
         const project = await sakuli.initializeProject(runOptions);
         const coreProps = project.objectFactory(SakuliCoreProperties);
-
+        const testContextRenderer = testExecutionContextRenderer(
+          sakuli.testExecutionContext,
+          coreProps
+        );
         console.log(
           chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`
         );
@@ -74,7 +74,9 @@ export const runCommand: CommandModuleProvider = (
         sakuli.testExecutionContext.logger.trace(
           `Sakuli finished project execution.`
         );
-        await rendering;
+
+        await testContextRenderer;
+
         await ifPresent(
           sakuli.testExecutionContext.error,
           async (error) => {

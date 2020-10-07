@@ -39,6 +39,7 @@ describe("runCommand", () => {
   let logLevelMock: jest.Mock;
   let preset: SakuliPresetProvider;
   beforeEach(() => {
+    jest.resetAllMocks();
     argv = mockPartial<Argv>({
       positional: jest.fn().mockImplementation(() => argv),
       demandOption: jest.fn().mockImplementation(() => argv),
@@ -83,14 +84,16 @@ describe("runCommand", () => {
   describe("handler", () => {
     const runOptions = Symbol("run-options-placeholder");
     let processExitMock: jest.Mock;
+    const properties = mockPartial<SakuliCoreProperties>({
+      sakuliLogFolder: "sakuli/log/folder",
+      logMode: "logfile",
+    });
     beforeEach(async () => {
       processExitMock = jest
         .spyOn(process, "exit")
         .mockImplementation((() => {}) as any) as any;
       jest.spyOn(commons, "ensurePath").mockImplementation(async () => {});
-      (<jest.Mock>project.objectFactory).mockReturnValue({
-        sakuliLogFolder: "sakuli/log/folder",
-      });
+      (<jest.Mock>project.objectFactory).mockReturnValue(properties);
     });
 
     afterEach(() => {
@@ -100,7 +103,8 @@ describe("runCommand", () => {
     it("should init renderer with sakuli context", async () => {
       await command.handler(runOptions);
       expect(testExecutionContextRenderer).toHaveBeenCalledWith(
-        sakuli.testExecutionContext
+        sakuli.testExecutionContext,
+        properties
       );
     });
 

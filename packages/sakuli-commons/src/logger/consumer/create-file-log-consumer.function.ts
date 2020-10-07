@@ -2,7 +2,7 @@ import { LogConsumerAdapter } from "../log-consumer-adapter.interface";
 import { SimpleLogger } from "../simple-logger.class";
 import { defaultStringifier } from "../stringifier";
 import { createWriteStream } from "fs";
-import { createWriteStreamConsumer } from "./create-write-stream-consumer.function";
+import { createClosableWriteStreamConsumer } from "./create-closable-write-stream-consumer.function";
 
 export interface FileLogConsumerOptions {
   path: string;
@@ -16,7 +16,10 @@ export const createFileLogConsumer = (
     flags: "a+",
   });
   return (logger: SimpleLogger, stringifier = defaultStringifier) => {
-    const clean = createWriteStreamConsumer(fileStream)(logger, stringifier);
+    const clean = createClosableWriteStreamConsumer(fileStream)(
+      logger,
+      stringifier
+    );
     return () => {
       clean();
       fileStream.close();
