@@ -3,6 +3,7 @@ import {
   TestContextEntity,
   TestContextEntityState,
   TestExecutionContext,
+  LogMode,
 } from "@sakuli/core";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import chalk from "chalk";
@@ -101,7 +102,7 @@ export const testExecutionContextRenderer = (
 ) =>
   new Promise((res) => {
     function logToConsole(message: string) {
-      if (!properties.logMode || properties.logMode === "logfile") {
+      if (properties.getLogMode() === LogMode.LOG_FILE) {
         console.log(message);
       }
     }

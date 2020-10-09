@@ -1,6 +1,5 @@
-import { StringProperty } from "@sakuli/commons";
-
-export type logModes = "logfile" | "ci";
+import { ensure, StringProperty } from "@sakuli/commons";
+import { LogMode, parseLogMode } from "./log-mode";
 
 export class SakuliCoreProperties {
   /**
@@ -13,7 +12,14 @@ export class SakuliCoreProperties {
    * Defines where the log output is written to
    */
   @StringProperty("log.mode")
-  logMode: logModes = "logfile";
+  logMode: LogMode = LogMode.LOG_FILE;
+
+  /**
+   * Defines where the log output is written to.
+   * Just as log.mode property but for environment variable.
+   */
+  @StringProperty("LOG_MODE")
+  logModeEnv: string = "";
 
   /**
    * Deletes all files that are older than the defined days in the folder `sakuli.log.folder`
@@ -28,4 +34,8 @@ export class SakuliCoreProperties {
    */
   @StringProperty("sakuli.log.folder")
   sakuliLogFolder: string = "${sakuli.testsuite.folder}/_logs";
+
+  getLogMode(): LogMode {
+    return ensure(parseLogMode(this.logModeEnv), this.logMode);
+  }
 }

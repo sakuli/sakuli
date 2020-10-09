@@ -5,7 +5,7 @@ import {
   LogConsumerAdapter,
   SimpleLogger,
 } from "@sakuli/commons";
-import { SakuliCoreProperties } from "@sakuli/core";
+import { SakuliCoreProperties, LogMode } from "@sakuli/core";
 import { join } from "path";
 import chalk from "chalk";
 
@@ -14,7 +14,7 @@ export function createLogConsumer(
   properties: SakuliCoreProperties
 ) {
   let logConsumerAdapter: LogConsumerAdapter;
-  if (properties?.logMode === "ci") {
+  if (properties?.getLogMode() === LogMode.CI) {
     logConsumerAdapter = createCiLogConsumer();
   } else {
     const path = join(properties.sakuliLogFolder, "sakuli.log");
