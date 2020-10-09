@@ -16,7 +16,7 @@ export function createLogConsumer(
   const path = join(properties.sakuliLogFolder, "sakuli.log");
   console.log(chalk`Writing logs to: {bold.gray ${path}}`);
   const fileLogConsumerAdapter = createFileLogConsumer({ path });
-
+  
   let logConsumer: LogConsumerAdapter;
   if (properties?.getLogMode() === LogMode.CI) {
     logConsumer = createCombinedLogConsumer(
