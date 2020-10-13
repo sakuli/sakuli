@@ -61,7 +61,7 @@ export function createRegionClass(ctx: TestExecutionContext, project: Project) {
               nutConfig.confidence,
               this
             );
-            ctx.logger.info(
+            ctx.logger.debug(
               `Located at: (${result.left},${result.top},${result.width},${result.height})`
             );
             resolve(
