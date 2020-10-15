@@ -1,4 +1,7 @@
-import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
+import {
+  isSahiElementQuery,
+  SahiElementQueryOrWebElement,
+} from "../sahi-element.interface";
 import { AssertionApi } from "./assertion-api.interface";
 import { TestExecutionContext } from "@sakuli/core";
 import { FetchApi } from "../fetch";
@@ -44,6 +47,11 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The element does not contain the expected text "${expected}" but "${await getElementText(
+        element
+      )}"`;
+    }
     return _assert(fetchApi._containsText(element, expected), message);
   }
 
@@ -52,6 +60,9 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The element contains the given text "${expected}"`;
+    }
     return _assertFalse(fetchApi._containsText(element, expected), message);
   }
 
@@ -83,6 +94,11 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The given element "${await getElementText(
+        element
+      )}" does not exist`;
+    }
     return _assert(fetchApi._exists(element), message);
   }
 
@@ -90,15 +106,31 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The given element "${await getElementText(element)}" exists`;
+    }
     return _assertFalse(fetchApi._exists(element), message);
   }
 
   async function _assertNotNull(value: any, message?: string): Promise<void> {
+    if (!message) {
+      message = `Given value is null`;
+    }
     return _assertNotEqual(value, null, message);
   }
 
   async function _assertNull(value: any, message?: string): Promise<void> {
+    if (!message) {
+      message = `${JSON.stringify(value)} does not equal null`;
+    }
     return _assertEqual(value, null, message);
+  }
+
+  async function getElementText(element: SahiElementQueryOrWebElement) {
+    if (isSahiElementQuery(element)) {
+      return element.identifier;
+    }
+    return `${await element.getText()}`;
   }
 
   return {

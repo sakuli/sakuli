@@ -134,10 +134,18 @@ describe("assertion-api", () => {
       expect(_containsTextMock).toHaveBeenCalledWith(dummyQuery, "ABC");
     });
 
-    it("should throw an exception, if element does not contains text", async () => {
+    it("should throw an exception with default message, if element does not contains text", async () => {
+      //GIVEN
       _containsTextMock.mockResolvedValue(false);
-      await expect(api._assertContainsText("ABC", dummyQuery)).rejects.toThrow(
-        AssertionError
+      const expectedText = "ABC";
+
+      //WHEN + THEN
+      await expect(
+        api._assertContainsText(expectedText, dummyQuery)
+      ).rejects.toThrow(
+        new AssertionError({
+          message: `The element does not contain the expected text "${expectedText}" but "${dummyQuery.identifier}"`,
+        })
       );
     });
 
@@ -162,11 +170,19 @@ describe("assertion-api", () => {
       expect(_containsTextMock).toHaveBeenCalledWith(dummyQuery, "ABC");
     });
 
-    it("should throw an exception, if element contains text", async () => {
+    it("should throw an exception with default message, if element contains text", async () => {
+      //GIVEN
       _containsTextMock.mockResolvedValue(true);
+      const expectedText = "ABC";
+
+      //WHEN + THEN
       await expect(
-        api._assertNotContainsText("ABC", dummyQuery)
-      ).rejects.toThrow(AssertionError);
+        api._assertNotContainsText(expectedText, dummyQuery)
+      ).rejects.toThrow(
+        new AssertionError({
+          message: `The element contains the given text "${expectedText}"`,
+        })
+      );
     });
 
     it("should use the exception message, if the assertion fails", async () => {
@@ -259,10 +275,15 @@ describe("assertion-api", () => {
       await expect(api._assertExists(dummyQuery)).resolves.toBeUndefined();
     });
 
-    it("should throw an exception, if element does not exists", async () => {
+    it("should throw an exception with default message, if element does not exists", async () => {
+      //GIVEN
       _existsMock.mockResolvedValue(false);
+
+      //WHEN + THEN
       await expect(api._assertExists(dummyQuery)).rejects.toThrow(
-        AssertionError
+        new AssertionError({
+          message: `The given element "${dummyQuery.identifier}" does not exist`,
+        })
       );
     });
 
@@ -288,7 +309,9 @@ describe("assertion-api", () => {
     it("should throw an exception, if element exists", async () => {
       _existsMock.mockResolvedValue(true);
       await expect(api._assertNotExists(dummyQuery)).rejects.toThrow(
-        AssertionError
+        new AssertionError({
+          message: `The given element "${dummyQuery.identifier}" exists`,
+        })
       );
     });
 
@@ -311,7 +334,12 @@ describe("assertion-api", () => {
     });
 
     it("should throw an exception, if the actual value is not null", async () => {
-      await expect(api._assertNull(undefined)).rejects.toThrow(AssertionError);
+      const expected = undefined;
+      await expect(api._assertNull(expected)).rejects.toThrow(
+        new AssertionError({
+          message: `${JSON.stringify(expected)} does not equal null`,
+        })
+      );
     });
 
     it("should use the exception message, if the assertion fails", async () => {
@@ -330,8 +358,10 @@ describe("assertion-api", () => {
       await expect(api._assertNotNull(undefined)).resolves.toBeUndefined();
     });
 
-    it("should throw an exception, if the actual value is null", async () => {
-      await expect(api._assertNotNull(null)).rejects.toThrow(AssertionError);
+    it("should throw an exception with default message, if the actual value is null", async () => {
+      await expect(api._assertNotNull(null)).rejects.toThrow(
+        new AssertionError({ message: "Given value is null" })
+      );
     });
 
     it("should use the exception message, if the assertion fails", async () => {
