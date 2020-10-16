@@ -180,7 +180,7 @@ describe("assertion-api", () => {
         api._assertNotContainsText(expectedText, dummyQuery)
       ).rejects.toThrow(
         new AssertionError({
-          message: `The element contains the given text "${expectedText}"`,
+          message: `The element contains the prohibited text "${expectedText}"`,
         })
       );
     });
