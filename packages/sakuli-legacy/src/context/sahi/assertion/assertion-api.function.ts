@@ -61,7 +61,7 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The element contains the given text "${expected}"`;
+      message = `The element contains the prohibited text "${expected}"`;
     }
     return _assertFalse(fetchApi._containsText(element, expected), message);
   }
