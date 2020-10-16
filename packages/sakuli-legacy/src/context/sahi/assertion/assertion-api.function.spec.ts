@@ -144,7 +144,7 @@ describe("assertion-api", () => {
         api._assertContainsText(expectedText, dummyQuery)
       ).rejects.toThrow(
         new AssertionError({
-          message: `The element does not contain the expected text "${expectedText}" but "${dummyQuery.identifier}"`,
+          message: `The element does not contain the expected text "${expectedText}"`,
         })
       );
     });
@@ -282,7 +282,7 @@ describe("assertion-api", () => {
       //WHEN + THEN
       await expect(api._assertExists(dummyQuery)).rejects.toThrow(
         new AssertionError({
-          message: `The given element "${dummyQuery.identifier}" does not exist`,
+          message: `The given element does not exist`,
         })
       );
     });
@@ -310,7 +310,7 @@ describe("assertion-api", () => {
       _existsMock.mockResolvedValue(true);
       await expect(api._assertNotExists(dummyQuery)).rejects.toThrow(
         new AssertionError({
-          message: `The given element "${dummyQuery.identifier}" exists`,
+          message: `The given element exists`,
         })
       );
     });

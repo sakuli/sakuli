@@ -1,7 +1,4 @@
-import {
-  isSahiElementQuery,
-  SahiElementQueryOrWebElement,
-} from "../sahi-element.interface";
+import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
 import { AssertionApi } from "./assertion-api.interface";
 import { TestExecutionContext } from "@sakuli/core";
 import { FetchApi } from "../fetch";
@@ -48,9 +45,7 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The element does not contain the expected text "${expected}" but "${await getElementText(
-        element
-      )}"`;
+      message = `The element does not contain the expected text "${expected}"`;
     }
     return _assert(fetchApi._containsText(element, expected), message);
   }
@@ -95,9 +90,7 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The given element "${await getElementText(
-        element
-      )}" does not exist`;
+      message = `The given element does not exist`;
     }
     return _assert(fetchApi._exists(element), message);
   }
@@ -107,7 +100,7 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The given element "${await getElementText(element)}" exists`;
+      message = `The given element exists`;
     }
     return _assertFalse(fetchApi._exists(element), message);
   }
@@ -124,13 +117,6 @@ export function assertionApi(
       message = `${JSON.stringify(value)} does not equal null`;
     }
     return _assertEqual(value, null, message);
-  }
-
-  async function getElementText(element: SahiElementQueryOrWebElement) {
-    if (isSahiElementQuery(element)) {
-      return element.identifier;
-    }
-    return `${await element.getText()}`;
   }
 
   return {
