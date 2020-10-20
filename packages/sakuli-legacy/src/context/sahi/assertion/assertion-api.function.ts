@@ -3,6 +3,7 @@ import { AssertionApi } from "./assertion-api.interface";
 import { TestExecutionContext } from "@sakuli/core";
 import { FetchApi } from "../fetch";
 import { deepStrictEqual, notDeepStrictEqual } from "assert";
+import { stringifyElement } from "../sahi-element-utils";
 
 export function assertionApi(
   testExecutionContext: TestExecutionContext,
@@ -56,7 +57,9 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The element contains the prohibited text "${expected}"`;
+      message = `The following element contains the prohibited text "${expected}:"\n\n${await stringifyElement(
+        element
+      )}`;
     }
     return _assertFalse(fetchApi._containsText(element, expected), message);
   }

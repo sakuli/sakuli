@@ -1,10 +1,6 @@
 import { ThenableWebDriver, WebElement } from "selenium-webdriver";
 import { AccessorUtil } from "../../accessor";
-import {
-  isSahiElementQuery,
-  SahiElementQueryOrWebElement,
-  sahiQueryToString,
-} from "../../sahi-element.interface";
+import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
 import { timeout } from "../poll-action.function";
 import { INJECT_SAKULI_HOOK } from "../inject.const";
 import { TestExecutionContext } from "@sakuli/core";
@@ -12,6 +8,10 @@ import { CommonActionsApi } from "./common-actions.interface";
 import { highlightElement, scrollIntoViewIfNeeded } from "../utils";
 import { wait } from "../../helper/wait.function";
 import { fetchPageSource } from "../utils/fetch-page-source.function";
+import {
+  isSahiElementQuery,
+  sahiQueryToString,
+} from "../../sahi-element-utils";
 
 export function commonActionsApi(
   webDriver: ThenableWebDriver,
