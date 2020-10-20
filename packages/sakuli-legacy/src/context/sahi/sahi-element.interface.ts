@@ -1,7 +1,6 @@
 import { Locator, WebElement } from "selenium-webdriver";
 import { SahiRelation } from "./relations/sahi-relation.interface";
 import { AccessorIdentifier } from "./api";
-import { Maybe } from "@sakuli/commons";
 import { stripIndents } from "common-tags";
 import { types } from "util";
 
@@ -11,11 +10,6 @@ export interface SahiElementQuery {
   relations: SahiRelation[];
 }
 export type SahiElementQueryOrWebElement = SahiElementQuery | WebElement;
-
-export interface SahiElement {
-  element: Maybe<WebElement>;
-  query: SahiElementQueryOrWebElement;
-}
 
 export function isSahiElementQuery(o: any): o is SahiElementQuery {
   return (
