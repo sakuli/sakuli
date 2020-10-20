@@ -1,5 +1,5 @@
 import { SahiElementQuery } from "./sahi-element.interface";
-import { By } from "selenium-webdriver";
+import { By, WebElement } from "selenium-webdriver";
 import {
   identifierToString,
   isSahiElementQuery,
@@ -124,7 +124,7 @@ describe("Sahi element utils", () => {
         relations: [],
       };
 
-      const expectedElementQuery = stripIndents`locator: By(css selector, *[id="data-test-id"])
+      const expectedElementQueryString = stripIndents`locator: By(css selector, *[id="data-test-id"])
                              identifier: 42
                              relations:`;
 
@@ -132,11 +132,35 @@ describe("Sahi element utils", () => {
       const stringifiedElement = await stringifyElement(elementQuery);
 
       //THEN
-      expect(stringifiedElement).toBe(expectedElementQuery);
+      expect(stringifiedElement).toBe(expectedElementQueryString);
     });
 
     it("should identify and render WebElement", async () => {
-      //TODO: should identify and render WebElement
+      //GIVEN
+      const expectedWebElementString = "WebElement content";
+      const expectedTagName = "WebElement content";
+      const expectedLocation = { height: 50, width: 2560, x: 0, y: 26.796875 };
+      const webElement: WebElement = mockPartial<WebElement>({
+        getText: jest.fn(() => {
+          return Promise.resolve(expectedWebElementString);
+        }),
+        getTagName: jest.fn(() => {
+          return Promise.resolve(expectedTagName);
+        }),
+        getRect: jest.fn(() => {
+          return Promise.resolve(expectedLocation);
+        }),
+      });
+
+      const expectedElementQueryString = stripIndents`tag: ${expectedTagName}
+                             text: ${expectedWebElementString}
+                             rect: ${JSON.stringify(expectedLocation)}`;
+
+      //WHEN
+      const stringifiedElement = await stringifyElement(webElement);
+
+      //THEN
+      expect(stringifiedElement).toBe(expectedElementQueryString);
     });
   });
 });

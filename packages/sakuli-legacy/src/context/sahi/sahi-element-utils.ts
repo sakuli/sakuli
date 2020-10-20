@@ -5,6 +5,7 @@ import {
   SahiElementQuery,
   SahiElementQueryOrWebElement,
 } from "./sahi-element.interface";
+import { WebElement } from "selenium-webdriver";
 
 export function isSahiElementQuery(o: any): o is SahiElementQuery {
   return (
@@ -39,8 +40,16 @@ export function sahiQueryToString({
     `;
 }
 
+export async function webElementToString(webElement: WebElement) {
+  return stripIndents`
+        tag: ${await webElement.getTagName()}
+        text: ${await webElement.getText()}
+        rect: ${JSON.stringify(await webElement.getRect())}
+    `;
+}
+
 export async function stringifyElement(element: SahiElementQueryOrWebElement) {
   return isSahiElementQuery(element)
     ? sahiQueryToString(element)
-    : await element.serialize();
+    : await webElementToString(element);
 }
