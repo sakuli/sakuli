@@ -46,7 +46,9 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The element does not contain the expected text "${expected}"`;
+      message = `The following element does not contain the expected text "${expected}":\n\n${await stringifyElement(
+        element
+      )}`;
     }
     return _assert(fetchApi._containsText(element, expected), message);
   }
@@ -57,7 +59,7 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The following element contains the prohibited text "${expected}:"\n\n${await stringifyElement(
+      message = `The following element contains the prohibited text "${expected}":\n\n${await stringifyElement(
         element
       )}`;
     }
@@ -93,7 +95,9 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The given element does not exist`;
+      message = `The given element does not exist:\n\n${await stringifyElement(
+        element
+      )}`;
     }
     return _assert(fetchApi._exists(element), message);
   }
@@ -103,7 +107,9 @@ export function assertionApi(
     message?: string
   ): Promise<void> {
     if (!message) {
-      message = `The given element exists`;
+      message = `The given element exists:\n\n${await stringifyElement(
+        element
+      )}`;
     }
     return _assertFalse(fetchApi._exists(element), message);
   }

@@ -1,3 +1,5 @@
+jest.mock("../sahi-element-utils");
+
 import { TestExecutionContext } from "@sakuli/core";
 import { createTestExecutionContextMock } from "../../__mocks__";
 import { assertionApi } from "./assertion-api.function";
@@ -6,6 +8,7 @@ import { FetchApi } from "../fetch";
 import { By } from "selenium-webdriver";
 import { SahiElementQuery } from "../sahi-element.interface";
 import { AssertionError } from "assert";
+import { stringifyElement } from "../sahi-element-utils";
 
 describe("assertion-api", () => {
   let dummyQuery: SahiElementQuery = {
@@ -138,15 +141,19 @@ describe("assertion-api", () => {
       //GIVEN
       _containsTextMock.mockResolvedValue(false);
       const expectedText = "ABC";
+      const expectedError = new AssertionError({
+        message: `The following element does not contain the expected text "${expectedText}":\n\n<<stringified Element>>`,
+      });
 
-      //WHEN + THEN
-      await expect(
-        api._assertContainsText(expectedText, dummyQuery)
-      ).rejects.toThrow(
-        new AssertionError({
-          message: `The element does not contain the expected text "${expectedText}"`,
-        })
+      //WHEN
+      const assertContainsPromise = api._assertContainsText(
+        expectedText,
+        dummyQuery
       );
+
+      //THEN
+      await expect(assertContainsPromise).rejects.toThrow(expectedError);
+      await expect(stringifyElement).toBeCalledWith(dummyQuery);
     });
 
     it("should use the exception message, if the assertion fails", async () => {
@@ -174,15 +181,19 @@ describe("assertion-api", () => {
       //GIVEN
       _containsTextMock.mockResolvedValue(true);
       const expectedText = "ABC";
+      const expectedError = new AssertionError({
+        message: `The following element contains the prohibited text "${expectedText}":\n\n<<stringified Element>>`,
+      });
 
-      //WHEN + THEN
-      await expect(
-        api._assertNotContainsText(expectedText, dummyQuery)
-      ).rejects.toThrow(
-        new AssertionError({
-          message: `The element contains the prohibited text "${expectedText}"`,
-        })
+      //WHEN
+      const notContainsPromise = api._assertNotContainsText(
+        expectedText,
+        dummyQuery
       );
+
+      //THEN
+      await expect(notContainsPromise).rejects.toThrow(expectedError);
+      await expect(stringifyElement).toBeCalledWith(dummyQuery);
     });
 
     it("should use the exception message, if the assertion fails", async () => {
@@ -278,13 +289,15 @@ describe("assertion-api", () => {
     it("should throw an exception with default message, if element does not exists", async () => {
       //GIVEN
       _existsMock.mockResolvedValue(false);
+      const expectedError = new AssertionError({
+        message: `The given element does not exist:\n\n<<stringified Element>>`,
+      });
 
-      //WHEN + THEN
-      await expect(api._assertExists(dummyQuery)).rejects.toThrow(
-        new AssertionError({
-          message: `The given element does not exist`,
-        })
-      );
+      //WHEN
+      const assertExistPromise = api._assertExists(dummyQuery);
+
+      // THEN
+      await expect(assertExistPromise).rejects.toThrow(expectedError);
     });
 
     it("should use the exception message, if the assertion fails", async () => {
@@ -307,12 +320,17 @@ describe("assertion-api", () => {
     });
 
     it("should throw an exception, if element exists", async () => {
+      //GIVEN
       _existsMock.mockResolvedValue(true);
-      await expect(api._assertNotExists(dummyQuery)).rejects.toThrow(
-        new AssertionError({
-          message: `The given element exists`,
-        })
-      );
+      const expectedError = new AssertionError({
+        message: `The given element exists:\n\n<<stringified Element>>`,
+      });
+
+      //WHEN
+      const assertNotExistPromise = api._assertNotExists(dummyQuery);
+
+      //THEN
+      await expect(assertNotExistPromise).rejects.toThrow(expectedError);
     });
 
     it("should use the exception message, if the assertion fails", async () => {
