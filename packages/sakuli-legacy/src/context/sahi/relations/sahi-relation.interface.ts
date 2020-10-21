@@ -5,7 +5,7 @@ import {
 
 /**
  * A Sahi relation is basically a mapping operation between two WebElement-Arrays
- * Usually it is produced by a higher order function wich injects some context to it.
+ * Usually it is produced by a higher order function which injects some context to it.
  * <code>
  *     function _in(element: WebElement) {
  *         return async (elements: WebElement[]) {

@@ -7,8 +7,8 @@ import {
 import { TestExecutionContext } from "@sakuli/core";
 import { SahiRelation } from "../relations/sahi-relation.interface";
 import { AccessorIdentifier } from "../api";
-import { isSahiElementQuery } from "../sahi-element.interface";
 import { MultipleElementApi } from "./multiple-element-api.interface";
+import { isSahiElementQuery } from "../sahi-element-utils";
 
 export function multipleElementApi(
   driver: ThenableWebDriver,

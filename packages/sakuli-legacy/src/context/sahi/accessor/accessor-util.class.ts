@@ -17,10 +17,8 @@ import {
 } from "./accessor-model.interface";
 import { RelationsResolver } from "../relations";
 import {
-  isSahiElementQuery,
   SahiElementQuery,
   SahiElementQueryOrWebElement,
-  sahiQueryToString,
 } from "../sahi-element.interface";
 import { ifPresent } from "@sakuli/commons";
 import { AccessorIdentifier } from "../api";
@@ -29,6 +27,7 @@ import {
   INJECT_SAKULI_HOOK,
   RESET_OPEN_REQUESTS,
 } from "../action/inject.const";
+import { isSahiElementQuery, sahiQueryToString } from "../sahi-element-utils";
 
 export class AccessorUtil {
   constructor(
