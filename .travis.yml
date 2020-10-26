@@ -29,6 +29,9 @@ services:
   - docker
   - xvfb
 
+env:
+  - LOG_MODE='ci'
+
 before_install:
   - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
 install: true
