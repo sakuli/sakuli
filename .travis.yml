@@ -16,7 +16,7 @@ language: node_js
 node_js:
   - lts/dubnium
   - lts/erbium
-  - 14
+  - lts/fermium
 
 addons:
   sonarcloud:
@@ -28,6 +28,9 @@ addons:
 services:
   - docker
   - xvfb
+
+env:
+  - LOG_MODE='ci'
 
 before_install:
   - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
