@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
   - Enhancement: create log files even if log.mode is ci [(#508)](https://github.com/sakuli/sakuli/issues/508)
   - Enhancement: consume optional property to redirect log output to stdout as environment variable [(#495)](https://github.com/sakuli/sakuli/issues/495)
   - Enhancement: Disable cli output by property [(#493)](https://github.com/sakuli/sakuli/issues/493)
+    - On the fly bugfix: Do not write to stream in `createClosableWriteStreamConsumer`, when stream has already been closed.
   - Enhancement: create logging consumer for stdout [(#494)](https://github.com/sakuli/sakuli/issues/494)
   - Enhancement: add std output mode property [(#502)](https://github.com/sakuli/sakuli/issues/502)
 - Enhancement: npx sakuli decrypt [(#433)](https://github.com/sakuli/sakuli/issues/433)
