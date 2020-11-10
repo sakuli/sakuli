@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Bugfix: Throw exception if a TestCase is not initialized correctly [(#466)](https://github.com/sakuli/sakuli/issues/466)
 - Bugfix: Inconsistent logging behavior on log.level=debug [(#376)](https://github.com/sakuli/sakuli/issues/376)
 - Bugfix: stringToRegExp adds s* instead of \s* [(#468)](https://github.com/sakuli/sakuli/issues/468)
+- Maintenance: fix rollup-plugin-node-resolve dependency [(#311)](https://github.com/sakuli/sakuli/issues/311)
 
 ## v2.4.0
 
