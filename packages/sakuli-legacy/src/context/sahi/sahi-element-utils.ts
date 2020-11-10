@@ -41,10 +41,16 @@ export function sahiQueryToString({
 }
 
 export async function webElementToString(webElement: WebElement) {
+  const tagString = webElement.getTagName ? await webElement.getTagName() : "";
+  const textString = webElement.getText ? await webElement.getText() : "";
+  const rectString = webElement.getRect
+    ? JSON.stringify(await webElement.getRect())
+    : "";
+
   return stripIndents`
-        tag: ${await webElement.getTagName()}
-        text: ${await webElement.getText()}
-        rect: ${JSON.stringify(await webElement.getRect())}
+        tag: ${tagString}
+        text: ${textString}
+        rect: ${rectString}
     `;
 }
 

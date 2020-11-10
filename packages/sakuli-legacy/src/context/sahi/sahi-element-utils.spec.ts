@@ -163,4 +163,81 @@ describe("Sahi element utils", () => {
       expect(stringifiedElement).toBe(expectedElementQueryString);
     });
   });
+
+  describe("webElementToString", () => {
+    it("should skip getTagName if it does not exist on web element", async () => {
+      //GIVEN
+      const expectedWebElementString = "WebElement content";
+      const expectedLocation = { height: 50, width: 2560, x: 0, y: 26.796875 };
+
+      const webElement: WebElement = mockPartial<WebElement>({
+        getText: jest.fn(() => {
+          return Promise.resolve(expectedWebElementString);
+        }),
+        getRect: jest.fn(() => {
+          return Promise.resolve(expectedLocation);
+        }),
+      });
+
+      const expectedElementQueryString = stripIndents`tag: 
+                             text: ${expectedWebElementString}
+                             rect: ${JSON.stringify(expectedLocation)}`;
+
+      //WHEN
+      const stringifiedElement = await stringifyElement(webElement);
+
+      //THEN
+      expect(stringifiedElement).toBe(expectedElementQueryString);
+    });
+
+    it("should skip getText if it does not exist on web element", async () => {
+      //GIVEN
+      const expectedTagName = "WebElement tag";
+      const expectedLocation = { height: 50, width: 2560, x: 0, y: 26.796875 };
+
+      const webElement: WebElement = mockPartial<WebElement>({
+        getTagName: jest.fn(() => {
+          return Promise.resolve(expectedTagName);
+        }),
+        getRect: jest.fn(() => {
+          return Promise.resolve(expectedLocation);
+        }),
+      });
+
+      const expectedElementQueryString = stripIndents`tag: ${expectedTagName}
+                             text: 
+                             rect: ${JSON.stringify(expectedLocation)}`;
+
+      //WHEN
+      const stringifiedElement = await stringifyElement(webElement);
+
+      //THEN
+      expect(stringifiedElement).toBe(expectedElementQueryString);
+    });
+
+    it("should skip getRect if it does not exist on web element", async () => {
+      //GIVEN
+      const expectedWebElementString = "WebElement content";
+      const expectedTagName = "WebElement tag";
+
+      const webElement: WebElement = mockPartial<WebElement>({
+        getTagName: jest.fn(() => {
+          return Promise.resolve(expectedTagName);
+        }),
+        getText: jest.fn(() => {
+          return Promise.resolve(expectedWebElementString);
+        }),
+      });
+
+      const expectedElementQueryString = stripIndents`tag: ${expectedTagName}
+                             text: ${expectedWebElementString}
+                             rect: `;
+
+      //WHEN
+      const stringifiedElement = await stringifyElement(webElement);
+
+      //THEN
+      expect(stringifiedElement).toBe(expectedElementQueryString);
+    });
+  });
 });
