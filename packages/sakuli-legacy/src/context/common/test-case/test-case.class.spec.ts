@@ -325,7 +325,23 @@ describe("TestCase", () => {
 
     describe("startStep", () => {
       it("should start a new test step", () => {
-        fail("not implemented");
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+
+        const testStepName = "testStep1";
+        const warningTime = 5;
+        const criticalTime = 10;
+
+        //WHEN
+        tc.startStep(testStepName, warningTime, criticalTime);
+
+        //THEN
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+          id: testStepName,
+          criticalTime: criticalTime,
+          warningTime: warningTime,
+        });
       });
 
       it("should update the current test step if it has no name (was started with endOfStep)", () => {

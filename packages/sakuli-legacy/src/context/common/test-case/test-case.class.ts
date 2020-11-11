@@ -95,7 +95,13 @@ export function createTestCaseClass(
     /**
      * @inheritDoc
      */
-    startStep(stepName: string, warning: number = 0, critical: number = 0) {}
+    startStep(stepName: string, warning: number = 0, critical: number = 0) {
+      ctx.updateCurrentTestStep({
+        id: stepName,
+        warningTime: warning,
+        criticalTime: critical,
+      });
+    }
 
     /**
      * @inheritDoc
