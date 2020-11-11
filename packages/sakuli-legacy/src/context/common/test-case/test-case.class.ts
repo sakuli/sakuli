@@ -120,9 +120,9 @@ export function createTestCaseClass(
       critical: number = 0,
       forward: boolean = false
     ) {
-      const currentTestStep = ctx.getCurrentTestStep();
+      let currentTestStep = ctx.getCurrentTestStep();
       if (!currentTestStep?.id) {
-        ctx.updateCurrentTestStep({
+        currentTestStep = ctx.updateCurrentTestStep({
           id: stepName,
           warningTime: warning,
           criticalTime: critical,

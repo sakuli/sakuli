@@ -3,7 +3,7 @@ jest.mock("../actions/screen.function");
 jest.mock("../release-keys.function");
 
 import { cwd } from "process";
-import { Project, TestExecutionContext } from "@sakuli/core";
+import { Project, TestExecutionContext, TestStepContext } from "@sakuli/core";
 import { mockPartial } from "sneer";
 import { createTestCaseClass } from "./test-case.class";
 
@@ -44,7 +44,9 @@ describe("TestCase", () => {
       getCurrentTestCase: jest.fn(),
       getCurrentTestStep: jest.fn(),
       updateCurrentTestCase: jest.fn(),
-      updateCurrentTestStep: jest.fn(),
+      updateCurrentTestStep: jest.fn((step) => {
+        return step as TestStepContext & Partial<TestStepContext>;
+      }),
       startExecution: jest.fn(),
       endExecution: jest.fn(),
       getCurrentTestAction: jest.fn(),
@@ -295,6 +297,8 @@ describe("TestCase", () => {
         const testStepName = "testStep1";
         const warningTime = 5;
         const criticalTime = 10;
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({});
 
         // WHEN
         tc.endOfStep(testStepName, warningTime, criticalTime);
