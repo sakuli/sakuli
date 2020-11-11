@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Bugfix: Inconsistent logging behavior on log.level=debug [(#376)](https://github.com/sakuli/sakuli/issues/376)
 - Bugfix: stringToRegExp adds s* instead of \s* [(#468)](https://github.com/sakuli/sakuli/issues/468)
 - Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
+  - This deprecates `testCase.endOfStep`
 
 ## v2.4.0
 
