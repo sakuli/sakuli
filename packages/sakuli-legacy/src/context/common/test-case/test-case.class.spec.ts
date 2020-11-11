@@ -330,12 +330,20 @@ describe("TestCase", () => {
         ).not.toHaveBeenCalled();
       });
 
-      it("should end the previous test step started with startStep if name is undefined", () => {
-        fail("not implemented");
-      });
-
       it("should throw if it tries to end an other step than currently running", () => {
-        fail("not implemented");
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+        const currentTestStep = "a test step";
+        const testStepToEnd = "totally different test step";
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({
+          id: currentTestStep,
+        });
+
+        //WHEN + THEN
+        expect(() => tc.endOfStep(testStepToEnd)).toThrowError(
+          `Inconsistent test steps: Current test step is '${currentTestStep}' but you tried to end '${testStepToEnd}'.`
+        );
       });
     });
 

@@ -131,6 +131,10 @@ export function createTestCaseClass(
       if (currentTestStep?.id === stepName) {
         ctx.endTestStep();
         ctx.startTestStep();
+      } else {
+        throw Error(
+          `Inconsistent test steps: Current test step is '${currentTestStep?.id}' but you tried to end '${stepName}'.`
+        );
       }
     }
 
