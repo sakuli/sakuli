@@ -16,7 +16,7 @@ export interface TestCase {
   addImagePaths(...paths: string[]): void;
 
   /**
-   *
+   * @deprecated
    * Updates the current current test step with the provided parameters and
    * finishes that step.
    *
