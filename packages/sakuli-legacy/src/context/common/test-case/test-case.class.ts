@@ -95,6 +95,11 @@ export function createTestCaseClass(
     /**
      * @inheritDoc
      */
+    startStep(stepName: string, warning: number = 0, critical: number = 0) {}
+
+    /**
+     * @inheritDoc
+     */
     endOfStep(
       stepName: string,
       warning: number = 0,

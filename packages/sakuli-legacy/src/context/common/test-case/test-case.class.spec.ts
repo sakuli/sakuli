@@ -159,7 +159,7 @@ describe("TestCase", () => {
       expect(tc.criticalTime).toBe(0);
     });
 
-    it("should be constructible with a caseId and warningTime", () => {
+    it("should be constructable with a caseId and warningTime", () => {
       // GIVEN
       const testFolder = "testCaseFolder";
       const testCase = createTestCaseClass(
@@ -180,7 +180,7 @@ describe("TestCase", () => {
       expect(tc.criticalTime).toBe(0);
     });
 
-    it("should be constructible with a caseId, warningTime and criticalTime", () => {
+    it("should be constructable with a caseId, warningTime and criticalTime", () => {
       // GIVEN
       const testFolder = "testCaseFolder";
       const testCase = createTestCaseClass(
@@ -202,7 +202,7 @@ describe("TestCase", () => {
       expect(tc.criticalTime).toBe(criticalTime);
     });
 
-    it("should be constructible with a caseId, warningTime, criticalTime and imagePaths", () => {
+    it("should be constructable with a caseId, warningTime, criticalTime and imagePaths", () => {
       // GIVEN
       const testFolder = "testCaseFolder";
       const testCase = createTestCaseClass(
@@ -230,7 +230,7 @@ describe("TestCase", () => {
   });
 
   describe("image path", () => {
-    it("should throw on missing testcasefolder", () => {
+    it("should throw on missing testcase folder", () => {
       // GIVEN
       const BrokenSUT = createTestCaseClass(
         testExecutionContext,
@@ -287,26 +287,54 @@ describe("TestCase", () => {
   });
 
   describe("steps", () => {
-    it("should properly update, stop and start", () => {
-      // GIVEN
-      const tc = new SUT("testId", 0, 0);
+    describe("endOfStep", () => {
+      it("should properly update, stop and start", () => {
+        // GIVEN
+        const tc = new SUT("testId", 0, 0);
 
-      const testStepName = "testStep1";
-      const warningTime = 5;
-      const criticalTime = 10;
+        const testStepName = "testStep1";
+        const warningTime = 5;
+        const criticalTime = 10;
 
-      // WHEN
-      tc.endOfStep(testStepName, warningTime, criticalTime);
+        // WHEN
+        tc.endOfStep(testStepName, warningTime, criticalTime);
 
-      // THEN
-      expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
-      expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
-        id: testStepName,
-        criticalTime: criticalTime,
-        warningTime: warningTime,
+        // THEN
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+          id: testStepName,
+          criticalTime: criticalTime,
+          warningTime: warningTime,
+        });
+        expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
       });
-      expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
-      expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
+
+      it("should end the previous test step started with startStep if names are matching", () => {
+        fail("not implemented");
+      });
+
+      it("should end the previous test step started with startStep if name is undefined", () => {
+        fail("not implemented");
+      });
+
+      it("should throw if it tries to end an other step than currently running", () => {
+        fail("not implemented");
+      });
+    });
+
+    describe("startStep", () => {
+      it("should start a new test step", () => {
+        fail("not implemented");
+      });
+
+      it("should update the current test step if it has no name (was started with endOfStep)", () => {
+        fail("not implemented");
+      });
+
+      it("should end the previous test step if called multiple times", () => {
+        fail("not implemented");
+      });
     });
   });
 
@@ -474,6 +502,7 @@ describe("TestCase", () => {
     it("should release all pressed keys", async () => {
       // GIVEN
       const legacyProps = new LegacyProjectProperties();
+      legacyProps.errorScreenshot = false;
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
