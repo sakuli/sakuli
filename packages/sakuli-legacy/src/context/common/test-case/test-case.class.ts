@@ -120,13 +120,18 @@ export function createTestCaseClass(
       critical: number = 0,
       forward: boolean = false
     ) {
-      ctx.updateCurrentTestStep({
-        id: stepName,
-        warningTime: warning,
-        criticalTime: critical,
-      });
-      ctx.endTestStep();
-      ctx.startTestStep();
+      const currentTestStep = ctx.getCurrentTestStep();
+      if (!currentTestStep?.id) {
+        ctx.updateCurrentTestStep({
+          id: stepName,
+          warningTime: warning,
+          criticalTime: critical,
+        });
+      }
+      if (currentTestStep?.id === stepName) {
+        ctx.endTestStep();
+        ctx.startTestStep();
+      }
     }
 
     /**

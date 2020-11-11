@@ -311,7 +311,23 @@ describe("TestCase", () => {
       });
 
       it("should end the previous test step started with startStep if names are matching", () => {
-        fail("not implemented");
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+        const stepName = "Awesome step";
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({
+          id: stepName,
+        });
+
+        //WHEN
+        tc.endOfStep(stepName);
+
+        //THEN
+        expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
+        expect(
+          testExecutionContext.updateCurrentTestStep
+        ).not.toHaveBeenCalled();
       });
 
       it("should end the previous test step started with startStep if name is undefined", () => {
