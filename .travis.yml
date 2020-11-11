@@ -31,8 +31,7 @@ services:
   - xvfb
 
 env:
-  - MOZ_HEADLESS=1
-  - LOG_MODE='ci'
+  - LOG_MODE='ci' MOZ_HEADLESS=1
 
 before_install:
   - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
