@@ -344,12 +344,29 @@ describe("TestCase", () => {
         });
       });
 
-      it("should update the current test step if it has no name (was started with endOfStep)", () => {
-        fail("not implemented");
-      });
-
       it("should end the previous test step if called multiple times", () => {
-        fail("not implemented");
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({
+          id: "First step",
+        });
+
+        const testStepName = "second test step";
+        const warningTime = 5;
+        const criticalTime = 10;
+
+        //WHEN
+        tc.startStep(testStepName, warningTime, criticalTime);
+
+        //THEN
+        expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
+        expect(testExecutionContext.startTestStep).toHaveBeenNthCalledWith(2, {
+          id: testStepName,
+          criticalTime: criticalTime,
+          warningTime: warningTime,
+        });
       });
     });
   });

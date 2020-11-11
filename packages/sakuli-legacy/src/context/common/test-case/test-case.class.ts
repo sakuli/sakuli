@@ -96,11 +96,19 @@ export function createTestCaseClass(
      * @inheritDoc
      */
     startStep(stepName: string, warning: number = 0, critical: number = 0) {
-      ctx.updateCurrentTestStep({
+      const testStep = {
         id: stepName,
         warningTime: warning,
         criticalTime: critical,
-      });
+      };
+
+      const currentTestStep = ctx.getCurrentTestStep();
+      if (currentTestStep?.id) {
+        ctx.endTestStep();
+        ctx.startTestStep(testStep);
+      } else {
+        ctx.updateCurrentTestStep(testStep);
+      }
     }
 
     /**
