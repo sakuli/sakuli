@@ -51,7 +51,7 @@ jobs:
       os: linux
       dist: bionic
       language: node_js
-      node_js: lts/erbium
+      node_js: lts/fermium
 
       before_install:
         - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
@@ -84,7 +84,7 @@ jobs:
       os: linux
       dist: bionic
       language: node_js
-      node_js: lts/erbium
+      node_js: lts/fermium
 
       install: true
       script:

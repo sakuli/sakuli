@@ -10,7 +10,7 @@ FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/
 npm run test:it
 npm run coverage:merge
 npm run coverage:merge-report
-if [[ $TRAVIS_NODE_VERSION = "lts/erbium" ]]; then
+if [[ $TRAVIS_NODE_VERSION = "lts/fermium" ]]; then
   sonar-scanner
 fi
 npm run test:e2e
