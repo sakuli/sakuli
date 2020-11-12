@@ -1,5 +1,5 @@
 (async () => {
-  const testCase = new TestCase("Fry an egg");
+  const testCase = new TestCase("Fry a typed egg");
   const url = "https://sakuli.io/e2e-pages/fryed-egg";
   const screen = new Region();
   const env = new Environment();
