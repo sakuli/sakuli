@@ -63,12 +63,12 @@ jobs:
         - npm ci && npm run build && lerna run typedoc
       deploy:
         - provider: script
-          skip_cleanup: false
+          skip_cleanup: true
           script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish-next
           on:
             branch: develop
         - provider: script
-          skip_cleanup: false
+          skip_cleanup: true
           script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish
           on:
             tags: true
