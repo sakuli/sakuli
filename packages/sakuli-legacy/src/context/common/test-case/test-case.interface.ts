@@ -29,8 +29,8 @@ export interface TestCase {
    * @deprecated
    * Updates the current current test step with the provided parameters, finishes that step and immediately starts a new test step.
    *
-   * If endOfStep is used in combination with startStep, the provided stepName has to be undefined or must match the current test step name.
-   * Otherwise the inconsistency in test step names will cause an error to be thrown.
+   * If endOfStep is used in combination with startStep, the provided stepName must match the current test step name.
+   * Otherwise and error will be thrown because of the inconsistency in test step names.
    *
    * @param stepName
    * @param warning
