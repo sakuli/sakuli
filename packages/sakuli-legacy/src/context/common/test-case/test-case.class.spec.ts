@@ -314,7 +314,7 @@ describe("TestCase", () => {
         expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
       });
 
-      it("should end the previous test step started with startStep if names are matching", () => {
+      it("should end the previous test step, started with startStep, if names are matching", () => {
         //GIVEN
         const tc = new SUT("testId", 0, 0);
         const stepName = "Awesome step";
@@ -352,7 +352,7 @@ describe("TestCase", () => {
     });
 
     describe("startStep", () => {
-      it("should start a new test step", () => {
+      it("should update current unnamed test steps", () => {
         //GIVEN
         const tc = new SUT("testId", 0, 0);
 
