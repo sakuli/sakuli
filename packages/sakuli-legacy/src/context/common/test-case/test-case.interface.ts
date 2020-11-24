@@ -16,11 +16,21 @@ export interface TestCase {
   addImagePaths(...paths: string[]): void;
 
   /**
+   * Starts a new test step.
+   * startStep can be used to end the current test step and start a new one by calling startStep again.
    *
-   * Updates the current current test step with the provided parameters and
-   * finishes that step.
+   * @param stepName - Name of the test step to start
+   * @param warning - warning threshold of the test step. Exceeding warning threshold changes the state transmitted to monitoring systems.
+   * @param critical - critical threshold of the test step. Exceeding critical threshold changes the state transmitted to monitoring systems.
+   */
+  startStep(stepName: string, warning?: number, critical?: number): void;
+
+  /**
+   * @deprecated
+   * Updates the current current test step with the provided parameters, finishes that step and immediately starts a new test step.
    *
-   * Immediately starts a new TestStep.
+   * If endOfStep is used in combination with startStep, the provided stepName must match the current test step name.
+   * Otherwise and error will be thrown because of the inconsistency in test step names.
    *
    * @param stepName
    * @param warning

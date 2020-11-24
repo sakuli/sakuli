@@ -95,19 +95,47 @@ export function createTestCaseClass(
     /**
      * @inheritDoc
      */
+    startStep(stepName: string, warning: number = 0, critical: number = 0) {
+      const testStep = {
+        id: stepName,
+        warningTime: warning,
+        criticalTime: critical,
+      };
+
+      const currentTestStep = ctx.getCurrentTestStep();
+      if (currentTestStep?.id) {
+        ctx.endTestStep();
+        ctx.startTestStep(testStep);
+      } else {
+        ctx.updateCurrentTestStep(testStep);
+      }
+    }
+
+    /**
+     * @inheritDoc
+     */
     endOfStep(
       stepName: string,
       warning: number = 0,
       critical: number = 0,
       forward: boolean = false
     ) {
-      ctx.updateCurrentTestStep({
-        id: stepName,
-        warningTime: warning,
-        criticalTime: critical,
-      });
-      ctx.endTestStep();
-      ctx.startTestStep();
+      let currentTestStep = ctx.getCurrentTestStep();
+      if (!currentTestStep?.id) {
+        currentTestStep = ctx.updateCurrentTestStep({
+          id: stepName,
+          warningTime: warning,
+          criticalTime: critical,
+        });
+      }
+      if (currentTestStep?.id === stepName) {
+        ctx.endTestStep();
+        ctx.startTestStep();
+      } else {
+        throw Error(
+          `Inconsistent test steps: Current test step is '${currentTestStep?.id}' but you tried to end '${stepName}'.`
+        );
+      }
     }
 
     /**

@@ -24,6 +24,8 @@ All notable changes to this project will be documented in this file.
 - Bugfix: stringToRegExp adds s* instead of \s* [(#468)](https://github.com/sakuli/sakuli/issues/468)
 - Maintenance: fix rollup-plugin-node-resolve dependency [(#311)](https://github.com/sakuli/sakuli/issues/311)
 - Bugfix: WebElement typing differs [(#528)](https://github.com/sakuli/sakuli/issues/528)
+- Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
+  - This deprecates `testCase.endOfStep`
 
 ## v2.4.0
 
