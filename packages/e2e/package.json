@@ -19,8 +19,8 @@
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "scripts": {
-    "test": "sakuli run e2e-suite",
-    "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run e2e-suite"
+    "test": "sakuli run e2e-suite-chrome && sakuli run e2e-suite-firefox",
+    "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run e2e-suite-chrome"
   },
   "dependencies": {
     "@sakuli/cli": "2.4.0",

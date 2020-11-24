@@ -3,7 +3,7 @@ jest.mock("../actions/screen.function");
 jest.mock("../release-keys.function");
 
 import { cwd } from "process";
-import { Project, TestExecutionContext } from "@sakuli/core";
+import { Project, TestExecutionContext, TestStepContext } from "@sakuli/core";
 import { mockPartial } from "sneer";
 import { createTestCaseClass } from "./test-case.class";
 
@@ -44,7 +44,9 @@ describe("TestCase", () => {
       getCurrentTestCase: jest.fn(),
       getCurrentTestStep: jest.fn(),
       updateCurrentTestCase: jest.fn(),
-      updateCurrentTestStep: jest.fn(),
+      updateCurrentTestStep: jest.fn((step) => {
+        return step as TestStepContext & Partial<TestStepContext>;
+      }),
       startExecution: jest.fn(),
       endExecution: jest.fn(),
       getCurrentTestAction: jest.fn(),
@@ -159,7 +161,7 @@ describe("TestCase", () => {
       expect(tc.criticalTime).toBe(0);
     });
 
-    it("should be constructible with a caseId and warningTime", () => {
+    it("should be constructable with a caseId and warningTime", () => {
       // GIVEN
       const testFolder = "testCaseFolder";
       const testCase = createTestCaseClass(
@@ -180,7 +182,7 @@ describe("TestCase", () => {
       expect(tc.criticalTime).toBe(0);
     });
 
-    it("should be constructible with a caseId, warningTime and criticalTime", () => {
+    it("should be constructable with a caseId, warningTime and criticalTime", () => {
       // GIVEN
       const testFolder = "testCaseFolder";
       const testCase = createTestCaseClass(
@@ -202,7 +204,7 @@ describe("TestCase", () => {
       expect(tc.criticalTime).toBe(criticalTime);
     });
 
-    it("should be constructible with a caseId, warningTime, criticalTime and imagePaths", () => {
+    it("should be constructable with a caseId, warningTime, criticalTime and imagePaths", () => {
       // GIVEN
       const testFolder = "testCaseFolder";
       const testCase = createTestCaseClass(
@@ -230,7 +232,7 @@ describe("TestCase", () => {
   });
 
   describe("image path", () => {
-    it("should throw on missing testcasefolder", () => {
+    it("should throw on missing testcase folder", () => {
       // GIVEN
       const BrokenSUT = createTestCaseClass(
         testExecutionContext,
@@ -287,26 +289,113 @@ describe("TestCase", () => {
   });
 
   describe("steps", () => {
-    it("should properly update, stop and start", () => {
-      // GIVEN
-      const tc = new SUT("testId", 0, 0);
+    describe("endOfStep", () => {
+      it("should properly update, stop and start", () => {
+        // GIVEN
+        const tc = new SUT("testId", 0, 0);
 
-      const testStepName = "testStep1";
-      const warningTime = 5;
-      const criticalTime = 10;
+        const testStepName = "testStep1";
+        const warningTime = 5;
+        const criticalTime = 10;
 
-      // WHEN
-      tc.endOfStep(testStepName, warningTime, criticalTime);
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({});
 
-      // THEN
-      expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
-      expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
-        id: testStepName,
-        criticalTime: criticalTime,
-        warningTime: warningTime,
+        // WHEN
+        tc.endOfStep(testStepName, warningTime, criticalTime);
+
+        // THEN
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+          id: testStepName,
+          criticalTime: criticalTime,
+          warningTime: warningTime,
+        });
+        expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
       });
-      expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
-      expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
+
+      it("should end the previous test step, started with startStep, if names are matching", () => {
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+        const stepName = "Awesome step";
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({
+          id: stepName,
+        });
+
+        //WHEN
+        tc.endOfStep(stepName);
+
+        //THEN
+        expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
+        expect(
+          testExecutionContext.updateCurrentTestStep
+        ).not.toHaveBeenCalled();
+      });
+
+      it("should throw if it tries to end an other step than currently running", () => {
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+        const currentTestStep = "a test step";
+        const testStepToEnd = "totally different test step";
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({
+          id: currentTestStep,
+        });
+
+        //WHEN + THEN
+        expect(() => tc.endOfStep(testStepToEnd)).toThrowError(
+          `Inconsistent test steps: Current test step is '${currentTestStep}' but you tried to end '${testStepToEnd}'.`
+        );
+      });
+    });
+
+    describe("startStep", () => {
+      it("should update current unnamed test steps", () => {
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+
+        const testStepName = "testStep1";
+        const warningTime = 5;
+        const criticalTime = 10;
+
+        //WHEN
+        tc.startStep(testStepName, warningTime, criticalTime);
+
+        //THEN
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+          id: testStepName,
+          criticalTime: criticalTime,
+          warningTime: warningTime,
+        });
+      });
+
+      it("should end the previous test step if called multiple times", () => {
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+
+        testExecutionContext.getCurrentTestStep = jest.fn().mockReturnValue({
+          id: "First step",
+        });
+
+        const testStepName = "second test step";
+        const warningTime = 5;
+        const criticalTime = 10;
+
+        //WHEN
+        tc.startStep(testStepName, warningTime, criticalTime);
+
+        //THEN
+        expect(testExecutionContext.endTestStep).toBeCalledTimes(1);
+        expect(testExecutionContext.startTestStep).toBeCalledTimes(2);
+        expect(testExecutionContext.startTestStep).toHaveBeenNthCalledWith(2, {
+          id: testStepName,
+          criticalTime: criticalTime,
+          warningTime: warningTime,
+        });
+      });
     });
   });
 
@@ -474,6 +563,7 @@ describe("TestCase", () => {
     it("should release all pressed keys", async () => {
       // GIVEN
       const legacyProps = new LegacyProjectProperties();
+      legacyProps.errorScreenshot = false;
       project = mockPartial<Project>({
         objectFactory: jest.fn().mockReturnValue(legacyProps),
       });
