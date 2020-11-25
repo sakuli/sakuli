@@ -27,26 +27,26 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/common-tags": "1.4.0",
+    "@types/common-tags": "1.8.0",
     "@types/jest": "25.1.5",
-    "@types/mock-fs": "4.10.0",
+    "@types/mock-fs": "4.13.0",
     "@types/node": "12.12.34",
     "@types/properties-reader": "0.0.1",
-    "@types/yargs": "15.0.4",
+    "@types/yargs": "15.0.10",
     "jest": "25.2.7",
     "mock-fs": "4.13.0",
     "sneer": "1.0.1",
     "ts-jest": "25.3.1",
-    "typedoc": "0.17.4",
+    "typedoc": "0.19.2",
     "typescript": "3.8.3"
   },
   "dependencies": {
     "@sakuli/commons": "2.4.0",
-    "class-validator": "0.9.1",
+    "class-validator": "0.12.2",
     "common-tags": "1.8.0",
     "date-fns": "1.29.0",
-    "execa": "^4.0.0",
+    "execa": "4.1.0",
     "properties-reader": "0.0.16",
-    "reflect-metadata": "0.1.12"
+    "reflect-metadata": "0.1.13"
   }
 }

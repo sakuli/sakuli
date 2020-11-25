@@ -35,10 +35,10 @@
     "@sakuli/commons": "2.4.0",
     "@sakuli/legacy": "2.4.0",
     "@types/node": "12.12.34",
-    "dts-dom": "3.3.0",
+    "dts-dom": "3.6.0",
     "flatted": "2.0.0",
     "ts-node": "8.8.2",
-    "typedoc": "0.17.4",
+    "typedoc": "0.19.2",
     "typescript": "3.8.3"
   },
   "peerDependencies": {

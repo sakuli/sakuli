@@ -34,11 +34,11 @@
     "jest": "25.2.7",
     "sneer": "1.0.1",
     "ts-jest": "25.3.0",
-    "typedoc": "0.17.4",
+    "typedoc": "0.19.2",
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@types/yargs": "15.0.4",
+    "@types/yargs": "15.0.10",
     "common-tags": "1.8.0",
     "properties-reader": "0.0.16",
     "reflect-metadata": "0.1.13",
