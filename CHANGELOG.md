@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Maintenance: update main build to node 14 [(#519)](https://github.com/sakuli/sakuli/issues/519)
 - Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
   - This deprecates `testCase.endOfStep`
+- Maintenance: Update minor dependency versions [(#525)](https://github.com/sakuli/sakuli/issues/525)
 
 ## v2.4.0
 
