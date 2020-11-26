@@ -6,12 +6,17 @@ import { tmpdir } from "os";
 import { join, sep } from "path";
 import { JavaPropertiesFileSource } from "@sakuli/commons";
 
-jest.mock("@sakuli/commons", () => ({
-  ...jest.requireActual("@sakuli/commons"),
-  JavaPropertiesFileSource: jest.fn(() => ({
-    createPropertyMap: jest.fn(),
-  })),
-}));
+jest.mock("@sakuli/commons", () => {
+  const originalModule = jest.requireActual("@sakuli/commons");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    JavaPropertiesFileSource: jest.fn(() => ({
+      createPropertyMap: jest.fn(),
+    })),
+  };
+});
 
 describe("LegacyLoader", () => {
   let tmpDir: string = "";
@@ -89,7 +94,6 @@ describe("LegacyLoader", () => {
 
   it("should throw with missing testsuite.properties", async (done) => {
     let loader: LegacyLoader;
-    let project: Project;
     tmpDir = await fs.mkdtemp(`${tmpdir()}${sep}`);
 
     await fs.mkdir(join(tmpDir, "path/to/testsuites/suite/case1"), {
@@ -120,9 +124,7 @@ describe("LegacyLoader", () => {
 
     try {
       loader = new LegacyLoader();
-      project = await loader.load(
-        new Project(join(tmpDir, "path/to/testsuites/suite"))
-      );
+      await loader.load(new Project(join(tmpDir, "path/to/testsuites/suite")));
       done.fail();
     } catch (e) {
       expect(e.message).toContain("testsuite.properties");

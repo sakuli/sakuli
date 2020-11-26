@@ -10,7 +10,7 @@ export function waitForConnection(
   timeout: number = 15_000
 ) {
   return async () => {
-    return new Promise((res, rej) => {
+    return new Promise<void>((res, rej) => {
       const timeoutId = setTimeout(() => {
         clearInterval(interval);
         rej(

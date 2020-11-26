@@ -12,7 +12,7 @@ export const createFileLogConsumer = (
   options: FileLogConsumerOptions
 ): LogConsumerAdapter => {
   const fileStream = createWriteStream(options.path, {
-    encoding: "UTF-8",
+    encoding: "utf-8",
     flags: "a+",
   });
   return (logger: SimpleLogger, stringifier = defaultStringifier) => {
