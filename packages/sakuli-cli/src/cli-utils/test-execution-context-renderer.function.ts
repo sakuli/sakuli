@@ -1,7 +1,9 @@
 import {
+  SakuliCoreProperties,
   TestContextEntity,
   TestContextEntityState,
   TestExecutionContext,
+  LogMode,
 } from "@sakuli/core";
 import { ifPresent, Maybe } from "@sakuli/commons";
 import chalk from "chalk";
@@ -94,16 +96,23 @@ export const entityOnStartLogMessage = (e: TestContextEntity, name: string) => {
   return `Started ${name} ${ensureName(e.id)}`;
 };
 
-export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
+export const testExecutionContextRenderer = (
+  ctx: TestExecutionContext,
+  properties: SakuliCoreProperties
+) =>
   new Promise((res) => {
-    const l = console.log.bind(console);
+    function logToConsole(message: string) {
+      if (properties.getLogMode() === LogMode.LOG_FILE) {
+        console.log(message);
+      }
+    }
 
     const logEntityOnStart = (
       s: TestContextEntity,
       name: string,
       indent: number = 0
     ) => {
-      l(renderEntityOnStart(s, name, indent));
+      logToConsole(renderEntityOnStart(s, name, indent));
       ctx.logger.info(entityOnStartLogMessage(s, name));
     };
     const logEntityOnEnd = (
@@ -111,13 +120,13 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
       name: string,
       indent: number = 0
     ) => {
-      l(renderEntityOnEnd(s, name, indent));
+      logToConsole(renderEntityOnEnd(s, name, indent));
       ctx.logger.info(entityOnEndLogMessage(s, name));
     };
 
     ctx
       .on("START_EXECUTION", (_) => {
-        l(`Started execution`);
+        logToConsole(`Started execution`);
       })
       .on("START_TESTSUITE", (s) => {
         logEntityOnStart(s, "Testsuite");
@@ -135,7 +144,7 @@ export const testExecutionContextRenderer = (ctx: TestExecutionContext) =>
         logEntityOnEnd(s, "Testsuite");
       })
       .on("END_EXECUTION", (_) => {
-        l(`End execution`);
+        logToConsole(`End execution`);
         res();
       });
   });

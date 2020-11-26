@@ -36,17 +36,17 @@
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "devDependencies": {
-    "@schemastore/package": "0.0.5",
+    "@schemastore/package": "0.0.6",
     "@types/common-tags": "1.8.0",
     "@types/jest": "25.2.1",
-    "@types/mock-fs": "3.6.30",
+    "@types/mock-fs": "4.13.0",
     "@types/node": "12.12.34",
     "@types/rollup": "0.54.0",
     "jest": "25.2.7",
-    "mock-fs": "4.8.0",
+    "mock-fs": "4.13.0",
     "sneer": "1.0.1",
     "ts-jest": "25.3.1",
-    "typedoc": "0.17.4",
+    "typedoc": "0.19.2",
     "typescript": "3.8.3"
   },
   "dependencies": {
@@ -57,7 +57,7 @@
     "execa": "2.0.4",
     "ora": "3.4.0",
     "rollup": "1.10.0",
-    "rollup-plugin-node-resolve": "4.2.3",
-    "rollup-plugin-typescript2": "0.20.1"
+    "@rollup/plugin-node-resolve": "10.0.0",
+    "rollup-plugin-typescript2": "0.29.0"
   }
 }

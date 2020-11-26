@@ -1,3 +1,6 @@
+jest.mock("./common/button-registry");
+jest.mock("./common/release-keys.function");
+
 import { LegacyLifecycleHooks } from "./legacy-lifecycle-hooks.class";
 import {
   Builder,
@@ -8,11 +11,22 @@ import {
 } from "selenium-webdriver";
 import { mockPartial } from "sneer";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
-import { Project, TestExecutionContext } from "@sakuli/core";
-import { TestFile } from "@sakuli/core/dist/loader/model/test-file.interface";
-import { createPropertyMapMock } from "@sakuli/commons/dist/properties/__mocks__";
-import { createTestExecutionContextMock } from "./__mocks__";
+import {
+  nodeSignals,
+  Project,
+  TestExecutionContext,
+  TestFile,
+} from "@sakuli/core";
+import {
+  createPropertyMapMock,
+  createTestExecutionContextMock,
+} from "./__mocks__";
+import { releaseKeys } from "./common/release-keys.function";
+import { Key, MouseButton } from "./common";
+import { getActiveKeys } from "./common/button-registry";
+import mockFs from "mock-fs";
 import Mock = jest.Mock;
+import Signals = NodeJS.Signals;
 
 describe("LegacyLifecycleHooks", () => {
   let builder: Builder;
@@ -24,6 +38,8 @@ describe("LegacyLifecycleHooks", () => {
   let testExecutionContext: TestExecutionContext;
   let legacyProps: LegacyProjectProperties;
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     window = mockPartial<Window>({
       maximize: jest.fn(),
     });
@@ -63,7 +79,7 @@ describe("LegacyLifecycleHooks", () => {
 
   describe("Sahi Api", () => {
     it("should init webdriver with builder", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       expect(builder.forBrowser).toHaveBeenCalledWith("chrome");
       await expect(builder.withCapabilities).toHaveBeenCalledWith(
         Capabilities.chrome()
@@ -71,12 +87,12 @@ describe("LegacyLifecycleHooks", () => {
     });
 
     it("should maximize browser after init", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       expect(window.maximize).toHaveBeenCalled();
     });
 
     it("should publish sahi function into context", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       lcp.currentTest = "/some/where/over/the/rainbow";
       const context = await lcp.requestContext(
         testExecutionContext,
@@ -86,7 +102,7 @@ describe("LegacyLifecycleHooks", () => {
     });
 
     it("should quit the webdriver in teardown", async () => {
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       await expect(lcp.driver).toBeDefined();
       jest.spyOn(lcp.driver!, "quit");
       await lcp.afterExecution(minimumProject, testExecutionContext);
@@ -98,7 +114,7 @@ describe("LegacyLifecycleHooks", () => {
 
     it("should log in case the webdriver in teardown errored", async () => {
       //GIVEN
-      await lcp.onProject(minimumProject);
+      await lcp.onProject(minimumProject, testExecutionContext);
       await expect(lcp.driver).toBeDefined();
       const expectedError = Error("Oh no! Quit did some fuxi wuxi =/");
       lcp.driver!.quit = jest.fn().mockRejectedValue(expectedError);
@@ -208,14 +224,14 @@ describe("LegacyLifecycleHooks", () => {
       ...createPropertyMapMock({}),
     });
     it("should prepare context for UI-Only test", async () => {
-      await lcp.onProject(uiOnlyProject);
+      await lcp.onProject(uiOnlyProject, testExecutionContext);
       expect(lcp.uiOnly).toBeTruthy();
       expect(builder.build).toHaveBeenCalledTimes(0);
       expect(lcp.driver).toBeNull();
     });
 
     it("should create a context without sahi api", async () => {
-      await lcp.onProject(uiOnlyProject);
+      await lcp.onProject(uiOnlyProject, testExecutionContext);
       lcp.currentTest = "";
       const context = await lcp.requestContext(
         testExecutionContext,
@@ -225,6 +241,140 @@ describe("LegacyLifecycleHooks", () => {
       expect(() => {
         context._navigateTo("");
       }).toThrowError(/_navigateTo/);
+    });
+  });
+
+  describe("signals", () => {
+    it.each(["SIGINT", "SIGTERM"] as Signals[])(
+      "should release pressed keys on %s",
+      (signal) => {
+        //GIVEN
+        const expectedButtonRegistry = {
+          keyboard: [Key.ALT, Key.SHIFT],
+          mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+        };
+        (getActiveKeys as jest.Mock).mockImplementation(
+          () => expectedButtonRegistry
+        );
+
+        //WHEN
+        lcp.onSignal(signal, minimumProject, testExecutionContext);
+
+        //THEN
+        expect(releaseKeys).toBeCalledWith(
+          expectedButtonRegistry,
+          expect.anything(),
+          expect.anything()
+        );
+      }
+    );
+
+    it.each(
+      nodeSignals.filter(
+        (signal) => signal !== "SIGINT" && signal !== "SIGTERM"
+      )
+    )("should not release pressed keys on %s", (signal) => {
+      //GIVEN
+      const expectedButtonRegistry = {
+        keyboard: [Key.ALT, Key.SHIFT],
+        mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+      };
+      (getActiveKeys as jest.Mock).mockImplementation(
+        () => expectedButtonRegistry
+      );
+
+      //WHEN
+      lcp.onSignal(signal, minimumProject, testExecutionContext);
+
+      //THEN
+      expect(releaseKeys).not.toBeCalled();
+    });
+  });
+
+  it("should release pressed keys on onUnhandledError", () => {
+    //GIVEN
+    const expectedButtonRegistry = {
+      keyboard: [Key.ALT, Key.SHIFT],
+      mouse: [MouseButton.RIGHT, MouseButton.LEFT],
+    };
+    (getActiveKeys as jest.Mock).mockImplementation(
+      () => expectedButtonRegistry
+    );
+
+    //WHEN
+    lcp.onUnhandledError(Error("foo"), minimumProject, testExecutionContext);
+
+    //THEN
+    expect(releaseKeys).toBeCalledWith(
+      expectedButtonRegistry,
+      expect.anything(),
+      expect.anything()
+    );
+  });
+
+  describe("browser reuse is deactivated", () => {
+    let browserReuseProps = new LegacyProjectProperties();
+    browserReuseProps.reuseBrowser = false;
+    let browserReuseProject = mockPartial<Project>({
+      rootDir: "",
+      testFiles: [],
+      objectFactory: jest.fn().mockReturnValue(browserReuseProps),
+      ...createPropertyMapMock({}),
+    });
+    const file: TestFile = {
+      path: "my-suite/my-case/case1.js",
+    };
+    mockFs({
+      "my-suite/my-case": {
+        "case1.js": {},
+      },
+    });
+
+    afterAll(() => {
+      mockFs.restore();
+    });
+
+    it("should not build webdriver onProject", async () => {
+      // WHEN
+      await lcp.onProject(browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(builder.build).not.toHaveBeenCalled();
+      expect(lcp.driver).toBeNull();
+    });
+
+    it("should build webdriver beforeRunFile", async () => {
+      // GIVEN
+      await lcp.onProject(browserReuseProject, testExecutionContext);
+
+      // WHEN
+      await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(builder.build).toHaveBeenCalledTimes(1);
+    });
+
+    it("should quit webdriver afterRunFile", async () => {
+      // GIVEN
+      await lcp.onProject(browserReuseProject, testExecutionContext);
+      await lcp.beforeRunFile(file, browserReuseProject, testExecutionContext);
+
+      // WHEN
+      await lcp.afterRunFile(file, browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(driver.quit).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not quit webdriver afterExecution", async () => {
+      // GIVEN
+      await lcp.onProject(browserReuseProject, testExecutionContext);
+
+      // WHEN
+      await lcp.afterExecution(browserReuseProject, testExecutionContext);
+
+      // THEN
+      expect(driver.quit).not.toHaveBeenCalled();
     });
   });
 });

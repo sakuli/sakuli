@@ -3,12 +3,17 @@ set -e
 
 echo $PWD
 
+export FIREFOX_WD_URL=http://localhost:4444/wd/hub
+export CHROME_WD_URL=http://localhost:4445/wd/hub
+
 npm ci
 npm run build
-FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm test -- --runInBand --ci --bail
-if [[ $TRAVIS_NODE_VERSION = "lts/erbium" ]]; then
+npm run coverage:clean
+npm test -- --runInBand --ci --bail
+npm run test:it
+npm run coverage:merge
+npm run coverage:merge-report
+if [[ $TRAVIS_NODE_VERSION = "lts/fermium" ]]; then
   sonar-scanner
 fi
-npm run test:it
 npm run test:e2e
-lerna run typedoc

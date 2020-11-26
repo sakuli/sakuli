@@ -19,15 +19,15 @@
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "scripts": {
-    "test": "sakuli run e2e-suite",
-    "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run e2e-suite"
+    "test": "sakuli run e2e-suite-chrome && sakuli run e2e-suite-firefox",
+    "test:debug": "node --inspect node_modules/@sakuli/cli/dist/index run e2e-suite-chrome"
   },
   "dependencies": {
     "@sakuli/cli": "2.4.0",
     "@sakuli/legacy": "2.4.0",
     "@sakuli/legacy-types": "2.4.0",
-    "chromedriver": "84.0.1",
-    "geckodriver": "1.20.0",
+    "chromedriver": "87.0.0",
+    "geckodriver": "1.21.0",
     "typescript": "3.8.3"
   },
   "sakuli": {

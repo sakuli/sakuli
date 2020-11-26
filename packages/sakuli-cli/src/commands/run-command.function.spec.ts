@@ -1,4 +1,9 @@
-import { Project, SakuliInstance, SakuliPresetProvider } from "@sakuli/core";
+import {
+  Project,
+  SakuliCoreProperties,
+  SakuliInstance,
+  SakuliPresetProvider,
+} from "@sakuli/core";
 import { mockPartial, mockRecursivePartial } from "sneer";
 import { runCommand } from "./run-command.function";
 import { Argv, CommandModule } from "yargs";
@@ -9,6 +14,7 @@ import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 import { renderError } from "./run-command/render-error.function";
+import { LogMode } from "@sakuli/core";
 
 jest.mock("../cli-utils/test-execution-context-renderer.function", () => ({
   testExecutionContextRenderer: jest.fn(),
@@ -34,6 +40,7 @@ describe("runCommand", () => {
   let logLevelMock: jest.Mock;
   let preset: SakuliPresetProvider;
   beforeEach(() => {
+    jest.resetAllMocks();
     argv = mockPartial<Argv>({
       positional: jest.fn().mockImplementation(() => argv),
       demandOption: jest.fn().mockImplementation(() => argv),
@@ -78,14 +85,16 @@ describe("runCommand", () => {
   describe("handler", () => {
     const runOptions = Symbol("run-options-placeholder");
     let processExitMock: jest.Mock;
+    const properties = mockPartial<SakuliCoreProperties>({
+      sakuliLogFolder: "sakuli/log/folder",
+      logMode: LogMode.LOG_FILE,
+    });
     beforeEach(async () => {
       processExitMock = jest
         .spyOn(process, "exit")
         .mockImplementation((() => {}) as any) as any;
       jest.spyOn(commons, "ensurePath").mockImplementation(async () => {});
-      (<jest.Mock>project.objectFactory).mockReturnValue({
-        sakuliLogFolder: "sakuli/log/folder",
-      });
+      (<jest.Mock>project.objectFactory).mockReturnValue(properties);
     });
 
     afterEach(() => {
@@ -95,7 +104,8 @@ describe("runCommand", () => {
     it("should init renderer with sakuli context", async () => {
       await command.handler(runOptions);
       expect(testExecutionContextRenderer).toHaveBeenCalledWith(
-        sakuli.testExecutionContext
+        sakuli.testExecutionContext,
+        properties
       );
     });
 
@@ -138,13 +148,21 @@ describe("runCommand", () => {
     });
 
     it("should initialize a logConsumer", async () => {
-      await command.handler(runOptions);
-      (<jest.Mock>project.objectFactory).mockReturnValue({
+      //GIVEN
+      const sakuliCoreProperties = mockPartial<SakuliCoreProperties>({
         sakuliLogFolder: "sakuli/log/folder",
       });
+      (<jest.Mock<SakuliCoreProperties>>project.objectFactory).mockReturnValue(
+        sakuliCoreProperties
+      );
+
+      //WHEN
+      await command.handler(runOptions);
+
+      //THEN
       expect(createLogConsumer).toHaveBeenCalledWith(
         sakuli.testExecutionContext.logger,
-        "sakuli/log/folder/sakuli.log"
+        sakuliCoreProperties
       );
     });
 
@@ -165,9 +183,8 @@ describe("runCommand", () => {
 
     it("should exit the process with sakulis resultState", async () => {
       await command.handler(runOptions);
-      expect(process.exit).toHaveBeenCalledWith(
-        sakuli.testExecutionContext.resultState
-      );
+      expect(process.exit).not.toHaveBeenCalled();
+      expect(process.exitCode).toBe(sakuli.testExecutionContext.resultState);
     });
 
     it("should exit with 1 when an error occurs during execution", async () => {
@@ -177,7 +194,8 @@ describe("runCommand", () => {
       });
       await command.handler(runOptions);
       expect(renderError).toHaveBeenCalledWith(dummyError);
-      expect(process.exit).toHaveBeenLastCalledWith(1);
+      expect(process.exit).not.toHaveBeenCalled();
+      expect(process.exitCode).toBe(1);
     });
   });
 });

@@ -60,7 +60,9 @@ export const connectForwarderToTestExecutionContext = async (
         await forwarding;
       } catch (e) {
         ctx.logger.error(
-          `There were errors during forwarding: ${JSON.stringify(e)}`
+          `There were errors during forwarding: ${JSON.stringify(
+            e.message || e
+          )}`
         );
       }
     }

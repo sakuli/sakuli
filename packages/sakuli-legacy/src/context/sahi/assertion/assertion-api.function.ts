@@ -3,6 +3,7 @@ import { AssertionApi } from "./assertion-api.interface";
 import { TestExecutionContext } from "@sakuli/core";
 import { FetchApi } from "../fetch";
 import { deepStrictEqual, notDeepStrictEqual } from "assert";
+import { stringifyElement } from "../sahi-element-utils";
 
 export function assertionApi(
   testExecutionContext: TestExecutionContext,
@@ -44,6 +45,11 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The following element does not contain the expected text "${expected}":\n\n${await stringifyElement(
+        element
+      )}`;
+    }
     return _assert(fetchApi._containsText(element, expected), message);
   }
 
@@ -52,6 +58,11 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The following element contains the prohibited text "${expected}":\n\n${await stringifyElement(
+        element
+      )}`;
+    }
     return _assertFalse(fetchApi._containsText(element, expected), message);
   }
 
@@ -83,6 +94,11 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The given element does not exist:\n\n${await stringifyElement(
+        element
+      )}`;
+    }
     return _assert(fetchApi._exists(element), message);
   }
 
@@ -90,14 +106,25 @@ export function assertionApi(
     element: SahiElementQueryOrWebElement,
     message?: string
   ): Promise<void> {
+    if (!message) {
+      message = `The given element exists:\n\n${await stringifyElement(
+        element
+      )}`;
+    }
     return _assertFalse(fetchApi._exists(element), message);
   }
 
   async function _assertNotNull(value: any, message?: string): Promise<void> {
+    if (!message) {
+      message = `Given value is null`;
+    }
     return _assertNotEqual(value, null, message);
   }
 
   async function _assertNull(value: any, message?: string): Promise<void> {
+    if (!message) {
+      message = `${JSON.stringify(value)} does not equal null`;
+    }
     return _assertEqual(value, null, message);
   }
 

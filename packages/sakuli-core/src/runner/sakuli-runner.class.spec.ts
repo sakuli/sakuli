@@ -7,10 +7,13 @@ import { tmpdir } from "os";
 import { join, sep } from "path";
 import { promises as fs } from "fs";
 import Mocked = jest.Mocked;
+import { nodeSignals } from "../node-signals";
+import Signals = NodeJS.Signals;
 import { SimpleLogger } from "@sakuli/commons";
 
 describe("SakuliRunner", () => {
   let tempDir: string;
+  process.setMaxListeners(999);
   beforeEach(async () => (tempDir = await fs.mkdtemp(`${tmpdir()}${sep}`)));
   afterEach(async () => fs.unlink(tempDir).catch(() => {}));
 
@@ -23,6 +26,8 @@ describe("SakuliRunner", () => {
     afterRunFile: jest.fn(),
     beforeRunFile: jest.fn(),
     beforeExecution: jest.fn(),
+    onUnhandledError: jest.fn(),
+    onSignal: jest.fn(),
   });
 
   const createScriptExecutorMock = (): Mocked<TestScriptExecutor> =>
@@ -45,6 +50,7 @@ describe("SakuliRunner", () => {
     logger: mockPartial<SimpleLogger>({
       trace: jest.fn(),
       warn: jest.fn(),
+      info: jest.fn(),
     }),
   });
 
@@ -81,7 +87,10 @@ describe("SakuliRunner", () => {
   });
 
   it("should tearUp all providers for each test", async (done) => {
+    //WHEN
     await sakuliRunner.execute(projectWithThreeTestFiles);
+
+    //THEN
     expect(lifecycleHooks1.onProject).toHaveBeenCalledTimes(1);
     expect(lifecycleHooks1.onProject).toHaveBeenCalledWith(
       projectWithThreeTestFiles,
@@ -90,6 +99,18 @@ describe("SakuliRunner", () => {
 
     expect(lifecycleHooks2.onProject).toHaveBeenCalledTimes(1);
     expect(lifecycleHooks2.onProject).toHaveBeenCalledWith(
+      projectWithThreeTestFiles,
+      testExecutionContext
+    );
+
+    expect(lifecycleHooks1.beforeExecution).toHaveBeenCalledTimes(1);
+    expect(lifecycleHooks1.beforeExecution).toHaveBeenCalledWith(
+      projectWithThreeTestFiles,
+      testExecutionContext
+    );
+
+    expect(lifecycleHooks2.beforeExecution).toHaveBeenCalledTimes(1);
+    expect(lifecycleHooks2.beforeExecution).toHaveBeenCalledWith(
       projectWithThreeTestFiles,
       testExecutionContext
     );
@@ -209,9 +230,11 @@ describe("SakuliRunner", () => {
     //GIVEN
     const expectedError = Error("Whoopsi");
 
-    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
-      process.emit("unhandledRejection", expectedError, Promise.resolve());
-    });
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("unhandledRejection", expectedError, Promise.resolve());
+      }
+    );
 
     const project = mockPartial<Project>({
       rootDir: join(tempDir, "somedir"),
@@ -229,9 +252,11 @@ describe("SakuliRunner", () => {
     //GIVEN
     const expectedError = Error("Well yes, but actually no");
 
-    (testExecutionContext.endExecution as jest.Mock).mockImplementation(() => {
-      process.emit("uncaughtException", expectedError);
-    });
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("uncaughtException", expectedError);
+      }
+    );
 
     const project = mockPartial<Project>({
       rootDir: join(tempDir, "somedir"),
@@ -243,5 +268,153 @@ describe("SakuliRunner", () => {
 
     //THEN
     expect(testExecutionContext.error).toEqual(expectedError);
+  });
+
+  it("should call onUnhandledError on lifecycle hooks for unhandledRejection", async () => {
+    //GIVEN
+    const expectedError = Error("Whoopsi");
+
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("unhandledRejection", expectedError, Promise.resolve());
+      }
+    );
+
+    const project = mockPartial<Project>({
+      rootDir: join(tempDir, "somedir"),
+      testFiles: [],
+    });
+
+    //WHEN
+    await sakuliRunner.execute(project);
+
+    //THEN
+    [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
+      expect(hook.onUnhandledError).toBeCalledWith(
+        expectedError,
+        project,
+        testExecutionContext
+      );
+    });
+  });
+
+  it("should call onUnhandledError on lifecycle hooks for uncaughtException", async () => {
+    //GIVEN
+    const expectedError = Error("Well yes, but actually no");
+
+    (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+      () => {
+        process.emit("uncaughtException", expectedError);
+      }
+    );
+
+    const project = mockPartial<Project>({
+      rootDir: join(tempDir, "somedir"),
+      testFiles: [],
+    });
+
+    //WHEN
+    await sakuliRunner.execute(project);
+
+    //THEN
+    [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
+      expect(hook.onUnhandledError).toBeCalledWith(
+        expectedError,
+        project,
+        testExecutionContext
+      );
+    });
+  });
+
+  describe("signals", () => {
+    let exitSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
+        return undefined as never;
+      });
+    });
+
+    afterEach(() => {
+      exitSpy.mockRestore();
+    });
+
+    it.each(nodeSignals)(
+      "should forward %s to life cycle hooks",
+      async (signal) => {
+        //GIVEN
+        (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+          () => {
+            process.emit(signal, signal);
+          }
+        );
+
+        const project = mockPartial<Project>({
+          rootDir: join(tempDir, "somedir"),
+          testFiles: [],
+        });
+
+        //WHEN
+        await sakuliRunner.execute(project);
+
+        //THEN
+        [lifecycleHooks1, lifecycleHooks2].forEach((hook) => {
+          expect(hook.onSignal).toBeCalledWith(
+            signal,
+            project,
+            testExecutionContext
+          );
+        });
+      }
+    );
+
+    it.each(["SIGINT", "SIGTERM"] as Signals[])(
+      "should abort execution on %s",
+      async (signal) => {
+        //GIVEN
+        (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+          () => {
+            process.emit(signal, signal);
+          }
+        );
+
+        const project = mockPartial<Project>({
+          rootDir: join(tempDir, "somedir"),
+          testFiles: [],
+        });
+        const expectedExitCode = 130;
+
+        //WHEN
+        await sakuliRunner.execute(project);
+
+        //THEN
+        expect(exitSpy).toBeCalledWith(expectedExitCode);
+        expect(testExecutionContext.logger.info).toBeCalled();
+      }
+    );
+
+    it.each(
+      nodeSignals.filter(
+        (signal) => signal !== "SIGINT" && signal !== "SIGTERM"
+      )
+    )("should not abort execution on %s", async (signal) => {
+      //GIVEN
+      (testExecutionContext.startExecution as jest.Mock).mockImplementation(
+        () => {
+          process.emit(signal, signal);
+        }
+      );
+
+      const project = mockPartial<Project>({
+        rootDir: join(tempDir, "somedir"),
+        testFiles: [],
+      });
+
+      //WHEN
+      await sakuliRunner.execute(project);
+
+      //THEN
+      expect(exitSpy).not.toBeCalled();
+    });
   });
 });

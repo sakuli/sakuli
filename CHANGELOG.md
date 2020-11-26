@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## Upcoming Release
+
+- Enhancement: Improve error messages of assertion API [(507)](https://github.com/sakuli/sakuli/issues/507)
+- Enhancement: Log "image located at" message on debug level [(#514)](https://github.com/sakuli/sakuli/issues/514)
+- Epic: Redirect log information to stdout in CI/CD setup [(#402)](https://github.com/sakuli/sakuli/issues/402)
+  - Enhancement: create log files even if log.mode is ci [(#508)](https://github.com/sakuli/sakuli/issues/508)
+  - Enhancement: consume optional property to redirect log output to stdout as environment variable [(#495)](https://github.com/sakuli/sakuli/issues/495)
+  - Enhancement: Disable cli output by property [(#493)](https://github.com/sakuli/sakuli/issues/493)
+    - On the fly bugfix: Do not write to stream in `createClosableWriteStreamConsumer`, when stream has already been closed.
+  - Enhancement: create logging consumer for stdout [(#494)](https://github.com/sakuli/sakuli/issues/494)
+  - Enhancement: add std output mode property [(#502)](https://github.com/sakuli/sakuli/issues/502)
+- Enhancement: npx sakuli decrypt [(#433)](https://github.com/sakuli/sakuli/issues/433)
+- Enhancement: Added MultipleElementApi documentation [(#413)](https://github.com/sakuli/sakuli/issues/413)
+- Enhancement: Control if Sakuli should create new browser sessions within Testsuite [(#260)](https://github.com/sakuli/sakuli/issues/260)
+- Bugfix: Cryptic error message in case the image is too large [(#326)](https://github.com/sakuli/sakuli/issues/326)
+- Enhancement: Release buttons on errors[(#379)](https://github.com/sakuli/sakuli/issues/379)
+- Bugfix: Sakuli dies on executing empty test script [(#407)](https://github.com/sakuli/sakuli/issues/407)
+- Bugfix: Throw exception if a TestCase is not initialized correctly [(#466)](https://github.com/sakuli/sakuli/issues/466)
+- Bugfix: Inconsistent logging behavior on log.level=debug [(#376)](https://github.com/sakuli/sakuli/issues/376)
+- Bugfix: stringToRegExp adds s* instead of \s* [(#468)](https://github.com/sakuli/sakuli/issues/468)
+- Maintenance: fix rollup-plugin-node-resolve dependency [(#311)](https://github.com/sakuli/sakuli/issues/311)
+- Bugfix: WebElement typing differs [(#528)](https://github.com/sakuli/sakuli/issues/528)
+- Maintenance: update main build to node 14 [(#519)](https://github.com/sakuli/sakuli/issues/519)
+- Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
+  - This deprecates `testCase.endOfStep`
+- Maintenance: Update minor dependency versions [(#525)](https://github.com/sakuli/sakuli/issues/525)
+
 ## v2.4.0
 
 - Bugfix: \_highlight doesn't "null check" if a rect-object is obtained from element [(#434)](https://github.com/sakuli/sakuli/issues/343)

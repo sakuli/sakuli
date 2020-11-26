@@ -16,7 +16,7 @@ language: node_js
 node_js:
   - lts/dubnium
   - lts/erbium
-  - 12.13.0
+  - lts/fermium
 
 addons:
   sonarcloud:
@@ -24,10 +24,14 @@ addons:
     token:
       secure: "kyPFHtVbo9gHNp7fy2B3d2I6g4/+v4h1/rjLm3LnLx1XECI13F/htxLI6tWOQGNnWeC3MRAMsrd2BJ2/ovJY0qz3EtfMBuFByEbwPiLobB+YJqaTTTnXcNsPVN+AibkbGk9jQEiO/2TIebo+29XtBH6EQLdsew1qNxGAXPCHyCFtrJT1x9jj+RO8RFxTP3PMFKzZaXAGd7Twl4AcWPTd6EYUCnV+2rq/mkIqmZwH0ckYIiVnIKm5g69P3i+LLabUl/tdftXU4+J+BHaHxwb7X+D0k9NsTXPWn19grmC8FdubO7GNX5zf+gvHX0d40oZGGYYe/55CSJKS0Coerj9Wmd380ZGzZZwnZl9pfyh6BITOWJlOUw8WoILX2w8k0jiZVF2puQ/h82+m9jfnPuk9v6cnIsJmO/2cSDz3T0ZznbhA4W/yGdsEfK0SKVn3VjyV6Gbd2R7YvZC3hag5UgRz2L8odIXn7y3U9KXQhpquxX/HLkVOKd2w/PXCcOX1BsMUcgjQiP2VfZuZKkGvkFg+E/iLovoSwlG0FYRu2Qmu5C74saz1K4H5IyVe3WzZZzWoLWSWwdWN0ZEXmpFI5Lxyy/3H6x4b+mkVld7j1ProuxQdf1TjFoYd0OWYcxVcedG6FdaNDmGc3FMtmVuSjeBYcpbMyU7d7l7xdigeNTK86J8="
   chrome: stable
+  firefox: latest
 
 services:
   - docker
   - xvfb
+
+env:
+  - LOG_MODE='ci'
 
 before_install:
   - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
@@ -48,7 +52,7 @@ jobs:
       os: linux
       dist: bionic
       language: node_js
-      node_js: lts/erbium
+      node_js: lts/fermium
 
       before_install:
         - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
@@ -56,14 +60,15 @@ jobs:
       script: true
       before_deploy:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+        - npm ci && npm run build && lerna run typedoc
       deploy:
         - provider: script
-          skip_cleanup: false
+          skip_cleanup: true
           script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish-next
           on:
             branch: develop
         - provider: script
-          skip_cleanup: false
+          skip_cleanup: true
           script: FIREFOX_WD_URL=http://localhost:4444/wd/hub CHROME_WD_URL=http://localhost:4445/wd/hub npm run lerna:publish
           on:
             tags: true
@@ -80,7 +85,7 @@ jobs:
       os: linux
       dist: bionic
       language: node_js
-      node_js: lts/erbium
+      node_js: lts/fermium
 
       install: true
       script:

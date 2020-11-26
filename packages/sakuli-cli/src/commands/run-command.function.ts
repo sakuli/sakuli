@@ -15,7 +15,6 @@ import {
 import chalk from "chalk";
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
 import { createLogConsumer } from "../create-log-consumer.function";
-import { join } from "path";
 import { renderError } from "./run-command/render-error.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 
@@ -34,14 +33,14 @@ export const runCommand: CommandModuleProvider = (
     },
 
     async handler(runOptions: any) {
-      const rendering = testExecutionContextRenderer(
-        sakuli.testExecutionContext
-      );
       let cleanLogConsumer: Maybe<() => void>;
       try {
         const project = await sakuli.initializeProject(runOptions);
         const coreProps = project.objectFactory(SakuliCoreProperties);
-
+        const testContextRenderer = testExecutionContextRenderer(
+          sakuli.testExecutionContext,
+          coreProps
+        );
         console.log(
           chalk`Initialized Sakuli with {bold ${project.testFiles.length.toString()}} Testcases\n`
         );
@@ -56,11 +55,10 @@ export const runCommand: CommandModuleProvider = (
         );
         const logPath = ensure<string>(coreProps.sakuliLogFolder, "");
         await ensurePath(logPath);
-        const logFile = join(logPath, "sakuli.log");
-        console.log(chalk`Writing logs to: {bold.gray ${logFile}}`);
+
         cleanLogConsumer = createLogConsumer(
           sakuli.testExecutionContext.logger,
-          logFile
+          coreProps
         );
 
         sakuli.testExecutionContext.logger.info(
@@ -76,7 +74,9 @@ export const runCommand: CommandModuleProvider = (
         sakuli.testExecutionContext.logger.trace(
           `Sakuli finished project execution.`
         );
-        await rendering;
+
+        await testContextRenderer;
+
         await ifPresent(
           sakuli.testExecutionContext.error,
           async (error) => {
@@ -87,10 +87,10 @@ export const runCommand: CommandModuleProvider = (
         );
 
         await renderErrorsFromContext(sakuli.testExecutionContext);
-        process.exit(sakuli.testExecutionContext.resultState);
+        process.exitCode = sakuli.testExecutionContext.resultState;
       } catch (e) {
         await renderError(e);
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         invokeIfPresent(cleanLogConsumer);
       }

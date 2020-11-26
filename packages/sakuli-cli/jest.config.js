@@ -3,7 +3,6 @@ module.exports = {
   testEnvironment: "node",
   name: "sakuli-cli",
   displayName: "sakuli-cli",
-  coverageDirectory: "<rootDir>/../coverage/sakuli-cli",
   rootDir: "src/",
   testMatch: [
     `**/!(*.+(aix|it).*|*.+(darwin|it).*|*.+(freebsd|it).*|*.+(linux|it).*|*.+(openbsd|it).*|*.+(sunos|it).*|*.+(win32|it).*)+(spec|test).[jt]s?(x)`,

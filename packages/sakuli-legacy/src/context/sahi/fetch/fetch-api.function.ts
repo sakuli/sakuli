@@ -2,7 +2,7 @@ import { By, ThenableWebDriver } from "selenium-webdriver";
 import { AccessorUtil } from "../accessor";
 import { TestExecutionContext } from "@sakuli/core";
 import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
-import { html, stripIndent } from "common-tags";
+import { html, stripIndent, stripIndents } from "common-tags";
 import { isChildOf } from "../helper/is-child-of.function";
 import { Vector2 } from "../relations/vector2.type";
 import { isEqual } from "../helper/is-equal.function";
@@ -98,6 +98,12 @@ export function fetchApi(
     text: string
   ) {
     const e = await accessorUtil.fetchElement(query, 1000);
+    ctx.logger
+      .debug(stripIndents`_containsText: Checking text "${text}" with element:
+    text: ${await e.getText()},
+    tag: ${await e.getTagName()},
+    id: ${await e.getId()}
+`);
     return e
       .getText()
       .then((elementText) => new RegExp(text).test(elementText));
