@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
   - This deprecates `testCase.endOfStep`
 - Maintenance: Update minor dependency versions [(#525)](https://github.com/sakuli/sakuli/issues/525)
+- Fux: Pull up timer fix from nut-js [(#544)](https://github.com/sakuli/sakuli/issues/544)
 
 ## v2.4.0
 
