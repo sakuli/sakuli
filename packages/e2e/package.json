@@ -28,7 +28,7 @@
     "@sakuli/legacy-types": "2.4.0",
     "chromedriver": "87.0.0",
     "geckodriver": "1.21.0",
-    "typescript": "4.1.2"
+    "typescript": "3.8.3"
   },
   "sakuli": {
     "presetProvider": [

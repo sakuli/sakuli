@@ -46,8 +46,8 @@
     "mock-fs": "4.13.0",
     "sneer": "1.0.1",
     "ts-jest": "26.4.4",
-    "typedoc": "0.19.2",
-    "typescript": "4.1.2"
+    "typedoc": "0.17.8",
+    "typescript": "3.8.3"
   },
   "dependencies": {
     "@sakuli/commons": "2.4.0",
