@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
   - This deprecates `testCase.endOfStep`
 - Maintenance: Update minor dependency versions [(#525)](https://github.com/sakuli/sakuli/issues/525)
 - Maintenance: Identify major dependency updates [(#524)](https://github.com/sakuli/sakuli/issues/524)
+- Maintenance: Remove Node 10+12 builds [(#547)](https://github.com/sakuli/sakuli/issues/547)
 
 ## v2.4.0
 

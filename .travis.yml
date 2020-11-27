@@ -14,8 +14,6 @@ dist: bionic
 language: node_js
 
 node_js:
-  - lts/dubnium
-  - lts/erbium
   - lts/fermium
 
 addons:

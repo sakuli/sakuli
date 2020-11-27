@@ -13,7 +13,5 @@ npm test -- --runInBand --ci --bail
 npm run test:it
 npm run coverage:merge
 npm run coverage:merge-report
-if [[ $TRAVIS_NODE_VERSION = "lts/fermium" ]]; then
-  sonar-scanner
-fi
+sonar-scanner
 npm run test:e2e
