@@ -55,6 +55,16 @@ describe("getBootstrapTasks", () => {
 
   test.each(<[string, string, ConfigurationRecord][]>[
     [
+      FeatureChoices.Prometheus,
+      "@sakuli/forwarder-prometheus",
+      {
+        "sakuli.forwarder.prometheus.enabled": {
+          isComment: false,
+          value: "true",
+        },
+      },
+    ],
+    [
       FeatureChoices.Icinga2,
       "@sakuli/forwarder-icinga2",
       {
