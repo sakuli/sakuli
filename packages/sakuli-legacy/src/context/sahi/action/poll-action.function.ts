@@ -5,42 +5,42 @@ export const timeout = (
 ) => {
   return new Promise((resolve, reject) => {
     let interval: NodeJS.Timeout;
-    const timeout = setTimeout(() => {
-      clearTimeout(timeout);
+    let timerCleaned = false;
+
+    function executeInterval() {
+      action().then(validateResult).catch(handleRejection);
+    }
+
+    function validateResult(result: boolean) {
+      if (!result) {
+        interval = setTimeout(executeInterval, updateInterval);
+      } else {
+        cleanupTimer();
+        resolve(result);
+      }
+    }
+
+    function handleRejection() {
+      if (!timerCleaned) {
+        interval = setTimeout(executeInterval, updateInterval);
+      }
+    }
+
+    function cleanupTimer() {
+      timerCleaned = true;
+      if (maxTimeout) {
+        clearTimeout(maxTimeout);
+      }
       if (interval) {
         clearTimeout(interval);
       }
-      reject(`Action timed out after ${maxDuration}`);
-    }, maxDuration);
-    const startInterval = () => {
-      interval = setTimeout(function intervalFunc() {
-        action()
-          .then((result) => {
-            if (!result) {
-              interval = setTimeout(intervalFunc, updateInterval);
-            } else {
-              clearTimeout(timeout);
-              clearTimeout(interval);
-              resolve();
-            }
-          })
-          .catch(() => {
-            interval = setTimeout(intervalFunc, updateInterval);
-          });
-      }, updateInterval);
-    };
+    }
 
-    action()
-      .then((result) => {
-        if (result) {
-          clearTimeout(timeout);
-          resolve();
-        } else {
-          startInterval();
-        }
-      })
-      .catch(() => {
-        startInterval();
-      });
+    const maxTimeout = setTimeout(() => {
+      cleanupTimer();
+      reject(`Action timed out after ${maxDuration} ms`);
+    }, maxDuration);
+
+    executeInterval();
   });
 };
