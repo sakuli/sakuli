@@ -68,5 +68,15 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     );
   }
 
+  if (answers.features.includes(FeatureChoices.Prometheus)) {
+    tasks.push(
+      ...getPackageBootstrapTasks("@sakuli/forwarder-prometheus", {
+        "sakuli.forwarder.prometheus.enabled": configValue("true"),
+        "sakuli.forwarder.prometheus.api.host": configValue(),
+        "sakuli.forwarder.prometheus.api.port": configValue(),
+        "sakuli.forwarder.prometheus.api.job": configValue(),
+      })
+    );
+  }
   return tasks;
 };
