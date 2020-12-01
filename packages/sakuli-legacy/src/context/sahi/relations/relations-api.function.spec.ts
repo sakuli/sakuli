@@ -218,6 +218,50 @@ describe("relations-api", () => {
         });
       });
 
+      describe("horizontal", () => {
+        beforeAll(async () => {
+          await driver.get(
+            mockHtml(`
+                <table>
+                    <tr>
+                        <td>left</td>
+                        <td><div id="anchor">center</div></td>
+                        <td>right</td>
+                    </tr>
+                </table>
+                `)
+          );
+        });
+
+        it("should find element with _leftOf", async () => {
+          const anchor = await createQuery(By.css("#anchor"));
+          const leftQuery = await api._leftOf(anchor)(
+            createCssQuery(By.css("code"))
+          );
+          const left = await accessorUtil.fetchElements(leftQuery);
+          expect(left.length).toBe(1);
+        });
+
+        it("should find element with _rightOf", async () => {
+          const anchor = await createQuery(By.css("#anchor"));
+          const leftQuery = await api._rightOf(anchor)(
+            createCssQuery(By.css("code"))
+          );
+          const right = await accessorUtil.fetchElements(leftQuery);
+          expect(right.length).toBe(1);
+        });
+
+        it("should find element with _leftOrRight", async () => {
+          const anchor = await createQuery(By.css("#anchor"));
+          const leftQuery = await api._leftOrRightOf(
+            anchor,
+            0
+          )(createCssQuery(By.css("code")));
+          const leftOrRight = await accessorUtil.fetchElements(leftQuery);
+          expect(leftOrRight.length).toBe(1);
+        });
+      });
+
       describe("position", () => {
         beforeAll(async () => {
           await driver.get(
