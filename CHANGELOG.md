@@ -27,10 +27,12 @@ All notable changes to this project will be documented in this file.
 - Maintenance: update main build to node 14 [(#519)](https://github.com/sakuli/sakuli/issues/519)
 - Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
   - This deprecates `testCase.endOfStep`
+- Fix: Pull up timer fix from nut-js [(#544)](https://github.com/sakuli/sakuli/issues/544)
 - Maintenance: Update minor dependency versions [(#525)](https://github.com/sakuli/sakuli/issues/525)
+- Maintenance: Identify major dependency updates [(#524)](https://github.com/sakuli/sakuli/issues/524)
 - Maintenance: Remove Node 10+12 builds [(#547)](https://github.com/sakuli/sakuli/issues/547)
-- Fux: Pull up timer fix from nut-js [(#544)](https://github.com/sakuli/sakuli/issues/544)
 - Enhancement: CLI - Sakuli enterprise project bootstrap for prometheus forwarder [(#370)](https://github.com/sakuli/sakuli/issues/370)
+- Maintenance: Rework CI/CD pipelines [(#548)](https://github.com/sakuli/sakuli/issues/548)
 
 ## v2.4.0
 

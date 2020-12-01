@@ -8,15 +8,20 @@ import {
 } from "./tasks";
 import { FeatureChoices } from "./feature-choices.const";
 
-jest.mock("./tasks", () => ({
-  ...jest.requireActual("./tasks"),
-  oraTask: jest.fn(),
-  npmGlobalTask: jest.fn(),
-  licenseGlobalTask: jest.fn(),
-  getPackageBootstrapTasks: jest
-    .fn()
-    .mockReturnValue(Array.from({ length: 3 })),
-}));
+jest.mock("./tasks", () => {
+  const originalModule = jest.requireActual("./tasks");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    oraTask: jest.fn(),
+    npmGlobalTask: jest.fn(),
+    licenseGlobalTask: jest.fn(),
+    getPackageBootstrapTasks: jest
+      .fn()
+      .mockReturnValue(Array.from({ length: 3 })),
+  };
+});
 
 describe("getBootstrapTasks", () => {
   it("should return an empty task list when the user has no license", () => {
@@ -100,7 +105,7 @@ describe("getBootstrapTasks", () => {
       };
 
       // WHEN
-      const tasks = getBootstrapTasks(answers);
+      getBootstrapTasks(answers);
 
       // THEN
       expect(getPackageBootstrapTasks).toHaveBeenCalledWith(

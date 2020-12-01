@@ -3,8 +3,11 @@ let fileLogConsumerMock = jest.fn();
 let createCiLogConsumerMock = jest.fn();
 
 jest.mock("@sakuli/commons", () => {
+  const originalModule = jest.requireActual("@sakuli/commons");
+
   return {
-    ...jest.requireActual("@sakuli/commons"),
+    __esModule: true,
+    ...originalModule,
     createFileLogConsumer: fileLogConsumerMock,
     createCombinedLogConsumer: createCombinedLogConsumerMock,
     createCiLogConsumer: createCiLogConsumerMock,

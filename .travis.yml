@@ -31,9 +31,8 @@ services:
 env:
   - LOG_MODE='ci'
 
-before_install:
+install:
   - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
-install: true
 script:
   - "bash ./.build/run_${TRAVIS_OS_NAME}.sh"
 
@@ -41,8 +40,6 @@ stages:
   - test
   - name: deploy
     if: ((branch = develop) OR (tag IS present)) AND (type != pull_request)
-  - name: trigger-image-build
-    if: (branch = develop) AND (type != pull_request)
 
 jobs:
   include:
@@ -52,9 +49,8 @@ jobs:
       language: node_js
       node_js: lts/fermium
 
-      before_install:
+      install:
         - "bash ./.build/setup_${TRAVIS_OS_NAME}.sh"
-      install: true
       script: true
       before_deploy:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
@@ -78,13 +74,5 @@ jobs:
           keep_history: true
           on:
             tags: true
-
-    - stage: trigger-image-build
-      os: linux
-      dist: bionic
-      language: node_js
-      node_js: lts/fermium
-
-      install: true
-      script:
+      after_success:
         - "bash ./.build/trigger-image-build.sh"
