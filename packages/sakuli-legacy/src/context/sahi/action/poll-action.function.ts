@@ -13,7 +13,7 @@ export const timeout = (
 
     function validateResult(result: boolean) {
       if (!result) {
-        interval = setTimeout(executeInterval, updateInterval);
+        interval = global.setTimeout(executeInterval, updateInterval);
       } else {
         cleanupTimer();
         resolve(result);
@@ -22,7 +22,7 @@ export const timeout = (
 
     function handleRejection() {
       if (!timerCleaned) {
-        interval = setTimeout(executeInterval, updateInterval);
+        interval = global.setTimeout(executeInterval, updateInterval);
       }
     }
 
