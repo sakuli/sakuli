@@ -74,5 +74,5 @@ jobs:
           keep_history: true
           on:
             tags: true
-      after_success:
+      after_deploy:
         - "bash ./.build/trigger-image-build.sh"
