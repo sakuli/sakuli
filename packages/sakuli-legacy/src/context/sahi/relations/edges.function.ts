@@ -90,6 +90,8 @@ export interface Edge extends EdgeInfo {
   isAbove(b: EdgeInfo, anchor?: keyof EdgeInfo): boolean;
 
   intersectsVertical(b: EdgeInfo): boolean;
+
+  intersectsHorizontal(b: EdgeInfo): boolean;
 }
 
 export function edges(pos: PositionalInfo): Edge {
@@ -118,6 +120,14 @@ export function edges(pos: PositionalInfo): Edge {
     const xRange: Vector2 = [x, x + width];
     return isInVector(lx, xRange) || isInVector(rx, xRange);
   };
+  const intersectsHorizontal = ({
+    top: [tx, ty],
+    bottom: [bx, by],
+  }: EdgeInfo) => {
+    const yRange: Vector2 = [y, y + height];
+    return isInVector(ty, yRange) || isInVector(by, yRange);
+  };
+
   return {
     top,
     bottom,
@@ -131,5 +141,6 @@ export function edges(pos: PositionalInfo): Edge {
     isUnder,
     isAbove,
     intersectsVertical,
+    intersectsHorizontal,
   };
 }
