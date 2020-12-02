@@ -225,7 +225,9 @@ describe("relations-api", () => {
                 <table>
                     <tr>
                         <td>left</td>
-                        <td><div id="anchor">center</div></td>
+                        <td>
+                            <div id="anchor">center</div>
+                        </td>
                         <td>right</td>
                     </tr>
                 </table>
@@ -235,19 +237,23 @@ describe("relations-api", () => {
 
         it("should find element with _leftOf", async () => {
           const anchor = await createQuery(By.css("#anchor"));
-          const leftQuery = await api._leftOf(anchor)(
-            createCssQuery(By.css("code"))
-          );
+          const leftQuery = await api._leftOf(
+            anchor,
+            0
+          )(createCssQuery(By.css("td")));
           const left = await accessorUtil.fetchElements(leftQuery);
+          expect(await left[0].getText()).toBe("left");
           expect(left.length).toBe(1);
         });
 
         it("should find element with _rightOf", async () => {
           const anchor = await createQuery(By.css("#anchor"));
-          const leftQuery = await api._rightOf(anchor)(
-            createCssQuery(By.css("code"))
-          );
-          const right = await accessorUtil.fetchElements(leftQuery);
+          const rightQuery = await api._rightOf(
+            anchor,
+            0
+          )(createCssQuery(By.css("td")));
+          const right = await accessorUtil.fetchElements(rightQuery);
+          expect(await right[0].getText()).toBe("right");
           expect(right.length).toBe(1);
         });
 
@@ -256,9 +262,11 @@ describe("relations-api", () => {
           const leftQuery = await api._leftOrRightOf(
             anchor,
             0
-          )(createCssQuery(By.css("code")));
+          )(createCssQuery(By.css("td")));
           const leftOrRight = await accessorUtil.fetchElements(leftQuery);
-          expect(leftOrRight.length).toBe(1);
+          expect(await leftOrRight[0].getText()).toBe("left");
+          expect(await leftOrRight[1].getText()).toBe("right");
+          expect(leftOrRight.length).toBe(2);
         });
       });
 
