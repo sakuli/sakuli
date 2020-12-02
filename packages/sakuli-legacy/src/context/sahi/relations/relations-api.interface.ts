@@ -52,7 +52,7 @@ export interface RelationApi extends ParentApi {
    * Create a relation that specifies elements that are geometrically above an anchor element.
    *
    * **Note**: The specified elements must be intersected by the same vertical line.
-   * This works just the same as in [[_under]].
+   * This works just the same as in [[`_under`]].
    * @param anchor
    * @param offset
    */
@@ -62,7 +62,7 @@ export interface RelationApi extends ParentApi {
    * Create a relation that specifies elements that are geometrically under or above an anchor element.
    *
    * **Note**: The specified elements must be intersected by the same vertical line.
-   * This works just the same as in [[_under]].
+   * This works just the same as in [[`_under`]].
    * @param anchor
    * @param offset
    */
