@@ -218,7 +218,7 @@ describe("relations-api", () => {
         });
       });
 
-      describe("horizontal", () => {
+      describe("horizontal relations", () => {
         beforeAll(async () => {
           await driver.get(
             mockHtml(`
