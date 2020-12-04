@@ -341,33 +341,27 @@ describe("relations-api", () => {
           keyof ParentApi | "_near" | "_in"
         >;
         it.each(<[number, PositionMethod, number, string[]][]>[
-          [
-            3,
-            "_leftOf",
-            0,
-            ["Rhona Davidson", "Integration Specialist", "Tokyo"],
-          ],
-          [2, "_leftOf", 1, ["Integration Specialist", "Tokyo"]],
+          [2, "_leftOf", 0, ["Rhona Davidson", "Integration Specialist"]],
+          [1, "_leftOf", 1, ["Integration Specialist"]],
           [3, "_rightOf", 0, ["55", "2010/10/14", "$327,900"]],
           [2, "_rightOf", 1, ["2010/10/14", "$327,900"]],
           [
-            6,
+            5,
             "_leftOrRightOf",
             0,
             [
               "Rhona Davidson",
               "Integration Specialist",
-              "Tokyo",
               "55",
               "2010/10/14",
               "$327,900",
             ],
           ],
           [
-            5,
+            4,
             "_leftOrRightOf",
             1,
-            ["Integration Specialist", "Tokyo", "55", "2010/10/14", "$327,900"],
+            ["Integration Specialist", "55", "2010/10/14", "$327,900"],
           ],
           [1, "_above", 0, ["San Francisco"]],
           [2, "_under", 0, ["New York", "San Francisco"]],
