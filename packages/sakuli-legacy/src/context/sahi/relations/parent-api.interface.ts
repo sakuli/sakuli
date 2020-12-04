@@ -3,9 +3,9 @@ import { WebElement } from "selenium-webdriver";
 
 export interface ParentApi {
   /**
-   * Create a relation that specifies an element with `tagName` that encloses the anchor element `q`.
+   * Fetch an element with `tagName` that encloses the anchor element `q`.
    * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
-   * The `occurence` defaults to 1.
+   * The `occurence` defaults to 1, if not specified.
    *
    * @example Assuming this HTML-snippet:
    * ```
@@ -38,14 +38,51 @@ export interface ParentApi {
     tagName: string,
     occurrence?: number
   ): Promise<SahiElementQueryOrWebElement>;
+
+  /**
+   * Fetch a HTML-table-cell (with tag `td`), if the element specified by `q` is its child.
+   * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
+   * The `occurence` defaults to 1, if not specified.
+   *
+   * @example Assuming this HTML-snippet:
+   * ```
+   * <td>
+   *   <div>text</div>
+   * </td>
+   * ```
+   * The folliwing query ...
+   * ```
+   * await _parentCell(div("text"))
+   * ```
+   * @param q
+   * @param occurrence
+   */
   _parentCell(
     q: SahiElementQueryOrWebElement,
     occurrence?: number
   ): Promise<SahiElementQueryOrWebElement>;
+
+  /**
+   * Fetch a HTML-table-row if it is a parent of the element specified by `q`.
+   * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
+   * The `occurence` defaults to 1, if not specified.
+   *
+   * @param q
+   * @param occurrence
+   */
   _parentRow(
     q: SahiElementQueryOrWebElement,
     occurrence?: number
   ): Promise<SahiElementQueryOrWebElement>;
+
+  /**
+   * Fetch a HTML-table if it is a parent of the element specified by `q`.
+   * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
+   * The `occurence` defaults to 1, if not specified.
+   *
+   * @param q
+   * @param occurrence
+   */
   _parentTable(
     q: SahiElementQueryOrWebElement,
     occurrence?: number
