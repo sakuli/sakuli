@@ -43,6 +43,9 @@ export interface RelationApi extends ParentApi {
    *      +----+
    * ```
    * In this sense element `3` is  "under" element `2` and element `3` is also "under" element `1`, but element `2` is not "under" element `1`.
+   *
+   * **Note**: Reference for the relation is the geometrical center of each element.
+   * That means that elements, that are part of the relation, can overlap with the anchor element.
    * @param anchor
    * @param offset
    */
@@ -70,8 +73,46 @@ export interface RelationApi extends ParentApi {
     anchor: SahiElementQueryOrWebElement,
     offset?: number
   ): SahiRelation;
+
+  /**
+   * Create a relation that specifies elements that are geometrically right of an anchor element.
+   *
+   * **Note**: The specified elements must be intersected by the same horizontal line.
+   * ```
+   * +----+
+   * | 1  |
+   * +----+          +----+
+   *         +----+  | 3  |
+   *         | 2  |  +----+
+   *         +----+
+   * ```
+   * In this sense, element `3` is "right" of element `1` and element `2`, but element `2` is not "right" of element `1`.
+   *
+   * **Note**: Reference for the relation is the geometrical center of each element.
+   * This means, that elements, that are part of the relation, can overlap with the anchor element.
+   * @param anchor
+   * @param offset
+   */
   _rightOf(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
+
+  /**
+   * Create a relation that specifies elements that are geometrically left of an anchor element.
+   *
+   * **Note**: The specified elements must be intersected by the same horizontal line.
+   * This works just the same as in [[`_rightOf`]].
+   * @param anchor
+   * @param offset
+   */
   _leftOf(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
+
+  /**
+   * Create a relation that specifies elements that are geometrically left of right of an anchor element.
+   *
+   * **Note**: The specified elements must be intersected by the same horizontal line.
+   * This works just the same as in [[`_rightOf`]].
+   * @param anchor
+   * @param offset
+   */
   _leftOrRightOf(
     anchor: SahiElementQueryOrWebElement,
     offset?: number
