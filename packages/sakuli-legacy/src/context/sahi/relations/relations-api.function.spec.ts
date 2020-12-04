@@ -244,7 +244,7 @@ describe("relations-api", () => {
           )(createCssQuery(By.css("td")));
           const left = await accessorUtil.fetchElements(leftQuery);
           expect(await left[0].getText()).toBe("left");
-          expect(left.length).toBe(2);
+          expect(left.length).toBe(1);
         });
 
         it("should find element with _rightOf", async () => {
@@ -265,10 +265,9 @@ describe("relations-api", () => {
             0
           )(createCssQuery(By.css("td")));
           const leftOrRight = await accessorUtil.fetchElements(leftQuery);
-          expect(leftOrRight.length).toBe(3);
+          expect(leftOrRight.length).toBe(2);
           expect(await leftOrRight[0].getText()).toBe("left");
-          expect(await leftOrRight[1].getText()).toBe("center");
-          expect(await leftOrRight[2].getText()).toBe("right");
+          expect(await leftOrRight[1].getText()).toBe("right");
         });
       });
 
