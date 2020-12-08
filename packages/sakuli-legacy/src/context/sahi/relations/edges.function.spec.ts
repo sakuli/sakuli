@@ -108,4 +108,54 @@ describe("edges()", () => {
       expect(B.isAbove(A)).toBeFalsy();
     });
   });
+
+  describe("intersectsHorizontal", () => {
+    const A = edges({
+      origin: mockPartial({}),
+      location: {
+        x: 3,
+        y: 4,
+      },
+      size: {
+        width: 3,
+        height: 4,
+      },
+    });
+
+    const B = edges({
+      origin: mockPartial({}),
+      location: {
+        x: 7,
+        y: 2,
+      },
+      size: {
+        width: 3,
+        height: 4,
+      },
+    });
+
+    const D = edges({
+      origin: mockPartial({}),
+      location: {
+        x: 11,
+        y: 10,
+      },
+      size: {
+        width: 3,
+        height: 4,
+      },
+    });
+
+    it("should be D not intersects A", () => {
+      expect(D.intersectsHorizontal(A)).toBeFalsy();
+    });
+
+    it("should be B intersects A", () => {
+      expect(B.intersectsHorizontal(A)).toBeTruthy();
+    });
+
+    it("should be A intersects B", () => {
+      expect(A.intersectsHorizontal(B)).toBeTruthy();
+    });
+  });
 });
