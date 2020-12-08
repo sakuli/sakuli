@@ -11,14 +11,14 @@ export interface RelationApi extends ParentApi {
    *
    * ```html
    * <b>something</b>
-   * <div>
-   *   <b>something else</b>
+   * <div id="div1">
+   *   <b>something</b>
    * </div>
    * ```
    *
    * The following expression ...
    * ```typescript
-   * await _bold(0, _in(_div(1)))
+   * await _bold("something", _in(_byId("div1")))
    * ```
    * ... would return the second bold element.
    * @param anchor
@@ -40,7 +40,7 @@ export interface RelationApi extends ParentApi {
    * ```
    * The HTML-element with id "elem" has a distance of 3 to the anchor element.
    *
-   * **Warning:**If two elements require the exact same amount of steps to reach from an anchor element,
+   * **Warning**: If two elements require the exact same amount of steps to reach from an anchor element,
    * the element that comes first in the html source code is determined to be nearer to the anchor.
    * ```
    * <div>
