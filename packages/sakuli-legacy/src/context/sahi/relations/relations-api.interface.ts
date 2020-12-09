@@ -28,34 +28,6 @@ export interface RelationApi extends ParentApi {
   /**
    * Create a relation that sorts elements by how near they are to an anchor element.
    *
-   * The distance between two elements is determined by the minimum amount of steps
-   * you have to move up or down the dom-hierarchy to get from one element to the other.
-   * ```
-   * <div>
-   *   <div>
-   *     <b id="elem"></b>
-   *   </div>
-   *   <code id="anchor"></code>
-   * </div>
-   * ```
-   * The HTML-element with id "elem" has a distance of 3 to the anchor element.
-   *
-   * **Warning**: If two elements require the exact same amount of steps to reach from an anchor element,
-   * the element that comes first in the html source code is determined to be nearer to the anchor.
-   * ```
-   * <div>
-   *   <div>
-   *     <b id="elem1">elem</b>
-   *     <b id="elem2">elem</b>
-   *   </div>
-   *   <code id="anchor"></code>
-   * </div>
-   * ```
-   * In the above example the element with id "elem1" is nearer to the anchor than the element with id "elem2",
-   * so the following code highlights the element with id `1`:
-   * ```
-   * await _highlight(_bold("elem", _near(_byId("anchor")))));
-   * ```
    * @param anchor
    */
   _near(anchor: SahiElementQueryOrWebElement): SahiRelation;
