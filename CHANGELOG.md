@@ -33,6 +33,7 @@ All notable changes to this project will be documented in this file.
 - Maintenance: Remove Node 10+12 builds [(#547)](https://github.com/sakuli/sakuli/issues/547)
 - Enhancement: CLI - Sakuli enterprise project bootstrap for prometheus forwarder [(#370)](https://github.com/sakuli/sakuli/issues/370)
 - Maintenance: Rework CI/CD pipelines [(#548)](https://github.com/sakuli/sakuli/issues/548)
+- Enhancement: Added documentation for relations api [(sakuli/docs#32)](https://github.com/sakuli/docs/issues/32)
 
 ## v2.4.0
 
