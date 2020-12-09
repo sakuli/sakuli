@@ -10,7 +10,7 @@ export function vectorAdd([x1, y1]: Vector2, [x2, y2]: Vector2): Vector2 {
  * @param v2 Vector2
  */
 export function isLeftOf([x1]: Vector2, [x2]: Vector2) {
-  return x1 >= x2;
+  return x1 > x2;
 }
 
 /**

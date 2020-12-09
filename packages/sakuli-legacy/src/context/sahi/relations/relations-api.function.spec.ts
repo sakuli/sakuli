@@ -218,6 +218,59 @@ describe("relations-api", () => {
         });
       });
 
+      describe("horizontal relations", () => {
+        beforeAll(async () => {
+          await driver.get(
+            mockHtml(`
+                <table>
+                    <tr>
+                        <td>left</td>
+                        <td>
+                            <div id="anchor">center</div>
+                        </td>
+                        <td>right</td>
+                    </tr>
+                    <tr>below</tr>
+                </table>
+                `)
+          );
+        });
+
+        it("should find element with _leftOf", async () => {
+          const anchor = await createQuery(By.css("#anchor"));
+          const leftQuery = await api._leftOf(
+            anchor,
+            0
+          )(createCssQuery(By.css("td")));
+          const left = await accessorUtil.fetchElements(leftQuery);
+          expect(await left[0].getText()).toBe("left");
+          expect(left.length).toBe(1);
+        });
+
+        it("should find element with _rightOf", async () => {
+          const anchor = await createQuery(By.css("#anchor"));
+          const rightQuery = await api._rightOf(
+            anchor,
+            0
+          )(await createCssQuery(By.css("td")));
+          const right = await accessorUtil.fetchElements(rightQuery);
+          expect(await right[0].getText()).toBe("right");
+          expect(right.length).toBe(1);
+        });
+
+        it("should find element with _leftOrRight", async () => {
+          const anchor = await createQuery(By.css("#anchor"));
+          const leftQuery = await api._leftOrRightOf(
+            anchor,
+            0
+          )(createCssQuery(By.css("td")));
+          const leftOrRight = await accessorUtil.fetchElements(leftQuery);
+          expect(leftOrRight.length).toBe(2);
+          expect(await leftOrRight[0].getText()).toBe("left");
+          expect(await leftOrRight[1].getText()).toBe("right");
+        });
+      });
+
       describe("position", () => {
         beforeAll(async () => {
           await driver.get(
@@ -287,33 +340,27 @@ describe("relations-api", () => {
           keyof ParentApi | "_near" | "_in"
         >;
         it.each(<[number, PositionMethod, number, string[]][]>[
-          [
-            3,
-            "_leftOf",
-            0,
-            ["Rhona Davidson", "Integration Specialist", "Tokyo"],
-          ],
-          [2, "_leftOf", 1, ["Integration Specialist", "Tokyo"]],
+          [2, "_leftOf", 0, ["Rhona Davidson", "Integration Specialist"]],
+          [1, "_leftOf", 1, ["Integration Specialist"]],
           [3, "_rightOf", 0, ["55", "2010/10/14", "$327,900"]],
           [2, "_rightOf", 1, ["2010/10/14", "$327,900"]],
           [
-            6,
+            5,
             "_leftOrRightOf",
             0,
             [
               "Rhona Davidson",
               "Integration Specialist",
-              "Tokyo",
               "55",
               "2010/10/14",
               "$327,900",
             ],
           ],
           [
-            5,
+            4,
             "_leftOrRightOf",
             1,
-            ["Integration Specialist", "Tokyo", "55", "2010/10/14", "$327,900"],
+            ["Integration Specialist", "55", "2010/10/14", "$327,900"],
           ],
           [1, "_above", 0, ["San Francisco"]],
           [2, "_under", 0, ["New York", "San Francisco"]],
