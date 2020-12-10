@@ -47,7 +47,7 @@ export interface RelationApi extends ParentApi {
    *      | 3  |
    *      +----+
    * ```
-   * In this sense element `3` is  "under" element `2` and element `3` is also "under" element `1`, but element `2` is not "under" element `1`.
+   * In this case element `3` is  "under" element `2` and element `3` is also "under" element `1`, but element `2` is not "under" element `1`.
    *
    * **Note**: Reference for the relation is the geometrical center of each element.
    * That means that elements, that are part of the relation, can overlap with the anchor element.
@@ -91,7 +91,7 @@ export interface RelationApi extends ParentApi {
    *         | 2  |  +----+
    *         +----+
    * ```
-   * In this sense, element `3` is "right" of element `1` and element `2`, but element `2` is not "right" of element `1`.
+   * In this case element `3` is "right" of element `1` and element `2`, but element `2` is not "right" of element `1`.
    *
    * **Note**: Reference for the relation is the geometrical center of each element.
    * This means, that elements, that are part of the relation, can overlap with the anchor element.
