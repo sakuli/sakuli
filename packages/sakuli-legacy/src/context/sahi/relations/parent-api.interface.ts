@@ -21,11 +21,10 @@ export interface ParentApi {
    *   </div>
    * </div>
    * ```
-   * The following query ...
+   * The following query returns the element with id `"target"`.
    * ```
-   * await _parentNode(_byId("anchor"), "div", 2))
+   * await _parentNode(_byId("anchor"), "div", 2);
    * ```
-   * ... will return the element with id `"target"`.
    *
    * **Note**: Exits with an error if the `occurence` parameter is higher than the number of elements with tag `tagName` in the hierarchy above the anchor element `q`.
    *
@@ -50,9 +49,9 @@ export interface ParentApi {
    *   <div>text</div>
    * </td>
    * ```
-   * The folliwing query ...
+   * The folliwing query returns the `<td>` element.
    * ```
-   * await _parentCell(div("text"))
+   * await _parentCell(_div("text"));
    * ```
    * @param q
    * @param occurrence

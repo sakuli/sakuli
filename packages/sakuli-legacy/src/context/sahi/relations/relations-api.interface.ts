@@ -4,7 +4,7 @@ import { SahiRelation } from "./sahi-relation.interface";
 
 export interface RelationApi extends ParentApi {
   /**
-   * Create a relation that specifies elements inside an anchor element.
+   * Creates a relation that specifies elements inside the anchor element.
    *
    * @example
    * <br />Assuming this HTML-snippet:
@@ -16,24 +16,23 @@ export interface RelationApi extends ParentApi {
    * </div>
    * ```
    *
-   * The following expression ...
+   * The following expression returns the second bold element.
    * ```typescript
-   * await _bold("something", _in(_byId("div1")))
+   * await _bold("something", _in(_byId("div1")));
    * ```
-   * ... would return the second bold element.
    * @param anchor
    */
   _in(anchor: SahiElementQueryOrWebElement): SahiRelation;
 
   /**
-   * Create a relation that sorts elements by how near they are to an anchor element.
+   * Creates a relation that sorts elements according to how close they are to the anchor element.
    *
    * @param anchor
    */
   _near(anchor: SahiElementQueryOrWebElement): SahiRelation;
 
   /**
-   * Create a relation that specifies elements that are geometrically under an anchor element.
+   * Creates a relation that specifies elements that are geometrically under the anchor element.
    *
    * **Note**: The specified elements must be intersected by the same vertical line. E.g.:
    *
@@ -58,7 +57,7 @@ export interface RelationApi extends ParentApi {
   _under(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Create a relation that specifies elements that are geometrically above an anchor element.
+   * Creates a relation that specifies elements that are geometrically above the anchor element.
    *
    * **Note**: The specified elements must be intersected by the same vertical line.
    * This works just the same as in [[`_under`]].
@@ -68,7 +67,7 @@ export interface RelationApi extends ParentApi {
   _above(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Create a relation that specifies elements that are geometrically under or above an anchor element.
+   * Creates a relation that specifies elements that are geometrically under or above the anchor element.
    *
    * **Note**: The specified elements must be intersected by the same vertical line.
    * This works just the same as in [[`_under`]].
@@ -81,7 +80,7 @@ export interface RelationApi extends ParentApi {
   ): SahiRelation;
 
   /**
-   * Create a relation that specifies elements that are geometrically right of an anchor element.
+   * Creates a relation that specifies elements that are geometrically right of the anchor element.
    *
    * **Note**: The specified elements must be intersected by the same horizontal line.
    * ```
@@ -102,7 +101,7 @@ export interface RelationApi extends ParentApi {
   _rightOf(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Create a relation that specifies elements that are geometrically left of an anchor element.
+   * Creates a relation that specifies elements that are geometrically left of the anchor element.
    *
    * **Note**: The specified elements must be intersected by the same horizontal line.
    * This works just the same as in [[`_rightOf`]].
@@ -112,7 +111,7 @@ export interface RelationApi extends ParentApi {
   _leftOf(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Create a relation that specifies elements that are geometrically left of right of an anchor element.
+   * Creates a relation that specifies elements that are geometrically left or right of the anchor element.
    *
    * **Note**: The specified elements must be intersected by the same horizontal line.
    * This works just the same as in [[`_rightOf`]].
