@@ -3,9 +3,9 @@ import { WebElement } from "selenium-webdriver";
 
 export interface ParentApi {
   /**
-   * Fetch an element with `tagName` that encloses the anchor element `q`.
-   * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
-   * The `occurence` defaults to 1, if not specified.
+   * Fetches an element with `tagName` that encloses the anchor element `q`.
+   * If `occurrence` is set to `n`, the n-th parent of the given element will be returned.
+   * `occurrence` defaults to 1, which is the immediate parent.
    *
    * @example Assuming this HTML-snippet:
    * ```
