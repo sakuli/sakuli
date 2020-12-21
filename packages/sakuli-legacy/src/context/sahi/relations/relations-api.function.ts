@@ -18,6 +18,7 @@ import { getSiblingIndex } from "../helper/get-sibling-index.function";
 import { parentApi } from "./parent-api.function";
 import { PositionalInfo, positionalInfo } from "./positional-info.function";
 import { RelationApi } from "./relations-api.interface";
+import { stringifyElement } from "../sahi-element-utils";
 
 export function relationsApi(
   driver: ThenableWebDriver,
@@ -42,6 +43,9 @@ export function relationsApi(
 
   const _in: RelationProducer = (parentQuery: SahiElementQueryOrWebElement) => {
     return async (elementsQuery: SahiElementQuery) => {
+      testExecutionContext.logger.debug(
+        `applying _in with:\n${await stringifyElement(parentQuery)}`
+      );
       // assume elements is as query
       const parentElement = await accessorUtil.fetchElement(parentQuery);
       const elementsInParent = await parentElement.findElements(
@@ -57,6 +61,9 @@ export function relationsApi(
 
   const _near: RelationProducer = (query: SahiElementQueryOrWebElement) => {
     return async (possibleElementsQuery) => {
+      testExecutionContext.logger.debug(
+        `applying _near with:\n${await stringifyElement(query)}`
+      );
       const possibleElements = await fetchWithoutRelations(
         possibleElementsQuery
       );
@@ -105,6 +112,11 @@ export function relationsApi(
     offset: number = 0
   ) => {
     return createPositionalRelation(query, offset, (a, b) => {
+      stringifyElement(query).then((stringifiedQuery) =>
+        testExecutionContext.logger.debug(
+          `applying _under with:\n${stringifiedQuery}`
+        )
+      );
       const edgesA = edges(a);
       const edgesB = edges(b);
       return (
@@ -118,6 +130,11 @@ export function relationsApi(
     query: SahiElementQueryOrWebElement,
     offset: number = 0
   ) => {
+    stringifyElement(query).then((stringifiedQuery) =>
+      testExecutionContext.logger.debug(
+        `applying _above with:\n${stringifiedQuery}`
+      )
+    );
     return createPositionalRelation(query, offset, (a, b) => {
       const edgesA = edges(a);
       const edgesB = edges(b);
