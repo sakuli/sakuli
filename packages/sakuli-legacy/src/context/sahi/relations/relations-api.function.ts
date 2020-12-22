@@ -86,27 +86,6 @@ export function relationsApi(
     };
   };
 
-  function createPositionalRelation(
-    query: SahiElementQueryOrWebElement,
-    offset: number,
-    predicate: (
-      anchor: PositionalInfo,
-      fittingElement: PositionalInfo
-    ) => boolean
-  ): SahiRelation {
-    return async (elementsQuery) => {
-      const element = await accessorUtil.fetchElement(query);
-      const elements = await fetchWithoutRelations(elementsQuery);
-      const anchor = await positionalInfo(element);
-      const positionals = await mapAsync(positionalInfo)(elements);
-      const relatedElements = positionals
-        .filter((pi) => predicate(anchor, pi))
-        .slice(offset)
-        .map(({ origin }) => origin);
-      return webElementsToQuery(relatedElements);
-    };
-  }
-
   const _under: RelationProducerWithOffset = (
     query: SahiElementQueryOrWebElement,
     offset: number = 0
@@ -149,6 +128,11 @@ export function relationsApi(
     query: SahiElementQueryOrWebElement,
     offset: number = 0
   ) => {
+    stringifyElement(query).then((stringifiedQuery) =>
+      testExecutionContext.logger.debug(
+        `applying _underOrAbove with:\n${stringifiedQuery}`
+      )
+    );
     return createPositionalRelation(query, offset, (a, b) => {
       const edgesA = edges(a);
       const edgesB = edges(b);
@@ -163,6 +147,11 @@ export function relationsApi(
     query: SahiElementQueryOrWebElement,
     offset = 0
   ) => {
+    stringifyElement(query).then((stringifiedQuery) =>
+      testExecutionContext.logger.debug(
+        `applying _rightOf with:\n${stringifiedQuery}`
+      )
+    );
     return createPositionalRelation(query, offset, (a, b) => {
       let edges1 = edges(a);
       let edges2 = edges(b);
@@ -178,6 +167,11 @@ export function relationsApi(
     query: SahiElementQueryOrWebElement,
     offset = 0
   ) => {
+    stringifyElement(query).then((stringifiedQuery) =>
+      testExecutionContext.logger.debug(
+        `applying _leftOf with:\n${stringifiedQuery}`
+      )
+    );
     return createPositionalRelation(query, offset, (a, b) => {
       let edges1 = edges(a);
       let edges2 = edges(b);
@@ -193,6 +187,11 @@ export function relationsApi(
     query: SahiElementQueryOrWebElement,
     offset: number = 0
   ) => {
+    stringifyElement(query).then((stringifiedQuery) =>
+      testExecutionContext.logger.debug(
+        `applying _leftOrRightOf with:\n${stringifiedQuery}`
+      )
+    );
     return createPositionalRelation(query, offset, (a, b) => {
       let edges1 = edges(a);
       let edges2 = edges(b);
@@ -204,6 +203,27 @@ export function relationsApi(
       );
     });
   };
+
+  function createPositionalRelation(
+    query: SahiElementQueryOrWebElement,
+    offset: number,
+    predicate: (
+      anchor: PositionalInfo,
+      fittingElement: PositionalInfo
+    ) => boolean
+  ): SahiRelation {
+    return async (elementsQuery) => {
+      const element = await accessorUtil.fetchElement(query);
+      const elements = await fetchWithoutRelations(elementsQuery);
+      const anchor = await positionalInfo(element);
+      const positionals = await mapAsync(positionalInfo)(elements);
+      const relatedElements = positionals
+        .filter((pi) => predicate(anchor, pi))
+        .slice(offset)
+        .map(({ origin }) => origin);
+      return webElementsToQuery(relatedElements);
+    };
+  }
 
   const { _parentNode, _parentCell, _parentRow, _parentTable } = parentApi(
     driver,

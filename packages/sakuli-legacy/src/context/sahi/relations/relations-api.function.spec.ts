@@ -249,6 +249,7 @@ describe("relations-api", () => {
                 applying _under with:
                 locator: By(css selector, #anchor)
                 identifier: 0`;
+
           //WHEN
           const under = await accessorUtil.fetchElements(underQuery);
 
@@ -260,13 +261,25 @@ describe("relations-api", () => {
         });
 
         it("should find element with  _underOrAbove", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const underQuery = await api._underOrAbove(
             anchor,
             0
           )(createCssQuery(By.css("code")));
+          const expectedLogMessage = stripIndents`
+                applying _underOrAbove with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const underOrAbove = await accessorUtil.fetchElements(underQuery);
+
+          //THEN
           expect(underOrAbove.length).toBe(2);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
       });
 
@@ -289,37 +302,73 @@ describe("relations-api", () => {
         });
 
         it("should find element with _leftOf", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const leftQuery = await api._leftOf(
             anchor,
             0
           )(createCssQuery(By.css("td")));
+          const expectedLogMessage = stripIndents`
+                applying _leftOf with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const left = await accessorUtil.fetchElements(leftQuery);
+
+          //THEN
           expect(await left[0].getText()).toBe("left");
           expect(left.length).toBe(1);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
 
         it("should find element with _rightOf", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const rightQuery = await api._rightOf(
             anchor,
             0
           )(await createCssQuery(By.css("td")));
+          const expectedLogMessage = stripIndents`
+                applying _rightOf with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const right = await accessorUtil.fetchElements(rightQuery);
+
+          //THEN
           expect(await right[0].getText()).toBe("right");
           expect(right.length).toBe(1);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
 
-        it("should find element with _leftOrRight", async () => {
+        it("should find element with _leftOrRightOf", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const leftQuery = await api._leftOrRightOf(
             anchor,
             0
           )(createCssQuery(By.css("td")));
+          const expectedLogMessage = stripIndents`
+                applying _leftOrRightOf with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const leftOrRight = await accessorUtil.fetchElements(leftQuery);
+
+          //THEN
           expect(leftOrRight.length).toBe(2);
           expect(await leftOrRight[0].getText()).toBe("left");
           expect(await leftOrRight[1].getText()).toBe("right");
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
       });
 
