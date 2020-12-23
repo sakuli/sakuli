@@ -3,17 +3,18 @@ import { createTestExecutionContextMock } from "../../__mocks__";
 import { mockPartial } from "sneer";
 import { Project } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
-import * as actions from "../actions";
 import { MouseButton } from "../button.class";
 import nutConfig from "../nut-global-config.class";
 import { join } from "path";
-import { Key } from "..";
 import {
   registerKeyboardPressKeys,
   registerKeyboardReleaseKeys,
   registerMouseDown,
   registerMouseUp,
 } from "../button-registry";
+import * as runAsActionFunctionMock from "../actions/__mocks__/action.function";
+import { createKeyboardApi, createMouseApi, ScreenApi } from "../actions";
+import { Key } from "..";
 
 jest.mock("../actions");
 jest.mock("../button-registry");
@@ -28,10 +29,10 @@ describe("sakuli region class", () => {
   );
   const sakuliRegion = new sakuliRegionClass();
 
-  const mouseApi = actions.createMouseApi(new LegacyProjectProperties());
-  const keyboardApi = actions.createKeyboardApi(new LegacyProjectProperties());
+  const mouseApi = createMouseApi(new LegacyProjectProperties());
+  const keyboardApi = createKeyboardApi(new LegacyProjectProperties());
 
-  let runAsActionSpy = jest.spyOn(actions, "runAsAction");
+  let runAsActionSpy = jest.spyOn(runAsActionFunctionMock, "runAsAction");
 
   const resourceDirectory = join(__dirname, "__mocks__");
 
@@ -213,8 +214,8 @@ describe("sakuli region class", () => {
           "find",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.find).toBeCalledTimes(1);
-        expect(actions.ScreenApi.find).toBeCalledWith(
+        expect(ScreenApi.find).toBeCalledTimes(1);
+        expect(ScreenApi.find).toBeCalledWith(
           imageFileToSearch,
           resourceDirectory,
           nutConfig.confidence,
@@ -250,8 +251,8 @@ describe("sakuli region class", () => {
           "exists",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.waitForImage).toBeCalledTimes(1);
-        expect(actions.ScreenApi.waitForImage).toBeCalledWith(
+        expect(ScreenApi.waitForImage).toBeCalledTimes(1);
+        expect(ScreenApi.waitForImage).toBeCalledWith(
           imageFileToSearch,
           resourceDirectory,
           nutConfig.confidence,
@@ -278,8 +279,8 @@ describe("sakuli region class", () => {
           "exists",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.waitForImage).toBeCalledTimes(1);
-        expect(actions.ScreenApi.waitForImage).toBeCalledWith(
+        expect(ScreenApi.waitForImage).toBeCalledTimes(1);
+        expect(ScreenApi.waitForImage).toBeCalledWith(
           imageFileToSearch,
           resourceDirectory,
           nutConfig.confidence,
@@ -320,8 +321,8 @@ describe("sakuli region class", () => {
           "waitForImage",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.waitForImage).toBeCalledTimes(1);
-        expect(actions.ScreenApi.waitForImage).toBeCalledWith(
+        expect(ScreenApi.waitForImage).toBeCalledTimes(1);
+        expect(ScreenApi.waitForImage).toBeCalledWith(
           imageFileToSearch,
           resourceDirectory,
           nutConfig.confidence,
@@ -345,8 +346,8 @@ describe("sakuli region class", () => {
           "highlight",
           expect.any(Function)
         );
-        expect(actions.ScreenApi.highlight).toBeCalledTimes(1);
-        expect(actions.ScreenApi.highlight).toBeCalledWith(
+        expect(ScreenApi.highlight).toBeCalledTimes(1);
+        expect(ScreenApi.highlight).toBeCalledWith(
           sakuliRegion,
           highlightDuration
         );
@@ -413,8 +414,8 @@ describe("sakuli region class", () => {
         "takeScreenshot",
         expect.any(Function)
       );
-      expect(actions.ScreenApi.takeScreenshot).toBeCalledTimes(1);
-      expect(actions.ScreenApi.takeScreenshot).toBeCalledWith(filename);
+      expect(ScreenApi.takeScreenshot).toBeCalledTimes(1);
+      expect(ScreenApi.takeScreenshot).toBeCalledWith(filename);
     });
 
     it("should take a screenshot and append a timestamp to the filename", async () => {
@@ -430,10 +431,8 @@ describe("sakuli region class", () => {
         "takeScreenshotWithTimestamp",
         expect.any(Function)
       );
-      expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
-      expect(actions.ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(
-        filename
-      );
+      expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledTimes(1);
+      expect(ScreenApi.takeScreenshotWithTimestamp).toBeCalledWith(filename);
     });
   });
 
