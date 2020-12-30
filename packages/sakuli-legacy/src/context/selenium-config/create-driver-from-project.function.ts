@@ -15,13 +15,6 @@ const defaultCapabilityMap: CapabilityMap = {
   edge: () => Capabilities.edge(),
   safari: () => Capabilities.safari(),
   ie: () => Capabilities.ie(),
-  phantomjs: () => Capabilities.phantomjs(),
-  htmlunit: () => Capabilities.htmlunit(),
-  htmlunitwithjs: () => Capabilities.htmlunitwithjs(),
-  android: () => Capabilities.android(),
-  iphone: () => Capabilities.iphone(),
-  ipad: () => Capabilities.ipad(),
-  opera: () => Capabilities.opera(),
 };
 
 export const createDriverFromProject = (
