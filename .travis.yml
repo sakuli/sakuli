@@ -2,8 +2,7 @@
 git:
   depth: false
 
-os:
-  - linux
+os: linux
 
 osx_image:
   - xcode11
