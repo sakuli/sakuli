@@ -18,6 +18,7 @@ import { getSiblingIndex } from "../helper/get-sibling-index.function";
 import { parentApi } from "./parent-api.function";
 import { PositionalInfo, positionalInfo } from "./positional-info.function";
 import { RelationApi } from "./relations-api.interface";
+import { stringifyElement } from "../sahi-element-utils";
 
 export function relationsApi(
   driver: ThenableWebDriver,
@@ -42,6 +43,7 @@ export function relationsApi(
 
   const _in: RelationProducer = (parentQuery: SahiElementQueryOrWebElement) => {
     return async (elementsQuery: SahiElementQuery) => {
+      logRelation("_in", parentQuery);
       // assume elements is as query
       const parentElement = await accessorUtil.fetchElement(parentQuery);
       const elementsInParent = await parentElement.findElements(
@@ -56,7 +58,14 @@ export function relationsApi(
   };
 
   const _near: RelationProducer = (query: SahiElementQueryOrWebElement) => {
+    function byDistance(a: any, b: any) {
+      return a.toRoot === b.toRoot
+        ? a.asSibling - b.asSibling
+        : a.toRoot - b.toRoot;
+    }
+
     return async (possibleElementsQuery) => {
+      logRelation("_near", query);
       const possibleElements = await fetchWithoutRelations(
         possibleElementsQuery
       );
@@ -69,14 +78,104 @@ export function relationsApi(
         }))
       );
       const nearElements = elementDistances
-        .sort((a, b) => {
-          return a.toRoot === b.toRoot
-            ? a.asSibling - b.asSibling
-            : a.toRoot - b.toRoot;
-        })
+        .sort(byDistance)
         .map(({ element }) => element);
       return webElementsToQuery(nearElements);
     };
+  };
+
+  const _under: RelationProducerWithOffset = (
+    query: SahiElementQueryOrWebElement,
+    offset: number = 0
+  ) => {
+    return createPositionalRelation(query, offset, (a, b) => {
+      logRelation("_under", query);
+      const edgesA = edges(a);
+      const edgesB = edges(b);
+      return (
+        edgesB.isUnder(edgesA) &&
+        (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB))
+      );
+    });
+  };
+
+  const _above: RelationProducerWithOffset = (
+    query: SahiElementQueryOrWebElement,
+    offset: number = 0
+  ) => {
+    return createPositionalRelation(query, offset, (a, b) => {
+      logRelation("_above", query);
+      const edgesA = edges(a);
+      const edgesB = edges(b);
+      return (
+        edgesB.isAbove(edgesA) &&
+        (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB))
+      );
+    });
+  };
+
+  const _underOrAbove: RelationProducerWithOffset = (
+    query: SahiElementQueryOrWebElement,
+    offset: number = 0
+  ) => {
+    return createPositionalRelation(query, offset, (a, b) => {
+      logRelation("_underOrAbove", query);
+      const edgesA = edges(a);
+      const edgesB = edges(b);
+      return (
+        (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) &&
+        (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB))
+      );
+    });
+  };
+
+  const _rightOf: RelationProducerWithOffset = (
+    query: SahiElementQueryOrWebElement,
+    offset = 0
+  ) => {
+    return createPositionalRelation(query, offset, (a, b) => {
+      logRelation("_rightOf", query);
+      let edges1 = edges(a);
+      let edges2 = edges(b);
+      return (
+        isRightOf(edges1.center, edges2.center) &&
+        (edges1.intersectsHorizontal(edges2) ||
+          edges2.intersectsHorizontal(edges1))
+      );
+    });
+  };
+
+  const _leftOf: RelationProducerWithOffset = (
+    query: SahiElementQueryOrWebElement,
+    offset = 0
+  ) => {
+    return createPositionalRelation(query, offset, (a, b) => {
+      logRelation("_leftOf", query);
+      let edges1 = edges(a);
+      let edges2 = edges(b);
+      return (
+        isLeftOf(edges1.center, edges2.center) &&
+        (edges1.intersectsHorizontal(edges2) ||
+          edges2.intersectsHorizontal(edges1))
+      );
+    });
+  };
+
+  const _leftOrRightOf: RelationProducerWithOffset = (
+    query: SahiElementQueryOrWebElement,
+    offset: number = 0
+  ) => {
+    return createPositionalRelation(query, offset, (a, b) => {
+      logRelation("_leftOrRightOf", query);
+      let edges1 = edges(a);
+      let edges2 = edges(b);
+      return (
+        (isRightOf(edges1.center, edges2.center) ||
+          isLeftOf(edges1.center, edges2.center)) &&
+        (edges1.intersectsHorizontal(edges2) ||
+          edges2.intersectsHorizontal(edges1))
+      );
+    });
   };
 
   function createPositionalRelation(
@@ -100,93 +199,16 @@ export function relationsApi(
     };
   }
 
-  const _under: RelationProducerWithOffset = (
-    query: SahiElementQueryOrWebElement,
-    offset: number = 0
-  ) => {
-    return createPositionalRelation(query, offset, (a, b) => {
-      const edgesA = edges(a);
-      const edgesB = edges(b);
-      return (
-        edgesB.isUnder(edgesA) &&
-        (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB))
-      );
-    });
-  };
-
-  const _above: RelationProducerWithOffset = (
-    query: SahiElementQueryOrWebElement,
-    offset: number = 0
-  ) => {
-    return createPositionalRelation(query, offset, (a, b) => {
-      const edgesA = edges(a);
-      const edgesB = edges(b);
-      return (
-        edgesB.isAbove(edgesA) &&
-        (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB))
-      );
-    });
-  };
-
-  const _underOrAbove: RelationProducerWithOffset = (
-    query: SahiElementQueryOrWebElement,
-    offset: number = 0
-  ) => {
-    return createPositionalRelation(query, offset, (a, b) => {
-      const edgesA = edges(a);
-      const edgesB = edges(b);
-      return (
-        (edgesB.isAbove(edgesA) || edgesB.isUnder(edgesA)) &&
-        (edgesB.intersectsVertical(edgesA) || edgesA.intersectsVertical(edgesB))
-      );
-    });
-  };
-
-  const _rightOf: RelationProducerWithOffset = (
-    query: SahiElementQueryOrWebElement,
-    offset = 0
-  ) => {
-    return createPositionalRelation(query, offset, (a, b) => {
-      let edges1 = edges(a);
-      let edges2 = edges(b);
-      return (
-        isRightOf(edges1.center, edges2.center) &&
-        (edges1.intersectsHorizontal(edges2) ||
-          edges2.intersectsHorizontal(edges1))
-      );
-    });
-  };
-
-  const _leftOf: RelationProducerWithOffset = (
-    query: SahiElementQueryOrWebElement,
-    offset = 0
-  ) => {
-    return createPositionalRelation(query, offset, (a, b) => {
-      let edges1 = edges(a);
-      let edges2 = edges(b);
-      return (
-        isLeftOf(edges1.center, edges2.center) &&
-        (edges1.intersectsHorizontal(edges2) ||
-          edges2.intersectsHorizontal(edges1))
-      );
-    });
-  };
-
-  const _leftOrRightOf: RelationProducerWithOffset = (
-    query: SahiElementQueryOrWebElement,
-    offset: number = 0
-  ) => {
-    return createPositionalRelation(query, offset, (a, b) => {
-      let edges1 = edges(a);
-      let edges2 = edges(b);
-      return (
-        (isRightOf(edges1.center, edges2.center) ||
-          isLeftOf(edges1.center, edges2.center)) &&
-        (edges1.intersectsHorizontal(edges2) ||
-          edges2.intersectsHorizontal(edges1))
-      );
-    });
-  };
+  function logRelation(
+    relationName: string,
+    query: SahiElementQueryOrWebElement
+  ) {
+    stringifyElement(query).then((stringifiedQuery) =>
+      testExecutionContext.logger.debug(
+        `applying ${relationName} with:\n${stringifiedQuery}`
+      )
+    );
+  }
 
   const { _parentNode, _parentCell, _parentRow, _parentTable } = parentApi(
     driver,
