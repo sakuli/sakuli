@@ -28,15 +28,10 @@ export function identifierToString(identifier: AccessorIdentifier) {
   }
 }
 
-export function sahiQueryToString({
-  locator,
-  relations,
-  identifier,
-}: SahiElementQuery) {
+export function sahiQueryToString({ locator, identifier }: SahiElementQuery) {
   return stripIndents`
         locator: ${locator.toString()}
         identifier: ${identifierToString(identifier)}
-        relations: ${relations.map((f) => f.name).join(", ")}
     `;
 }
 
