@@ -40,7 +40,7 @@ export interface ParentApi {
 
   /**
    * Fetches the HTML-table-cell (with tag `td`), if the element specified by `q` is its child.
-   * If `occurrence` is set to `n`, the n-th table-cell out of the given elements parents, will be returned.
+   * If `occurrence` is set to `n`, the n-th parent table-cell out of the given elements parents, will be returned.
    * `occurrence` defaults to 1, which is the immediate parent.
    *
    * @example Assuming this HTML-snippet:
@@ -63,7 +63,7 @@ export interface ParentApi {
 
   /**
    * Fetches the HTML-table-row if it is a parent of the element specified by `q`.
-   * If `occurrence` is set to `n`, the n-th table-row out of the list of the given elements parents, will be returned.
+   * If `occurrence` is set to `n`, the n-th parent table-row out of the list of the given elements parents, will be returned.
    * `occurrence` defaults to 1, which is the immediate parent.
    *
    * @param q
