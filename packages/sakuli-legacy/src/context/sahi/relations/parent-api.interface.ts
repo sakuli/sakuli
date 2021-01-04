@@ -62,9 +62,9 @@ export interface ParentApi {
   ): Promise<SahiElementQueryOrWebElement>;
 
   /**
-   * Fetch a HTML-table-row if it is a parent of the element specified by `q`.
-   * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
-   * The `occurence` defaults to 1, if not specified.
+   * Fetches the HTML-table-row if it is a parent of the element specified by `q`.
+   * If `occurrence` is set to `n`, the n-th table-row out of the list of the given elements parents, will be returned.
+   * `occurrence` defaults to 1, which is the immediate parent.
    *
    * @param q
    * @param occurrence
