@@ -6,11 +6,16 @@ import {
   SahiElementQuery,
   SahiElementQueryOrWebElement,
 } from "../sahi-element.interface";
-import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
-import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 import { RelationApi } from "./relations-api.interface";
 import { ParentApi } from "./parent-api.interface";
+import { stripIndents } from "common-tags";
 
 jest.setTimeout(15_000);
 describe("relations-api", () => {
@@ -75,6 +80,7 @@ describe("relations-api", () => {
       describe("dom", () => {
         describe("_in", () => {
           it("should find span in div", async (done) => {
+            //GIVEN
             await driver.get(
               mockHtml(`
                 <span id="outside"></span>
@@ -85,9 +91,19 @@ describe("relations-api", () => {
             );
             const inRel = api._in(createQuery(By.css("div")));
             const relatedQuery = await inRel(createCssQuery(By.css("span")));
+            const expectedLogMessage = stripIndents`
+                applying _in with:
+                locator: By(css selector, div)
+                identifier: 0`;
+
+            //WHEN
             const related = await accessorUtil.fetchElements(relatedQuery);
+            //THEN
             expect(related.length).toBe(1);
             await expect(related[0].getAttribute("id")).resolves.toBe("inside");
+            expect(testExecutionContext.logger.debug).toBeCalledWith(
+              expectedLogMessage
+            );
             done();
           });
 
@@ -130,6 +146,7 @@ describe("relations-api", () => {
 
         describe("_near", () => {
           it("should work", async () => {
+            //GIVEN
             const html = mockHtml(`
                     <table class="_in">
                       <tr>
@@ -154,8 +171,19 @@ describe("relations-api", () => {
             const linksNearUserTwoQuery = await nearUserTwo(
               createCssQuery(By.css("a"))
             );
+            const expectedLogMessage = stripIndents`
+                applying _near with:
+                locator: By(css selector, #user-two)
+                identifier: 0`;
+
+            //WHEN
             const linksNearUserTwo = await accessorUtil.fetchElements(
               linksNearUserTwoQuery
+            );
+
+            //THEN
+            expect(testExecutionContext.logger.debug).toBeCalledWith(
+              expectedLogMessage
             );
             return await expect(linksNearUserTwo[0].getText()).resolves.toEqual(
               expect.stringContaining("user two")
@@ -188,33 +216,70 @@ describe("relations-api", () => {
         });
 
         it("should find element with _above", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const underQuery = await api._above(
             anchor,
             0
           )(createCssQuery(By.css("code")));
+          const expectedLogMessage = stripIndents`
+                applying _above with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
+
           const above = await accessorUtil.fetchElements(underQuery);
+
+          //THEN
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
           expect(above.length).toBe(1);
         });
 
         it("should find element with _under", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const underQuery = await api._under(
             anchor,
             0
           )(createCssQuery(By.css("code")));
+          const expectedLogMessage = stripIndents`
+                applying _under with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const under = await accessorUtil.fetchElements(underQuery);
+
+          //THEN
           expect(under.length).toBe(1);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
 
         it("should find element with  _underOrAbove", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const underQuery = await api._underOrAbove(
             anchor,
             0
           )(createCssQuery(By.css("code")));
+          const expectedLogMessage = stripIndents`
+                applying _underOrAbove with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const underOrAbove = await accessorUtil.fetchElements(underQuery);
+
+          //THEN
           expect(underOrAbove.length).toBe(2);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
       });
 
@@ -237,37 +302,73 @@ describe("relations-api", () => {
         });
 
         it("should find element with _leftOf", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const leftQuery = await api._leftOf(
             anchor,
             0
           )(createCssQuery(By.css("td")));
+          const expectedLogMessage = stripIndents`
+                applying _leftOf with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const left = await accessorUtil.fetchElements(leftQuery);
+
+          //THEN
           expect(await left[0].getText()).toBe("left");
           expect(left.length).toBe(1);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
 
         it("should find element with _rightOf", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const rightQuery = await api._rightOf(
             anchor,
             0
           )(await createCssQuery(By.css("td")));
+          const expectedLogMessage = stripIndents`
+                applying _rightOf with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const right = await accessorUtil.fetchElements(rightQuery);
+
+          //THEN
           expect(await right[0].getText()).toBe("right");
           expect(right.length).toBe(1);
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
 
-        it("should find element with _leftOrRight", async () => {
+        it("should find element with _leftOrRightOf", async () => {
+          //GIVEN
           const anchor = await createQuery(By.css("#anchor"));
           const leftQuery = await api._leftOrRightOf(
             anchor,
             0
           )(createCssQuery(By.css("td")));
+          const expectedLogMessage = stripIndents`
+                applying _leftOrRightOf with:
+                locator: By(css selector, #anchor)
+                identifier: 0`;
+
+          //WHEN
           const leftOrRight = await accessorUtil.fetchElements(leftQuery);
+
+          //THEN
           expect(leftOrRight.length).toBe(2);
           expect(await leftOrRight[0].getText()).toBe("left");
           expect(await leftOrRight[1].getText()).toBe("right");
+          expect(testExecutionContext.logger.debug).toBeCalledWith(
+            expectedLogMessage
+          );
         });
       });
 

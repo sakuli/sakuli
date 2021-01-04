@@ -104,8 +104,7 @@ describe("Sahi element utils", () => {
       };
 
       const expectedElementQuery = stripIndents`locator: By(css selector, *[id="data-test-id"])
-                             identifier: 42
-                             relations:`; //Relations are not rendered as of today => https://github.com/sakuli/sakuli/issues/518
+                             identifier: 42`;
 
       //WHEN
       const stringifiedQuery = sahiQueryToString(elementQuery);
@@ -125,8 +124,7 @@ describe("Sahi element utils", () => {
       };
 
       const expectedElementQueryString = stripIndents`locator: By(css selector, *[id="data-test-id"])
-                             identifier: 42
-                             relations:`;
+                             identifier: 42`;
 
       //WHEN
       const stringifiedElement = await stringifyElement(elementQuery);
