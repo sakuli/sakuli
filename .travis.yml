@@ -3,7 +3,6 @@ git:
   depth: false
 
 os:
-  - osx
   - linux
 
 osx_image:
