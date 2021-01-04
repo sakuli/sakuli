@@ -6,7 +6,7 @@ export interface RelationApi extends ParentApi {
   _in(anchor: SahiElementQueryOrWebElement): SahiRelation;
 
   /**
-   * Creates a relation which returns the given element nearest (distance within the DOM) to the anchor
+   * Creates a relation which returns the given element nearest (distance within the DOM tree) to the anchor
    *
    * @example
    * Assuming the following HTML-snippets
@@ -27,7 +27,7 @@ export interface RelationApi extends ParentApi {
    * </div>
    * ```
    *
-   * The following query will return in both cases the element with id="elem1"
+   * The following query will return in both cases the element with id="elem0"
    * ```typescript
    * _paragraph("elem", _near(_paragraph("anchor"));
    * ```
