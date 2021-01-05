@@ -32,25 +32,22 @@ export interface RelationApi extends ParentApi {
   _near(anchor: SahiElementQueryOrWebElement): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are geometrically under the anchor element.
+   * Creates a relation that specifies elements that are vertically aligned under the center of the anchor element.
    *
-   * **Note**: The specified elements must be intersected by the same vertical line. E.g.:
-   *
+   * @example
    * ```
    * +----+
    * | 1  |
    * +----+
-   *          +----+
-   *          | 2  |
-   *          +----+
+   *      :   +----+
+   *      :   | 2  |
+   *      :   +----+
    *      +----+
    *      | 3  |
    *      +----+
    * ```
    * In this case element `3` is  "under" element `2` and element `3` is also "under" element `1`, but element `2` is not "under" element `1`.
    *
-   * **Note**: Reference for the relation is the geometrical center of each element.
-   * That means that elements, that are part of the relation, can overlap with the anchor element.
    * @param anchor
    * @param offset
    */
