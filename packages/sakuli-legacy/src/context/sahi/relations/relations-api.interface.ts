@@ -48,7 +48,7 @@ export interface RelationApi extends ParentApi {
    *      | 3  |
    *      +----+
    * ```
-   * In this case element `3` is  "under" element `2` and element `3` is also "under" element `1`, but element `2` is not "under" element `1`.
+   * In this case element `3` is  "under" element `2` and element `3` is also "under" element `1`, but element `2` is not "under" element `1` as they do not align vertically.
    *
    * @param anchor
    * @param offset
@@ -72,7 +72,7 @@ export interface RelationApi extends ParentApi {
    *      | 1  |
    *      +----+
    * ```
-   * In this case element `2` is  "above" element `1` and element `3` is also "above" element `1`, but element `3` is not "above" element `2`.
+   * In this case element `2` is  "above" element `1` and element `3` is also "above" element `1`, but element `3` is not "above" element `2` as they do not align vertically.
    *
    * @param anchor
    * @param offset
@@ -80,10 +80,28 @@ export interface RelationApi extends ParentApi {
   _above(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are geometrically under or above the anchor element.
+   * Creates a relation that identifies relational elements by the following criteria:
+   *  - The center of the relational element is located under or above the center of the anchor element on the y axis
+   *  - The relational element is vertically aligned with the anchor element
    *
-   * **Note**: The specified elements must be intersected by the same vertical line.
-   * This works just the same as in [[`_under`]].
+   * @example
+   * ```
+   * +----+
+   * | 3  |
+   * +----+
+   *      :        +----+
+   *      :        | 4  |
+   *      :        +----+
+   *      +----+
+   *      | 1  |
+   *      +----+
+   *          :
+   *         +----+
+   *         | 2  |
+   *         +----+
+   * ```
+   * In this case element `2` and `3` are "under or above" element `1`. Element 4 is not "under or above" element `1` as they do not align vertically.
+   *
    * @param anchor
    * @param offset
    */
