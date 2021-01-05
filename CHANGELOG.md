@@ -35,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - Maintenance: Rework CI/CD pipelines [(#548)](https://github.com/sakuli/sakuli/issues/548)
 - Enhancement: \_leftOf/ \_rightOf is usable outside of tables [(#397)](https://github.com/sakuli/sakuli/issues/397)
 - Enhancement: sahiQueryToString not rendering relations properly [(#518)](https://github.com/sakuli/sakuli/issues/518)
+- Maintenance: Update Typescript and Typedoc [(#551)](https://github.com/sakuli/sakuli/issues/551)
 - Docs: Revisit specification of \_near relation [(#563)](https://github.com/sakuli/sakuli/issues/563)
 
 ## v2.4.0

@@ -1,4 +1,5 @@
 import {
+  LogMode,
   Project,
   SakuliCoreProperties,
   SakuliInstance,
@@ -8,13 +9,12 @@ import { mockPartial, mockRecursivePartial } from "sneer";
 import { runCommand } from "./run-command.function";
 import { Argv, CommandModule } from "yargs";
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
-import * as commons from "@sakuli/commons";
+import * as ensurePathModule from "@sakuli/commons/dist/fs/ensure-path.function";
 import { ensurePath, LogLevel } from "@sakuli/commons";
 import chalk from "chalk";
 import { createLogConsumer } from "../create-log-consumer.function";
 import { renderErrorsFromContext } from "./run-command/render-errors-from-context.function";
 import { renderError } from "./run-command/render-error.function";
-import { LogMode } from "@sakuli/core";
 
 jest.mock("../cli-utils/test-execution-context-renderer.function", () => ({
   testExecutionContextRenderer: jest.fn(),
@@ -93,7 +93,9 @@ describe("runCommand", () => {
       processExitMock = jest
         .spyOn(process, "exit")
         .mockImplementation((() => {}) as any) as any;
-      jest.spyOn(commons, "ensurePath").mockImplementation(async () => {});
+      jest
+        .spyOn(ensurePathModule, "ensurePath")
+        .mockImplementation(async () => {});
       (<jest.Mock>project.objectFactory).mockReturnValue(properties);
     });
 
