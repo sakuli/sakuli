@@ -111,21 +111,20 @@ export interface RelationApi extends ParentApi {
   ): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are geometrically right of the anchor element.
+   * Creates a relation that identifies relational elements by the following criteria:
+   *  - The center of the relational element is located right of the center of the anchor element on the x axis
+   *  - The relational element is horizontally aligned with the anchor element
    *
-   * **Note**: The specified elements must be intersected by the same horizontal line.
    * ```
    * +----+
    * | 1  |
-   * +----+          +----+
-   *         +----+  | 3  |
+   * +----+ ~~~~~~~~~+----+
+   *         +----+ ~| 3  |
    *         | 2  |  +----+
    *         +----+
    * ```
-   * In this case element `3` is "right" of element `1` and element `2`, but element `2` is not "right" of element `1`.
+   * In this case element `3` is "right" of element `1` and element `2`, but element `2` is not "right" of element `1` as they do not align horizontally.
    *
-   * **Note**: Reference for the relation is the geometrical center of each element.
-   * This means, that elements, that are part of the relation, can overlap with the anchor element.
    * @param anchor
    * @param offset
    */
