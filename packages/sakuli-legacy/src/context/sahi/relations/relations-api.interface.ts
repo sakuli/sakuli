@@ -123,7 +123,7 @@ export interface RelationApi extends ParentApi {
    *         | 2  |  +----+
    *         +----+
    * ```
-   * In this case element `3` is "right" of element `1` and element `2`, but element `2` is not "right" of element `1` as they do not align horizontally.
+   * In this case element `3` is "right of" element `1` and element `2`, but element `2` is not "right of" element `1` as they do not align horizontally.
    *
    * @param anchor
    * @param offset
@@ -131,10 +131,19 @@ export interface RelationApi extends ParentApi {
   _rightOf(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are geometrically left of the anchor element.
+   * Creates a relation that identifies relational elements by the following criteria:
+   *  - The center of the relational element is located left of the center of the anchor element on the x axis
+   *  - The relational element is horizontally aligned with the anchor element
    *
-   * **Note**: The specified elements must be intersected by the same horizontal line.
-   * This works just the same as in [[`_rightOf`]].
+   * ```
+   * +----+
+   * | 1  |
+   * +----+ ~~~~~~~~~+----+
+   *         +----+ ~| 3  |
+   *         | 2  |  +----+
+   *         +----+
+   * ```
+   * In this case element `1` and element `2` are "left of" element `3`, but element `1` is not "left of" element `2` as they do not align horizontally.
    * @param anchor
    * @param offset
    */
