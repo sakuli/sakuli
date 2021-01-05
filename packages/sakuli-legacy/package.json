@@ -49,7 +49,7 @@
     "@types/escodegen": "0.0.6",
     "@types/esprima": "4.0.2",
     "@types/express": "4.17.9",
-    "@types/jest": "26.0.15",
+    "@types/jest": "26.0.19",
     "@types/mock-fs": "4.13.0",
     "@types/node": "14.14.10",
     "@types/node-fetch": "2.5.7",
@@ -64,7 +64,7 @@
     "node-fetch": "2.6.1",
     "sneer": "1.0.1",
     "ts-jest": "26.4.4",
-    "typedoc": "0.17.8",
-    "typescript": "3.8.3"
+    "typedoc": "0.19.2",
+    "typescript": "4.1.3"
   }
 }

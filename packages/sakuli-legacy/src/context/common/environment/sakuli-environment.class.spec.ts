@@ -2,9 +2,10 @@ import { createTestExecutionContextMock } from "../../__mocks__";
 import { mockPartial } from "sneer";
 import { Project } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import * as runAsActionFunctionMock from "../actions/__mocks__/action.function";
 import * as actions from "../actions";
-import { createEnvironmentClass } from "./sakuli-environment.class";
 import { ScreenApi } from "../actions";
+import { createEnvironmentClass } from "./sakuli-environment.class";
 import { createRegionClass } from "../region";
 import { Key } from "..";
 import {
@@ -34,7 +35,7 @@ describe("sakuli environment", () => {
 
   const keyboardApi = actions.createKeyboardApi(new LegacyProjectProperties());
 
-  let runAsActionSpy = jest.spyOn(actions, "runAsAction");
+  let runAsActionSpy = jest.spyOn(runAsActionFunctionMock, "runAsAction");
 
   it("should scroll down on mouseWheelDown", async () => {
     //GIVEN
