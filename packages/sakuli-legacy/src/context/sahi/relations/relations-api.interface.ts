@@ -32,7 +32,9 @@ export interface RelationApi extends ParentApi {
   _near(anchor: SahiElementQueryOrWebElement): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are vertically aligned under the center of the anchor element.
+   * Creates a relation that identifies relational elements by the following criteria:
+   *  - The center of the relational element is located under the center of the anchor element on the y axis
+   *  - The relational element is vertically aligned with the anchor element
    *
    * @example
    * ```
@@ -54,7 +56,9 @@ export interface RelationApi extends ParentApi {
   _under(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are vertically aligned above the center of the anchor element.
+   * Creates a relation that identifies relational elements by the following criteria:
+   *  - The center of the relational element is located above the center of the anchor element on the y axis
+   *  - The relational element is vertically aligned with the anchor element
    *
    * @example
    * ```
