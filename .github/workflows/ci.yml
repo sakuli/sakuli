@@ -19,9 +19,9 @@ jobs:
         with:
           node-version: 14.x
       - name: Run setup script
-        run: bash setup_${{ runner.os }}.sh
+        run: bash ./.build/setup_${{ runner.os }}.sh
       - name: Run unit/integration tests
-        run: bash run_${{ runner.os }}.sh
+        run: bash ./.build/run_${{ runner.os }}.sh
       - name: SonarCloud Scan
         if: runner.os == 'Linux'
         uses: SonarSource/sonarcloud-github-action@v1.4
