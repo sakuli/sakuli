@@ -13,5 +13,3 @@ npm test -- --runInBand --ci --bail
 npm run test:it
 npm run coverage:merge
 npm run coverage:merge-report
-sonar-scanner
-npm run test:e2e

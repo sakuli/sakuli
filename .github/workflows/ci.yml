@@ -1,0 +1,40 @@
+name: Continuous integration
+
+on:
+  push:
+    branches-ignore:
+      - "master"
+      - "develop"
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: Install Sakuli dependecies
+        run: npm run ci
+      - name: Build Sakuli
+        run: npm run build
+      - name: Run setup script
+        run: bash setup_${{ runner.os }}.sh
+      - name: Run unit/integration tests
+        run: bash run_${{ runner.os }}.sh
+      - name: SonarCloud Scan
+        if: runner.os == 'Linux'
+        uses: SonarSource/sonarcloud-github-action@v1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Run e2e tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:e2e
+        env:
+          LOG_MODE: "ci"
