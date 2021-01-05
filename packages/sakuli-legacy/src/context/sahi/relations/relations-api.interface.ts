@@ -54,10 +54,22 @@ export interface RelationApi extends ParentApi {
   _under(anchor: SahiElementQueryOrWebElement, offset?: number): SahiRelation;
 
   /**
-   * Creates a relation that specifies elements that are geometrically above the anchor element.
+   * Creates a relation that specifies elements that are vertically aligned above the center of the anchor element.
    *
-   * **Note**: The specified elements must be intersected by the same vertical line.
-   * This works just the same as in [[`_under`]].
+   * @example
+   * ```
+   * +----+
+   * | 3  |
+   * +----+
+   *      :   +----+
+   *      :   | 2  |
+   *      :   +----+
+   *      +----+
+   *      | 1  |
+   *      +----+
+   * ```
+   * In this case element `2` is  "above" element `1` and element `3` is also "above" element `1`, but element `3` is not "above" element `2`.
+   *
    * @param anchor
    * @param offset
    */
