@@ -40,7 +40,7 @@ export interface ParentApi {
 
   /**
    * Fetches the HTML-table-cell (with tag `td`), if the element specified by `q` is its child.
-   * If `occurrence` is set to `n`, the n-th parent table-cell out of the given elements parents, will be returned.
+   * If `occurrence` is set to `n`, the n-th parent table-cell out of the hierarchy of given elements parents, will be returned.
    * `occurrence` defaults to 1, which is the immediate parent.
    *
    * @example Assuming this HTML-snippet:
@@ -88,9 +88,24 @@ export interface ParentApi {
   ): Promise<SahiElementQueryOrWebElement>;
 
   /**
-   * Fetch a HTML-table if it is a parent of the element specified by `q`.
-   * If `occurence` is given it specifies the "occurence" of the element, that should be taken, in the hierarchy above the anchor element.
-   * The `occurence` defaults to 1, if not specified.
+   * Fetches the HTML-table if it is a parent of the element specified by `q`.
+   * If `occurrence` is set to `n`, the n-th parent table out of the hierarchy of given elements parents, will be returned.
+   * `occurrence` defaults to 1, which is the immediate parent.
+   *
+   * @example Assuming this HTML-snippet:
+   * ```
+   * <table>
+   *   <tr>
+   *     <td>
+   *       <div>text</div>
+   *     </td>
+   *   </tr>
+   * </table>
+   * ```
+   * The folliwing query returns the `<table>` element.
+   * ```
+   * await _parentTable(_div("text"));
+   * ```
    *
    * @param q
    * @param occurrence
