@@ -25,6 +25,12 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: "bash run_${{ runner.os }}.sh"
+      - name: Run e2e tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:e2e
+        env:
+          LOG_MODE: "ci"
       - name: Publish next release
         run: npm run lerna:publish-next
       - name: Trigger Docker build

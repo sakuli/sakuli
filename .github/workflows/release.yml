@@ -27,6 +27,12 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: "bash run_${{ runner.os }}.sh"
+      - name: Run e2e tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:e2e
+        env:
+          LOG_MODE: "ci"
       - name: Run Typedoc
         run: npx lerna run typedoc
       - name: Publish tagged release
