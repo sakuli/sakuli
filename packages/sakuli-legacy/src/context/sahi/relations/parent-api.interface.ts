@@ -63,8 +63,21 @@ export interface ParentApi {
 
   /**
    * Fetches the HTML-table-row if it is a parent of the element specified by `q`.
-   * If `occurrence` is set to `n`, the n-th parent table-row out of the list of the given elements parents, will be returned.
+   * If `occurrence` is set to `n`, the n-th parent table-row out of the hierarchy of given elements parents, will be returned.
    * `occurrence` defaults to 1, which is the immediate parent.
+   *
+   * @example Assuming this HTML-snippet:
+   * ```
+   * <tr>
+   *   <td>
+   *     <div>text</div>
+   *   </td>
+   * </tr>
+   * ```
+   * The folliwing query returns the `<tr>` element.
+   * ```
+   * await _parentRow(_div("text"));
+   * ```
    *
    * @param q
    * @param occurrence
