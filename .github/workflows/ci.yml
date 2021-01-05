@@ -21,11 +21,6 @@ jobs:
           node-version: 14.x
       - name: Run setup script
         run: bash ./.build/setup_${{ runner.os }}.sh
-      - name: Dependencies [macOS]
-        if: runner.os == 'macOs'
-        run: |
-          brew update
-          brew install calc
       - name: Run unit/integration tests
         uses: GabrielBB/xvfb-action@v1
         with:

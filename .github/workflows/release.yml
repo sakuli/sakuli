@@ -1,0 +1,37 @@
+name: release-version
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  release-version:
+    name: release-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: "0"
+      - run: git fetch origin +refs/tags/*:refs/tags/*
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - name: Setup NPM token
+        run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc 2> /dev/null
+      - name: Run setup script
+        run: "bash setup_${{ runner.os }}.sh"
+      - name: Run unit/integration tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: "bash run_${{ runner.os }}.sh"
+      - name: Run Typedoc
+        run: npx lerna run typedoc
+      - name: Publish tagged release
+        run: npm run lerna:publish
+      - name: Publish typedocs
+        run: npm run gh-pages:publish
+        env:
+          SAKULIDEV_TOKEN: ${{ secrets.SAKULIDEV_TOKEN

@@ -32,6 +32,7 @@
     "coverage:merge": "istanbul-merge --out coverage/merged/coverage-final.json coverage/unit/coverage-final.json  coverage/it/coverage-final.json",
     "coverage:merge-report": "nyc report --reporter=lcov --reporter=text --temp-dir=./coverage/merged --report-dir=./coverage/merged",
     "build": "lerna run build",
+    "gh-pages:publish": "gh-pages -d ./docs -r https://$SAKULIDEV_TOKEN@github.com/sakuli/apidoc.git",
     "postbuild": "lerna bootstrap",
     "test": "jest",
     "test:it": "jest -c jest.it.config.js --runInBand --no-cache --passWithNoTests --coverage",
@@ -42,6 +43,7 @@
     "share-scripts": "node scripts/distribute-npm-scripts"
   },
   "devDependencies": {
+    "gh-pages": "3.1.0",
     "husky": "4.3.0",
     "istanbul-merge": "1.1.1",
     "jest": "26.6.3",
