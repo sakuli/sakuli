@@ -16,13 +16,13 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: 14.x
-      - name: Run setup script
+      - name: Install dependencies
         run: bash ./.build/setup_${{ runner.os }}.sh
       - name: Run unit/integration tests
         uses: GabrielBB/xvfb-action@v1
         with:
           run: bash ./.build/run_${{ runner.os }}.sh
-      - name: SonarCloud Scan
+      - name: Send results to SonarCloud
         if: runner.os == 'Linux'
         uses: SonarSource/sonarcloud-github-action@v1.4
         env:

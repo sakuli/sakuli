@@ -17,12 +17,20 @@ jobs:
         with:
           node-version: 14.x
           registry-url: https://registry.npmjs.org/
-      - name: Run setup script
+      - name: Install dependencies
         run: "bash setup_${{ runner.os }}.sh"
+      - run: npm ci
+      - run: npm run build
       - name: Run unit/integration tests
         uses: GabrielBB/xvfb-action@v1
         with:
           run: "bash run_${{ runner.os }}.sh"
+      - name: Send results to SonarCloud
+        if: runner.os == 'Linux'
+        uses: SonarSource/sonarcloud-github-action@v1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Run e2e tests
         uses: GabrielBB/xvfb-action@v1
         with:
