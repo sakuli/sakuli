@@ -37,7 +37,16 @@ jobs:
         run: npx lerna run typedoc
       - name: Publish tagged release
         run: npm run lerna:publish
-      - name: Publish typedocs
-        run: npm run gh-pages:publish
-        env:
-          SAKULIDEV_TOKEN: ${{ secrets.SAKULIDEV_TOKEN
+      - name: Publish typedocs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.SAKULIDEV_TOKEN }}
+          external_repository: sakuli/apidoc
+          publish_dir: ./docs
+      - name: Trigger Docker build
+        uses: mvasigh/dispatch-action@1.1.6
+        with:
+          token: ${{ secrets.SAKULIDEV_TOKEN }}
+          repo: sakuli-docker
+          owner: sakuli
+          event-type: build-latest

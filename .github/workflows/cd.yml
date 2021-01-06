@@ -34,6 +34,9 @@ jobs:
       - name: Publish next release
         run: npm run lerna:publish-next
       - name: Trigger Docker build
-        run: bash ./.build/trigger-image-build.sh
-        env:
-          SAKULIDEV_TOKEN: ${{ secrets.SAKULIDEV_TOKEN }}
+        uses: mvasigh/dispatch-action@1.1.6
+        with:
+          token: ${{ secrets.SAKULIDEV_TOKEN }}
+          repo: sakuli-docker
+          owner: sakuli
+          event-type: build-latest
