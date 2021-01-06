@@ -19,8 +19,6 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - name: Setup NPM token
-        run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc 2> /dev/null
       - name: Run setup script
         run: "bash setup_${{ runner.os }}.sh"
       - name: Run unit/integration tests
@@ -37,6 +35,8 @@ jobs:
         run: npx lerna run typedoc
       - name: Publish tagged release
         run: npm run lerna:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish typedocs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:

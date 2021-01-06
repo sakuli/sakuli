@@ -17,8 +17,6 @@ jobs:
         with:
           node-version: 14.x
           registry-url: https://registry.npmjs.org/
-      - name: Setup NPM token
-        run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" >> $HOME/.npmrc 2> /dev/null
       - name: Run setup script
         run: "bash setup_${{ runner.os }}.sh"
       - name: Run unit/integration tests
@@ -33,6 +31,8 @@ jobs:
           LOG_MODE: "ci"
       - name: Publish next release
         run: npm run lerna:publish-next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Trigger Docker build
         uses: mvasigh/dispatch-action@1.1.6
         with:
