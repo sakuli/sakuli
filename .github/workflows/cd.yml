@@ -31,6 +31,14 @@ jobs:
           run: npm run test:e2e
         env:
           LOG_MODE: "ci"
+      - name: save error screenshots on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: error-screenshots
+          path: |
+            ./packages/e2e/e2e-suite-chrome/_logs/_screenshots
+            ./packages/e2e/e2e-suite-firefox/_logs/_screenshots
       - name: Publish next release
         run: npm run lerna:publish-next
         env:
