@@ -18,13 +18,13 @@ jobs:
           node-version: 14.x
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
-        run: "bash setup_${{ runner.os }}.sh"
+        run: bash ./.build/setup_${{ runner.os }}.sh
       - run: npm ci
       - run: npm run build
       - name: Run unit/integration tests
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: "bash run_${{ runner.os }}.sh"
+          run: bash ./.build/run_${{ runner.os }}.sh
       - name: Run e2e tests
         uses: GabrielBB/xvfb-action@v1
         with:
