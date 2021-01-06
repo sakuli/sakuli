@@ -1,0 +1,44 @@
+name: cd
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  release-next:
+    name: release-next
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: "0"
+      - run: git fetch origin +refs/tags/*:refs/tags/*
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+          registry-url: https://registry.npmjs.org/
+      - name: Install dependencies
+        run: "bash setup_${{ runner.os }}.sh"
+      - run: npm ci
+      - run: npm run build
+      - name: Run unit/integration tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: "bash run_${{ runner.os }}.sh"
+      - name: Run e2e tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:e2e
+        env:
+          LOG_MODE: "ci"
+      - name: Publish next release
+        run: npm run lerna:publish-next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Trigger Docker build
+        uses: mvasigh/dispatch-action@1.1.6
+        with:
+          token: ${{ secrets.SAKULIDEV_TOKEN }}
+          repo: sakuli-docker
+          owner: sakuli
+          event-type: build-latest
