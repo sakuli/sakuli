@@ -5,6 +5,7 @@ on:
     branches-ignore:
       - "master"
       - "develop"
+      - "release/**"
   pull_request:
 
 jobs:
