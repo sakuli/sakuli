@@ -18,6 +18,8 @@ jobs:
           node-version: 14.x
       - name: Install dependencies
         run: bash ./.build/setup_${{ runner.os }}.sh
+      - run: npm ci
+      - run: npm run build
       - name: Run unit/integration tests
         uses: GabrielBB/xvfb-action@v1
         with:
