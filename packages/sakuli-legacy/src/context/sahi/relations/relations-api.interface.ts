@@ -25,8 +25,31 @@ export interface RelationApi extends ParentApi {
   _in(anchor: SahiElementQueryOrWebElement): SahiRelation;
 
   /**
-   * Creates a relation that sorts elements according to how close they are to the anchor element.
+   * Creates a relation which returns the given element nearest (distance within the DOM tree) to the anchor
    *
+   * @example
+   * Assuming the following HTML-snippets
+   * ```html
+   * <div>
+   *    <p id="elem0">elem</p>
+   *    <p id="elem1">elem</p>
+   *    <p id="anchor"></p>
+   * </div>
+   * ```
+   * ```html
+   * <div>
+   *  <div>
+   *    <p id="elem0">elem</p>
+   *    <p id="elem1">elem</p>
+   *  </div>
+   *  <p id="anchor"></p>
+   * </div>
+   * ```
+   *
+   * The following query will return in both cases the element with id="elem0"
+   * ```typescript
+   * _paragraph("elem", _near(_paragraph("anchor"));
+   * ```
    * @param anchor
    */
   _near(anchor: SahiElementQueryOrWebElement): SahiRelation;
