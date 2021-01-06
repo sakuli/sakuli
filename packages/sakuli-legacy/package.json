@@ -54,7 +54,7 @@
     "@types/node": "14.14.10",
     "@types/node-fetch": "2.5.7",
     "@types/properties-reader": "2.1.0",
-    "@types/selenium-webdriver": "4.0.0",
+    "@types/selenium-webdriver": "4.0.10",
     "@types/yargs": "15.0.10",
     "chromedriver": "87.0.0",
     "dockerode": "3.2.1",
