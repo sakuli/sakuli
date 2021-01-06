@@ -57,4 +57,4 @@ jobs:
           token: ${{ secrets.SAKULIDEV_TOKEN }}
           repo: sakuli-docker
           owner: sakuli
-          event-type: build-latest
+          event_type: build-latest
