@@ -26,9 +26,7 @@ jobs:
         with:
           run: bash ./.build/run_${{ runner.os }}.sh
       - name: Run e2e tests
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: npm run test:e2e
+        run: xvfb-run --server-args="-screen 0, 1920x1080x24" npm run test:e2e
         env:
           LOG_MODE: "ci"
       - name: save error screenshots on failure
