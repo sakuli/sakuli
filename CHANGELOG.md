@@ -39,6 +39,7 @@ All notable changes to this project will be documented in this file.
 - Maintenance: Update Typescript and Typedoc [(#551)](https://github.com/sakuli/sakuli/issues/551)
 - Maintenance: update @types/selenium-webdriver in sakuli-legacy [(#542)](https://github.com/sakuli/sakuli/issues/542)
 - Docs: Revisit specification of \_near relation [(#563)](https://github.com/sakuli/sakuli/issues/563)
+- Maintenance: Add windows e2e tests to Sakuli [(#580)](https://github.com/sakuli/sakuli/issues/580)
 
 ## v2.4.0
 
