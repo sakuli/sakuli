@@ -41,6 +41,18 @@ jobs:
           npm run coverage:merge
           npm run coverage:merge-report
 
+  it-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:it
+
   e2e-test:
     strategy:
       matrix:
@@ -82,7 +94,7 @@ jobs:
 
   release-version:
     name: release-version
-    needs: [test, e2e-tests]
+    needs: [test, it-test, e2e-test]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
