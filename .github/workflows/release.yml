@@ -24,7 +24,6 @@ jobs:
           docker run -d -p 4445:4444 selenium/standalone-chrome-debug
       - run: npm ci
       - run: npm run build
-      - run: npm run coverage:clean
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1
         with:
@@ -36,10 +35,6 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm run test:it
-      - name: Merge coverage report
-        run: |
-          npm run coverage:merge
-          npm run coverage:merge-report
 
   it-test:
     runs-on: windows-latest
