@@ -26,7 +26,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: run unit tests
-        run: npm test -- --runInBand --ci --bail
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm test -- --runInBand --ci --bail
         env:
           FIREFOX_WD_URL: http://localhost:4444/wd/hub
           CHROME_WD_URL: http://localhost:4445/wd/hub
