@@ -73,6 +73,7 @@ jobs:
           CHROME_WD_URL: http://localhost:4445/wd/hub
 
   integration-test:
+    needs: [sonar, unit-test]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -97,6 +98,7 @@ jobs:
           run: npm run test:it
 
   e2e-test:
+    needs: [integration-test]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]

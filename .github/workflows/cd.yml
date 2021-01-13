@@ -30,6 +30,7 @@ jobs:
           CHROME_WD_URL: http://localhost:4445/wd/hub
 
   integration-test:
+    needs: [unit-test]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -54,6 +55,7 @@ jobs:
           run: npm run test:it
 
   e2e-test:
+    needs: [integration-test]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -95,7 +97,7 @@ jobs:
 
   release-next:
     name: release-next
-    needs: [test, it-test, e2e-test]
+    needs: [e2e-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
