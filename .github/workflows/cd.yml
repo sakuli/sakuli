@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Setup node node ${{ matrix.node }}
+      - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v2.1.4
         with:
           node-version: node ${{ matrix.node }}
