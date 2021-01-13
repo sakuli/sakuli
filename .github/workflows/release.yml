@@ -6,29 +6,76 @@ on:
       - v*.*.*
 
 jobs:
-  release-version:
-    name: release-version
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
-        with:
-          fetch-depth: "0"
-      - run: git fetch origin +refs/tags/*:refs/tags/*
-      - name: Use Node.js 14
+      - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 14
-          registry-url: https://registry.npmjs.org/
+          node-version: 14.x
       - name: Install dependencies
-        run: bash ./.build/setup_${{ runner.os }}.sh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnome-calculator
+          docker pull selenium/standalone-chrome-debug
+          docker pull selenium/standalone-firefox-debug
+          docker run -d -p 4444:4444 selenium/standalone-firefox-debug
+          docker run -d -p 4445:4444 selenium/standalone-chrome-debug
       - run: npm ci
       - run: npm run build
-      - name: Run unit/integration tests
+      - name: run unit tests
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: bash ./.build/run_${{ runner.os }}.sh
-      - name: Run e2e tests
+          run: npm test -- --runInBand --ci --bail
+        env:
+          FIREFOX_WD_URL: http://localhost:4444/wd/hub
+          CHROME_WD_URL: http://localhost:4445/wd/hub
+      - name: run integration tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:it
+
+  it-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:it
+
+  e2e-test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: Install dependencies [Linux]
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
+      - run: npm ci
+      - run: npm run build
+      - name: Run e2e tests [Linux]
+        if: runner.os == 'Linux'
         run: xvfb-run --server-args="-screen 0, 1920x1080x24" npm run test:e2e
+        shell: bash
+        env:
+          LOG_MODE: "ci"
+      - name: Run e2e tests [Windows]
+        if: runner.os == 'Windows'
+        run: npm run test:e2e
+        shell: powershell
         env:
           LOG_MODE: "ci"
       - name: save error screenshots on failure
@@ -39,6 +86,23 @@ jobs:
           path: |
             ./packages/e2e/e2e-suite-chrome/_logs/_screenshots
             ./packages/e2e/e2e-suite-firefox/_logs/_screenshots
+
+  release-version:
+    name: release-version
+    needs: [test, it-test, e2e-test]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: "0"
+      - run: git fetch origin +refs/tags/*:refs/tags/*
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - run: npm run build
       - name: Run Typedoc
         run: npx lerna run typedoc
       - name: Publish tagged release

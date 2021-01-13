@@ -8,6 +8,7 @@
     await testCase.endOfStep("Navigate to sakuli website");
     await testCase.startStep("Search egg");
     await _highlight(_heading1(/LET'S FRY AN EGG/), 2000);
+    await screen.find("background_color.png").click();
     await env.setSimilarity(0.95);
     await screen
       .find("source_egg.png")
