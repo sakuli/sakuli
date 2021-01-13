@@ -16,7 +16,7 @@ jobs:
       - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: node ${{ matrix.node }}
+          node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: |
           docker pull selenium/standalone-chrome-debug
