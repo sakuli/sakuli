@@ -24,6 +24,8 @@ jobs:
           docker run -d -p 4444:4444 selenium/standalone-firefox-debug
           docker run -d -p 4445:4444 selenium/standalone-chrome-debug
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1
@@ -52,6 +54,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gnome-calculator
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: run integration tests
         uses: GabrielBB/xvfb-action@v1
@@ -77,6 +81,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: Run e2e tests [Linux]
         if: runner.os == 'Linux'
@@ -114,6 +120,8 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: Run Typedoc
         run: npx lerna run typedoc
