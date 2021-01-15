@@ -9,14 +9,14 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-20.04
+  sonar:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Setup Node.js environment
+      - name: Setup node 14
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 14.x
+          node-version: 14
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -26,6 +26,8 @@ jobs:
           docker run -d -p 4444:4444 selenium/standalone-firefox-debug
           docker run -d -p 4445:4444 selenium/standalone-chrome-debug
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - run: npm run coverage:clean
       - name: run unit tests
@@ -44,35 +46,80 @@ jobs:
           npm run coverage:merge
           npm run coverage:merge-report
       - name: Send results to SonarCloud
-        if: runner.os == 'Linux'
         uses: SonarSource/sonarcloud-github-action@v1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  it-test:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2.3.4
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.4
-        with:
-          node-version: 14.x
-      - run: npm ci
-      - run: npm run build
-      - run: npm run test:it
-
-  e2e-test:
+  unit-test:
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest]
+        node: [10, 12] # Node 14 unit-tests are covered in 'sonar' job
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup node node ${{ matrix.node }}
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        run: |
+          docker pull selenium/standalone-chrome-debug
+          docker pull selenium/standalone-firefox-debug
+          docker run -d -p 4444:4444 selenium/standalone-firefox-debug
+          docker run -d -p 4445:4444 selenium/standalone-chrome-debug
+      - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
+      - run: npm run build
+      - name: run unit tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm test -- --runInBand --ci --bail
+        env:
+          FIREFOX_WD_URL: http://localhost:4444/wd/hub
+          CHROME_WD_URL: http://localhost:4445/wd/hub
+
+  integration-test:
+    needs: [sonar, unit-test]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [10, 12, 14]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Setup Node.js environment
+      - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 14.x
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies [Linux]
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnome-calculator
+      - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
+      - run: npm run build
+      - name: run integration tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:it
+
+  e2e-test:
+    needs: [integration-test]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [10, 12, 14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup node ${{ matrix.node }}
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: ${{ matrix.node }}
       - name: Install dependencies [Linux]
         if: runner.os == 'Linux'
         run: |

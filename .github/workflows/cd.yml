@@ -1,26 +1,29 @@
-name: cd
+name: Continuous Delivery
 on:
   push:
     branches: [develop]
 
 jobs:
-  test:
-    runs-on: ubuntu-20.04
+  unit-test:
+    strategy:
+      matrix:
+        node: [10, 12, 14]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Setup Node.js environment
+      - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 14.x
+          node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gnome-calculator
           docker pull selenium/standalone-chrome-debug
           docker pull selenium/standalone-firefox-debug
           docker run -d -p 4444:4444 selenium/standalone-firefox-debug
           docker run -d -p 4445:4444 selenium/standalone-chrome-debug
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1
@@ -29,34 +32,47 @@ jobs:
         env:
           FIREFOX_WD_URL: http://localhost:4444/wd/hub
           CHROME_WD_URL: http://localhost:4445/wd/hub
+
+  integration-test:
+    needs: [unit-test]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [10, 12, 14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup node ${{ matrix.node }}
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies [Linux]
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnome-calculator
+      - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
+      - run: npm run build
       - name: run integration tests
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm run test:it
 
-  it-test:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2.3.4
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.4
-        with:
-          node-version: 14.x
-      - run: npm ci
-      - run: npm run build
-      - run: npm run test:it
-
   e2e-test:
+    needs: [integration-test]
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest]
+        os: [ubuntu-latest, windows-latest]
+        node: [10, 12, 14]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Setup Node.js environment
+      - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 14.x
+          node-version: ${{ matrix.node }}
       - name: Install dependencies [Linux]
         if: runner.os == 'Linux'
         run: |
@@ -87,19 +103,21 @@ jobs:
 
   release-next:
     name: release-next
-    needs: [test, it-test, e2e-test]
-    runs-on: ubuntu-20.04
+    needs: [e2e-test]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
         with:
           fetch-depth: "0"
       - run: git fetch origin +refs/tags/*:refs/tags/*
-      - name: Setup Node.js environment
+      - name: Setup node
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 14.x
+          node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: npm ci
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: Publish next release
         run: npm run lerna:publish-next
