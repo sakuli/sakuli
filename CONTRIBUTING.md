@@ -115,7 +115,7 @@ This helps us to reach several goals:
 
 The pull request workflow is as follows:
 
-- Every pull request will be built via [Travis CI](https://travis-ci.com/sakuli/sakuli). It's mandatory that
+- Every pull request will be built via [GH Actions](https://github.com/sakuli/sakuli/actions). It's mandatory that
   the build of the pull request is successful before the review begins.
 - A maintainer will [review](#review-criteria) your changes and provide feedback to you.
 - If the pull request is project internal, it is required that the

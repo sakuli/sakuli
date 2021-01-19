@@ -1,7 +1,7 @@
 # `e2e`
 
 This package contains a set of E2E tests which are used to verify functionality of Sakuli on various platforms and node versions.
-They are executed in our [CI job](https://travis-ci.com/sakuli/sakuli)
+They are executed in our [CI job](https://github.com/sakuli/sakuli/actions)
 
 ## Usage
 
