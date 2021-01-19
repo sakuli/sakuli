@@ -44,7 +44,7 @@ git commit -am "Release ${RELEASE_VERSION}"
 printf "\n%s\n" "Pushing changes"
 git push --set-upstream origin release/${RELEASE_VERSION}
 
-printf "\n\n%s\n" "Verify successful builds on Travis before continuing."
+printf "\n\n%s\n" "Verify successful builds on GH Actions before continuing."
 echo "To to release the plugin-validator use following commands:"
 printf "%s\n" "git tag -a v${RELEASE_VERSION} -m \"Release ${RELEASE_VERSION}\""
 echo "git push --tags"

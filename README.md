@@ -1,6 +1,6 @@
 # Sakuli2
 
-[![Build Status](https://travis-ci.com/sakuli/sakuli.svg?branch=develop)](https://travis-ci.com/sakuli/sakuli)
+[![Build Status](https://github.com/sakuli/sakuli/workflows/Continuous%20Delivery/badge.svg)](https://github.com/sakuli/sakuli/actions?query=workflow:%22Continuous+Delivery%22)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sakuli%3Asakuli&metric=alert_status)](https://sonarcloud.io/dashboard?id=sakuli%3Asakuli)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sakuli%3Asakuli&metric=coverage)](https://sonarcloud.io/dashboard?id=sakuli%3Asakuli)
 
