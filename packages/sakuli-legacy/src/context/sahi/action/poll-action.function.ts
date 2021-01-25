@@ -12,7 +12,7 @@ export const timeout = (
     }
 
     function validateResult(result: boolean) {
-      if (!result) {
+      if (!result && !timerCleaned) {
         interval = global.setTimeout(executeInterval, updateInterval);
       } else {
         cleanupTimer();
