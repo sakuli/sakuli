@@ -128,7 +128,7 @@ describe("poll-action", () => {
     expect(end - start).toBeLessThan(updateInterval);
   });
 
-  it("should fail after timeout if no result is returned from action", async (done) => {
+  it("should fail after timeout if no result is returned from long running action", async (done) => {
     // GIVEN
     const updateInterval = 100;
     const maxDuration = 200;
