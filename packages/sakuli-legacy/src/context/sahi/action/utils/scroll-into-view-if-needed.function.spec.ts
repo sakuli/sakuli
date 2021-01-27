@@ -89,9 +89,7 @@ describe("scroll into view if needed", () => {
       webElementMock
     );
   });
-});
 
-describe("scrollIntoViewIfNeeded", () => {
   describe.each(getTestBrowserList())(
     "%s",
     (browser: "firefox" | "chrome", local: boolean) => {
