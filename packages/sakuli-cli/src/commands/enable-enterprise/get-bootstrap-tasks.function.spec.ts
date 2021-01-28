@@ -93,6 +93,7 @@ describe("getBootstrapTasks", () => {
         },
       },
     ],
+    [FeatureChoices.OCR, "@sakuli/ocr", {}],
   ])(
     'when user choosed "%s" package %s should installed with at least %s',
     (answer, packageName, minimumConfig) => {
