@@ -143,7 +143,7 @@ export function createTestCaseClass(
      */
     async handleException<E extends Error>(e: E) {
       ctx.logger.error(
-        `Error in testcase ${this.caseId}: ${e.message}`,
+        `Error in testcase ${this.caseId}: ${e.message ? e.message : e}`,
         e.stack
       );
       ctx.updateCurrentTestStep({

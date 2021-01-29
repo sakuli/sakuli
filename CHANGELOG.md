@@ -27,7 +27,7 @@ All notable changes to this project will be documented in this file.
 - Maintenance: update main build to node 14 [(#519)](https://github.com/sakuli/sakuli/issues/519)
 - Feature: Add startStep to DSL [(#517)](https://github.com/sakuli/sakuli/issues/517)
   - This deprecates `testCase.endOfStep`
-- Fix: Pull up timer fix from nut-js [(#544)](https://github.com/sakuli/sakuli/issues/544)
+- Bugfix: Pull up timer fix from nut-js [(#544)](https://github.com/sakuli/sakuli/issues/544)
 - Maintenance: Update minor dependency versions [(#525)](https://github.com/sakuli/sakuli/issues/525)
 - Maintenance: Identify major dependency updates [(#524)](https://github.com/sakuli/sakuli/issues/524)
 - Maintenance: Remove Node 10+12 builds [(#547)](https://github.com/sakuli/sakuli/issues/547)
@@ -40,6 +40,7 @@ All notable changes to this project will be documented in this file.
 - Maintenance: update @types/selenium-webdriver in sakuli-legacy [(#542)](https://github.com/sakuli/sakuli/issues/542)
 - Docs: Revisit specification of \_near relation [(#563)](https://github.com/sakuli/sakuli/issues/563)
 - Maintenance: Add windows e2e tests to Sakuli [(#580)](https://github.com/sakuli/sakuli/issues/580)
+- Bugfix: Dynamic wait not initialised, reason: NoSuchSessionError [(#583)](https://github.com/sakuli/sakuli/issues/583)
 - Enhancement: improve confidence of scrollIntoViewIfNeeded [(#482)](https://github.com/sakuli/sakuli/issues/482)
 
 ## v2.4.0
