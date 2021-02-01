@@ -41,7 +41,6 @@ All notable changes to this project will be documented in this file.
 - Docs: Revisit specification of \_near relation [(#563)](https://github.com/sakuli/sakuli/issues/563)
 - Maintenance: Add windows e2e tests to Sakuli [(#580)](https://github.com/sakuli/sakuli/issues/580)
 - Bugfix: Dynamic wait not initialised, reason: NoSuchSessionError [(#583)](https://github.com/sakuli/sakuli/issues/583)
-- Enhancement: improve confidence of scrollIntoViewIfNeeded [(#482)](https://github.com/sakuli/sakuli/issues/482)
 
 ## v2.4.0
 
