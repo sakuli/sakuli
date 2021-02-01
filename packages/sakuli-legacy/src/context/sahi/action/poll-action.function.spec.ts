@@ -1,6 +1,12 @@
 import { timeout } from "./poll-action.function";
 
 describe("poll-action", () => {
+  function applyTimerBuffer(time: number) {
+    // Added buffer to timer accuracy as `The callback will be called as close as possible to the time specified.`
+    // https://nodejs.org/api/timers.html#timers_settimeout_callback_delay_args
+    return time * 0.99;
+  }
+
   it("should timeout after maxDuration if action rejects", async () => {
     // GIVEN
     const updateInterval = 200;
@@ -20,7 +26,7 @@ describe("poll-action", () => {
     const end = Date.now();
 
     // THEN
-    expect(end - start).toBeGreaterThanOrEqual(maxDuration);
+    expect(end - start).toBeGreaterThanOrEqual(applyTimerBuffer(maxDuration));
     expect(action).toBeCalledTimes(maxDuration / updateInterval);
   });
 
@@ -43,7 +49,7 @@ describe("poll-action", () => {
     const end = Date.now();
 
     // THEN
-    expect(end - start).toBeGreaterThanOrEqual(maxDuration);
+    expect(end - start).toBeGreaterThanOrEqual(applyTimerBuffer(maxDuration));
     expect(action).toBeCalledTimes(maxDuration / updateInterval);
   });
 
@@ -104,7 +110,7 @@ describe("poll-action", () => {
     const end = Date.now();
 
     // THEN
-    expect(end - start).toBeGreaterThanOrEqual(delay);
+    expect(end - start).toBeGreaterThanOrEqual(applyTimerBuffer(delay));
     expect(action).toBeCalledTimes(4);
   });
 
