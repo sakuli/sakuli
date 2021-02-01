@@ -21,10 +21,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y gnome-calculator
-          docker pull selenium/standalone-chrome-debug
-          docker pull selenium/standalone-firefox-debug
-          docker run -d -p 4444:4444 selenium/standalone-firefox-debug
-          docker run -d -p 4445:4444 selenium/standalone-chrome-debug
+          docker pull selenium/standalone-chrome
+          docker pull selenium/standalone-firefox
+          docker run -d -p 4444:4444 selenium/standalone-firefox
+          docker run -d -p 4445:4444 selenium/standalone-chrome
       - run: npm ci
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true
@@ -64,10 +64,10 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: |
-          docker pull selenium/standalone-chrome-debug
-          docker pull selenium/standalone-firefox-debug
-          docker run -d -p 4444:4444 selenium/standalone-firefox-debug
-          docker run -d -p 4445:4444 selenium/standalone-chrome-debug
+          docker pull selenium/standalone-chrome
+          docker pull selenium/standalone-firefox
+          docker run -d -p 4444:4444 selenium/standalone-firefox
+          docker run -d -p 4445:4444 selenium/standalone-chrome
       - run: npm ci
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true

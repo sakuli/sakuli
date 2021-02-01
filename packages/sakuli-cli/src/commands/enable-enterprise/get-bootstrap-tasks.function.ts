@@ -78,5 +78,10 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
       })
     );
   }
+
+  if (answers.features.includes(FeatureChoices.OCR)) {
+    tasks.push(...getPackageBootstrapTasks("@sakuli/ocr", {}));
+  }
+
   return tasks;
 };
