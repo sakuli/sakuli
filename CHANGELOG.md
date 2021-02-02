@@ -41,6 +41,7 @@ All notable changes to this project will be documented in this file.
 - Docs: Revisit specification of \_near relation [(#563)](https://github.com/sakuli/sakuli/issues/563)
 - Maintenance: Add windows e2e tests to Sakuli [(#580)](https://github.com/sakuli/sakuli/issues/580)
 - Bugfix: Dynamic wait not initialised, reason: NoSuchSessionError [(#583)](https://github.com/sakuli/sakuli/issues/583)
+- Enhancement: Require compatible Node engine Version in package.json [(#589)](https://github.com/sakuli/sakuli/issues/589)
 - Enhancement: Sakuli CLl encrypt command fails when secret is a numerical value [(#587)](https://github.com/sakuli/sakuli/issues/587)
 
 ## v2.4.0
