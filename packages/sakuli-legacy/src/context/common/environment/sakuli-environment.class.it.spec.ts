@@ -123,7 +123,10 @@ describe("sleep", () => {
     );
     const SUT = new EnvironmentImpl();
     const pauseInSeconds = 1;
-    const expectedPauseInMilliseconds = 1000;
+
+    // Added buffer to timer accuracy as `The callback will be called as close as possible to the time specified.`
+    // https://nodejs.org/api/timers.html#timers_settimeout_callback_delay_args
+    const expectedPauseInMilliseconds = 1000 * 0.99;
     const start = Date.now();
 
     // WHEN
@@ -141,15 +144,19 @@ describe("sleep", () => {
       await createMockProject()
     );
     const SUT = new EnvironmentImpl();
-    const expectedPause = 200;
+    const pause = 200;
+
+    // Added buffer to timer accuracy as `The callback will be called as close as possible to the time specified.`
+    // https://nodejs.org/api/timers.html#timers_settimeout_callback_delay_args
+    const expectedMinimumPause = pause * 0.99;
     const start = Date.now();
 
     // WHEN
-    await SUT.sleepMs(expectedPause);
+    await SUT.sleepMs(pause);
     const stop = Date.now();
 
     // THEN
-    expect(stop - start).toBeGreaterThanOrEqual(expectedPause);
+    expect(stop - start).toBeGreaterThanOrEqual(expectedMinimumPause);
   });
 });
 

@@ -3,6 +3,7 @@ export const FeatureChoices = {
   CheckMk: "Forwarding to Check_MK",
   OMD: "Forwarding to OMD",
   Prometheus: "Forwarding to Prometheus",
+  OCR: "Optical Character Recognition (OCR) Plug-in",
 } as const;
 
 export const AllFeatureChoices = [
@@ -10,4 +11,5 @@ export const AllFeatureChoices = [
   FeatureChoices.CheckMk,
   FeatureChoices.OMD,
   FeatureChoices.Prometheus,
+  FeatureChoices.OCR,
 ];
