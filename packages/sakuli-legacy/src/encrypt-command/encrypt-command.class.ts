@@ -12,6 +12,7 @@ export const encryptCommand: CommandModuleProvider = (): CommandModule => {
       return argv
         .positional("secret", {
           describe: "The secret to encrypt",
+          type: "string",
         })
         .option("masterkey", {
           describe: "The masterkey used for encryption",
