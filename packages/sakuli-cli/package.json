@@ -25,6 +25,9 @@
     "Sven Hettwer <sven.hettwer@consol.de>",
     "Cliff Le Van <cliff.le.van@consol.de>"
   ],
+  "engines": {
+    "node": "10 || 12 || 14"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "@sakuli/commons": "2.4.0",
