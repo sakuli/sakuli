@@ -15,7 +15,6 @@ import {
   TestEnvironment,
 } from "../../__mocks__";
 import { mockPartial } from "sneer";
-import { wait } from "../../helper/wait.function";
 
 function mockExecuteScript<T>(promise: Promise<T>) {
   const executeScriptFunction = jest.fn().mockResolvedValue(promise);
@@ -89,9 +88,7 @@ describe("scroll into view if needed", () => {
       webElementMock
     );
   });
-});
 
-describe("scrollIntoViewIfNeeded", () => {
   describe.each(getTestBrowserList())(
     "%s",
     (browser: "firefox" | "chrome", local: boolean) => {
@@ -135,7 +132,6 @@ describe("scrollIntoViewIfNeeded", () => {
           )
         );
         const element = await driver.findElement(By.id("click-me"));
-        await wait(2000);
 
         // WHEN
         const hasScrolled = await scrollIntoViewIfNeeded(
