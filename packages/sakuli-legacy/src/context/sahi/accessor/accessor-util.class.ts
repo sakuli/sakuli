@@ -129,9 +129,6 @@ export class AccessorUtil {
       WebElement,
       string[]
     ][] = await this.getStringIdentifiersForElement(elements);
-    this.testExecutionContext.logger.debug(
-      `Found ${eAndText.length} Elements for RegEx: ${regEx}`
-    );
 
     return eAndText
       .filter(([, potentialMatches]) => {
@@ -194,17 +191,30 @@ export class AccessorUtil {
     identifier: AccessorIdentifier
   ): Promise<WebElement[]> {
     if (isAccessorIdentifierAttributes(identifier)) {
+      this.testExecutionContext.logger.trace(
+        "Resolve identifier as AccessorIdentifierAttributes",
+        identifier
+      );
       return await this.getElementsByAccessorIdentifier(elements, identifier);
     }
     if (typeof identifier === "number") {
+      this.testExecutionContext.logger.trace(
+        `Resolve identifier as Sahi index ${identifier}`
+      );
       return Promise.resolve([
         this.getElementBySahiIndex(elements, { sahiIndex: identifier }),
       ]);
     }
     if (types.isRegExp(identifier)) {
+      this.testExecutionContext.logger.trace(
+        `Resolve identifier as regex ${identifier}`
+      );
       return this.getByRegEx(elements, identifier);
     }
     if (typeof identifier === "string") {
+      this.testExecutionContext.logger.trace(
+        `Resolve identifier as string "${identifier}"`
+      );
       return this.getByString(elements, identifier);
     }
     return Promise.resolve([]);
@@ -216,19 +226,31 @@ export class AccessorUtil {
   ): Promise<WebElement[]> {
     return this.webDriver.wait<WebElement[]>(
       async () => {
+        this.testExecutionContext.logger.trace(
+          "Start applying relations to element"
+        );
         const queryAfterRelation = await this.relationResolver.applyRelations(
           query
         );
-        const elements = await this.findElements(queryAfterRelation.locator);
         this.testExecutionContext.logger.trace(
-          `${elements.length} Elements found after applying relations ${query.relations}`
+          typeof queryAfterRelation.locator === "function"
+            ? `A query was found for the desired element after applying all relations`
+            : `Created query after applying relation ${JSON.stringify(
+                queryAfterRelation
+              )}`
+        );
+        const elements = await this.findElements(queryAfterRelation.locator);
+        this.testExecutionContext.logger.debug(
+          typeof queryAfterRelation.locator === "function"
+            ? `Find the element with the query`
+            : `${elements.length} Elements found with locator ${queryAfterRelation.locator}`
         );
         const elementsAfterIdentifier = await this.resolveByIdentifier(
           elements,
           queryAfterRelation.identifier
         );
-        this.testExecutionContext.logger.trace(
-          `${elements.length} Elements found after applying identifier ${query.identifier}`
+        this.testExecutionContext.logger.debug(
+          `${elementsAfterIdentifier.length} Elements found after applying identifier ${query.identifier}`
         );
         return elementsAfterIdentifier.length ? elementsAfterIdentifier : false;
       },
@@ -243,6 +265,7 @@ export class AccessorUtil {
     query: SahiElementQueryOrWebElement | WebElement,
     waitTimeout: number = this.timeout
   ): Promise<WebElement> {
+    this.testExecutionContext.logger.trace("Fetch Element", query);
     return isSahiElementQuery(query)
       ? this.fetchElements(query, waitTimeout).then(([first]) => first)
       : Promise.resolve(query);
@@ -303,7 +326,7 @@ export class AccessorUtil {
         : "^\\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$"
     );
     this.testExecutionContext.logger.debug(
-      `Converted string "${str}" to regex ${regex}`
+      `Converted identifier string "${str}" to regex ${regex}`
     );
     return regex;
   }
