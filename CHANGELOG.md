@@ -43,6 +43,7 @@ All notable changes to this project will be documented in this file.
 - Bugfix: Dynamic wait not initialised, reason: NoSuchSessionError [(#583)](https://github.com/sakuli/sakuli/issues/583)
 - Enhancement: Require compatible Node engine Version in package.json [(#589)](https://github.com/sakuli/sakuli/issues/589)
 - Enhancement: Sakuli CLl encrypt command fails when secret is a numerical value [(#587)](https://github.com/sakuli/sakuli/issues/587)
+- Enhancement: Improve logging for fetchElements [(#599)](https://github.com/sakuli/sakuli/issues/599)
 
 ## v2.4.0
 
