@@ -123,4 +123,24 @@ describe("sakuli environment", () => {
       expect.any(Function)
     );
   });
+
+  it("should throw exception on execute if configured", async () => {
+    //GIVEN
+    (actions.execute as jest.Mock).mockImplementation(() => {
+      return {
+        getExitCode: jest.fn(() => 1),
+        getOutput: jest.fn(() => "Am I a joke to you? T_T"),
+      };
+    });
+    const shouldThrowError = true;
+
+    //WHEN
+    const command = async () =>
+      await sakuliEnvironment.runCommand("", shouldThrowError);
+
+    //THEN
+    await expect(command).rejects.toThrowError(
+      "Command execution failed with exit code '1'"
+    );
+  });
 });
