@@ -53,8 +53,10 @@ describe("TestCase", () => {
       getCurrentTestSuite: jest.fn(),
       logger: mockPartial<SimpleLogger>({
         info: jest.fn(),
+        warn: jest.fn(),
         debug: jest.fn(),
         error: jest.fn(),
+        trace: jest.fn(),
       }),
     });
 
@@ -592,6 +594,31 @@ describe("TestCase", () => {
         expect.anything()
       );
     });
+
+    it.each([
+      ["string", ("foo" as unknown) as Error],
+      ["number", (42 as unknown) as Error],
+      ["object", ({} as unknown) as Error],
+    ])(
+      "should warn in case the provided object is not an Error but %s",
+      async (_, sample) => {
+        //GIVEN
+        const tc = new SUT("testId", 0, 0);
+
+        //WHEN
+        await tc.handleException(sample);
+
+        //THEN
+        expect(testExecutionContext.logger.warn).toBeCalledWith(
+          expect.stringContaining(
+            "handleException has been called with a parameter that is not of type Error."
+          )
+        );
+        expect(testExecutionContext.logger.trace).toBeCalledWith(
+          expect.stringContaining("Object was:")
+        );
+      }
+    );
   });
 
   describe("caching", () => {

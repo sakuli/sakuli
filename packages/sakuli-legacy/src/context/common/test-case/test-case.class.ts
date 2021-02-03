@@ -17,6 +17,7 @@ import { LegacyProjectProperties } from "../../../loader/legacy-project-properti
 import { releaseKeys } from "../release-keys.function";
 import { getActiveKeys } from "../button-registry";
 import { createKeyboardApi, createMouseApi } from "../actions";
+import * as util from "util";
 
 function validateArgumentTypes(
   caseId: string,
@@ -142,6 +143,12 @@ export function createTestCaseClass(
      * @inheritDoc
      */
     async handleException<E extends Error>(e: E) {
+      if (!util.types.isNativeError(e)) {
+        ctx.logger.warn(
+          "handleException has been called with a parameter that is not of type Error. I'll try to work with it but expect strange things to happen!"
+        );
+        ctx.logger.trace(`Object was:\n${JSON.stringify(e)}`);
+      }
       ctx.logger.error(
         `Error in testcase ${this.caseId}: ${e.message}`,
         e.stack
