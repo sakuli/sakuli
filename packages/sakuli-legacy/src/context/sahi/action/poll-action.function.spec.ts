@@ -21,7 +21,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
     const end = Date.now();
 
@@ -44,7 +46,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
     const end = Date.now();
 
@@ -125,7 +129,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
     const end = Date.now();
 
@@ -150,7 +156,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
 
     // THEN
