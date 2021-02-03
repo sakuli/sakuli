@@ -246,7 +246,7 @@ describe("AccessorUtil", () => {
           identifier: "D1[1]",
           relations: [],
         });
-        expect(testExecutionContext.logger.debug).toHaveBeenCalledTimes(2);
+        expect(testExecutionContext.logger.debug).toHaveBeenCalledTimes(3);
         return expect(div.getAttribute("id")).resolves.toBe("div-2");
       });
 
