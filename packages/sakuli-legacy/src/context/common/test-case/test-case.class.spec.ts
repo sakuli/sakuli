@@ -615,7 +615,8 @@ describe("TestCase", () => {
           )
         );
         expect(testExecutionContext.logger.trace).toBeCalledWith(
-          expect.stringContaining("Object was:")
+          expect.stringContaining("Object was:"),
+          expect.any(String)
         );
       }
     );

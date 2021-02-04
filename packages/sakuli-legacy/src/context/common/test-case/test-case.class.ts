@@ -147,7 +147,7 @@ export function createTestCaseClass(
         ctx.logger.warn(
           "handleException has been called with a parameter that is not of type Error. I'll try to work with it but expect strange things to happen!"
         );
-        ctx.logger.trace(`Object was:\n${JSON.stringify(e)}`);
+        ctx.logger.trace("Object was:", JSON.stringify(e));
       }
       ctx.logger.error(
         `Error in testcase ${this.caseId}: ${e.message}`,
