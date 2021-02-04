@@ -4,7 +4,6 @@ import { Forwarder } from "./forwarder.interface";
 import { mockPartial } from "sneer";
 import { Project } from "../loader";
 import { connectForwarderToTestExecutionContext } from "./connect-forwarder-to-test-execution-context.function";
-import any = jasmine.any;
 
 describe("connectForwarderToTestExecutionContext", () => {
   let ctx: TestExecutionContext;
@@ -120,7 +119,7 @@ describe("connectForwarderToTestExecutionContext", () => {
         `There were errors during forwarding: ${JSON.stringify(
           expectedError.message
         )}`,
-        any(String)
+        expect.any(String)
       );
       expect(forwarder.tearDown).toHaveBeenCalledTimes(1);
     });
