@@ -236,9 +236,6 @@ export class AccessorUtil {
   ): Promise<WebElement[]> {
     return this.webDriver.wait<WebElement[]>(
       async () => {
-        this.testExecutionContext.logger.trace(
-          "Start applying relations to element"
-        );
         const queryAfterRelation = await this.relationResolver.applyRelations(
           query
         );

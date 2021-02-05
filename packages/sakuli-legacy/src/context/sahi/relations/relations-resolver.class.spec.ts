@@ -4,6 +4,7 @@ import { TestExecutionContext } from "@sakuli/core";
 import { RelationsResolver } from "./relations-resolver.class";
 import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
+import { SimpleLogger } from "@sakuli/commons";
 
 const webElementToQuery = (elements: WebElement[]) => {
   return {
@@ -18,7 +19,11 @@ describe("RelationResolver", () => {
   describe.each(getTestBrowserList())(
     "%s",
     (browser: "firefox" | "chrome", local: boolean) => {
-      const testExecutionContext = mockPartial<TestExecutionContext>({});
+      const testExecutionContext = mockPartial<TestExecutionContext>({
+        logger: mockPartial<SimpleLogger>({
+          trace: jest.fn(),
+        }),
+      });
 
       let env: TestEnvironment;
       beforeAll(async () => {
