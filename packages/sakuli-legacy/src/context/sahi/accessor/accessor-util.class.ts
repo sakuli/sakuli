@@ -125,22 +125,32 @@ export class AccessorUtil {
     elements: WebElement[],
     regEx: RegExp
   ): Promise<WebElement[]> {
+    function isMatch(text: string): boolean {
+      const match = text.match(regEx);
+      return match ? match.length > 0 : false;
+    }
+
+    function findMatches([, potentialMatches]: [
+      WebElement,
+      string[]
+    ]): boolean {
+      const matches = potentialMatches.filter((x) => x).map(isMatch);
+      return !!matches.find((m) => m);
+    }
+
     const eAndText: [
       WebElement,
       string[]
     ][] = await this.getStringIdentifiersForElement(elements);
 
-    return eAndText
-      .filter(([, potentialMatches]) => {
-        const matches = potentialMatches
-          .filter((x) => x)
-          .map((text) => {
-            const match = text.match(regEx);
-            return match ? match.length > 0 : false;
-          });
-        return !!matches.find((m) => !!m);
-      })
+    const webElementMatches = eAndText
+      .filter(findMatches)
       .map(([element]) => element);
+
+    this.testExecutionContext.logger.trace(
+      `Found ${webElementMatches.length} Elements for RegEx: ${regEx}`
+    );
+    return webElementMatches;
   }
 
   async enableHook() {
@@ -324,9 +334,6 @@ export class AccessorUtil {
       isRegEx
         ? str
         : "^\\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$"
-    );
-    this.testExecutionContext.logger.debug(
-      `Converted identifier string "${str}" to regex ${regex}`
     );
     return regex;
   }
