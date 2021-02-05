@@ -269,13 +269,18 @@ export class AccessorUtil {
   }
 
   async fetchElement(
-    query: SahiElementQueryOrWebElement | WebElement,
+    query: SahiElementQueryOrWebElement,
     waitTimeout: number = this.timeout
   ): Promise<WebElement> {
-    this.testExecutionContext.logger.trace("Fetch Element", query);
-    return isSahiElementQuery(query)
-      ? this.fetchElements(query, waitTimeout).then(([first]) => first)
-      : Promise.resolve(query);
+    if (isSahiElementQuery(query)) {
+      this.testExecutionContext.logger.trace(
+        "Fetch Element",
+        sahiQueryToString(query)
+      );
+      return this.fetchElements(query, waitTimeout).then(([first]) => first);
+    } else {
+      return Promise.resolve(query);
+    }
   }
 
   private isRegExpString(identifier: string) {
