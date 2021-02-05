@@ -43,6 +43,7 @@ describe("connectForwarderToTestExecutionContext", () => {
 
   beforeEach(() => {
     ctx = new TestExecutionContext(logger);
+    jest.clearAllMocks();
   });
 
   describe("full implemented forwarder", () => {
