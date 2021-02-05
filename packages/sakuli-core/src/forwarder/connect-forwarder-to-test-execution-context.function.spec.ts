@@ -18,6 +18,28 @@ describe("connectForwarderToTestExecutionContext", () => {
     debug: jest.fn(),
     trace: jest.fn(),
   });
+  function simulateExecution() {
+    ctx.startExecution();
+    ctx.startTestSuite({ id: "suite1" });
+    ctx.startTestCase({ id: "case1" });
+    ctx.startTestStep({});
+    ctx.updateCurrentTestStep({ id: "step1" });
+    ctx.endTestStep();
+    ctx.startTestStep({ id: "step2" });
+    ctx.endTestStep();
+    ctx.endTestCase();
+    ctx.endTestSuite();
+    ctx.endExecution();
+  }
+  forwarder = mockPartial<Forwarder>({
+    setup: jest.fn(() => Promise.resolve()),
+    tearDown: jest.fn(() => Promise.resolve()),
+    forward: jest.fn(() => Promise.resolve()),
+    forwardStepResult: jest.fn(() => Promise.resolve()),
+    forwardActionResult: jest.fn(() => Promise.resolve()),
+    forwardCaseResult: jest.fn(() => Promise.resolve()),
+    forwardSuiteResult: jest.fn(() => Promise.resolve()),
+  });
 
   beforeEach(() => {
     ctx = new TestExecutionContext(logger);
@@ -26,30 +48,7 @@ describe("connectForwarderToTestExecutionContext", () => {
   describe("full implemented forwarder", () => {
     let teardown: () => Promise<void>;
 
-    function simulateExecution() {
-      ctx.startExecution();
-      ctx.startTestSuite({ id: "suite1" });
-      ctx.startTestCase({ id: "case1" });
-      ctx.startTestStep({});
-      ctx.updateCurrentTestStep({ id: "step1" });
-      ctx.endTestStep();
-      ctx.startTestStep({ id: "step2" });
-      ctx.endTestStep();
-      ctx.endTestCase();
-      ctx.endTestSuite();
-      ctx.endExecution();
-    }
-
     beforeEach(async () => {
-      forwarder = mockPartial<Forwarder>({
-        setup: jest.fn(() => Promise.resolve()),
-        tearDown: jest.fn(() => Promise.resolve()),
-        forward: jest.fn(() => Promise.resolve()),
-        forwardStepResult: jest.fn(() => Promise.resolve()),
-        forwardActionResult: jest.fn(() => Promise.resolve()),
-        forwardCaseResult: jest.fn(() => Promise.resolve()),
-        forwardSuiteResult: jest.fn(() => Promise.resolve()),
-      });
       teardown = await connectForwarderToTestExecutionContext(
         forwarder,
         ctx,
@@ -97,31 +96,31 @@ describe("connectForwarderToTestExecutionContext", () => {
       await teardown();
       expect(forwarder.tearDown).toHaveBeenCalledTimes(1);
     });
+  });
 
-    it("should log an error in case a forwarder rejects", async () => {
-      //GIVEN
-      const expectedError = Error("forwarder does not forward...");
-      (forwarder.forward as jest.Mock).mockRejectedValue(expectedError);
+  it("should log an error in case a forwarder rejects", async () => {
+    //GIVEN
+    const expectedError = Error("forwarder does not forward...");
+    (forwarder.forward as jest.Mock).mockRejectedValue(expectedError);
 
-      let rejectionTeardown = await connectForwarderToTestExecutionContext(
-        forwarder,
-        ctx,
-        project
-      );
+    let rejectionTeardown = await connectForwarderToTestExecutionContext(
+      forwarder,
+      ctx,
+      project
+    );
 
-      simulateExecution();
+    simulateExecution();
 
-      //WHEN
-      await rejectionTeardown();
+    //WHEN
+    await rejectionTeardown();
 
-      //THEN
-      expect(logger.error).toHaveBeenCalledWith(
-        `There were errors during forwarding: ${JSON.stringify(
-          expectedError.message
-        )}`,
-        expect.any(String)
-      );
-      expect(forwarder.tearDown).toHaveBeenCalledTimes(1);
-    });
+    //THEN
+    expect(logger.error).toHaveBeenCalledWith(
+      `There were errors during forwarding: ${JSON.stringify(
+        expectedError.message
+      )}`,
+      expect.any(String)
+    );
+    expect(forwarder.tearDown).toHaveBeenCalledTimes(1);
   });
 });
