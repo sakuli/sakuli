@@ -165,6 +165,12 @@ export class LegacyProjectProperties {
   }
 
   /**
+   *
+   */
+  @BooleanProperty("testsuite.skipFrames")
+  skipFrames: boolean = false;
+
+  /**
    */
   @NumberProperty("sakuli.environment.similarity.default")
   sakuliEnvironmentSimilarityDefault: number = 0.99;
