@@ -1,10 +1,16 @@
 import { By, ThenableWebDriver } from "selenium-webdriver";
-import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 import { actionApi } from "./action-api.function";
 import { AccessorUtil } from "../accessor";
 import { RelationsResolver } from "../relations";
-import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import { mockPartial } from "sneer";
 
 jest.setTimeout(60_000);
 describe("action-api", () => {
@@ -13,10 +19,12 @@ describe("action-api", () => {
     (browser: "firefox" | "chrome", local: boolean) => {
       let env: TestEnvironment;
       let driver: ThenableWebDriver;
+      let properties: LegacyProjectProperties;
       beforeAll(async () => {
         env = createTestEnv(browser, local);
         await env.start();
         driver = (await env.getEnv()).driver;
+        properties = mockPartial<LegacyProjectProperties>({});
       });
 
       function createApi(driver: ThenableWebDriver) {
@@ -24,7 +32,8 @@ describe("action-api", () => {
         return actionApi(
           driver,
           new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx)),
-          ctx
+          ctx,
+          properties
         );
       }
 
@@ -92,6 +101,8 @@ describe("action-api", () => {
           await expect(out.getText()).resolves.toEqual("clicked");
         });
       });
+
+      describe("deactivate auto switch between frames", () => {});
 
       describe("auto switch between frames", () => {
         it("should find elements over all frames in frameset", async () => {

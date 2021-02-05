@@ -3,6 +3,7 @@ import { ThenableWebDriver } from "selenium-webdriver";
 import { sahiApi } from "./api";
 import { createTestExecutionContextMock } from "../__mocks__";
 import { SahiApi } from "./sahi-api.interface";
+import { LegacyProjectProperties } from "../../loader/legacy-project-properties.class";
 
 let getTimeoutMock = jest.fn();
 let setTimeoutMock = jest.fn();
@@ -18,11 +19,12 @@ jest.mock("./accessor", () => ({
 describe("SahiApi", () => {
   const mockDriver = mockPartial<ThenableWebDriver>({});
   const ctx = createTestExecutionContextMock();
+  const properties = mockPartial<LegacyProjectProperties>({});
 
   describe("global timeout", () => {
     let api: SahiApi;
     beforeEach(() => {
-      api = sahiApi(mockDriver, ctx);
+      api = sahiApi(mockDriver, ctx, properties);
     });
 
     it("should setTimeout in AccessorUtil", () => {

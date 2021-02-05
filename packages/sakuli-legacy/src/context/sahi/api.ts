@@ -12,6 +12,7 @@ import { actionApi } from "./action";
 import { fetchApi } from "./fetch";
 import { SahiApi } from "./sahi-api.interface";
 import { assertionApi } from "./assertion/assertion-api.function";
+import { LegacyProjectProperties } from "../../loader/legacy-project-properties.class";
 
 /**
  * Generic type which can be used in the most [AccessorApi Functions]{@link AccessorApi}. It is inspired by the [Sahi syntax](https://sahipro.com/docs/sahi-apis/accessor-api-basics.html).
@@ -60,7 +61,8 @@ export type AccessorFunction = (
 
 export function sahiApi(
   driver: ThenableWebDriver,
-  testExecutionContext: TestExecutionContext
+  testExecutionContext: TestExecutionContext,
+  properties: LegacyProjectProperties
 ): SahiApi {
   const relationResolver = new RelationsResolver(driver, testExecutionContext);
   const accessorUtil = new AccessorUtil(
@@ -68,7 +70,12 @@ export function sahiApi(
     testExecutionContext,
     relationResolver
   );
-  const action = actionApi(driver, accessorUtil, testExecutionContext);
+  const action = actionApi(
+    driver,
+    accessorUtil,
+    testExecutionContext,
+    properties
+  );
   const accessor = accessorApi();
   const relations = relationsApi(driver, accessorUtil, testExecutionContext);
   const fetch = fetchApi(driver, accessorUtil, testExecutionContext);

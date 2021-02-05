@@ -1,7 +1,16 @@
 import { Builder, ThenableWebDriver } from "selenium-webdriver";
 import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
-import { createTestCaseClass } from "./common/test-case";
-import { createKeyboardApi, createMouseApi, Key, MouseButton } from "./common";
+import {
+  createKeyboardApi,
+  createLoggerObject,
+  createMouseApi,
+  createTestCaseClass,
+  createThenableApplicationClass,
+  createThenableEnvironmentClass,
+  createThenableRegionClass,
+  Key,
+  MouseButton,
+} from "./common";
 import { sahiApi } from "./sahi/api";
 import {
   Project,
@@ -10,12 +19,8 @@ import {
   TestFile,
 } from "@sakuli/core";
 import { basename, dirname, join, parse, sep } from "path";
-import { createLoggerObject } from "./common/logger";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
 import { promises as fs } from "fs";
-import { createThenableApplicationClass } from "./common/application";
-import { createThenableEnvironmentClass } from "./common/environment";
-import { createThenableRegionClass } from "./common/region";
 import { LegacyApi } from "./legacy-api.interface";
 import { createDriverFromProject } from "./selenium-config/create-driver-from-project.function";
 import { TestStepCache } from "./common/test-case/steps-cache/test-step-cache.class";
@@ -108,8 +113,9 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext,
     project: Project
   ): Promise<LegacyApi> {
+    const properties = project.objectFactory(LegacyProjectProperties);
     const sahi: SahiApi = this.driver
-      ? sahiApi(this.driver, testExecutionContext)
+      ? sahiApi(this.driver, testExecutionContext, properties)
       : NoopSahiApi;
     const currentTestFolder = throwIfAbsent(
       this.currentTest,
