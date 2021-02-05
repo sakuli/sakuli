@@ -209,7 +209,7 @@ export class AccessorUtil {
     }
     if (typeof identifier === "number") {
       this.testExecutionContext.logger.trace(
-        `Resolve identifier as Sahi index ${identifier}`
+        `Resolve identifier as index reference ${identifier}`
       );
       return Promise.resolve([
         this.getElementBySahiIndex(elements, { sahiIndex: identifier }),
