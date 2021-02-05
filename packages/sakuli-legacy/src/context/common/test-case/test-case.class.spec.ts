@@ -596,30 +596,50 @@ describe("TestCase", () => {
     });
 
     it.each([
-      ["string", ("foo" as unknown) as Error],
       ["number", (42 as unknown) as Error],
       ["object", ({} as unknown) as Error],
+      ["function", ((() => {}) as unknown) as Error],
+      ["boolean", (false as unknown) as Error],
+      ["undefined", (undefined as unknown) as Error],
+      ["symbol", (Symbol() as unknown) as Error],
     ])(
-      "should warn in case the provided object is not an Error but %s",
+      "should throw in case the provided object is not an Error but %s",
       async (_, sample) => {
         //GIVEN
         const tc = new SUT("testId", 0, 0);
+        const expectedError =
+          "handleException has been called with a parameter that is not of type Error.";
 
         //WHEN
-        await tc.handleException(sample);
+        const handleException = async () => await tc.handleException(sample);
 
         //THEN
-        expect(testExecutionContext.logger.warn).toBeCalledWith(
-          expect.stringContaining(
-            "handleException has been called with a parameter that is not of type Error."
-          )
+        await expect(handleException).rejects.toThrowError(
+          Error(expectedError)
         );
-        expect(testExecutionContext.logger.trace).toBeCalledWith(
-          expect.stringContaining("Object was:"),
+        expect(testExecutionContext.logger.error).toBeCalledWith(
+          expect.stringContaining(`${expectedError} Object was:`),
           expect.any(String)
         );
       }
     );
+
+    it("should convert string message to Error", async () => {
+      //GIVEN
+      const tc = new SUT("testId", 0, 0);
+      const expectedWarning =
+        "handleException has been called with a parameter that is of type 'string'. Converting message to Error...";
+      const errorString = "foobar";
+
+      //WHEN
+      await tc.handleException((errorString as unknown) as Error);
+
+      //THEN
+      expect(testExecutionContext.logger.warn).toBeCalledWith(expectedWarning);
+      expect(testExecutionContext.updateCurrentTestStep).toBeCalledWith({
+        error: Error(errorString),
+      });
+    });
   });
 
   describe("caching", () => {

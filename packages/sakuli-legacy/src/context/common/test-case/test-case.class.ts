@@ -1,5 +1,10 @@
 import { cwd } from "process";
-import { Project, TestExecutionContext, TestStepContext } from "@sakuli/core";
+import {
+  Project,
+  TestCaseContext,
+  TestExecutionContext,
+  TestStepContext,
+} from "@sakuli/core";
 import nutConfig from "../nut-global-config.class";
 import {
   ensure,
@@ -61,6 +66,90 @@ export function createTestCaseClass(
     legacyProps.screenshotDir,
     currentTestFolder
   );
+
+  async function updateFromTestStepCache(ctc: TestCaseContext) {
+    const cachedSteps = await testStepCache.read();
+    const currentSteps = ctc.getChildren();
+    if (currentSteps.length <= cachedSteps.length) {
+      const stepToUpdate = cachedSteps[currentSteps.length - 1];
+      ctx.updateCurrentTestStep(stepToUpdate);
+    }
+  }
+
+  async function takeErrorScreenshot() {
+    try {
+      const screenShotPath = await takeErrorScreenShot(
+        ctx,
+        legacyProps.screenshotStorage,
+        screenShotDestPath
+      );
+      if (existsSync(screenShotPath)) {
+        ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
+        ctx.updateCurrentTestStep({
+          screenshot: screenShotPath,
+        });
+      }
+    } catch (exception) {
+      ctx.logger.warn(
+        `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${exception}`
+      );
+    }
+  }
+
+  /**
+   * Runtime type guard to ensure the given object is an Error.
+   * @param error The object to be checked
+   * @private
+   */
+  function validateError<E>(error: E) {
+    if (!util.types.isNativeError(error)) {
+      const invalidObjectErrorMessage =
+        "handleException has been called with a parameter that is not of type Error.";
+
+      let objectRepresentation;
+      switch (typeof error) {
+        case "function":
+          objectRepresentation = error.toString();
+          break;
+        case "undefined":
+          objectRepresentation = "undefined";
+          break;
+        case "symbol":
+          objectRepresentation = (error as Symbol).toString();
+          break;
+        case "bigint":
+        case "boolean":
+        case "number":
+        case "string":
+        case "object":
+          objectRepresentation = JSON.stringify(error);
+          break;
+      }
+
+      ctx.logger.error(
+        `${invalidObjectErrorMessage} Object was:`,
+        objectRepresentation
+      );
+      throw Error(invalidObjectErrorMessage);
+    }
+  }
+
+  /**
+   * Runtime resilience functionality in case some promise rejects a string instead of an object fulfilling the Error
+   * interface of Typescript.
+   * @param originalError The error to be checked for conversion
+   * @private
+   */
+  function convertToErrorIfFeasable(originalError: Error | string) {
+    if (typeof originalError === "string") {
+      ctx.logger.warn(
+        "handleException has been called with a parameter that is of type 'string'. Converting message to Error..."
+      );
+      return Error(originalError);
+    }
+    return originalError;
+  }
+
   return class SakuliTestCase implements TestCase {
     constructor(
       readonly caseId: string = "Testcase",
@@ -142,54 +231,31 @@ export function createTestCaseClass(
     /**
      * @inheritDoc
      */
-    async handleException<E extends Error>(e: E) {
-      if (!util.types.isNativeError(e)) {
-        ctx.logger.warn(
-          "handleException has been called with a parameter that is not of type Error. I'll try to work with it but expect strange things to happen!"
-        );
-        ctx.logger.trace("Object was:", JSON.stringify(e));
-      }
-      ctx.logger.error(
-        `Error in testcase ${this.caseId}: ${e.message}`,
-        e.stack
-      );
-      ctx.updateCurrentTestStep({
-        error: e,
-      });
+    async handleException<E extends Error>(originalError: E) {
       await releaseKeys(
         getActiveKeys(),
         createMouseApi(legacyProps),
         createKeyboardApi(legacyProps)
       );
+
+      const error = convertToErrorIfFeasable(originalError);
+      validateError(error);
+
+      ctx.logger.error(
+        `Error in testcase ${this.caseId}: ${error.message}`,
+        error.stack
+      );
+      ctx.updateCurrentTestStep({
+        error: error,
+      });
+
       if (legacyProps.errorScreenshot) {
-        try {
-          const screenShotPath = await takeErrorScreenShot(
-            ctx,
-            legacyProps.screenshotStorage,
-            screenShotDestPath
-          );
-          if (existsSync(screenShotPath)) {
-            ctx.logger.info(`Saved error screenshot at '${screenShotPath}'`);
-            ctx.updateCurrentTestStep({
-              screenshot: screenShotPath,
-            });
-          }
-        } catch (exception) {
-          ctx.logger.warn(
-            `Failed to store error screenshot under path ${screenShotDestPath}. Reason: ${exception}`
-          );
-        }
+        await takeErrorScreenshot();
       }
+
       await ifPresent(
         ctx.getCurrentTestCase(),
-        async (ctc) => {
-          const cachedSteps = await testStepCache.read();
-          const currentSteps = ctc.getChildren();
-          if (currentSteps.length <= cachedSteps.length) {
-            const stepToUpdate = cachedSteps[currentSteps.length - 1];
-            ctx.updateCurrentTestStep(stepToUpdate);
-          }
-        },
+        (ctc: TestCaseContext) => updateFromTestStepCache(ctc),
         () => Promise.resolve()
       );
     }
