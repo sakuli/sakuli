@@ -140,7 +140,7 @@ export function createTestCaseClass(
    * @param originalError The error to be checked for conversion
    * @private
    */
-  function convertToErrorIfFeasable(originalError: Error | string) {
+  function convertToErrorIfFeasible(originalError: Error | string) {
     if (typeof originalError === "string") {
       ctx.logger.warn(
         "handleException has been called with a parameter that is of type 'string'. Converting message to Error..."
