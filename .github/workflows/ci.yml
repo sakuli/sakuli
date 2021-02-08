@@ -111,7 +111,7 @@ jobs:
     #    needs: [integration-test]
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest] # ubuntu-latest,
         node: [10, 12, 14]
     runs-on: ${{ matrix.os }}
     steps:
@@ -120,11 +120,11 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{ matrix.node }}
-      - name: Install dependencies [Linux]
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
+      #      - name: Install dependencies [Linux]
+      #        if: runner.os == 'Linux'
+      #        run: |
+      #          sudo apt-get update
+      #          sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
       - run: npm ci
       - run: npm run build
       #      - name: Run e2e tests [Linux]
