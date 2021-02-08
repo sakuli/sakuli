@@ -238,7 +238,7 @@ export function createTestCaseClass(
         createKeyboardApi(legacyProps)
       );
 
-      const error = convertToErrorIfFeasable(originalError);
+      const error = convertToErrorIfFeasible(originalError);
       validateError(error);
 
       ctx.logger.error(
