@@ -38,7 +38,7 @@ export const timeout = (
 
     const maxTimeout = setTimeout(() => {
       cleanupTimer();
-      reject(`Action timed out after ${maxDuration} ms`);
+      reject(Error(`Action timed out after ${maxDuration} ms`));
     }, maxDuration);
 
     executeInterval();

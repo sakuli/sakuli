@@ -301,7 +301,9 @@ export function createEnvironmentClass(
             );
             if (result.getExitCode() !== 0 && optThrowException) {
               reject(
-                `Command execution failed with exit code '${result.getExitCode()}`
+                Error(
+                  `Command execution failed with exit code '${result.getExitCode()}'`
+                )
               );
             } else {
               resolve(result);

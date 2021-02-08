@@ -175,7 +175,6 @@ export class AccessorUtil {
   async findElements(locator: Locator): Promise<WebElement[]> {
     try {
       await this.enableHook();
-      // TODO Make timeout configurable
       await this.waitForOpenRequests(5000);
     } catch (e) {
       this.testExecutionContext.logger.info(
