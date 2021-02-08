@@ -99,7 +99,7 @@ describe("poll-action", () => {
     // GIVEN
     const updateInterval = 200;
     const maxDuration = 1000;
-    const delay = 2.2 * updateInterval;
+    const delay = 2.5 * updateInterval;
     const action = jest.fn(() => {
       console.log(`Polling...`);
       const interval = Date.now() - start;
