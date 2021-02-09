@@ -165,10 +165,15 @@ export class LegacyProjectProperties {
   }
 
   /**
+   * Disables the automatic iteration of frames.
+   * If this is enabled, switching frames needs to be done manually via the webdriver.
+   * For further information click [here](https://sakuli.io/docs/cookbook/frames/).
    *
+   *
+   * Default value: false
    */
-  @BooleanProperty("testsuite.skipFrames")
-  skipFrames: boolean = false;
+  @BooleanProperty("testsuite.manualFrames.enabled")
+  manualFrames: boolean = false;
 
   /**
    */

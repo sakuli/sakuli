@@ -25,7 +25,7 @@ export function actionApi(
     name: string,
     fn: (...args: ARGS) => Promise<R>
   ): ((...args: ARGS) => Promise<R>) => {
-    if (properties.skipFrames) {
+    if (properties.manualFrames) {
       return withActionContext(name, withRetries(5, fn));
     } else {
       return withActionContext(name, withTryAcrossFrames(withRetries(5, fn)));
