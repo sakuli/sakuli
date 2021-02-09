@@ -41,7 +41,9 @@ export function createApplicationClass(
             } catch (e) {
               if (!optSilent) {
                 reject(
-                  `Failed to ${methodName} application with PID=${this.process.pid}`
+                  new Error(
+                    `Failed to ${methodName} application with PID=${this.process.pid}`
+                  )
                 );
               } else {
                 resolve(this);
