@@ -102,7 +102,31 @@ describe("action-api", () => {
         });
       });
 
-      describe("deactivate auto switch between frames", () => {});
+      describe("deactivate auto switch between frames", () => {
+        it("should not find element in iframe when skipFrame is activated", async () => {
+          // GIVEN
+          properties.manualFrames = true;
+          const api = createApi(driver);
+          await driver.get(
+            mockHtml(`
+                    <iframe src="${mockHtml(`
+                        <div id="in-iframe">Frame1</div>
+                    `)}" >
+                `)
+          );
+
+          // WHEN
+          await expect(
+            api._highlight({
+              locator: By.css("#in-iframe"),
+              identifier: 0,
+              relations: [],
+            })
+          )
+            // THEN
+            .rejects.toThrowError();
+        });
+      });
 
       describe("auto switch between frames", () => {
         it("should find elements over all frames in frameset", async () => {
