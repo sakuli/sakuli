@@ -64,7 +64,7 @@ describe("create-with-action-context", () => {
       );
       expect(ctx.logger.trace).toHaveBeenNthCalledWith(
         2,
-        `Finish action ${actionName}`,
+        `Finish action ${actionName} with errors`,
         expect.stringMatching(error.message)
       );
       expect(ctx.getCurrentTestAction).toHaveBeenCalledTimes(1);
@@ -88,7 +88,7 @@ describe("create-with-action-context", () => {
       );
       expect(ctx.logger.trace).toHaveBeenNthCalledWith(
         2,
-        `Finish action ${actionName}`,
+        `Finish action ${actionName} with errors`,
         expect.stringMatching(error.message)
       );
       expect(ctx.getCurrentTestAction).toHaveBeenCalledTimes(1);
