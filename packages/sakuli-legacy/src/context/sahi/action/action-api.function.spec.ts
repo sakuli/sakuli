@@ -20,7 +20,8 @@ describe("action-api", () => {
       let env: TestEnvironment;
       let driver: ThenableWebDriver;
       let properties: LegacyProjectProperties;
-      beforeAll(async () => {
+      beforeEach(async () => {
+        jest.clearAllMocks();
         env = createTestEnv(browser, local);
         await env.start();
         driver = (await env.getEnv()).driver;
