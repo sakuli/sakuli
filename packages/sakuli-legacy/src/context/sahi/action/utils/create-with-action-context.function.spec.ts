@@ -8,6 +8,7 @@ describe("create-with-action-context", () => {
     name: string,
     fn: (...args: ARGS) => Promise<R>
   ) => (...args: ARGS) => Promise<R>;
+  const actionName = "dummy";
 
   beforeEach(() => {
     ctx = createTestExecutionContextMock();
@@ -20,15 +21,18 @@ describe("create-with-action-context", () => {
 
     beforeEach(() => {
       actionMock = jest.fn().mockResolvedValue("Works");
-      wrappedAction = withActionContext("dummy", actionMock);
+      wrappedAction = withActionContext(actionName, actionMock);
     });
 
     it("should invoke action and return its result", async () => {
       await wrappedAction(1, "Test");
       expect(ctx.startTestAction).toHaveBeenCalledWith(
-        expect.objectContaining({ id: "dummy" })
+        expect.objectContaining({ id: actionName })
       );
-      expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
+      expect(ctx.logger.trace).toHaveBeenNthCalledWith(
+        1,
+        `Start action ${actionName}`
+      );
       expect(ctx.endTestAction).toHaveBeenCalled();
     });
   });
@@ -41,27 +45,53 @@ describe("create-with-action-context", () => {
     beforeEach(() => {
       actionError = Error("Error in Action");
       actionMock = jest.fn().mockRejectedValue(actionError);
-      wrappedAction = withActionContext("dummy", actionMock);
+      wrappedAction = withActionContext(actionName, actionMock);
     });
 
     it("should invoke action and throw an error", async () => {
+      //GIVEN
+      const error = Error("Error in Action");
+
+      //WHEN
       const wrappedActionResultPromise = wrappedAction(1, "Test");
-      await expect(wrappedActionResultPromise).rejects.toThrowError(
-        /Error in Action/
-      );
+
+      //THEN
+      await expect(wrappedActionResultPromise).rejects.toThrowError(error);
       expect(actionMock).toHaveBeenCalledWith(1, "Test");
-      expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
+      expect(ctx.logger.trace).toHaveBeenNthCalledWith(
+        1,
+        `Start action ${actionName}`
+      );
+      expect(ctx.logger.trace).toHaveBeenNthCalledWith(
+        2,
+        `Finish action ${actionName}`,
+        expect.stringMatching(error.message)
+      );
+      expect(ctx.getCurrentTestAction).toHaveBeenCalledTimes(1);
     });
 
     it("should start and finish an action anyway", async () => {
-      await expect(wrappedAction(1, "Test")).rejects.toThrowError(
-        /Error in Action/
-      );
+      //GIVEN
+      const error = Error("Error in Action");
+
+      //WHEN
+      await expect(wrappedAction(1, "Test"))
+        //THEN
+        .rejects.toThrowError(error);
       expect(ctx.startTestAction).toHaveBeenCalledWith(
         expect.objectContaining({ id: "dummy" })
       );
       expect(ctx.endTestAction).toHaveBeenCalled();
-      expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
+      expect(ctx.logger.trace).toHaveBeenNthCalledWith(
+        1,
+        `Start action ${actionName}`
+      );
+      expect(ctx.logger.trace).toHaveBeenNthCalledWith(
+        2,
+        `Finish action ${actionName}`,
+        expect.stringMatching(error.message)
+      );
+      expect(ctx.getCurrentTestAction).toHaveBeenCalledTimes(1);
     });
   });
 });
