@@ -1,6 +1,6 @@
 import { Forwarder } from "./forwarder.interface";
-import { TestExecutionContext } from "../runner/test-execution-context";
-import { Project } from "../loader/model";
+import { TestExecutionContext } from "../runner";
+import { Project } from "../loader";
 
 /**
  * Connecting a forwarder to TestExecutionContext ctx
@@ -62,7 +62,8 @@ export const connectForwarderToTestExecutionContext = async (
         ctx.logger.error(
           `There were errors during forwarding: ${JSON.stringify(
             e.message || e
-          )}`
+          )}`,
+          e.stack
         );
       }
     }
