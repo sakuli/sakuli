@@ -13,7 +13,6 @@ export function createWithActionContext(ctx: TestExecutionContext) {
       try {
         res = await fn(...args);
       } catch (error) {
-        ctx.updateCurrentTestAction({ error });
         throw error;
       } finally {
         const log = [`Finish action ${name}`];
@@ -21,7 +20,7 @@ export function createWithActionContext(ctx: TestExecutionContext) {
           log.push(action.error ? `with errors` : `successfully`);
           log.push(
             `after ${
-              (new Date().getTime() - action!.startDate!.getTime()) / 1000
+              (new Date().getTime() - action.startDate!.getTime()) / 1000
             }s`
           );
         });

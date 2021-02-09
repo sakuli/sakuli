@@ -1,6 +1,6 @@
 import { createWithActionContext } from "./create-with-action-context.function";
 import { createTestExecutionContextMock } from "../../../__mocks__";
-import { TestExecutionContext } from "@sakuli/core/dist";
+import { TestExecutionContext } from "@sakuli/core";
 
 describe("create-with-action-context", () => {
   let ctx: TestExecutionContext;
@@ -59,9 +59,6 @@ describe("create-with-action-context", () => {
       );
       expect(ctx.startTestAction).toHaveBeenCalledWith(
         expect.objectContaining({ id: "dummy" })
-      );
-      expect(ctx.updateCurrentTestAction).toHaveBeenCalledWith(
-        expect.objectContaining({ error: actionError })
       );
       expect(ctx.endTestAction).toHaveBeenCalled();
       expect(ctx.logger.trace).toHaveBeenCalledTimes(2);
