@@ -247,14 +247,15 @@ export class AccessorUtil {
     waitTimeout: number = this.timeout
   ): Promise<WebElement> {
     if (isSahiElementQuery(query)) {
+      const stringifiedQuery = sahiQueryToString(query)
       this.testExecutionContext.logger.trace(
         "Fetch Element",
-        sahiQueryToString(query)
+        stringifiedQuery
       );
       const elements = await this.fetchElements(query, waitTimeout);
       this.testExecutionContext.logger.debug(
         `${elements.length} Elements found for query`,
-        sahiQueryToString(query)
+        stringifiedQuery
       );
       return elements[0];
     } else {
