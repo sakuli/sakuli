@@ -172,7 +172,7 @@ export class LegacyProjectProperties {
    *
    * Default value: false
    */
-  @BooleanProperty("testsuite.manualFrames.enabled")
+  @BooleanProperty("testsuite.manualFrameSwitch")
   manualFrames: boolean = false;
 
   /**
