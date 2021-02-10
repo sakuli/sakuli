@@ -172,8 +172,8 @@ export class LegacyProjectProperties {
    *
    * Default value: false
    */
-  @BooleanProperty("testsuite.manualFrameSwitch")
-  manualFrames: boolean = false;
+  @BooleanProperty("testsuite.disableSearchInFrames")
+  disableSearchInFrames: boolean = false;
 
   /**
    */

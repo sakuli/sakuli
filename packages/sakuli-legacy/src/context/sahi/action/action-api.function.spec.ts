@@ -106,7 +106,7 @@ describe("action-api", () => {
       describe("deactivate auto switch between frames", () => {
         it("should not find element in iframe when skipFrame is activated", async () => {
           // GIVEN
-          properties.manualFrames = true;
+          properties.disableSearchInFrames = true;
           const api = createApi(driver);
           await driver.get(
             mockHtml(`

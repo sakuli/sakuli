@@ -4,6 +4,8 @@ import { sahiApi } from "./api";
 import { createTestExecutionContextMock } from "../__mocks__";
 import { SahiApi } from "./sahi-api.interface";
 import { LegacyProjectProperties } from "../../loader/legacy-project-properties.class";
+import { actionApi } from "./action";
+import { TestExecutionContext } from "@sakuli/core";
 
 let getTimeoutMock = jest.fn();
 let setTimeoutMock = jest.fn();
@@ -16,10 +18,21 @@ jest.mock("./accessor", () => ({
   })),
 }));
 
+jest.mock("./action", () => ({
+  actionApi: jest.fn(),
+}));
+
 describe("SahiApi", () => {
-  const mockDriver = mockPartial<ThenableWebDriver>({});
-  const ctx = createTestExecutionContextMock();
-  const properties = mockPartial<LegacyProjectProperties>({});
+  let mockDriver: ThenableWebDriver;
+  let ctx: TestExecutionContext;
+  let properties: LegacyProjectProperties;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDriver = mockPartial<ThenableWebDriver>({});
+    ctx = createTestExecutionContextMock();
+    properties = mockPartial<LegacyProjectProperties>({});
+  });
 
   describe("global timeout", () => {
     let api: SahiApi;
@@ -39,5 +52,23 @@ describe("SahiApi", () => {
       expect(getTimeoutMock).toHaveBeenCalled();
       expect(result).toBe(returnValue);
     });
+  });
+
+  it("should call actionApi with correct parameters", () => {
+    // GIVEN
+
+    // WHEN
+    sahiApi(mockDriver, ctx, properties);
+
+    // THEN
+    expect(actionApi).toHaveBeenCalledWith(
+      mockDriver,
+      expect.objectContaining({
+        getTimeout: getTimeoutMock,
+        setTimeout: setTimeoutMock,
+      }),
+      ctx,
+      properties
+    );
   });
 });

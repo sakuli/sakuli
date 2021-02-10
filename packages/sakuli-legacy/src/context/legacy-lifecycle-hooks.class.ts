@@ -1,5 +1,5 @@
 import { Builder, ThenableWebDriver } from "selenium-webdriver";
-import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
+import { ensure, ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
 import {
   createKeyboardApi,
   createLoggerObject,
@@ -39,6 +39,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   currentTest: Maybe<string> = null;
   uiOnly = false;
   reuseBrowser = true;
+  properties: Maybe<LegacyProjectProperties> = null;
 
   constructor(readonly builder: Builder) {}
 
@@ -46,7 +47,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    const properties = project.objectFactory(LegacyProjectProperties);
+    const properties = ensure(
+      this.properties,
+      project.objectFactory(LegacyProjectProperties)
+    );
     this.uiOnly = properties.isUiOnly();
     this.reuseBrowser = properties.isReuseBrowser();
     if (!this.uiOnly && this.reuseBrowser) {
@@ -58,7 +62,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    const properties = project.objectFactory(LegacyProjectProperties);
+    const properties = ensure(
+      this.properties,
+      project.objectFactory(LegacyProjectProperties)
+    );
     const id = properties.testsuiteId
       ? properties.testsuiteId
       : project.rootDir.split(sep).pop();
@@ -113,7 +120,10 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext,
     project: Project
   ): Promise<LegacyApi> {
-    const properties = project.objectFactory(LegacyProjectProperties);
+    const properties = ensure(
+      this.properties,
+      project.objectFactory(LegacyProjectProperties)
+    );
     const sahi: SahiApi = this.driver
       ? sahiApi(this.driver, testExecutionContext, properties)
       : NoopSahiApi;
