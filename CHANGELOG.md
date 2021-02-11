@@ -44,6 +44,7 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Require compatible Node engine Version in package.json [(#589)](https://github.com/sakuli/sakuli/issues/589)
 - Enhancement: Sakuli CLl encrypt command fails when secret is a numerical value [(#587)](https://github.com/sakuli/sakuli/issues/587)
 - Enhancement: Add stack traces to forwader error logging [(#601)](https://github.com/sakuli/sakuli/issues/601)
+- Enhancement: \_wait should return the value of the awaited expression [(#596)](https://github.com/sakuli/sakuli/issues/596)
 
 ## v2.4.0
 
