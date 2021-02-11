@@ -59,6 +59,7 @@ export interface CommonActionsApi {
 
   /**
    * Wait for a maximum of the given timeout. It's also possible to pass an expression function which will be evaluated during the waiting.
+   * The truthy evaluated value of the expression will be returned from _wait.
    *
    * @example
    *
@@ -68,8 +69,8 @@ export interface CommonActionsApi {
    * await _wait(10000);
    *
    *
-   * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible
-   * await _wait(5000, () => _isVisible(_submit('Buy Now')));
+   * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible and return the resulting boolean valie
+   * const isVisible = await _wait(5000, () => _isVisible(_submit('Buy Now')));
    * ```
    *
    *
