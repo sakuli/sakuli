@@ -1,10 +1,25 @@
 import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
-import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
 import { AccessorUtil } from "./accessor-util.class";
 import { RelationsResolver } from "../relations";
 import { TestExecutionContext } from "@sakuli/core";
-import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
+import { sahiQueryToString } from "../sahi-element-utils";
+
+jest.mock("../sahi-element-utils", () => {
+  const originalModule = jest.requireActual("../sahi-element-utils");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    sahiQueryToString: jest.fn(),
+  };
+});
 
 jest.setTimeout(15_000);
 describe("AccessorUtil", () => {
@@ -28,6 +43,7 @@ describe("AccessorUtil", () => {
           testExecutionContext,
           new RelationsResolver(driver, testExecutionContext)
         );
+        jest.clearAllMocks();
       });
 
       afterAll(async () => {
@@ -234,6 +250,7 @@ describe("AccessorUtil", () => {
       });
 
       it("should identify an element by string index", async () => {
+        //GIVEN
         await driver.get(
           mockHtml(`
             <div id="div-1">D1</div>
@@ -241,12 +258,34 @@ describe("AccessorUtil", () => {
             <div id="div-3">D1</div>
         `)
         );
-        const div = await accessorUtil.fetchElement({
+        const query = {
           locator: By.css("div"),
           identifier: "D1[1]",
           relations: [],
+        };
+        const queryString = "mock sahi query";
+        (<jest.Mock>sahiQueryToString).mockImplementation(() => {
+          return queryString;
         });
-        expect(testExecutionContext.logger.debug).toHaveBeenCalledTimes(2);
+
+        //WHEN
+        const div = await accessorUtil.fetchElement(query);
+
+        //THEN
+        expect(testExecutionContext.logger.debug).toHaveBeenNthCalledWith(
+          1,
+          "1 Elements found for query",
+          queryString
+        );
+        expect(testExecutionContext.logger.trace).toHaveBeenNthCalledWith(
+          1,
+          "Fetch Element",
+          queryString
+        );
+        expect(testExecutionContext.logger.trace).toHaveBeenNthCalledWith(
+          2,
+          `3 Elements found with locator ${query.locator}`
+        );
         return expect(div.getAttribute("id")).resolves.toBe("div-2");
       });
 

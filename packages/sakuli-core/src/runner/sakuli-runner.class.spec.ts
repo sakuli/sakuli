@@ -2,14 +2,14 @@ import { SakuliRunner, TestExecutionContext } from ".";
 import { TestExecutionLifecycleHooks } from "./context-provider.interface";
 import { TestScriptExecutor } from "./test-script-executor.interface";
 import { mockPartial } from "sneer";
-import { Project } from "../loader/model";
+import { Project } from "../loader";
 import { tmpdir } from "os";
 import { join, sep } from "path";
 import { promises as fs } from "fs";
-import Mocked = jest.Mocked;
 import { nodeSignals } from "../node-signals";
-import Signals = NodeJS.Signals;
 import { SimpleLogger } from "@sakuli/commons";
+import Mocked = jest.Mocked;
+import Signals = NodeJS.Signals;
 
 describe("SakuliRunner", () => {
   let tempDir: string;
@@ -17,9 +17,7 @@ describe("SakuliRunner", () => {
   beforeEach(async () => (tempDir = await fs.mkdtemp(`${tmpdir()}${sep}`)));
   afterEach(async () => fs.unlink(tempDir).catch(() => {}));
 
-  const createContextProviderMock = (): jest.Mocked<
-    TestExecutionLifecycleHooks
-  > => ({
+  const createContextProviderMock = (): jest.Mocked<TestExecutionLifecycleHooks> => ({
     onProject: jest.fn(),
     afterExecution: jest.fn(),
     requestContext: jest.fn(),
@@ -35,24 +33,24 @@ describe("SakuliRunner", () => {
       execute: jest.fn((_: any, ctx: any) => Promise.resolve({ ...ctx })),
     }) as Mocked<TestScriptExecutor>;
 
-  const testExecutionContext: TestExecutionContext = mockPartial<
-    TestExecutionContext
-  >({
-    startTestCase: jest.fn(),
-    endTestSuite: jest.fn(),
-    startTestSuite: jest.fn(),
-    getCurrentTestCase: jest.fn(),
-    updateCurrentTestCase: jest.fn(),
-    startExecution: jest.fn(),
-    endExecution: jest.fn(),
-    getCurrentTestAction: jest.fn(),
-    getCurrentTestSuite: jest.fn(),
-    logger: mockPartial<SimpleLogger>({
-      trace: jest.fn(),
-      warn: jest.fn(),
-      info: jest.fn(),
-    }),
-  });
+  const testExecutionContext: TestExecutionContext = mockPartial<TestExecutionContext>(
+    {
+      startTestCase: jest.fn(),
+      endTestSuite: jest.fn(),
+      startTestSuite: jest.fn(),
+      getCurrentTestCase: jest.fn(),
+      updateCurrentTestCase: jest.fn(),
+      startExecution: jest.fn(),
+      endExecution: jest.fn(),
+      getCurrentTestAction: jest.fn(),
+      getCurrentTestSuite: jest.fn(),
+      logger: mockPartial<SimpleLogger>({
+        trace: jest.fn(),
+        warn: jest.fn(),
+        info: jest.fn(),
+      }),
+    }
+  );
 
   let sakuliRunner: SakuliRunner;
   let lifecycleHooks1: jest.Mocked<TestExecutionLifecycleHooks>;
@@ -113,6 +111,31 @@ describe("SakuliRunner", () => {
     expect(lifecycleHooks2.beforeExecution).toHaveBeenCalledWith(
       projectWithThreeTestFiles,
       testExecutionContext
+    );
+    done();
+  });
+
+  it("should call onProject before beforeExecution and requestContext to ensure properties", async (done) => {
+    // GIVEN
+
+    // WHEN
+    await sakuliRunner.execute(projectWithThreeTestFiles);
+
+    // THEN
+    const lifecycleHooks1OnProjectOrder = (<jest.Mock>lifecycleHooks1.onProject)
+      .mock.invocationCallOrder[0];
+    const lifecycleHooks1BeforeExecutionOrder = (<jest.Mock>(
+      lifecycleHooks1.beforeExecution
+    )).mock.invocationCallOrder[0];
+    const lifecycleHooks1RequestContextOrder = (<jest.Mock>(
+      lifecycleHooks1.requestContext
+    )).mock.invocationCallOrder[0];
+
+    expect(lifecycleHooks1OnProjectOrder).toBeLessThan(
+      lifecycleHooks1BeforeExecutionOrder
+    );
+    expect(lifecycleHooks1BeforeExecutionOrder).toBeLessThan(
+      lifecycleHooks1RequestContextOrder
     );
     done();
   });

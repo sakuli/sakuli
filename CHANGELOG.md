@@ -44,6 +44,10 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Require compatible Node engine Version in package.json [(#589)](https://github.com/sakuli/sakuli/issues/589)
 - Enhancement: Sakuli CLl encrypt command fails when secret is a numerical value [(#587)](https://github.com/sakuli/sakuli/issues/587)
 - Enhancement: Add stack traces to forwader error logging [(#601)](https://github.com/sakuli/sakuli/issues/601)
+- Bugfix: throwing/rejecting strings instead of errors causing issues in error handling [(#600)](https://github.com/sakuli/sakuli/issues/600)
+- Enhancement: Action Errors preserves even if they are caught by programm flow [(#597)](https://github.com/sakuli/sakuli/issues/597)
+- Enhancement: Improve logging for fetchElements [(#599)](https://github.com/sakuli/sakuli/issues/599)
+- Enhancement: Skip automatic iteration of frames on website [(#591)](https://github.com/sakuli/sakuli/issues/591)
 - Enhancement: \_wait should return the value of the awaited expression [(#596)](https://github.com/sakuli/sakuli/issues/596)
 
 ## v2.4.0

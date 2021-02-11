@@ -21,7 +21,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
     const end = Date.now();
 
@@ -44,7 +46,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
     const end = Date.now();
 
@@ -95,7 +99,7 @@ describe("poll-action", () => {
     // GIVEN
     const updateInterval = 200;
     const maxDuration = 1000;
-    const delay = 2.2 * updateInterval;
+    const delay = 2.5 * updateInterval;
     const action = jest.fn(() => {
       console.log(`Polling...`);
       const interval = Date.now() - start;
@@ -125,7 +129,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
     const end = Date.now();
 
@@ -150,7 +156,9 @@ describe("poll-action", () => {
     try {
       await timeout(updateInterval, maxDuration, action);
     } catch (e) {
-      expect(e).toBe(`Action timed out after ${maxDuration} ms`);
+      expect(e).toStrictEqual(
+        Error(`Action timed out after ${maxDuration} ms`)
+      );
     }
 
     // THEN

@@ -125,25 +125,25 @@ export class AccessorUtil {
     elements: WebElement[],
     regEx: RegExp
   ): Promise<WebElement[]> {
+    function isMatch(text: string): boolean {
+      const match = text.match(regEx);
+      return match ? match.length > 0 : false;
+    }
+
+    function findMatches([, potentialMatches]: [
+      WebElement,
+      string[]
+    ]): boolean {
+      const matches = potentialMatches.filter((x) => x).map(isMatch);
+      return !!matches.find((m) => m);
+    }
+
     const eAndText: [
       WebElement,
       string[]
     ][] = await this.getStringIdentifiersForElement(elements);
-    this.testExecutionContext.logger.debug(
-      `Found ${eAndText.length} Elements for RegEx: ${regEx}`
-    );
 
-    return eAndText
-      .filter(([, potentialMatches]) => {
-        const matches = potentialMatches
-          .filter((x) => x)
-          .map((text) => {
-            const match = text.match(regEx);
-            return match ? match.length > 0 : false;
-          });
-        return !!matches.find((m) => !!m);
-      })
-      .map(([element]) => element);
+    return eAndText.filter(findMatches).map(([element]) => element);
   }
 
   async enableHook() {
@@ -175,7 +175,6 @@ export class AccessorUtil {
   async findElements(locator: Locator): Promise<WebElement[]> {
     try {
       await this.enableHook();
-      // TODO Make timeout configurable
       await this.waitForOpenRequests(5000);
     } catch (e) {
       this.testExecutionContext.logger.info(
@@ -183,7 +182,17 @@ export class AccessorUtil {
       );
     }
     try {
-      return await this.webDriver.wait(until.elementsLocated(locator), 3000);
+      const elements = await this.webDriver.wait(
+        until.elementsLocated(locator),
+        3000
+      );
+      if (typeof locator !== "function") {
+        //only log if 'webElementsToQuery()` wasn't used beforehand during relations
+        this.testExecutionContext.logger.trace(
+          `${elements.length} Elements found with locator ${locator}`
+        );
+      }
+      return elements;
     } catch (e) {
       return Promise.resolve([]);
     }
@@ -220,15 +229,9 @@ export class AccessorUtil {
           query
         );
         const elements = await this.findElements(queryAfterRelation.locator);
-        this.testExecutionContext.logger.trace(
-          `${elements.length} Elements found after applying relations ${query.relations}`
-        );
         const elementsAfterIdentifier = await this.resolveByIdentifier(
           elements,
           queryAfterRelation.identifier
-        );
-        this.testExecutionContext.logger.trace(
-          `${elements.length} Elements found after applying identifier ${query.identifier}`
         );
         return elementsAfterIdentifier.length ? elementsAfterIdentifier : false;
       },
@@ -240,12 +243,21 @@ export class AccessorUtil {
   }
 
   async fetchElement(
-    query: SahiElementQueryOrWebElement | WebElement,
+    query: SahiElementQueryOrWebElement,
     waitTimeout: number = this.timeout
   ): Promise<WebElement> {
-    return isSahiElementQuery(query)
-      ? this.fetchElements(query, waitTimeout).then(([first]) => first)
-      : Promise.resolve(query);
+    if (isSahiElementQuery(query)) {
+      const stringifiedQuery = sahiQueryToString(query);
+      this.testExecutionContext.logger.trace("Fetch Element", stringifiedQuery);
+      const elements = await this.fetchElements(query, waitTimeout);
+      this.testExecutionContext.logger.debug(
+        `${elements.length} Elements found for query`,
+        stringifiedQuery
+      );
+      return elements[0];
+    } else {
+      return Promise.resolve(query);
+    }
   }
 
   private isRegExpString(identifier: string) {
@@ -301,9 +313,6 @@ export class AccessorUtil {
       isRegEx
         ? str
         : "^\\s*" + str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$"
-    );
-    this.testExecutionContext.logger.debug(
-      `Converted string "${str}" to regex ${regex}`
     );
     return regex;
   }
