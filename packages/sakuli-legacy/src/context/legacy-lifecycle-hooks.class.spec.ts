@@ -143,9 +143,15 @@ describe("LegacyLifecycleHooks", () => {
     });
 
     it("should set suite id by property", async () => {
+      //GIVEN
       legacyProps.testsuiteId = "from-property";
       (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+      await lcp.onProject(minimumProject, testExecutionContext);
+
+      //WHEN
       await lcp.beforeExecution(minimumProject, testExecutionContext);
+
+      //THEN
       expect(testExecutionContext.startTestSuite).toHaveBeenCalledWith(
         expect.objectContaining({ id: "from-property" })
       );
@@ -157,6 +163,7 @@ describe("LegacyLifecycleHooks", () => {
       legacyProps.testsuiteId = "from-property";
       legacyProps.testsuiteWarningTime = warningTimeFromProps;
       (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+      await lcp.onProject(minimumProject, testExecutionContext);
 
       // WHEN
       await lcp.beforeExecution(minimumProject, testExecutionContext);
@@ -177,6 +184,7 @@ describe("LegacyLifecycleHooks", () => {
       legacyProps.testsuiteId = "from-property";
       legacyProps.testsuiteCriticalTime = criticalTimeFromProps;
       (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+      await lcp.onProject(minimumProject, testExecutionContext);
 
       // WHEN
       await lcp.beforeExecution(minimumProject, testExecutionContext);
@@ -199,6 +207,7 @@ describe("LegacyLifecycleHooks", () => {
       legacyProps.testsuiteWarningTime = warningTimeFromProps;
       legacyProps.testsuiteCriticalTime = criticalTimeFromProps;
       (testExecutionContext.getCurrentTestCase as Mock).mockReturnValue({});
+      await lcp.onProject(minimumProject, testExecutionContext);
 
       // WHEN
       await lcp.beforeExecution(minimumProject, testExecutionContext);

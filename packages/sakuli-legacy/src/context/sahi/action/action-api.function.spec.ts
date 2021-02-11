@@ -1,10 +1,16 @@
 import { By, ThenableWebDriver } from "selenium-webdriver";
-import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 import { actionApi } from "./action-api.function";
 import { AccessorUtil } from "../accessor";
 import { RelationsResolver } from "../relations";
-import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
+import {
+  createTestEnv,
+  getTestBrowserList,
+  mockHtml,
+  TestEnvironment,
+} from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
+import { mockPartial } from "sneer";
 
 jest.setTimeout(60_000);
 describe("action-api", () => {
@@ -13,10 +19,13 @@ describe("action-api", () => {
     (browser: "firefox" | "chrome", local: boolean) => {
       let env: TestEnvironment;
       let driver: ThenableWebDriver;
-      beforeAll(async () => {
+      let properties: LegacyProjectProperties;
+      beforeEach(async () => {
+        jest.clearAllMocks();
         env = createTestEnv(browser, local);
         await env.start();
         driver = (await env.getEnv()).driver;
+        properties = mockPartial<LegacyProjectProperties>({});
       });
 
       function createApi(driver: ThenableWebDriver) {
@@ -24,7 +33,8 @@ describe("action-api", () => {
         return actionApi(
           driver,
           new AccessorUtil(driver, ctx, new RelationsResolver(driver, ctx)),
-          ctx
+          ctx,
+          properties
         );
       }
 
@@ -90,6 +100,32 @@ describe("action-api", () => {
           ).resolves.toBeNull();
           const out = await driver.findElement(By.id("out"));
           await expect(out.getText()).resolves.toEqual("clicked");
+        });
+      });
+
+      describe("deactivate auto switch between frames", () => {
+        it("should not find element in iframe when skipFrame is activated", async () => {
+          // GIVEN
+          properties.disableSearchInFrames = true;
+          const api = createApi(driver);
+          await driver.get(
+            mockHtml(`
+                    <iframe src="${mockHtml(`
+                        <div id="in-iframe">Frame1</div>
+                    `)}" >
+                `)
+          );
+
+          // WHEN
+          await expect(
+            api._highlight({
+              locator: By.css("#in-iframe"),
+              identifier: 0,
+              relations: [],
+            })
+          )
+            // THEN
+            .rejects.toThrowError();
         });
       });
 
