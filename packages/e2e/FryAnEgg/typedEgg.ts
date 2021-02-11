@@ -6,8 +6,12 @@
   try {
     await _navigateTo(url);
     await testCase.endOfStep("Navigate to sakuli website");
+    await _wait(100);
     await testCase.startStep("Search egg");
-    await _highlight(_heading1(/LET'S FRY AN EGG/), 2000);
+    const header = await _wait(2000, () =>
+      _fetch(_heading1(/LET'S FRY AN EGG/))
+    );
+    await _highlight(header, 2000);
     await screen.find("background_color.png").click();
     await env.setSimilarity(0.95);
     await screen
