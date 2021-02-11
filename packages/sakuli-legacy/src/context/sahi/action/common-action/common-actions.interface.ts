@@ -9,6 +9,9 @@ export type WaitParameterWithExpression<R> = [
 export type WaitParameter<R> =
   | WaitParameterTimeoutOnly
   | WaitParameterWithExpression<R>;
+export type WaitReturn<P> = Promise<
+  P extends WaitParameterWithExpression<infer R> ? R : void
+>;
 
 export interface CommonActionsApi {
   /**
@@ -79,7 +82,7 @@ export interface CommonActionsApi {
    */
   _wait<P extends WaitParameter<any>>(
     ...[millis, expression]: P
-  ): Promise<P extends WaitParameterWithExpression<infer R> ? R : void>;
+  ): WaitReturn<P>;
 
   /**
    * Navigates the browser instance to the given URL (also [Data URLs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) are possible).

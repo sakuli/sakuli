@@ -5,10 +5,7 @@ import { SahiRelation } from "./sahi/relations/sahi-relation.interface";
 import { WebElement } from "selenium-webdriver";
 import { CharInfo } from "./sahi/action/char-info.interface";
 import { ClickOptions } from "./sahi/action/mouse-action";
-import {
-  WaitParameter,
-  WaitParameterWithExpression,
-} from "./sahi/action/common-action";
+import { WaitParameter, WaitReturn } from "./sahi/action/common-action";
 
 const _NoopSahiApi: SahiApi = {
   _parentNode(
@@ -188,9 +185,7 @@ const _NoopSahiApi: SahiApi = {
   _pageIsStable(_?: number, __?: number): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _wait<P extends WaitParameter<any>>(
-    ...[_, __]: P
-  ): Promise<P extends WaitParameterWithExpression<infer R> ? R : void> {
+  _wait<P extends WaitParameter<any>>(...[_, __]: P): WaitReturn<P> {
     throw new Error("Method not implemented.");
   },
   _navigateTo(
