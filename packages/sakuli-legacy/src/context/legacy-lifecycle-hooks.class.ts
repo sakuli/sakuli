@@ -1,5 +1,5 @@
 import { Builder, ThenableWebDriver } from "selenium-webdriver";
-import { ensure, ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
+import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
 import {
   createKeyboardApi,
   createLoggerObject,
@@ -47,12 +47,9 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    const properties = ensure(
-      this.properties,
-      project.objectFactory(LegacyProjectProperties)
-    );
-    this.uiOnly = properties.isUiOnly();
-    this.reuseBrowser = properties.isReuseBrowser();
+    this.properties = project.objectFactory(LegacyProjectProperties);
+    this.uiOnly = this.properties.isUiOnly();
+    this.reuseBrowser = this.properties.isReuseBrowser();
     if (!this.uiOnly && this.reuseBrowser) {
       await this.createDriver(project, testExecutionContext);
     }
@@ -62,15 +59,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    const properties = ensure(
-      this.properties,
-      project.objectFactory(LegacyProjectProperties)
-    );
-    const id = properties.testsuiteId
-      ? properties.testsuiteId
+    const id = this.properties!.testsuiteId
+      ? this.properties!.testsuiteId
       : project.rootDir.split(sep).pop();
-    const warningTime = properties.testsuiteWarningTime || 0;
-    const criticalTime = properties.testsuiteCriticalTime || 0;
+    const warningTime = this.properties!.testsuiteWarningTime || 0;
+    const criticalTime = this.properties!.testsuiteCriticalTime || 0;
     testExecutionContext.startTestSuite({ id, warningTime, criticalTime });
   }
 
@@ -120,12 +113,8 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     testExecutionContext: TestExecutionContext,
     project: Project
   ): Promise<LegacyApi> {
-    const properties = ensure(
-      this.properties,
-      project.objectFactory(LegacyProjectProperties)
-    );
     const sahi: SahiApi = this.driver
-      ? sahiApi(this.driver, testExecutionContext, properties)
+      ? sahiApi(this.driver, testExecutionContext, this.properties!)
       : NoopSahiApi;
     const currentTestFolder = throwIfAbsent(
       this.currentTest,
