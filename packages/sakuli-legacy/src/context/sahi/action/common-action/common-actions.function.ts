@@ -8,7 +8,6 @@ import {
   CommonActionsApi,
   WaitParameter,
   WaitParameterWithExpression,
-  WaitReturn,
 } from "./common-actions.interface";
 import { highlightElement, scrollIntoViewIfNeeded } from "../utils";
 import { wait } from "../../helper/wait.function";
@@ -59,7 +58,7 @@ export function commonActionsApi(
 
   async function _wait<P extends WaitParameter<any>>(
     ...[millis, expression]: P
-  ): WaitReturn<P> {
+  ): Promise<P extends WaitParameterWithExpression<infer R> ? R : void> {
     if (!expression) {
       return <
         Promise<P extends WaitParameterWithExpression<infer R> ? R : void>
