@@ -7,6 +7,7 @@ import { TestExecutionContext } from "@sakuli/core";
 import {
   CommonActionsApi,
   WaitParameter,
+  WaitParameterWithExpression,
   WaitReturn,
 } from "./common-actions.interface";
 import { highlightElement, scrollIntoViewIfNeeded } from "../utils";
@@ -60,7 +61,9 @@ export function commonActionsApi(
     ...[millis, expression]: P
   ): WaitReturn<P> {
     if (!expression) {
-      return <WaitReturn<P>>new Promise<void>((res) => {
+      return <
+        Promise<P extends WaitParameterWithExpression<infer R> ? R : void>
+      >new Promise<void>((res) => {
         setTimeout(() => res(), millis);
       });
     }
