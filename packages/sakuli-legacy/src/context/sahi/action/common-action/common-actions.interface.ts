@@ -69,7 +69,7 @@ export interface CommonActionsApi {
    * await _wait(10000);
    *
    *
-   * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible and return the resulting boolean valie
+   * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible and return the resulting boolean value
    * const isVisible = await _wait(5000, () => _isVisible(_submit('Buy Now')));
    * ```
    *
