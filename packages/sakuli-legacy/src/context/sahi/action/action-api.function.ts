@@ -8,13 +8,15 @@ import { ActionApi } from "./action-api.interface";
 import { commonActionsApi } from "./common-action";
 import { createWithActionContext, createWithRetries } from "./utils";
 import { createWithTryAcrossFrames } from "./utils/create-with-try-across-frames.function";
+import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 
 export type ActionApiFunction = ReturnType<typeof actionApi>;
 
 export function actionApi(
   webDriver: ThenableWebDriver,
   accessorUtil: AccessorUtil,
-  ctx: TestExecutionContext
+  ctx: TestExecutionContext,
+  properties: LegacyProjectProperties
 ): ActionApi {
   const withRetries = createWithRetries(ctx);
   const withActionContext = createWithActionContext(ctx);
@@ -23,7 +25,11 @@ export function actionApi(
     name: string,
     fn: (...args: ARGS) => Promise<R>
   ): ((...args: ARGS) => Promise<R>) => {
-    return withActionContext(name, withTryAcrossFrames(withRetries(5, fn)));
+    if (properties.disableSearchInFrames) {
+      return withActionContext(name, withRetries(5, fn));
+    } else {
+      return withActionContext(name, withTryAcrossFrames(withRetries(5, fn)));
+    }
   };
 
   const {

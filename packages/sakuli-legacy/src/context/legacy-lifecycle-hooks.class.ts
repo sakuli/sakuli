@@ -1,7 +1,16 @@
 import { Builder, ThenableWebDriver } from "selenium-webdriver";
 import { ifPresent, Maybe, throwIfAbsent } from "@sakuli/commons";
-import { createTestCaseClass } from "./common/test-case";
-import { createKeyboardApi, createMouseApi, Key, MouseButton } from "./common";
+import {
+  createKeyboardApi,
+  createLoggerObject,
+  createMouseApi,
+  createTestCaseClass,
+  createThenableApplicationClass,
+  createThenableEnvironmentClass,
+  createThenableRegionClass,
+  Key,
+  MouseButton,
+} from "./common";
 import { sahiApi } from "./sahi/api";
 import {
   Project,
@@ -10,12 +19,8 @@ import {
   TestFile,
 } from "@sakuli/core";
 import { basename, dirname, join, parse, sep } from "path";
-import { createLoggerObject } from "./common/logger";
 import { LegacyProjectProperties } from "../loader/legacy-project-properties.class";
 import { promises as fs } from "fs";
-import { createThenableApplicationClass } from "./common/application";
-import { createThenableEnvironmentClass } from "./common/environment";
-import { createThenableRegionClass } from "./common/region";
 import { LegacyApi } from "./legacy-api.interface";
 import { createDriverFromProject } from "./selenium-config/create-driver-from-project.function";
 import { TestStepCache } from "./common/test-case/steps-cache/test-step-cache.class";
@@ -34,6 +39,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   currentTest: Maybe<string> = null;
   uiOnly = false;
   reuseBrowser = true;
+  properties: Maybe<LegacyProjectProperties> = null;
 
   constructor(readonly builder: Builder) {}
 
@@ -41,9 +47,9 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    const properties = project.objectFactory(LegacyProjectProperties);
-    this.uiOnly = properties.isUiOnly();
-    this.reuseBrowser = properties.isReuseBrowser();
+    this.properties = project.objectFactory(LegacyProjectProperties);
+    this.uiOnly = this.properties.isUiOnly();
+    this.reuseBrowser = this.properties.isReuseBrowser();
     if (!this.uiOnly && this.reuseBrowser) {
       await this.createDriver(project, testExecutionContext);
     }
@@ -53,12 +59,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    const properties = project.objectFactory(LegacyProjectProperties);
-    const id = properties.testsuiteId
-      ? properties.testsuiteId
+    const id = this.properties!.testsuiteId
+      ? this.properties!.testsuiteId
       : project.rootDir.split(sep).pop();
-    const warningTime = properties.testsuiteWarningTime || 0;
-    const criticalTime = properties.testsuiteCriticalTime || 0;
+    const warningTime = this.properties!.testsuiteWarningTime || 0;
+    const criticalTime = this.properties!.testsuiteCriticalTime || 0;
     testExecutionContext.startTestSuite({ id, warningTime, criticalTime });
   }
 
@@ -109,7 +114,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project
   ): Promise<LegacyApi> {
     const sahi: SahiApi = this.driver
-      ? sahiApi(this.driver, testExecutionContext)
+      ? sahiApi(this.driver, testExecutionContext, this.properties!)
       : NoopSahiApi;
     const currentTestFolder = throwIfAbsent(
       this.currentTest,
