@@ -48,6 +48,7 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Action Errors preserves even if they are caught by programm flow [(#597)](https://github.com/sakuli/sakuli/issues/597)
 - Enhancement: Improve logging for fetchElements [(#599)](https://github.com/sakuli/sakuli/issues/599)
 - Enhancement: Skip automatic iteration of frames on website [(#591)](https://github.com/sakuli/sakuli/issues/591)
+- Enhancement: \_wait should return the value of the awaited expression [(#596)](https://github.com/sakuli/sakuli/issues/596)
 
 ## v2.4.0
 

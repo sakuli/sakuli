@@ -173,10 +173,11 @@ describe("common-actions", () => {
         await expect(result).toEqual("Second");
       });
 
-      it("should return true for stabilized DOM within default timeout", async () => {
-        // GIVEN
-        await driver.get(
-          mockHtml(`
+      describe("_pageIsStable", () => {
+        it("should return true for stabilized DOM within default timeout", async () => {
+          // GIVEN
+          await driver.get(
+            mockHtml(`
                 <div id="root">
                 </div>
                 <script>
@@ -187,21 +188,22 @@ describe("common-actions", () => {
                 setTimeout(() => clearInterval(interval), 1000);
                 </script>
             `)
-        );
+          );
 
-        // WHEN
-        const start = Date.now();
-        const result = await api._pageIsStable();
-        const duration = Date.now() - start;
+          // WHEN
+          const start = Date.now();
+          const result = await api._pageIsStable();
+          const duration = Date.now() - start;
 
-        // THEN
-        expect(result).toBeTruthy();
-        expect(duration).toBeLessThan(2_000);
-      });
-      it("should return false for unstable DOM", async () => {
-        // GIVEN
-        await driver.get(
-          mockHtml(`
+          // THEN
+          expect(result).toBeTruthy();
+          expect(duration).toBeLessThan(2_000);
+        });
+
+        it("should return false for unstable DOM", async () => {
+          // GIVEN
+          await driver.get(
+            mockHtml(`
                 <div id="root">
                 </div>
                 <script>
@@ -212,16 +214,39 @@ describe("common-actions", () => {
                 setTimeout(() => clearInterval(interval), 3000);
                 </script>
             `)
-        );
+          );
 
-        // WHEN
-        const start = Date.now();
-        const result = await api._pageIsStable();
-        const duration = Date.now() - start;
+          // WHEN
+          const start = Date.now();
+          const result = await api._pageIsStable();
+          const duration = Date.now() - start;
 
-        // THEN
-        expect(result).toBeFalsy();
-        expect(duration).toBeGreaterThanOrEqual(1_999);
+          // THEN
+          expect(result).toBeFalsy();
+          expect(duration).toBeGreaterThanOrEqual(1_999);
+        });
+      });
+
+      describe("_wait", () => {
+        it("should return action return value on success", async () => {
+          //GIVEN
+          const expressionResult = "Who or what is Tom Bombadil?";
+          const expression = async () => expressionResult;
+
+          //WHEN
+          const result = await api._wait(2000, expression);
+
+          //THEN
+          expect(result).toBe(expressionResult);
+        });
+
+        it("should return void if no action was provided", async () => {
+          //WHEN
+          const result = await api._wait(2000);
+
+          //THEN
+          expect(result).toBeUndefined();
+        });
       });
     }
   );

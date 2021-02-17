@@ -1,9 +1,9 @@
-export const timeout = (
+export const timeout = <T>(
   updateInterval: number,
   maxDuration: number,
-  action: (...params: any) => Promise<boolean>
+  action: (...params: any) => Promise<T>
 ) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     let interval: NodeJS.Timeout;
     let timerCleaned = false;
 
@@ -11,7 +11,7 @@ export const timeout = (
       action().then(validateResult).catch(handleRejection);
     }
 
-    function validateResult(result: boolean) {
+    function validateResult(result: T) {
       if (!result && !timerCleaned) {
         interval = global.setTimeout(executeInterval, updateInterval);
       } else {

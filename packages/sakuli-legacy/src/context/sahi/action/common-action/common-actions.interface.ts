@@ -1,6 +1,15 @@
 import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
 import { WebElement } from "selenium-webdriver";
 
+export type WaitParameterTimeoutOnly = [millis: number];
+export type WaitParameterWithExpression<R> = [
+  millis: number,
+  expression: () => Promise<R>
+];
+export type WaitParameter<R> =
+  | WaitParameterTimeoutOnly
+  | WaitParameterWithExpression<R>;
+
 export interface CommonActionsApi {
   /**
    * This function sends Javascript to the browser which is executed their.
@@ -50,6 +59,7 @@ export interface CommonActionsApi {
 
   /**
    * Wait for a maximum of the given timeout. It's also possible to pass an expression function which will be evaluated during the waiting.
+   * The truthy evaluated value of the expression will be returned from _wait.
    *
    * @example
    *
@@ -59,20 +69,17 @@ export interface CommonActionsApi {
    * await _wait(10000);
    *
    *
-   * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible
-   * await _wait(5000, () => _isVisible(_submit('Buy Now')));
+   * // Will wait at most 5 seconds until a submit button with the text "Buy now" is visible and return the resulting boolean value
+   * const isVisible = await _wait(5000, () => _isVisible(_submit('Buy Now')));
    * ```
    *
    *
    * @param millis Maximum amount of time to be waiting (in milliseconds)
    * @param expression An optional function which will abort the wait when it returns a truthy value
    */
-  _wait(
-    millis: number,
-    expression?: (
-      ...locators: SahiElementQueryOrWebElement[]
-    ) => Promise<boolean>
-  ): Promise<void>;
+  _wait<P extends WaitParameter<any>>(
+    ...[millis, expression]: P
+  ): Promise<P extends WaitParameterWithExpression<infer R> ? R : void>;
 
   /**
    * Navigates the browser instance to the given URL (also [Data URLs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) are possible).

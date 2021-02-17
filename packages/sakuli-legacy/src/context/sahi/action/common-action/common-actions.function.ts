@@ -4,7 +4,11 @@ import { SahiElementQueryOrWebElement } from "../../sahi-element.interface";
 import { timeout } from "../poll-action.function";
 import { INJECT_SAKULI_HOOK } from "../inject.const";
 import { TestExecutionContext } from "@sakuli/core";
-import { CommonActionsApi } from "./common-actions.interface";
+import {
+  CommonActionsApi,
+  WaitParameter,
+  WaitParameterWithExpression,
+} from "./common-actions.interface";
 import { highlightElement, scrollIntoViewIfNeeded } from "../utils";
 import { wait } from "../../helper/wait.function";
 import { fetchPageSource } from "../utils/fetch-page-source.function";
@@ -52,18 +56,17 @@ export function commonActionsApi(
     await highlightElement(element, timeoutMs);
   }
 
-  async function _wait(
-    millis: number,
-    expression?: (
-      ...locators: SahiElementQueryOrWebElement[]
-    ) => Promise<boolean>
-  ): Promise<void> {
+  async function _wait<P extends WaitParameter<any>>(
+    ...[millis, expression]: P
+  ): Promise<P extends WaitParameterWithExpression<infer R> ? R : void> {
     if (!expression) {
-      return new Promise<void>((res) => {
+      return <
+        Promise<P extends WaitParameterWithExpression<infer R> ? R : void>
+      >new Promise<void>((res) => {
         setTimeout(() => res(), millis);
       });
     }
-    await timeout(200, millis, expression);
+    return await timeout(200, millis, expression);
   }
 
   async function _navigateTo(

@@ -5,72 +5,76 @@ import { SahiRelation } from "./sahi/relations/sahi-relation.interface";
 import { WebElement } from "selenium-webdriver";
 import { CharInfo } from "./sahi/action/char-info.interface";
 import { ClickOptions } from "./sahi/action/mouse-action";
+import {
+  WaitParameter,
+  WaitParameterWithExpression,
+} from "./sahi/action/common-action";
 
 const _NoopSahiApi: SahiApi = {
   _parentNode(
-    q: SahiElementQueryOrWebElement,
-    tagName: string,
-    occurrence?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __: string,
+    ___?: number | undefined
   ): Promise<SahiElementQueryOrWebElement> {
     throw new Error("Method not implemented.");
   },
   _parentCell(
-    q: SahiElementQueryOrWebElement,
-    occurrence?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): Promise<SahiElementQueryOrWebElement> {
     throw new Error("Method not implemented.");
   },
   _parentRow(
-    q: SahiElementQueryOrWebElement,
-    occurrence?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): Promise<SahiElementQueryOrWebElement> {
     throw new Error("Method not implemented.");
   },
   _parentTable(
-    q: SahiElementQueryOrWebElement,
-    occurrence?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): Promise<SahiElementQueryOrWebElement> {
     throw new Error("Method not implemented.");
   },
-  _in(anchor: SahiElementQueryOrWebElement): SahiRelation {
+  _in(_: SahiElementQueryOrWebElement): SahiRelation {
     throw new Error("Method not implemented.");
   },
-  _near(anchor: SahiElementQueryOrWebElement): SahiRelation {
+  _near(_: SahiElementQueryOrWebElement): SahiRelation {
     throw new Error("Method not implemented.");
   },
   _under(
-    anchor: SahiElementQueryOrWebElement,
-    offset?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): SahiRelation {
     throw new Error("Method not implemented.");
   },
   _above(
-    anchor: SahiElementQueryOrWebElement,
-    offset?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): SahiRelation {
     throw new Error("Method not implemented.");
   },
   _underOrAbove(
-    anchor: SahiElementQueryOrWebElement,
-    offset?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): SahiRelation {
     throw new Error("Method not implemented.");
   },
   _rightOf(
-    anchor: SahiElementQueryOrWebElement,
-    offset?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): SahiRelation {
     throw new Error("Method not implemented.");
   },
   _leftOf(
-    anchor: SahiElementQueryOrWebElement,
-    offset?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): SahiRelation {
     throw new Error("Method not implemented.");
   },
   _leftOrRightOf(
-    anchor: SahiElementQueryOrWebElement,
-    offset?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): SahiRelation {
     throw new Error("Method not implemented.");
   },
@@ -81,749 +85,731 @@ const _NoopSahiApi: SahiApi = {
     throw new Error("Method not implemented.");
   },
   _click(
-    query: SahiElementQueryOrWebElement,
-    combo?: string | undefined | ClickOptions,
-    options?: ClickOptions | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: string | undefined | ClickOptions,
+    ___?: ClickOptions | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _mouseDown(
-    query: SahiElementQueryOrWebElement,
-    isRight?: boolean | undefined,
-    combo?: string | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: boolean | undefined,
+    ___?: string | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _mouseUp(
-    query: SahiElementQueryOrWebElement,
-    isRight?: boolean | undefined,
-    combo?: string | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: boolean | undefined,
+    ___?: string | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _rightClick(
-    query: SahiElementQueryOrWebElement,
-    combo?: string | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: string | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _mouseOver(
-    query: SahiElementQueryOrWebElement,
-    combo?: string | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: string | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _check(query: SahiElementQueryOrWebElement): Promise<void> {
+  _check(_: SahiElementQueryOrWebElement): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _uncheck(query: SahiElementQueryOrWebElement): Promise<void> {
+  _uncheck(_: SahiElementQueryOrWebElement): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _dragDrop(
-    eSource: SahiElementQueryOrWebElement,
-    eTarget: SahiElementQueryOrWebElement
+    _: SahiElementQueryOrWebElement,
+    __: SahiElementQueryOrWebElement
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _dragDropXY(
-    q: SahiElementQueryOrWebElement,
-    x: number,
-    y: number,
-    $isRelative?: boolean | undefined
+    _: SahiElementQueryOrWebElement,
+    __: number,
+    ___: number,
+    ____?: boolean | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _setSelected(
-    query: SahiElementQueryOrWebElement,
-    optionToSelect: string | number | string[] | number[],
-    isMultiple?: boolean | undefined
+    _: SahiElementQueryOrWebElement,
+    __: string | number | string[] | number[],
+    ___?: boolean | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _setValue(query: SahiElementQueryOrWebElement, value: string): Promise<void> {
+  _setValue(_: SahiElementQueryOrWebElement, __: string): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _keyDown(
-    query: SahiElementQueryOrWebElement,
-    charInfo: CharInfo,
-    combo?: string | undefined
+    _: SahiElementQueryOrWebElement,
+    __: CharInfo,
+    ___?: string | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _keyUp(
-    query: SahiElementQueryOrWebElement,
-    charInfo: CharInfo
-  ): Promise<void> {
+  _keyUp(_: SahiElementQueryOrWebElement, __: CharInfo): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _keyPress(
-    query: SahiElementQueryOrWebElement,
-    charInfo: CharInfo,
-    combo?: string | undefined
+    _: SahiElementQueryOrWebElement,
+    __: CharInfo,
+    ___?: string | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _type(query: SahiElementQueryOrWebElement, text: string): Promise<void> {
+  _type(_: SahiElementQueryOrWebElement, __: string): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _focus(query: SahiElementQueryOrWebElement): Promise<void> {
+  _focus(_: SahiElementQueryOrWebElement): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _blur(query: SahiElementQueryOrWebElement): Promise<void> {
+  _blur(_: SahiElementQueryOrWebElement): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _removeFocus(query: SahiElementQueryOrWebElement): Promise<void> {
+  _removeFocus(_: SahiElementQueryOrWebElement): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _eval<T = any>(source: string, ..._args: any[]): Promise<T> {
     throw new Error("Method not implemented.");
   },
   _highlight(
-    query: SahiElementQueryOrWebElement,
-    timeoutMs?: number | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: number | undefined
   ): Promise<void> {
     throw new Error("Method not implemented.");
   },
-  _pageIsStable(timeout?: number, interval?: number): Promise<boolean> {
+  _pageIsStable(_?: number, __?: number): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _wait(
-    millis: number,
-    expression?:
-      | ((...locators: SahiElementQueryOrWebElement[]) => Promise<boolean>)
-      | undefined
-  ): Promise<void> {
+  _wait<P extends WaitParameter<any>>(
+    ...[_, __]: P
+  ): Promise<P extends WaitParameterWithExpression<infer R> ? R : void> {
     throw new Error("Method not implemented.");
   },
   _navigateTo(
-    target: string,
-    forceReload?: boolean | undefined,
-    credentials?: { user: string; password: string } | undefined
+    _: string,
+    __?: boolean | undefined,
+    ___?: { user: string; password: string } | undefined
   ): Promise<any> {
     throw new Error("Method not implemented.");
   },
-  _rteWrite(
-    query: SahiElementQueryOrWebElement,
-    content: string
-  ): Promise<void> {
+  _rteWrite(_: SahiElementQueryOrWebElement, __: string): Promise<void> {
     throw new Error("Method not implemented.");
   },
   _activeElement(): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
-  _byId(id: string): SahiElementQueryOrWebElement {
+  _byId(_: string): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
-  _byText(text: string, tagName: string): SahiElementQueryOrWebElement {
+  _byText(_: string, __: string): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
-  _byClassName(clsName: string, tagName: string): SahiElementQueryOrWebElement {
+  _byClassName(_: string, __: string): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
-  _byXPath(xPath: string): SahiElementQueryOrWebElement {
+  _byXPath(_: string): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _password(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _textbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _hidden(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _datebox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _datetimebox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _datetimelocalbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _emailbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _monthbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _numberbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _rangebox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _searchbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _telephonebox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _timebox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _urlbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _weekbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _textarea(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _button(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _checkbox(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _radio(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _submit(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _reset(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _imageSubmitButton(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _select(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _option(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _file(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _table(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _row(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _cell(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _tableHeader(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _link(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _image(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _label(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _listItem(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _list(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _div(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _span(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _fieldset(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _heading1(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _heading2(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _heading3(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _heading4(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _heading5(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _heading6(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _area(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _map(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _paragraph(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _italic(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _emphasis(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _bold(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _strong(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _preformatted(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _code(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _blockquote(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _canvas(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _abbr(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _hr(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _iframe(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _rte(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _frame(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _object(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _embed(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _dList(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _dTerm(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _dDesc(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _font(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_rect(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_tspan(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_circle(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_ellipse(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_line(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_polygon(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_polyline(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_path(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _svg_text(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _article(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _aside(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _details(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _figcaption(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _figure(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _footer(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _header(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _main(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _mark(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _nav(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _section(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _summary(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _time(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
   _video(
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): SahiElementQueryOrWebElement {
     throw new Error("Method not implemented.");
   },
-  _getValue(query: SahiElementQueryOrWebElement): Promise<string> {
+  _getValue(_: SahiElementQueryOrWebElement): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _getText(query: SahiElementQueryOrWebElement): Promise<string> {
+  _getText(_: SahiElementQueryOrWebElement): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _getCellText(query: SahiElementQueryOrWebElement): Promise<string> {
+  _getCellText(_: SahiElementQueryOrWebElement): Promise<string> {
     throw new Error("Method not implemented.");
   },
   _getOptions(
-    query: SahiElementQueryOrWebElement,
-    value?: "value" | undefined
+    _: SahiElementQueryOrWebElement,
+    __?: "value" | undefined
   ): Promise<string[]> {
     throw new Error("Method not implemented.");
   },
-  _getSelectedText(query: SahiElementQueryOrWebElement): Promise<string> {
+  _getSelectedText(_: SahiElementQueryOrWebElement): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _getAttribute(
-    query: SahiElementQueryOrWebElement,
-    name: string
-  ): Promise<string> {
+  _getAttribute(_: SahiElementQueryOrWebElement, __: string): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _exists(query: SahiElementQueryOrWebElement): Promise<boolean> {
+  _exists(_: SahiElementQueryOrWebElement): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
   _areEqual(
-    query1: SahiElementQueryOrWebElement,
-    query2: SahiElementQueryOrWebElement
+    _: SahiElementQueryOrWebElement,
+    __: SahiElementQueryOrWebElement
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _isVisible(query: SahiElementQueryOrWebElement): Promise<boolean> {
+  _isVisible(_: SahiElementQueryOrWebElement): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _isChecked(query: SahiElementQueryOrWebElement): Promise<boolean> {
+  _isChecked(_: SahiElementQueryOrWebElement): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _isEnabled(query: SahiElementQueryOrWebElement): Promise<boolean> {
+  _isEnabled(_: SahiElementQueryOrWebElement): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _containsText(
-    query: SahiElementQueryOrWebElement,
-    text: string
-  ): Promise<boolean> {
+  _containsText(_: SahiElementQueryOrWebElement, __: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
-  _containsHTML(
-    query: SahiElementQueryOrWebElement,
-    html: string
-  ): Promise<boolean> {
+  _containsHTML(_: SahiElementQueryOrWebElement, __: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
   _contains(
-    parent: SahiElementQueryOrWebElement,
-    child: SahiElementQueryOrWebElement
+    _: SahiElementQueryOrWebElement,
+    __: SahiElementQueryOrWebElement
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
   },
   _title(): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _style(query: SahiElementQueryOrWebElement, attr: string): Promise<string> {
+  _style(_: SahiElementQueryOrWebElement, __: string): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _position(query: SahiElementQueryOrWebElement): Promise<[number, number]> {
+  _position(_: SahiElementQueryOrWebElement): Promise<[number, number]> {
     throw new Error("Method not implemented.");
   },
   _getSelectionText(): Promise<string> {
     throw new Error("Method not implemented.");
   },
-  _fetch(query: SahiElementQueryOrWebElement): Promise<WebElement> {
+  _fetch(_: SahiElementQueryOrWebElement): Promise<WebElement> {
     throw new Error("Method not implemented.");
   },
   _collect(
@@ -916,8 +902,8 @@ const _NoopSahiApi: SahiApi = {
       | "_summary"
       | "_time"
       | "_video",
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): Promise<WebElement[]> {
     throw new Error("Method not implemented.");
   },
@@ -1011,72 +997,69 @@ const _NoopSahiApi: SahiApi = {
       | "_summary"
       | "_time"
       | "_video",
-    identifier: AccessorIdentifier,
-    ...relations: SahiRelation[]
+    _: AccessorIdentifier,
+    ...__: SahiRelation[]
   ): Promise<number> {
     throw new Error("Method not implemented.");
   },
-  _assertTrue(condition: Promise<boolean>, message?: String): Promise<void> {
+  _assertTrue(_: Promise<boolean>, __?: string): Promise<void> {
     throw new Error("Method not Implemented");
   },
   _assert(
-    condition: Promise<boolean>,
-    message = "Condition evaluated to 'false'"
+    _: Promise<boolean>,
+    __ = "Condition evaluated to 'false'"
   ): Promise<void> {
     throw new Error("Method not Implemented");
   },
-  _assertFalse(condition: Promise<boolean>, message?: String): Promise<void> {
+  _assertFalse(_: Promise<boolean>, __?: string): Promise<void> {
     throw new Error("Method not Implemented");
   },
-  _assertNotTrue(condition: Promise<boolean>, message?: String): Promise<void> {
+  _assertNotTrue(_: Promise<boolean>, __?: string): Promise<void> {
     throw new Error("Method not Implemented");
   },
   _assertContainsText(
-    expected: String,
-    element: SahiElementQueryOrWebElement,
-    message?: String
+    _: string,
+    __: SahiElementQueryOrWebElement,
+    ___?: string
   ): Promise<void> {
     throw new Error("Not Implemented");
   },
   _assertNotContainsText(
-    expected: String,
-    element: SahiElementQueryOrWebElement,
-    message?: String
+    _: string,
+    __: SahiElementQueryOrWebElement,
+    ___?: string
   ): Promise<void> {
     throw new Error("Not Implemented");
   },
-  _assertEqual(expected: any, actual: any, message?: String): Promise<void> {
+  _assertEqual(_: any, __: any, ___?: string): Promise<void> {
     throw new Error("Not Implemented");
   },
-  _assertNotEqual(expected: any, actual: any, message?: String): Promise<void> {
+  _assertNotEqual(_: any, __: any, ___?: string): Promise<void> {
     throw new Error("Not Implemented");
   },
   _assertEqualArrays(
-    expected: Array<any>,
-    actual: Array<any>,
-    message?: String
+    _: Array<any>,
+    __: Array<any>,
+    ___?: string
   ): Promise<void> {
     throw new Error("Not Implemented");
   },
-  _assertExists(
-    element: SahiElementQueryOrWebElement,
-    message?: String
-  ): Promise<void> {
+  _assertExists(_: SahiElementQueryOrWebElement, __?: string): Promise<void> {
     throw new Error("Not Implemented");
   },
   _assertNotExists(
-    element: SahiElementQueryOrWebElement,
-    message?: String
+    _: SahiElementQueryOrWebElement,
+    __?: string
   ): Promise<void> {
     throw new Error("Not Implemented");
   },
-  _assertNotNull(value: any, message?: String): Promise<void> {
+  _assertNotNull(_: any, __?: string): Promise<void> {
     throw new Error("Not Implemented");
   },
-  _assertNull(value: any, message?: String): Promise<void> {
+  _assertNull(_: any, __?: string): Promise<void> {
     throw new Error("Not Implemented");
   },
-  _setFetchTimeout(timeout: number): void {
+  _setFetchTimeout(_: number): void {
     throw new Error("Not Implemented");
   },
   _getFetchTimeout() {
@@ -1087,7 +1070,7 @@ const _NoopSahiApi: SahiApi = {
 export const NoopSahiApi = new Proxy(_NoopSahiApi, {
   get: (target: SahiApi, prop: keyof SahiApi) => {
     if (typeof target[prop] === "function") {
-      return (...args: any[]) => {
+      return (..._: any[]) => {
         throw Error(`Cannot invoke function ${prop} in ui only tests`);
       };
     } else {
