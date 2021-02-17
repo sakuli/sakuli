@@ -80,13 +80,12 @@ jobs:
           FIREFOX_WD_URL: http://localhost:4444/wd/hub
           CHROME_WD_URL: http://localhost:4445/wd/hub
 
-  integration-test:
+  integration-e2e-test:
     needs: [sonar, unit-test]
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         node: [10, 12, 14]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Setup node ${{ matrix.node }}
@@ -94,49 +93,18 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies [Linux]
-        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y gnome-calculator
+          sudo apt-get install -y gnome-calculator build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
       - run: npm ci
-        env:
-          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: run integration tests
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm run test:it
-
-  e2e-test:
-    needs: [integration-test]
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node: [10, 12, 14]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2.3.4
-      - name: Setup node ${{ matrix.node }}
-        uses: actions/setup-node@v2.1.4
-        with:
-          node-version: ${{ matrix.node }}
-      - name: Install dependencies [Linux]
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libxt-dev libxtst-dev libpng++-dev libxinerama-dev
-      - run: npm ci
-      - run: npm run build
       - name: Run e2e tests [Linux]
-        if: runner.os == 'Linux'
         run: xvfb-run --server-args="-screen 0, 1920x1080x24" npm run test:e2e
         shell: bash
-        env:
-          LOG_MODE: "ci"
-      - name: Run e2e tests [Windows]
-        if: runner.os == 'Windows'
-        run: npm run test:e2e
-        shell: powershell
         env:
           LOG_MODE: "ci"
       - name: save error screenshots on failure
