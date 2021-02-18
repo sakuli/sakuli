@@ -71,7 +71,7 @@ jobs:
 
   release-next:
     name: release-next
-    needs: [e2e-test]
+    needs: [integration-e2e-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
