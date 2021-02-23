@@ -48,7 +48,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
       if (!(await containsTypescript(baseDir))) {
         const tsVersion =
           require(join(__dirname, "..", "..", "package.json")).devDependencies
-            .typescript || "3.4.3";
+            .typescript || "4.1.3";
         typingPackages.unshift(["typescript", tsVersion]);
       }
 
