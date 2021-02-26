@@ -7,8 +7,8 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-legacy src/",
-    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-legacy/docs.json --out ../../docs/sakuli-legacy src/",
+    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-legacy src/index.ts",
+    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-legacy/docs.json --out ../../docs/sakuli-legacy src/index.ts",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
     "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && npm run build"

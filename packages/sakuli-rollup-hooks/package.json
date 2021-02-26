@@ -26,11 +26,11 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-rollup-hooks src/",
+    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/sakuli-rollup-hooks src/index.ts",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests",
     "prepublishOnly": "lerna bootstrap --ignore integration-tests --ignore e2e-tests && npm run build",
-    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-rollup-hooks/docs.json --out ../../docs/sakuli-rollup-hooks src/"
+    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/sakuli-rollup-hooks/docs.json --out ../../docs/sakuli-rollup-hooks src/index.ts"
   },
   "bugs": {
     "url": "https://github.com/sakuli/sakuli/issues"
