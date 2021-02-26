@@ -25,6 +25,8 @@ jobs:
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
+      - name: Run Typedoc
+        run: npx lerna run typedoc
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1
         with:
