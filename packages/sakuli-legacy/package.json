@@ -27,7 +27,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@nut-tree/nut-js": "next",
+    "@nut-tree/nut-js": "1.6.0",
     "@nut-tree/secrets": "4.0.2",
     "@sakuli/commons": "2.4.0",
     "@sakuli/core": "2.4.0",
