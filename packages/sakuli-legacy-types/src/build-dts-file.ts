@@ -16,16 +16,24 @@ const app = new Application();
 app.bootstrap({
   tsconfig: join(projectDir, "tsconfig.json"),
   exclude: ["**/*.spec.ts", "**/__mocks__/*"],
-  mode: "file",
-  target: ScriptTarget.ES5,
-  composite: true,
-  downlevelIteration: true,
-  strict: true,
-  esModuleInterop: true,
-  experimentalDecorators: true,
+  entryPoints: [srcDir],
 });
 
-const projection = app.convert(app.expandInputFiles([srcDir]));
+const inputFiles = app.expandInputFiles([srcDir]);
+app.options.setCompilerOptions(
+  inputFiles,
+  {
+    mode: "file",
+    target: ScriptTarget.ES5,
+    composite: true,
+    downlevelIteration: true,
+    strict: true,
+    esModuleInterop: true,
+    experimentalDecorators: true,
+  },
+  undefined
+);
+const projection = app.convert();
 
 if (projection) {
   const api = throwIfAbsent(projection.findReflectionByName("SahiApi"));
@@ -39,5 +47,4 @@ if (projection) {
   const dtsFileContent = renderDeclaration(reflections);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "index.d.ts"), dtsFileContent, { flag: "w" });
-} else {
 }

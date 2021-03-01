@@ -55,8 +55,8 @@
     "yargs": "16.1.1"
   },
   "sharedScripts": {
-    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/{package} src/",
-    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/{package}/docs.json --out ../../docs/{package} src/",
+    "typedoc": "typedoc --options ../../typedoc.js --out ../../docs/{package} src/index.ts",
+    "typedoc:json": "typedoc --options ../../typedoc.js --json ../../docs/{package}/docs.json --out ../../docs/{package} src/index.ts",
     "test:watch": "jest --watch --coverage",
     "test:ci": "jest --runInBand --no-cache --coverage --passWithNoTests"
   },
