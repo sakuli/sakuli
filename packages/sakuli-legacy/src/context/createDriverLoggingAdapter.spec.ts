@@ -52,6 +52,26 @@ describe("createDriverLoggingAdapter", () => {
     }, wait);
   });
 
+  it("should do nothing if no driver has been set", async (done) => {
+    //GIVEN
+    const wait = 250;
+    loggingAdapter = createDriverLoggingAdapter(logger);
+
+    //WHEN
+    await loggingAdapter.start();
+
+    //THEN
+    setTimeout(() => {
+      loggingAdapter.stop();
+      expect(logger.trace).not.toHaveBeenCalled();
+      expect(logger.debug).not.toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
+      expect(logger.warn).not.toHaveBeenCalled();
+      expect(logger.error).not.toHaveBeenCalled();
+      done();
+    }, wait);
+  });
+
   it("should request driver only once if start and stop are called subsequently", async (done) => {
     //GIVEN
     const expectedCalledTimes = 2;
