@@ -1,17 +1,21 @@
 import { mockPartial } from "sneer";
 import { Type } from "@sakuli/commons";
-import { Project } from "@sakuli/core";
+import { Project, TestExecutionContext } from "@sakuli/core";
 import { LegacyProjectProperties } from "../../loader/legacy-project-properties.class";
 import { SeleniumProperties } from "./selenium-properties.class";
 import {
   Browsers,
   createDriverFromProject,
 } from "./create-driver-from-project.function";
-import { Builder } from "selenium-webdriver";
+import { Builder, logging } from "selenium-webdriver";
 import { FirefoxProperties } from "./firefox-properties.class";
 import { IeProperties } from "./ie-properties.class";
 import { ChromeProperties } from "./chrome-properties.class";
 import { applyBrowserOptions } from "./apply-browser-options.function";
+import { createTestExecutionContextMock } from "../__mocks__";
+import { createLoggingPrefs } from "./createLoggingPrefs";
+
+jest.mock("./createLoggingPrefs");
 
 jest.mock("./apply-browser-options.function", () => ({
   applyBrowserOptions: jest.fn(),
@@ -25,6 +29,7 @@ describe("createDriverFromProject", () => {
   let ffProps: FirefoxProperties;
   let ieProps: IeProperties;
   let chromeProps: ChromeProperties;
+  let testExecutionContext: TestExecutionContext;
 
   beforeEach(() => {
     legacyProps = new LegacyProjectProperties();
@@ -32,6 +37,7 @@ describe("createDriverFromProject", () => {
     ffProps = new FirefoxProperties();
     ieProps = new IeProperties();
     chromeProps = new ChromeProperties();
+    testExecutionContext = createTestExecutionContextMock();
 
     project = mockPartial<Project>({
       objectFactory: jest.fn((type: Type<any>): any => {
@@ -52,12 +58,13 @@ describe("createDriverFromProject", () => {
       build: jest.fn(),
       setFirefoxOptions: jest.fn(() => builder),
       setChromeOptions: jest.fn(() => builder),
+      setLoggingPrefs: jest.fn(() => builder),
     });
   });
 
   it("should read browser with getBrowser", () => {
     jest.spyOn(legacyProps, "getBrowser");
-    createDriverFromProject(project, builder);
+    createDriverFromProject(project, testExecutionContext, builder);
     expect(legacyProps.getBrowser).toHaveBeenCalled();
   });
 
@@ -65,7 +72,7 @@ describe("createDriverFromProject", () => {
     `should in invoke the methods according to browser`,
     (browser: Browsers) => {
       legacyProps.browser = browser;
-      createDriverFromProject(project, builder);
+      createDriverFromProject(project, testExecutionContext, builder);
       expect(applyBrowserOptions).toHaveBeenCalledWith(
         browser,
         project,
@@ -73,4 +80,19 @@ describe("createDriverFromProject", () => {
       );
     }
   );
+
+  it("should configure logging prefs on driver", () => {
+    //GIVEN
+    const expectedLoggingPrefs = new logging.Preferences();
+    expectedLoggingPrefs.prefs_.set("foo", logging.Level.ALL);
+
+    (createLoggingPrefs as jest.Mock).mockReturnValue(expectedLoggingPrefs);
+
+    //WHEN
+    createDriverFromProject(project, testExecutionContext, builder);
+
+    //THEN
+    expect(createLoggingPrefs).toBeCalledWith(testExecutionContext.logger);
+    expect(builder.setLoggingPrefs).toBeCalledWith(expectedLoggingPrefs);
+  });
 });

@@ -156,7 +156,11 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    this.driver = createDriverFromProject(project, this.builder);
+    this.driver = createDriverFromProject(
+      project,
+      testExecutionContext,
+      this.builder
+    );
     await this.driver.manage().window().maximize();
     testExecutionContext.logger.debug("Created webdriver");
   }
