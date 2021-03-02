@@ -27,9 +27,18 @@ export function createDriverLoggingAdapter(
   let driver: ThenableWebDriver;
   let IsPollingActivated = false;
 
+  async function driverIsOpen(driverToCheck: ThenableWebDriver) {
+    try {
+      await driverToCheck.getCurrentUrl();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   async function getLogsFromDriver() {
     const entries: Entry[] = [];
-    if (driver) {
+    if (driver && (await driverIsOpen(driver))) {
       const logs = driver.manage().logs();
       const types = await logs.getAvailableLogTypes();
       for (let logType of types) {

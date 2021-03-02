@@ -11,6 +11,9 @@ import { createTestExecutionContextMock } from "./__mocks__";
 describe("createDriverLoggingAdapter", () => {
   let getAvailableLogTypesMock: () => Promise<string[]>;
   let getMock: (type: string) => Promise<Entry[]>;
+  let getCurrentUrlMock: () => Promise<string> = jest
+    .fn()
+    .mockResolvedValue("http://sakuli.io");
   const driver = mockPartial<ThenableWebDriver>({
     manage: () =>
       mockPartial<Options>({
@@ -20,6 +23,7 @@ describe("createDriverLoggingAdapter", () => {
             get: getMock,
           }),
       }),
+    getCurrentUrl: getCurrentUrlMock,
   });
   let logger: SimpleLogger;
   let loggingAdapter: DriverLoggingAdapter;
@@ -56,6 +60,29 @@ describe("createDriverLoggingAdapter", () => {
     //GIVEN
     const wait = 250;
     loggingAdapter = createDriverLoggingAdapter(logger);
+
+    //WHEN
+    await loggingAdapter.start();
+
+    //THEN
+    setTimeout(() => {
+      loggingAdapter.stop();
+      expect(logger.trace).not.toHaveBeenCalled();
+      expect(logger.debug).not.toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
+      expect(logger.warn).not.toHaveBeenCalled();
+      expect(logger.error).not.toHaveBeenCalled();
+      done();
+    }, wait);
+  });
+
+  it("should do nothing if driver has been closed", async (done) => {
+    //GIVEN
+    const wait = 250;
+    const driver = mockPartial<ThenableWebDriver>({
+      getCurrentUrl: jest.fn().mockRejectedValue("Driver has been closed"),
+    });
+    loggingAdapter.setDriver(driver);
 
     //WHEN
     await loggingAdapter.start();
