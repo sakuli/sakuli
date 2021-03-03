@@ -49,7 +49,10 @@ export const createDriverFromProject = (
     builder.usingServer(prop);
   });
 
-  builder.setLoggingPrefs(createLoggingPrefs(testExecutionContext.logger));
+  const loggingPrefs = createLoggingPrefs(testExecutionContext.logger);
+  if (loggingPrefs) {
+    builder.setLoggingPrefs(loggingPrefs);
+  }
 
   applyBrowserOptions(browser, project, builder);
 
