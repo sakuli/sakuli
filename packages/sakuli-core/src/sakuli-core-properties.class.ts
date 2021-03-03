@@ -1,4 +1,4 @@
-import { ensure, StringProperty } from "@sakuli/commons";
+import { ensure, Maybe, StringProperty } from "@sakuli/commons";
 import { LogMode, parseLogMode } from "./log-mode";
 
 export class SakuliCoreProperties {
@@ -12,7 +12,7 @@ export class SakuliCoreProperties {
    * Defines where the log output is written to
    */
   @StringProperty("log.mode")
-  logMode: LogMode = LogMode.LOG_FILE;
+  logMode: Maybe<LogMode>;
 
   /**
    * Defines where the log output is written to.
@@ -36,6 +36,9 @@ export class SakuliCoreProperties {
   sakuliLogFolder: string = "${sakuli.testsuite.folder}/_logs";
 
   getLogMode(): LogMode {
-    return ensure(parseLogMode(this.logModeEnv), this.logMode);
+    return ensure(
+      this.logMode,
+      parseLogMode(this.logModeEnv) || LogMode.LOG_FILE
+    );
   }
 }
