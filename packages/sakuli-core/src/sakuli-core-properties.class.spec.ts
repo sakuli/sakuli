@@ -40,5 +40,18 @@ describe("sakuli-core-properties", () => {
       // THEN
       expect(logMode).toBe(expectedLogMode);
     });
+
+    it("should return value of property file over env variable", () => {
+      const coreProps = new SakuliCoreProperties();
+      const expectedLogMode = LogMode.CI;
+      coreProps.logModeEnv = "logfile";
+      coreProps.logMode = LogMode.CI;
+
+      // WHEN
+      const logMode = coreProps.getLogMode();
+
+      // THEN
+      expect(logMode).toBe(expectedLogMode);
+    });
   });
 });
