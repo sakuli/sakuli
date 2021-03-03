@@ -1,6 +1,5 @@
 import { ThenableWebDriver } from "selenium-webdriver";
-import { SimpleLogger } from "@sakuli/commons";
-import setTimeoutUnref from "memfs/lib/setTimeoutUnref";
+import { LogLevel, Maybe, SimpleLogger } from "@sakuli/commons";
 import { Entry, Level } from "selenium-webdriver/lib/logging";
 
 export interface DriverLoggingAdapter {
@@ -24,8 +23,9 @@ export interface DriverLoggingAdapter {
 export function createDriverLoggingAdapter(
   logger: SimpleLogger
 ): DriverLoggingAdapter {
-  let driver: ThenableWebDriver;
+  let driver: Maybe<ThenableWebDriver>;
   let IsPollingActivated = false;
+  let loggingAdapterTimeout: NodeJS.Timeout;
 
   async function driverIsOpen(driverToCheck: ThenableWebDriver) {
     try {
@@ -39,13 +39,17 @@ export function createDriverLoggingAdapter(
   async function getLogsFromDriver() {
     const entries: Entry[] = [];
     if (driver && (await driverIsOpen(driver))) {
-      const logs = driver.manage().logs();
-      const types = await logs.getAvailableLogTypes();
-      for (let logType of types) {
-        const logEntries = await logs.get(logType);
-        if (logEntries) {
-          entries.push(...logEntries);
+      try {
+        const logs = driver.manage().logs();
+        const types = await logs.getAvailableLogTypes();
+        for (let logType of types) {
+          const logEntries = await logs.get(logType);
+          if (logEntries) {
+            entries.push(...logEntries);
+          }
         }
+      } catch (e) {
+        logger.trace(`Could not get logs from driver.`, e);
       }
     }
     return entries;
@@ -56,24 +60,21 @@ export function createDriverLoggingAdapter(
       switch (entry.level) {
         case Level.SEVERE:
         case Level.WARNING:
-        case Level.INFO:
-        case Level.DEBUG:
-          logger.debug(entry.message);
-          break;
-        case Level.FINE:
-        case Level.FINER:
-        case Level.FINEST:
-          logger.trace(entry.message);
+          logger.trace(`[WEB-DRIVER][${entry.level}]: ${entry.message}`);
           break;
       }
     }
   }
 
   async function startPolling() {
+    if (loggingAdapterTimeout) {
+      clearTimeout(loggingAdapterTimeout);
+    }
     if (IsPollingActivated) {
       const entries = await getLogsFromDriver();
       forwardEntriesToLogger(entries);
-      setTimeoutUnref(startPolling, 100);
+      loggingAdapterTimeout = setTimeout(startPolling, 100);
+      loggingAdapterTimeout.unref();
     }
   }
 
@@ -82,11 +83,17 @@ export function createDriverLoggingAdapter(
       driver = newDriver;
     },
     start: async () => {
-      IsPollingActivated = true;
-      await startPolling();
+      if (logger.logLevel === LogLevel.TRACE) {
+        IsPollingActivated = true;
+        await startPolling();
+      }
     },
     stop: () => {
       IsPollingActivated = false;
+      driver = undefined;
+      if (loggingAdapterTimeout) {
+        clearTimeout(loggingAdapterTimeout);
+      }
     },
   };
 }

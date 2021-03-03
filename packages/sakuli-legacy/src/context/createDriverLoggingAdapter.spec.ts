@@ -4,7 +4,7 @@ import {
   createDriverLoggingAdapter,
   DriverLoggingAdapter,
 } from "./createDriverLoggingAdapter";
-import { SimpleLogger } from "@sakuli/commons";
+import { LogLevel, SimpleLogger } from "@sakuli/commons";
 import { Entry, Level } from "selenium-webdriver/lib/logging";
 import { createTestExecutionContextMock } from "./__mocks__";
 
@@ -33,12 +33,21 @@ describe("createDriverLoggingAdapter", () => {
     getMock = jest.fn();
 
     logger = createTestExecutionContextMock().logger;
+    logger.logLevel = LogLevel.TRACE;
 
     loggingAdapter = createDriverLoggingAdapter(logger);
     loggingAdapter.setDriver(driver);
   });
 
-  it("should request driver logs every 100ms", async (done) => {
+  function expectNothingWasLogged() {
+    expect(logger.trace).not.toHaveBeenCalled();
+    expect(logger.debug).not.toHaveBeenCalled();
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.warn).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
+  }
+
+  it("should request driver logs on Sakuli TRACE log level every 100ms", async (done) => {
     //GIVEN
     const wait = 250;
     const expectedCalledTimes = 6;
@@ -56,6 +65,30 @@ describe("createDriverLoggingAdapter", () => {
     }, wait);
   });
 
+  it.each<LogLevel>([
+    LogLevel.ERROR,
+    LogLevel.WARN,
+    LogLevel.INFO,
+    LogLevel.DEBUG,
+  ])(
+    "should not request driver logs on Sakuli log level %s",
+    async (loglevel: LogLevel, done: any) => {
+      //GIVEN
+      const wait = 250;
+      logger.logLevel = loglevel;
+
+      //WHEN
+      await loggingAdapter.start();
+
+      //THEN
+      setTimeout(() => {
+        loggingAdapter.stop();
+        expect(driver.manage().logs().get).not.toBeCalled();
+        done();
+      }, wait);
+    }
+  );
+
   it("should do nothing if no driver has been set", async (done) => {
     //GIVEN
     const wait = 250;
@@ -67,11 +100,7 @@ describe("createDriverLoggingAdapter", () => {
     //THEN
     setTimeout(() => {
       loggingAdapter.stop();
-      expect(logger.trace).not.toHaveBeenCalled();
-      expect(logger.debug).not.toHaveBeenCalled();
-      expect(logger.info).not.toHaveBeenCalled();
-      expect(logger.warn).not.toHaveBeenCalled();
-      expect(logger.error).not.toHaveBeenCalled();
+      expectNothingWasLogged();
       done();
     }, wait);
   });
@@ -90,11 +119,7 @@ describe("createDriverLoggingAdapter", () => {
     //THEN
     setTimeout(() => {
       loggingAdapter.stop();
-      expect(logger.trace).not.toHaveBeenCalled();
-      expect(logger.debug).not.toHaveBeenCalled();
-      expect(logger.info).not.toHaveBeenCalled();
-      expect(logger.warn).not.toHaveBeenCalled();
-      expect(logger.error).not.toHaveBeenCalled();
+      expectNothingWasLogged();
       done();
     }, wait);
   });
@@ -117,9 +142,9 @@ describe("createDriverLoggingAdapter", () => {
     }, wait);
   });
 
-  it("should forward SEVERE, WARNING, INFO and DEBUG selenium logs to sakuli DEBUG log", async (done) => {
+  it("should forward SEVERE and WARNING selenium logs to sakuli TRACE log", async (done) => {
     //GIVEN
-    const expectedCalledTimes = 4;
+    const expectedCalledTimes = 2;
     const wait = 200;
     const seleniumSevereMessage = new Entry(Level.SEVERE, "SEVERE");
     const seleniumWarningMessage = new Entry(Level.WARNING, "WARNING");
@@ -140,32 +165,37 @@ describe("createDriverLoggingAdapter", () => {
 
     //THEN
     setTimeout(() => {
-      expect(logger.trace).not.toHaveBeenCalled();
+      expect(logger.debug).not.toHaveBeenCalled();
       expect(logger.info).not.toHaveBeenCalled();
       expect(logger.warn).not.toHaveBeenCalled();
       expect(logger.error).not.toHaveBeenCalled();
-      expect(logger.debug).toHaveBeenCalledTimes(expectedCalledTimes);
-      expect(logger.debug).toHaveBeenCalledWith(seleniumInfoMessage.message);
-      expect(logger.debug).toHaveBeenCalledWith(seleniumWarningMessage.message);
-      expect(logger.debug).toHaveBeenCalledWith(seleniumSevereMessage.message);
-      expect(logger.debug).toHaveBeenCalledWith(seleniumDebugMessage.message);
+      expect(logger.trace).toHaveBeenCalledTimes(expectedCalledTimes);
+      expect(logger.trace).toHaveBeenCalledWith(
+        expect.stringContaining(seleniumWarningMessage.message)
+      );
+      expect(logger.trace).toHaveBeenCalledWith(
+        expect.stringContaining(seleniumSevereMessage.message)
+      );
       done();
     }, wait);
   });
 
-  it("should forward FINE, FINER, FINEST selenium logs to sakuli TRACE log", async (done) => {
+  it("should not forward selenium logs of FINE, FINER, FINEST, INFO, DEBUG to sakuli", async (done) => {
     //GIVEN
-    const expectedCalledTimes = 3;
     const wait = 200;
     const seleniumFineMessage = new Entry(Level.FINE, "FINE");
     const seleniumFinerMessage = new Entry(Level.FINER, "FINER");
     const seleniumFinestMessage = new Entry(Level.FINEST, "FINEST");
+    const seleniumInfoMessage = new Entry(Level.INFO, "INFO");
+    const seleniumDebugMessage = new Entry(Level.DEBUG, "DEBUG");
     getMock = jest
       .fn()
       .mockResolvedValueOnce([
         seleniumFineMessage,
         seleniumFinerMessage,
         seleniumFinestMessage,
+        seleniumInfoMessage,
+        seleniumDebugMessage,
       ]);
 
     //WHEN
@@ -174,14 +204,7 @@ describe("createDriverLoggingAdapter", () => {
 
     //THEN
     setTimeout(() => {
-      expect(logger.trace).toHaveBeenCalledTimes(expectedCalledTimes);
-      expect(logger.trace).toHaveBeenCalledWith(seleniumFineMessage.message);
-      expect(logger.trace).toHaveBeenCalledWith(seleniumFinerMessage.message);
-      expect(logger.trace).toHaveBeenCalledWith(seleniumFinestMessage.message);
-      expect(logger.debug).not.toHaveBeenCalled();
-      expect(logger.info).not.toHaveBeenCalled();
-      expect(logger.warn).not.toHaveBeenCalled();
-      expect(logger.error).not.toHaveBeenCalled();
+      expectNothingWasLogged();
       done();
     }, wait);
   });
