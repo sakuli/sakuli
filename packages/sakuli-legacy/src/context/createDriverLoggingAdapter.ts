@@ -73,7 +73,7 @@ export function createDriverLoggingAdapter(
     if (IsPollingActivated) {
       const entries = await getLogsFromDriver();
       forwardEntriesToLogger(entries);
-      loggingAdapterTimeout = setTimeout(startPolling, 100);
+      loggingAdapterTimeout = global.setTimeout(startPolling, 100);
       loggingAdapterTimeout.unref();
     }
   }
