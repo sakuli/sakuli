@@ -3,7 +3,7 @@ import { LogMode } from "./log-mode";
 
 describe("sakuli-core-properties", () => {
   describe("getLogMode", () => {
-    it("should return 'logfile' as default", () => {
+    it("should return 'logFile' as default", () => {
       // GIVEN
       const coreProps = new SakuliCoreProperties();
       const expectedLogMode = LogMode.LOG_FILE;
@@ -46,6 +46,19 @@ describe("sakuli-core-properties", () => {
       const expectedLogMode = LogMode.CI;
       coreProps.logModeEnv = "logfile";
       coreProps.logMode = LogMode.CI;
+
+      // WHEN
+      const logMode = coreProps.getLogMode();
+
+      // THEN
+      expect(logMode).toBe(expectedLogMode);
+    });
+
+    it("should return default value 'LogFile' if log mode is unknown", () => {
+      // GIVEN
+      const coreProps = new SakuliCoreProperties();
+      const expectedLogMode = LogMode.LOG_FILE;
+      coreProps.logMode = "foobar";
 
       // WHEN
       const logMode = coreProps.getLogMode();

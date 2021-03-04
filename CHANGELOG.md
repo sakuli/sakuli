@@ -52,6 +52,7 @@ All notable changes to this project will be documented in this file.
 - Enhancement: Update to typedoc 0.20.x [(#610)](https://github.com/sakuli/sakuli/issues/610)
 - Bugfix: Env LOG_MODE has priority over property log.mode [(#616)](https://github.com/sakuli/sakuli/issues/616)
 - Bugfix: Colliding interfaces in selenium configuration [(#328)](https://github.com/sakuli/sakuli/issues/328)
+- Bugfix: correct log mode logfile to match specification + parsing of unknown log modes [(#619)](https://github.com/sakuli/sakuli/issues/619)
 
 ## v2.4.0
 
