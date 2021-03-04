@@ -51,6 +51,7 @@ All notable changes to this project will be documented in this file.
 - Enhancement: \_wait should return the value of the awaited expression [(#596)](https://github.com/sakuli/sakuli/issues/596)
 - Enhancement: Update to typedoc 0.20.x [(#610)](https://github.com/sakuli/sakuli/issues/610)
 - Bugfix: Env LOG_MODE has priority over property log.mode [(#616)](https://github.com/sakuli/sakuli/issues/616)
+- Bugfix: Colliding interfaces in selenium configuration [(#328)](https://github.com/sakuli/sakuli/issues/328)
 
 ## v2.4.0
 

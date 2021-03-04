@@ -1,9 +1,10 @@
-import { Project } from "@sakuli/core";
+import { Project, TestExecutionContext } from "@sakuli/core";
 import { Builder, Capabilities, ThenableWebDriver } from "selenium-webdriver";
 import { LegacyProjectProperties } from "../../loader/legacy-project-properties.class";
 import { SeleniumProperties } from "./selenium-properties.class";
 import { ifPresent, throwIfAbsent } from "@sakuli/commons";
 import { applyBrowserOptions } from "./apply-browser-options.function";
+import { createLoggingPrefs } from "./createLoggingPrefs";
 
 export type Browsers = Exclude<keyof typeof Capabilities, "prototype">;
 export type CapabilityProducer = () => Capabilities;
@@ -19,6 +20,7 @@ const defaultCapabilityMap: CapabilityMap = {
 
 export const createDriverFromProject = (
   project: Project,
+  testExecutionContext: TestExecutionContext,
   builder: Builder = new Builder(),
   capabilityMap: CapabilityMap = defaultCapabilityMap
 ): ThenableWebDriver => {
@@ -37,9 +39,6 @@ export const createDriverFromProject = (
   ifPresent(seleniumProperties.alertBehaviour, (prop) => {
     builder.setAlertBehavior(prop);
   });
-  ifPresent(seleniumProperties.loggingPrefs, (prop) => {
-    builder.setLoggingPrefs(prop);
-  });
   ifPresent(seleniumProperties.proxy, (prop) => {
     builder.setProxy(prop);
   });
@@ -49,6 +48,11 @@ export const createDriverFromProject = (
   ifPresent(seleniumProperties.server, (prop) => {
     builder.usingServer(prop);
   });
+
+  const loggingPrefs = createLoggingPrefs(testExecutionContext.logger);
+  if (loggingPrefs) {
+    builder.setLoggingPrefs(loggingPrefs);
+  }
 
   applyBrowserOptions(browser, project, builder);
 
