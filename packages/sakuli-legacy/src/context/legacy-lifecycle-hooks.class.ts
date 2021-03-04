@@ -28,6 +28,10 @@ import { NoopSahiApi } from "./noop-sahi-api.const";
 import { SahiApi } from "./sahi/sahi-api.interface";
 import { getActiveKeys } from "./common/button-registry";
 import { releaseKeys } from "./common/release-keys.function";
+import {
+  createDriverLoggingAdapter,
+  DriverLoggingAdapter,
+} from "./createDriverLoggingAdapter";
 import Signals = NodeJS.Signals;
 
 export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
@@ -40,6 +44,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
   uiOnly = false;
   reuseBrowser = true;
   properties: Maybe<LegacyProjectProperties> = null;
+  driverLoggingAdapter: Maybe<DriverLoggingAdapter>;
 
   constructor(readonly builder: Builder) {}
 
@@ -50,8 +55,12 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     this.properties = project.objectFactory(LegacyProjectProperties);
     this.uiOnly = this.properties.isUiOnly();
     this.reuseBrowser = this.properties.isReuseBrowser();
+    this.driverLoggingAdapter = createDriverLoggingAdapter(
+      testExecutionContext.logger
+    );
+    await this.driverLoggingAdapter.start();
     if (!this.uiOnly && this.reuseBrowser) {
-      await this.createDriver(project, testExecutionContext);
+      await this.setupDriver(project, testExecutionContext);
     }
   }
 
@@ -89,7 +98,7 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
       await fs.realpath(join(project.rootDir, file.path))
     );
     if (!this.reuseBrowser) {
-      await this.createDriver(project, testExecutionContext);
+      await this.setupDriver(project, testExecutionContext);
     }
   }
 
@@ -152,16 +161,31 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     });
   }
 
+  private async setupDriver(
+    project: Project,
+    testExecutionContext: TestExecutionContext
+  ) {
+    await this.createDriver(project, testExecutionContext);
+    if (this.driver) {
+      this.driverLoggingAdapter?.setDriver(this.driver);
+    }
+  }
+
   private async createDriver(
     project: Project,
     testExecutionContext: TestExecutionContext
   ) {
-    this.driver = createDriverFromProject(project, this.builder);
+    this.driver = createDriverFromProject(
+      project,
+      testExecutionContext,
+      this.builder
+    );
     await this.driver.manage().window().maximize();
     testExecutionContext.logger.debug("Created webdriver");
   }
 
   private async quitDriver(testExecutionContext: TestExecutionContext) {
+    this.driverLoggingAdapter?.stop();
     await ifPresent(
       this.driver,
       async (driver) => {
@@ -184,11 +208,13 @@ export class LegacyLifecycleHooks implements TestExecutionLifecycleHooks {
     project: Project,
     _: TestExecutionContext
   ) {
+    this.driverLoggingAdapter?.stop();
     await this.releaseKeys(project);
   }
 
   async onSignal(signal: Signals, project: Project, _: TestExecutionContext) {
     if (signal === "SIGINT" || signal === "SIGTERM") {
+      this.driverLoggingAdapter?.stop();
       await this.releaseKeys(project);
     }
   }

@@ -71,6 +71,7 @@ describe("LegacyLifecycleHooks", () => {
       setIeOptions: jest.fn(() => builder),
       setFirefoxOptions: jest.fn(() => builder),
       build: jest.fn(() => driver),
+      setLoggingPrefs: jest.fn(() => builder),
     });
     lcp = new LegacyLifecycleHooks(builder);
   });
