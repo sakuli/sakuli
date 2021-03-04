@@ -44,6 +44,5 @@
   "peerDependencies": {
     "@sakuli/legacy": "2.3.0",
     "@sakuli/rollup-hooks": "2.3.0"
-  },
-  "dependencies": {}
+  }
 }
