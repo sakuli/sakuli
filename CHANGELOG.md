@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Upcoming Release
+## v2.5.0
 
 - Enhancement: Improve error messages of assertion API [(507)](https://github.com/sakuli/sakuli/issues/507)
 - Enhancement: Log "image located at" message on debug level [(#514)](https://github.com/sakuli/sakuli/issues/514)
