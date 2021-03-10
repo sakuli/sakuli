@@ -98,7 +98,7 @@ jobs:
       - name: Publish typedocs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
-          github_token: ${{ secrets.SAKULIDEV_TOKEN }}
+          deploy_key: ${{ secrets.APIDOCS_DEPLOY_KEY }}
           external_repository: sakuli/apidoc
           publish_dir: ./docs
       - name: Trigger Docker build
