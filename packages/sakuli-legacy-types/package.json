@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/legacy-types",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "provide typings for Sakuli Legacy api (@sakuli/legacy)",
   "keywords": [
     "typings",
@@ -32,8 +32,8 @@
     "url": "https://github.com/sakuli/sakuli/issues"
   },
   "devDependencies": {
-    "@sakuli/commons": "2.4.0",
-    "@sakuli/legacy": "2.4.0",
+    "@sakuli/commons": "2.5.0",
+    "@sakuli/legacy": "2.5.0",
     "@types/node": "14.14.10",
     "dts-dom": "3.6.0",
     "flatted": "3.1.0",
