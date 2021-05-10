@@ -43,8 +43,8 @@
     "ora": "5.1.0",
     "yargonaut": "1.1.4",
     "yargs": "16.1.1",
-    "youch": "2.0.10",
-    "youch-terminal": "1.0.1"
+    "youch": "2.2.2",
+    "youch-terminal": "1.1.1"
   },
   "devDependencies": {
     "@types/figlet": "1.2.1",
