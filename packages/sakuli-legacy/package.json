@@ -60,7 +60,7 @@
     "dockerode": "3.2.1",
     "express": "4.17.1",
     "geckodriver": "2.0.4",
-    "jest": "26.6.3",
+    "jest": "27.2.0",
     "node-fetch": "2.6.1",
     "sneer": "1.0.1",
     "ts-jest": "26.4.4",
