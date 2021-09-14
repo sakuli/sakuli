@@ -50,7 +50,7 @@ jobs:
   unit-test:
     strategy:
       matrix:
-        node: [10, 12] # Node 14 unit-tests are covered in 'sonar' job
+        node: [10, 12, 16] # Node 14 unit-tests are covered in 'sonar' job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
