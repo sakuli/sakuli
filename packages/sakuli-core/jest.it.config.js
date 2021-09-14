@@ -8,4 +8,5 @@ module.exports = {
     `**/!(*.aix.*|*.darwin.*|*.freebsd.*|*.linux.*|*.openbsd.*|*.sunos.*|*.win32.*)+(.it.)+(spec|test).[jt]s?(x)`,
     `**/?(*.${process.platform}.it.*)+(spec|test).[jt]s?(x)`,
   ],
+  testRunner: "jest-jasmine2",
 };
