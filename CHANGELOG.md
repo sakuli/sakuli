@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.5.1
+
+- Security fixes
+
 ## v2.5.0
 
 - Enhancement: Improve error messages of assertion API [(507)](https://github.com/sakuli/sakuli/issues/507)

@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/rollup-hooks",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "provide test script preprocessing with rollup",
   "keywords": [
     "rollup",
@@ -51,8 +51,8 @@
   },
   "dependencies": {
     "@rollup/plugin-node-resolve": "10.0.0",
-    "@sakuli/commons": "2.5.0",
-    "@sakuli/core": "2.5.0",
+    "@sakuli/commons": "2.5.1",
+    "@sakuli/core": "2.5.1",
     "chalk": "4.1.2",
     "common-tags": "1.8.0",
     "execa": "5.1.1",

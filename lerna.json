@@ -1,12 +1,21 @@
 {
-  "version": "2.5.0",
-  "packages": ["packages/*"],
+  "version": "2.5.1",
+  "packages": [
+    "packages/*"
+  ],
   "command": {
     "publish": {
-      "ignoreChanges": ["*.md", "*.txt", "packages/integration-tests/"]
+      "ignoreChanges": [
+        "*.md",
+        "*.txt",
+        "packages/integration-tests/"
+      ]
     },
     "version": {
-      "allowBranch": ["release/*", "develop"]
+      "allowBranch": [
+        "release/*",
+        "develop"
+      ]
     }
   }
 }

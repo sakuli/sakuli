@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/cli",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -30,10 +30,10 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@sakuli/commons": "2.5.0",
-    "@sakuli/core": "2.5.0",
-    "@sakuli/legacy": "2.5.0",
-    "@sakuli/plugin-validator": "2.5.0",
+    "@sakuli/commons": "2.5.1",
+    "@sakuli/core": "2.5.1",
+    "@sakuli/legacy": "2.5.1",
+    "@sakuli/plugin-validator": "2.5.1",
     "ansi-escapes": "4.3.1",
     "chalk": "4.1.0",
     "date-fns": "2.16.1",
