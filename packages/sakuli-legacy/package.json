@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/common-tags": "1.8.0",
-    "@types/dockerode": "3.2.1",
+    "@types/dockerode": "3.2.7",
     "@types/escodegen": "0.0.6",
     "@types/esprima": "4.0.2",
     "@types/express": "4.17.9",
@@ -57,7 +57,7 @@
     "@types/selenium-webdriver": "4.0.15",
     "@types/yargs": "15.0.10",
     "chromedriver": "93.0.1",
-    "dockerode": "3.2.1",
+    "dockerode": "3.3.1",
     "express": "4.17.1",
     "geckodriver": "2.0.4",
     "jest": "27.2.0",
