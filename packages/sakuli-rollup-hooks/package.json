@@ -37,13 +37,13 @@
   },
   "devDependencies": {
     "@schemastore/package": "0.0.6",
-    "@types/common-tags": "1.8.0",
+    "@types/common-tags": "1.8.1",
     "@types/jest": "27.0.1",
-    "@types/mock-fs": "4.13.0",
-    "@types/node": "14.14.10",
+    "@types/mock-fs": "4.13.1",
+    "@types/node": "16.9.6",
     "@types/rollup": "0.54.0",
     "jest": "27.2.0",
-    "mock-fs": "4.13.0",
+    "mock-fs": "5.1.1",
     "sneer": "1.0.1",
     "ts-jest": "27.0.5",
     "typedoc": "0.20.28",
@@ -53,11 +53,11 @@
     "@rollup/plugin-node-resolve": "10.0.0",
     "@sakuli/commons": "2.5.0",
     "@sakuli/core": "2.5.0",
-    "chalk": "4.1.0",
+    "chalk": "4.1.2",
     "common-tags": "1.8.0",
-    "execa": "4.1.0",
-    "ora": "5.1.0",
-    "rollup": "2.33.3",
-    "rollup-plugin-typescript2": "0.29.0"
+    "execa": "5.1.1",
+    "ora": "6.0.1",
+    "rollup": "2.57.0",
+    "rollup-plugin-typescript2": "0.30.0"
   }
 }
