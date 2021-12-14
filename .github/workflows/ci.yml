@@ -22,10 +22,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y gnome-calculator
-          docker pull selenium/standalone-chrome
-          docker pull selenium/standalone-firefox
-          docker run -d -p 4444:4444 selenium/standalone-firefox
-          docker run -d -p 4445:4444 selenium/standalone-chrome
+          docker pull selenium/standalone-chrome:96.0-chromedriver-96.0
+          docker pull selenium/standalone-firefox:92.0-geckodriver-0.29.1
+          docker run -d -p 4444:4444 --shm-size="2g" selenium/standalone-firefox:92.0-geckodriver-0.29.1
+          docker run -d -p 4445:4444 --shm-size="2g" selenium/standalone-chrome:96.0-chromedriver-96.0
       - run: npm ci
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true
@@ -38,8 +38,8 @@ jobs:
         with:
           run: npm test -- --runInBand --ci --bail
         env:
-          FIREFOX_WD_URL: http://localhost:4444/wd/hub
-          CHROME_WD_URL: http://localhost:4445/wd/hub
+          FIREFOX_WD_URL: http://localhost:4444
+          CHROME_WD_URL: http://localhost:4445
       - name: run integration tests
         uses: GabrielBB/xvfb-action@v1.6
         with:
@@ -67,10 +67,10 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: |
-          docker pull selenium/standalone-chrome
-          docker pull selenium/standalone-firefox
-          docker run -d -p 4444:4444 selenium/standalone-firefox
-          docker run -d -p 4445:4444 selenium/standalone-chrome
+          docker pull selenium/standalone-chrome:96.0-chromedriver-96.0
+          docker pull selenium/standalone-firefox:92.0-geckodriver-0.29.1
+          docker run -d -p 4444:4444 --shm-size="2g" selenium/standalone-firefox:92.0-geckodriver-0.29.1
+          docker run -d -p 4445:4444 --shm-size="2g" selenium/standalone-chrome:96.0-chromedriver-96.0
       - run: npm ci
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true
@@ -82,8 +82,8 @@ jobs:
         with:
           run: npm test -- --runInBand --ci --bail
         env:
-          FIREFOX_WD_URL: http://localhost:4444/wd/hub
-          CHROME_WD_URL: http://localhost:4445/wd/hub
+          FIREFOX_WD_URL: http://localhost:4444
+          CHROME_WD_URL: http://localhost:4445
 
   integration-e2e-test:
     needs: [sonar, unit-test]

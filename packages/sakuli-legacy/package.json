@@ -41,7 +41,7 @@
     "mock-fs": "4.13.0",
     "properties-reader": "2.1.1",
     "reflect-metadata": "0.1.13",
-    "selenium-webdriver": "4.0.0-rc-1"
+    "selenium-webdriver": "4.1.0"
   },
   "devDependencies": {
     "@types/common-tags": "1.8.0",
@@ -54,7 +54,7 @@
     "@types/node": "14.14.10",
     "@types/node-fetch": "2.5.7",
     "@types/properties-reader": "2.1.0",
-    "@types/selenium-webdriver": "4.0.15",
+    "@types/selenium-webdriver": "4.0.16",
     "@types/yargs": "15.0.10",
     "chromedriver": "96.0.0",
     "dockerode": "3.3.1",
