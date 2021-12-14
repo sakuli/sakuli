@@ -34,14 +34,14 @@ jobs:
         run: npx lerna run typedoc
       - run: npm run coverage:clean
       - name: run unit tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm test -- --runInBand --ci --bail
         env:
           FIREFOX_WD_URL: http://localhost:4444/wd/hub
           CHROME_WD_URL: http://localhost:4445/wd/hub
       - name: run integration tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm run test:it
       - name: Merge coverage report
@@ -78,7 +78,7 @@ jobs:
       - name: Run Typedoc
         run: npx lerna run typedoc
       - name: run unit tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm test -- --runInBand --ci --bail
         env:
@@ -104,7 +104,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: run integration tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm run test:it
       - name: Run e2e tests [Linux]

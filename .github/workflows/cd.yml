@@ -28,7 +28,7 @@ jobs:
       - name: Run Typedoc
         run: npx lerna run typedoc
       - name: run unit tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm test -- --runInBand --ci --bail
         env:
@@ -54,7 +54,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: run integration tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm run test:it
       - name: Run e2e tests [Linux]
