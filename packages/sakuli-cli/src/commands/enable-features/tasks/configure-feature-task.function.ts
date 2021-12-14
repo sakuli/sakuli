@@ -1,15 +1,12 @@
 import { promises as fs } from "fs";
 import { join } from "path";
-import {
-  ConfigurationRecord,
-  recordToPropertiesString,
-} from "./configuration-record.type";
+import { ConfigurationRecord, recordToPropertiesString, } from "./configuration-record.type";
 
 /**
  * Creates a task that will convert the configurationRecords (key - value pairs)
  * into proper property-file format string and writes it into sakuli.properties
  *
- * We assume that the configuration for all enterprise features can be bootstrapped
+ * We assume that the configuration for all modules can be bootstrapped
  * in the sakuli.properties which means they apply for all testsuites
  *
  * @param configurationRecord - key - value pairs which are written to properties file

@@ -1,32 +1,11 @@
-import { EnterpriseAnswers, hasLicense } from "./enterprise-answers.interface";
-import { FeatureChoices } from "./feature-choices.const";
-import {
-  commentValue,
-  configValue,
-  getPackageBootstrapTasks,
-  licenseGlobalTask,
-  npmGlobalTask,
-  oraTask,
-  Task,
-} from "./tasks";
+import { ModuleAnswers } from "./module-answers.interface";
+import { ModuleChoices } from "./module-choices.const";
+import { commentValue, configValue, getPackageBootstrapTasks, Task, } from "./tasks";
 
-export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
+export const getBootstrapTasks = (answers: ModuleAnswers): Task[] => {
   const tasks: Task[] = [];
 
-  if (hasLicense(answers)) {
-    tasks.push(
-      oraTask(
-        "Configure global npm token",
-        npmGlobalTask(answers.npmKey || "")
-      ),
-      oraTask(
-        "Configure global license key",
-        licenseGlobalTask(answers.licenseKey || "")
-      )
-    );
-  }
-
-  if (answers.features.includes(FeatureChoices.CheckMk)) {
+  if (answers.features.includes(ModuleChoices.CheckMk)) {
     tasks.push(
       ...getPackageBootstrapTasks("@sakuli/forwarder-checkmk", {
         "sakuli.forwarder.check_mk.enabled": configValue("true"),
@@ -40,7 +19,7 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     );
   }
 
-  if (answers.features.includes(FeatureChoices.OMD)) {
+  if (answers.features.includes(ModuleChoices.OMD)) {
     tasks.push(
       ...getPackageBootstrapTasks("@sakuli/forwarder-gearman", {
         "sakuli.forwarder.gearman.enabled": configValue("true"),
@@ -53,7 +32,7 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     );
   }
 
-  if (answers.features.includes(FeatureChoices.Icinga2)) {
+  if (answers.features.includes(ModuleChoices.Icinga2)) {
     tasks.push(
       ...getPackageBootstrapTasks("@sakuli/forwarder-icinga2", {
         "sakuli.forwarder.icinga2.enabled": configValue("true"),
@@ -68,7 +47,7 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     );
   }
 
-  if (answers.features.includes(FeatureChoices.Prometheus)) {
+  if (answers.features.includes(ModuleChoices.Prometheus)) {
     tasks.push(
       ...getPackageBootstrapTasks("@sakuli/forwarder-prometheus", {
         "sakuli.forwarder.prometheus.enabled": configValue("true"),
@@ -79,7 +58,7 @@ export const getBootstrapTasks = (answers: EnterpriseAnswers): Task[] => {
     );
   }
 
-  if (answers.features.includes(FeatureChoices.OCR)) {
+  if (answers.features.includes(ModuleChoices.OCR)) {
     tasks.push(...getPackageBootstrapTasks("@sakuli/ocr", {}));
   }
 
