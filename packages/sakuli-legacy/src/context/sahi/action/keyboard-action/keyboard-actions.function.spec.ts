@@ -6,7 +6,7 @@ import { AccessorUtil } from "../../accessor";
 import { RelationsResolver } from "../../relations";
 import { getTestBrowserList } from "../../__mocks__/get-browser-list.function";
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 describe("KeyboardActions", () => {
   describe.each(getTestBrowserList())(
     "%s",

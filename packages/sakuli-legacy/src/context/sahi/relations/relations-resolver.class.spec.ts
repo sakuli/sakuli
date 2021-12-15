@@ -14,7 +14,7 @@ const webElementToQuery = (elements: WebElement[]) => {
   };
 };
 
-jest.setTimeout(60_000);
+jest.setTimeout(100_000);
 describe("RelationResolver", () => {
   describe.each(getTestBrowserList())(
     "%s",

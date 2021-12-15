@@ -7,7 +7,7 @@ import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
 import { AccessorUtil } from "../accessor";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(50000);
+jest.setTimeout(100_000);
 
 describe("distanceBetween", () => {
   describe.each(getTestBrowserList())(

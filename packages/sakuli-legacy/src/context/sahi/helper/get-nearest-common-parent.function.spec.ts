@@ -6,7 +6,7 @@ import { By } from "selenium-webdriver";
 import { getNearestCommonParent } from "./get-nearest-common-parent.function";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(50000);
+jest.setTimeout(100_000);
 
 describe("getNearestCommonParent", () => {
   describe.each(getTestBrowserList())(

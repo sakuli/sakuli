@@ -1,19 +1,8 @@
-import {
-  By,
-  ThenableWebDriver,
-  until,
-  WebDriver,
-  WebElement,
-} from "selenium-webdriver";
+import { By, ThenableWebDriver, until, WebDriver, WebElement, } from "selenium-webdriver";
 import { scrollIntoViewIfNeeded } from "./scroll-into-view-if-needed.function";
 import { TestExecutionContext } from "@sakuli/core";
 import { createTestExecutionContextMock } from "../../../__mocks__";
-import {
-  createTestEnv,
-  getTestBrowserList,
-  mockHtml,
-  TestEnvironment,
-} from "../../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../../__mocks__";
 import { mockPartial } from "sneer";
 
 function mockExecuteScript<T>(promise: Promise<T>) {
@@ -108,7 +97,7 @@ describe("scroll into view if needed", () => {
 
       it("should scroll to element before resolving", async () => {
         // GIVEN
-        jest.setTimeout(15_000);
+        jest.setTimeout(100_000);
         const expectedAlertText = "clicked!";
         await driver.get(
           mockHtml(

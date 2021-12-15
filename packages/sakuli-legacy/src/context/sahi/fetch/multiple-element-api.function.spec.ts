@@ -7,7 +7,7 @@ import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 import { RelationsResolver } from "../relations";
 import { MultipleElementApi } from "./multiple-element-api.interface";
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 describe("multipleElementApi", () => {
   describe.each(getTestBrowserList())(
     "%s",

@@ -9,7 +9,7 @@ import { ParentApi } from "./parent-api.interface";
 import { isEqual } from "../helper/is-equal.function";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 describe("relations-api", () => {
   describe.each(getTestBrowserList())(
     "%s",
