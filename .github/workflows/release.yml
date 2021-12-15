@@ -17,12 +17,6 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{ matrix.node }}
-      - name: Install dependencies
-        run: |
-          docker pull selenium/standalone-chrome
-          docker pull selenium/standalone-firefox
-          docker run -d -p 4444:4444 selenium/standalone-firefox
-          docker run -d -p 4445:4444 selenium/standalone-chrome
       - run: npm ci
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true
@@ -31,9 +25,6 @@ jobs:
         uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm test -- --ci --bail
-        env:
-          FIREFOX_WD_URL: http://localhost:4444
-          CHROME_WD_URL: http://localhost:4445
 
   integration-e2e-test:
     needs: [unit-test]
