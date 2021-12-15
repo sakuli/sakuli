@@ -36,7 +36,7 @@ jobs:
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1.6
         with:
-          run: npm test -- --runInBand --ci --bail
+          run: npm test -- --ci --bail
         env:
           FIREFOX_WD_URL: http://localhost:4444
           CHROME_WD_URL: http://localhost:4445
@@ -80,7 +80,7 @@ jobs:
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1.6
         with:
-          run: npm test -- --runInBand --ci --bail
+          run: npm test -- --ci --bail
         env:
           FIREFOX_WD_URL: http://localhost:4444
           CHROME_WD_URL: http://localhost:4445
