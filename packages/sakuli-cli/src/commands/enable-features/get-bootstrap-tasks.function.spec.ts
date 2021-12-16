@@ -18,19 +18,6 @@ jest.mock("./tasks", () => {
 
 describe("getBootstrapTasks", () => {
 
-  it("should configure npm config task and licence config task", () => {
-    // GIVEN
-    const answers: ModuleAnswers = {
-      features: []
-    };
-
-    // WHEN
-    const tasks = getBootstrapTasks(answers);
-
-    // THEN
-    expect(tasks.length).toBe(2);
-  });
-
   test.each(<[string, string, ConfigurationRecord][]>[
     [
       ModuleChoices.Prometheus,
