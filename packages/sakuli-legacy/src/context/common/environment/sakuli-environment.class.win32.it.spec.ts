@@ -5,7 +5,7 @@ import { prepareContext } from "../actions/__mocks__/prepare-context.function";
 
 const mockProject = new Project(".");
 
-jest.setTimeout(15000);
+jest.setTimeout(100_000);
 
 describe("Environment", () => {
   it("should return true for isWindows", () => {

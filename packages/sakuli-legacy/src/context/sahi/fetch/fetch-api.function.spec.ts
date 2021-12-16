@@ -7,7 +7,7 @@ import { RelationsResolver } from "../relations";
 import { SahiElementQueryOrWebElement } from "../sahi-element.interface";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 describe("fetch-api", () => {
   describe.each(getTestBrowserList())(
     "%s",

@@ -3,7 +3,7 @@ import { isChildOf } from "./is-child-of.function";
 import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(60_000);
+jest.setTimeout(100_000);
 describe("isChildOf", () => {
   describe.each(getTestBrowserList())(
     "%s",

@@ -1,10 +1,5 @@
 import { By, ThenableWebDriver, WebElement } from "selenium-webdriver";
-import {
-  createTestEnv,
-  getTestBrowserList,
-  mockHtml,
-  TestEnvironment,
-} from "../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
 import { AccessorUtil } from "./accessor-util.class";
 import { RelationsResolver } from "../relations";
@@ -21,7 +16,7 @@ jest.mock("../sahi-element-utils", () => {
   };
 });
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 describe("AccessorUtil", () => {
   describe.each(getTestBrowserList())(
     "%s",

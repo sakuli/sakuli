@@ -1,9 +1,4 @@
-import {
-  createTestEnv,
-  getTestBrowserList,
-  mockHtml,
-  TestEnvironment,
-} from "../../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../../__mocks__";
 import { createTestExecutionContextMock } from "../../../__mocks__";
 import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { CommonActionsApi } from "./common-actions.interface";
@@ -15,7 +10,7 @@ import * as highlightElementModule from "../utils/highlight.function";
 import * as scrollIntoViewIfNeededModule from "../utils/scroll-into-view-if-needed.function";
 import { TestExecutionContext } from "@sakuli/core";
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 
 describe("common-actions", () => {
   describe.each(getTestBrowserList())(

@@ -2,22 +2,14 @@ import { By, Locator, ThenableWebDriver } from "selenium-webdriver";
 import { relationsApi } from "./relations-api.function";
 import { AccessorUtil } from "../accessor";
 import { RelationsResolver } from "./relations-resolver.class";
-import {
-  SahiElementQuery,
-  SahiElementQueryOrWebElement,
-} from "../sahi-element.interface";
-import {
-  createTestEnv,
-  getTestBrowserList,
-  mockHtml,
-  TestEnvironment,
-} from "../__mocks__";
+import { SahiElementQuery, SahiElementQueryOrWebElement, } from "../sahi-element.interface";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
 import { RelationApi } from "./relations-api.interface";
 import { ParentApi } from "./parent-api.interface";
 import { stripIndents } from "common-tags";
 
-jest.setTimeout(15_000);
+jest.setTimeout(100_000);
 describe("relations-api", () => {
   describe.each(getTestBrowserList())(
     "%s",
