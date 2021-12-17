@@ -30,7 +30,7 @@ export function execute(
     });
 
     proc.on("close", (code) => {
-      resolve(new CommandLineResult(dataBuffer.join(" ").trim(), code));
+      resolve(new CommandLineResult(dataBuffer.join(" ").trim(), code || 0));
     });
   });
 }
