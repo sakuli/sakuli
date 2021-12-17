@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## next
+
+- Maintenance: Open Source [(660)](https://github.com/sakuli/sakuli/issues/660)
+- node 16 support 
+
 ## v2.5.1
 
 - Security fixes
