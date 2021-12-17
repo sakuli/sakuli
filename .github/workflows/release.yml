@@ -17,23 +17,14 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{ matrix.node }}
-      - name: Install dependencies
-        run: |
-          docker pull selenium/standalone-chrome
-          docker pull selenium/standalone-firefox
-          docker run -d -p 4444:4444 selenium/standalone-firefox
-          docker run -d -p 4445:4444 selenium/standalone-chrome
       - run: npm ci
         env:
           CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: run unit tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
-          run: npm test -- --runInBand --ci --bail
-        env:
-          FIREFOX_WD_URL: http://localhost:4444/wd/hub
-          CHROME_WD_URL: http://localhost:4445/wd/hub
+          run: npm test -- --ci --bail
 
   integration-e2e-test:
     needs: [unit-test]
@@ -54,7 +45,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: run integration tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm run test:it
       - name: Run e2e tests [Linux]

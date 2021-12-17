@@ -2,17 +2,12 @@ import { By, ThenableWebDriver } from "selenium-webdriver";
 import { actionApi } from "./action-api.function";
 import { AccessorUtil } from "../accessor";
 import { RelationsResolver } from "../relations";
-import {
-  createTestEnv,
-  getTestBrowserList,
-  mockHtml,
-  TestEnvironment,
-} from "../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../__mocks__";
 import { createTestExecutionContextMock } from "../../__mocks__";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";
 import { mockPartial } from "sneer";
 
-jest.setTimeout(60_000);
+jest.setTimeout(100_000);
 describe("action-api", () => {
   describe.each(getTestBrowserList())(
     "%s",

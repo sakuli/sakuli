@@ -1,13 +1,8 @@
 import { By } from "selenium-webdriver";
 import { getSiblingIndex } from "./get-sibling-index.function";
-import {
-  createTestEnv,
-  getTestBrowserList,
-  mockHtml,
-  TestEnvironment,
-} from "../__mocks__";
+import { createTestEnv, getTestBrowserList, mockHtml, TestEnvironment, } from "../__mocks__";
 
-jest.setTimeout(60_000);
+jest.setTimeout(100_000);
 describe("getSiblingIndex", () => {
   describe.each(getTestBrowserList())(
     "%s",

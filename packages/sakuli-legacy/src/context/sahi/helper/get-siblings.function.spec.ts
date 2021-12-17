@@ -3,7 +3,7 @@ import { By } from "selenium-webdriver";
 import { createTestEnv, mockHtml, TestEnvironment } from "../__mocks__";
 import { getTestBrowserList } from "../__mocks__/get-browser-list.function";
 
-jest.setTimeout(10000);
+jest.setTimeout(100_000);
 describe("getSiblings", () => {
   describe.each(getTestBrowserList())(
     "%s",
