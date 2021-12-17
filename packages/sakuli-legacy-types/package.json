@@ -40,9 +40,5 @@
     "ts-node": "10.2.1",
     "typedoc": "0.20.28",
     "typescript": "4.1.3"
-  },
-  "peerDependencies": {
-    "@sakuli/legacy": "2.3.0",
-    "@sakuli/rollup-hooks": "2.3.0"
   }
 }
