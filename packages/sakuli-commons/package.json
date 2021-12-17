@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/common-tags": "1.8.0",
-    "@types/jest": "27.0.3",
+    "@types/jest": "26.0.24",
     "@types/node": "16.11.7",
     "@types/properties-reader": "2.1.0",
     "jest": "27.2.0",

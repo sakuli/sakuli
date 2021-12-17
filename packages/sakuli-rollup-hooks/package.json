@@ -38,7 +38,7 @@
   "devDependencies": {
     "@schemastore/package": "0.0.6",
     "@types/common-tags": "1.8.1",
-    "@types/jest": "27.0.1",
+    "@types/jest": "26.0.24",
     "@types/mock-fs": "4.13.1",
     "@types/node": "16.11.7",
     "@types/rollup": "0.54.0",
