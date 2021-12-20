@@ -5,6 +5,9 @@ on:
     tags:
       - v*.*.*
 
+env:
+  CHROMEDRIVER_FILEPATH: "/usr/local/share/chrome_driver/chromedriver"
+
 jobs:
   unit-test:
     strategy:
@@ -18,8 +21,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
-        env:
-          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1.6
@@ -49,8 +50,10 @@ jobs:
         with:
           run: npm run test:it
       - name: Run e2e tests [Linux]
-        run: xvfb-run --server-args="-screen 0, 1920x1080x24" npm run test:e2e
-        shell: bash
+        uses: GabrielBB/xvfb-action@v1.6
+        with:
+          run: npm run test:e2e
+          options: "-screen 0, 1920x1080x24"
         env:
           LOG_MODE: "ci"
       - name: save error screenshots on failure
@@ -77,8 +80,6 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-        env:
-          CHROMEDRIVER_SKIP_DOWNLOAD: true
       - run: npm run build
       - name: Run Typedoc
         run: npx lerna run typedoc
