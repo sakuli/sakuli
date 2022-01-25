@@ -16,6 +16,7 @@ const testFilename = "testfile.png";
 const testPath = "/test/path";
 const testConfidence = 0.99;
 const testTimeout = 500;
+const defaultNutjsInterval = 500;
 const expectedRegion = new nutjs.Region(0, 0, 100, 100);
 
 beforeEach(() => {
@@ -27,14 +28,15 @@ beforeEach(() => {
 describe("ScreenApi", () => {
   it("should call `screen.find` with suitable Region", async () => {
     // GIVEN
-    const TestRegion = createRegionClass(ctx, project);
-    const testRegion = new TestRegion(0, 0, 100, 100);
+    const testRegion = createTestRegion();
     nutjs.screen.find = jest.fn(() => Promise.resolve(expectedRegion));
+    (nutjs.imageResource as any) = jest.fn((filename: string) => Promise.resolve(filename));
 
     // WHEN
     await ScreenApi.find(testFilename, testPath, testConfidence, testRegion);
 
     // THEN
+    expect(nutjs.imageResource).toHaveBeenCalledWith(testFilename)
     expect(nutjs.screen.find).toBeCalledTimes(1);
     expect(nutjs.screen.find).toBeCalledWith(testFilename, {
       confidence: testConfidence,
@@ -44,9 +46,10 @@ describe("ScreenApi", () => {
 
   it("should call `screen.waitFor` with suitable Region", async () => {
     // GIVEN
-    const TestRegion = createRegionClass(ctx, project);
-    const testRegion = new TestRegion(0, 0, 100, 100);
+    const testRegion = createTestRegion();
     nutjs.screen.waitFor = jest.fn(() => Promise.resolve(expectedRegion));
+    (nutjs.imageResource as any) = jest.fn((filename: string) => Promise.resolve(filename));
+
 
     // WHEN
     await ScreenApi.waitForImage(
@@ -58,8 +61,9 @@ describe("ScreenApi", () => {
     );
 
     // THEN
+    expect(nutjs.imageResource).toHaveBeenCalledWith(testFilename);
     expect(nutjs.screen.waitFor).toBeCalledTimes(1);
-    expect(nutjs.screen.waitFor).toBeCalledWith(testFilename, testTimeout, {
+    expect(nutjs.screen.waitFor).toBeCalledWith(testFilename, testTimeout, defaultNutjsInterval, {
       confidence: testConfidence,
       searchRegion: expectedRegion,
     });
@@ -67,8 +71,7 @@ describe("ScreenApi", () => {
 
   it("should call `screen.highlight` with suitable Region and timeout", async () => {
     // GIVEN
-    const TestRegion = createRegionClass(ctx, project);
-    const testRegion = new TestRegion(0, 0, 100, 100);
+    const testRegion = createTestRegion();
     const expectedRegion = await toNutRegion(testRegion);
     const testHighlightDuration = 5;
     nutjs.screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
@@ -102,8 +105,7 @@ describe("ScreenApi", () => {
 
   it("should return passed region after calling highlight for method chaining", async () => {
     // GIVEN
-    const TestRegion = createRegionClass(ctx, project);
-    const testRegion = new TestRegion(0, 0, 100, 100);
+    const testRegion = createTestRegion();
     const testHighlightDuration = 5;
     nutjs.screen.highlight = jest.fn(() => Promise.resolve(expectedRegion));
 
@@ -240,3 +242,8 @@ describe("getTimestamp", () => {
     expect(result).toBe("2019-07-09T16-01-15");
   });
 });
+
+const createTestRegion = () => {
+  const TestRegion = createRegionClass(ctx, project);
+  return new TestRegion(0, 0, 100, 100);
+}

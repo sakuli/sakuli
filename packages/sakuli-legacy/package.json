@@ -27,8 +27,9 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@nut-tree/nut-js": "1.7.0",
+    "@nut-tree/nut-js": "2.0.1",
     "@nut-tree/secrets": "4.0.2",
+    "@nut-tree/template-matcher": "1.0.1",
     "@sakuli/commons": "2.5.1",
     "@sakuli/core": "2.5.1",
     "@sakuli/rollup-hooks": "2.5.1",
