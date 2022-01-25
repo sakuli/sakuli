@@ -1,10 +1,9 @@
-import { FileType, getActiveWindow, imageResource, Region as NutRegion, screen } from "@nut-tree/nut-js";
+import { getActiveWindow, Region as NutRegion, screen } from "@nut-tree/nut-js";
+import { FileType } from "@nut-tree/nut-js/dist/lib/file-type.enum";
 import { parse } from "path";
 import { cwd } from "process";
 import { Region } from "../region";
 import { toNutRegion } from "./converter.function";
-
-import "@nut-tree/template-matcher";
 
 const getCoordinates = async (region: Region) => {
   return {
@@ -56,7 +55,7 @@ export const ScreenApi = {
     return new Promise<ScreenRegionResult>(async (resolve, reject) => {
       try {
         screen.config.resourceDirectory = path;
-        const result = await screen.find(await imageResource(filename), {
+        const result = await screen.find(filename, {
           confidence,
           searchRegion: new NutRegion(left, top, width, height),
         });
@@ -82,7 +81,7 @@ export const ScreenApi = {
     return new Promise<ScreenRegionResult>(async (resolve, reject) => {
       try {
         screen.config.resourceDirectory = path;
-        const result = await screen.waitFor(await imageResource(filepath), timeoutMs, 500,{
+        const result = await screen.waitFor(filepath, timeoutMs, {
           confidence,
           searchRegion: new NutRegion(left, top, width, height),
         });
