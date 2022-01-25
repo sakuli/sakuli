@@ -36,8 +36,8 @@
     "@sakuli/legacy": "2.5.1",
     "@types/node": "16.11.7",
     "dts-dom": "3.6.0",
-    "flatted": "3.1.0",
-    "ts-node": "10.2.1",
+    "flatted": "3.2.4",
+    "ts-node": "10.4.0",
     "typedoc": "0.20.28",
     "typescript": "4.1.3"
   }
