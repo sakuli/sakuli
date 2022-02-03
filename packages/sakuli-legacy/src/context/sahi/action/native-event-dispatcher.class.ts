@@ -51,9 +51,7 @@ export class NativeEventDispatcher {
   async dispatchCustomEvent(name: string, init: CustomEventInit) {
     return this.dispatchEvent("CustomEvent", name, init);
   }
-  async dispatchDeviceLightEvent(name: string, init: DeviceLightEventInit) {
-    return this.dispatchEvent("DeviceLightEvent", name, init);
-  }
+
   async dispatchDeviceMotionEvent(name: string, init: DeviceMotionEventInit) {
     return this.dispatchEvent("DeviceMotionEvent", name, init);
   }
@@ -90,9 +88,6 @@ export class NativeEventDispatcher {
 
   async dispatchKeyboardEvent(name: string, init: KeyboardEventInit) {
     return this.dispatchEvent("KeyboardEvent", name, init);
-  }
-  async dispatchMediaStreamEvent(name: string, init: MediaStreamEventInit) {
-    return this.dispatchEvent("MediaStreamEvent", name, init);
   }
   async dispatchMessageEvent(name: string, init: MessageEventInit) {
     return this.dispatchEvent("MessageEvent", name, init);

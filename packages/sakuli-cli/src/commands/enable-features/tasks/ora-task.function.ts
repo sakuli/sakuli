@@ -16,7 +16,7 @@ export const oraTask = (title: string, task: Task): Task => {
     try {
       await task();
       spinner.succeed();
-    } catch (e) {
+    } catch (e: any) {
       spinner.fail(chalk`${title} \n{red ${e.message}}`);
     }
   };

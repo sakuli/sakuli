@@ -1,17 +1,6 @@
 import { Argv, CommandModule } from "yargs";
-import {
-  CommandModuleProvider,
-  SakuliCoreProperties,
-  SakuliInstance,
-} from "@sakuli/core";
-import {
-  ensure,
-  ensurePath,
-  ifPresent,
-  invokeIfPresent,
-  LogLevel,
-  Maybe,
-} from "@sakuli/commons";
+import { CommandModuleProvider, SakuliCoreProperties, SakuliInstance, } from "@sakuli/core";
+import { ensure, ensurePath, ifPresent, invokeIfPresent, LogLevel, Maybe, } from "@sakuli/commons";
 import chalk from "chalk";
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
 import { createLogConsumer } from "../create-log-consumer.function";
@@ -88,7 +77,7 @@ export const runCommand: CommandModuleProvider = (
 
         await renderErrorsFromContext(sakuli.testExecutionContext);
         process.exitCode = sakuli.testExecutionContext.resultState;
-      } catch (e) {
+      } catch (e: any) {
         await renderError(e);
         process.exitCode = 1;
       } finally {

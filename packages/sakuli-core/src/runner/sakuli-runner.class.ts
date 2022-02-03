@@ -5,12 +5,9 @@ import { readFile } from "fs";
 import { JsScriptExecutor } from "./js-script-executor.class";
 import { join, resolve } from "path";
 import { TestExecutionContext } from "./test-execution-context";
-import Signals = NodeJS.Signals;
 import { nodeSignals } from "../node-signals";
-import {
-  LifecycleHookRegistry,
-  lifecycleHookRegistry,
-} from "./lifecycle-hook-registry";
+import { LifecycleHookRegistry, lifecycleHookRegistry, } from "./lifecycle-hook-registry";
+import Signals = NodeJS.Signals;
 
 export class SakuliRunner implements TestExecutionLifecycleHooks {
   private hookRegistry: LifecycleHookRegistry;
@@ -62,7 +59,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
         );
         await this.afterRunFile(testFile, project, this.testExecutionContext);
         result = { ...result, ...resultCtx };
-      } catch (error) {
+      } catch (error: any) {
         if (this.testExecutionContext.getCurrentTestSuite()) {
           this.testExecutionContext.updateCurrentTestSuite({ error });
         }
@@ -155,7 +152,7 @@ export class SakuliRunner implements TestExecutionLifecycleHooks {
     const fileReaders = this.hookRegistry.getReadFileContentHooks();
     if (fileReaders.length >= 1) {
       const [fileReader] = fileReaders;
-      return await fileReader.readFileContent!(testFile, project, context);
+      return fileReader.readFileContent!(testFile, project, context);
     } else {
       return new Promise<string>((res, rej) => {
         readFile(join(project.rootDir, testFile.path), (err, data) => {

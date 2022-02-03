@@ -58,7 +58,7 @@ export const connectForwarderToTestExecutionContext = async (
     for (const forwarding of forwardings) {
       try {
         await forwarding;
-      } catch (e) {
+      } catch (e: any) {
         ctx.logger.error(
           `There were errors during forwarding: ${JSON.stringify(
             e.message || e

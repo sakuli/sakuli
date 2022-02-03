@@ -126,7 +126,7 @@ describe("LegacyLoader", () => {
       loader = new LegacyLoader();
       await loader.load(new Project(join(tmpDir, "path/to/testsuites/suite")));
       done.fail();
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toContain("testsuite.properties");
       done();
     }

@@ -136,7 +136,7 @@ describe("TestCase", () => {
         // THEN
         try {
           SUT();
-        } catch (e) {
+        } catch (e: any) {
           expect(e).toBeInstanceOf(TypeError);
           expect(e.message).toContain(expectedError);
         }
