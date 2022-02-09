@@ -1,13 +1,7 @@
-import {
-  LogMode,
-  Project,
-  SakuliCoreProperties,
-  SakuliInstance,
-  SakuliPresetProvider,
-} from "@sakuli/core";
+import { LogMode, Project, SakuliCoreProperties, SakuliInstance, SakuliPresetProvider, } from "@sakuli/core";
 import { mockPartial, mockRecursivePartial } from "sneer";
 import { runCommand } from "./run-command.function";
-import { Argv, CommandModule } from "yargs";
+import { ArgumentsCamelCase, Argv, CommandModule } from "yargs";
 import { testExecutionContextRenderer } from "../cli-utils/test-execution-context-renderer.function";
 import * as ensurePathModule from "@sakuli/commons/dist/fs/ensure-path.function";
 import { ensurePath, LogLevel } from "@sakuli/commons";
@@ -83,7 +77,7 @@ describe("runCommand", () => {
   });
 
   describe("handler", () => {
-    const runOptions = Symbol("run-options-placeholder");
+    const runOptions: ArgumentsCamelCase = {_: [], $0: "run-options-placeholder"};
     let processExitMock: jest.Mock;
     const properties = mockPartial<SakuliCoreProperties>({
       sakuliLogFolder: "sakuli/log/folder",

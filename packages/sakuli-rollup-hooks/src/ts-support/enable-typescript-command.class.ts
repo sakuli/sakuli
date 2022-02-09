@@ -34,7 +34,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
         })
         .demandOption("project") as any;
     },
-    async handler(opts: Record<string, unknown> & { $0: string; _: string[] }) {
+    async handler(opts: Record<string, unknown> & { $0: string; _: (string|number)[] }) {
       const project = `${opts["project"]}`;
       const baseDir = isAbsolute(project)
         ? project
