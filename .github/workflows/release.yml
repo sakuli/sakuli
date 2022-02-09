@@ -25,7 +25,7 @@ jobs:
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1.6
         with:
-          run: npm test -- --ci --bail
+          run: npm test -- --ci --bail --forceExit
 
   integration-e2e-test:
     needs: [unit-test]
