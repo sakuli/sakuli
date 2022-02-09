@@ -43,7 +43,7 @@
     "yargonaut": "1.1.4",
     "yargs": "16.1.1",
     "youch": "3.1.0",
-    "youch-terminal": "2.1.0"
+    "youch-terminal": "2.1.2"
   },
   "devDependencies": {
     "@types/figlet": "1.5.4",

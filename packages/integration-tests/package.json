@@ -27,7 +27,7 @@
     "@sakuli/cli": "2.5.1",
     "@sakuli/legacy": "2.5.1",
     "@sakuli/legacy-types": "2.5.1",
-    "chromedriver": "97.0.2",
+    "chromedriver": "98.0.0",
     "execa": "6.0.0",
     "express": "4.17.2",
     "geckodriver": "3.0.1",
