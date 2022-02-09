@@ -1,27 +1,24 @@
-import { Application, DeclarationReflection } from "typedoc";
+import { Application, DeclarationReflection, TSConfigReader } from "typedoc";
 import { join } from "path";
 import { renderDeclaration } from "./template.function";
 import { mkdirSync, writeFileSync } from "fs";
 import { throwIfAbsent } from "@sakuli/commons";
-import {
-  Reflection,
-  TraverseProperty,
-} from "typedoc/dist/lib/models/reflections/abstract";
+import { Reflection, TraverseProperty, } from "typedoc/dist/lib/models/reflections/abstract";
 import { ScriptTarget } from "typescript";
 
 const outDir = "dist";
 const projectDir = join(__dirname, "..", "..", "sakuli-legacy");
 const srcDir = join(projectDir, "src");
 const app = new Application();
+app.options.addReader(new TSConfigReader());
 app.bootstrap({
   tsconfig: join(projectDir, "tsconfig.json"),
   exclude: ["**/*.spec.ts", "**/__mocks__/*"],
   entryPoints: [srcDir],
+  entryPointStrategy: "expand"
 });
-
-const inputFiles = app.expandInputFiles([srcDir]);
 app.options.setCompilerOptions(
-  inputFiles,
+  app.getEntryPoints()?.map(entryPoint => entryPoint.sourceFile.fileName) ?? [],
   {
     mode: "file",
     target: ScriptTarget.ES5,

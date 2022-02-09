@@ -34,7 +34,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
         })
         .demandOption("project") as any;
     },
-    async handler(opts: Record<string, unknown> & { $0: string; _: string[] }) {
+    async handler(opts: Record<string, unknown> & { $0: string; _: (string|number)[] }) {
       const project = `${opts["project"]}`;
       const baseDir = isAbsolute(project)
         ? project
@@ -48,17 +48,19 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
       if (!(await containsTypescript(baseDir))) {
         const tsVersion =
           require(join(__dirname, "..", "..", "package.json")).devDependencies
-            .typescript || "4.1.3";
+            .typescript || "4.5.5";
         typingPackages.unshift(["typescript", tsVersion]);
       }
+
+      const packageInstallationString = typingPackages
+        .map(([pkg, _]) => `  - Install ${chalk.green(pkg)}`)
+        .join(EOL)
 
       const answer = await userInput(stripIndents`
                 This command will install and configure all relevant packages to use ${chalk.bold.blueBright(
                   "Typescript"
                 )} in your project:
-                ${typingPackages
-                  .map(([pkg]) => `  - Install ${chalk.green(pkg)}`)
-                  .join(EOL)}
+                ${packageInstallationString}
                   - Create ${chalk.green("tsconfig.json")} in ${chalk.gray(
         baseDir
       )}
@@ -81,7 +83,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
             install.start();
             await execa("npm", ["i", `${pkg[0]}@${pkg[1]}`], { cwd: baseDir });
             install.succeed();
-          } catch (e) {
+          } catch (e: any) {
             install.fail(e.message);
           }
         }
@@ -97,7 +99,7 @@ export const enableTypescriptCommand: CommandModuleProvider = (): CommandModule 
             { flag: "w" }
           );
           createFile.succeed();
-        } catch (e) {
+        } catch (e: any) {
           createFile.fail(e.message);
           console.error(chalk.red(e));
           process.exit(1);

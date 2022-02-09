@@ -1,7 +1,6 @@
-import { Button as NutButton, mouse, Point } from "@nut-tree/nut-js";
+import { Button as NutButton, mouse, MouseClass as Mouse, Point } from "@nut-tree/nut-js";
 import { createMouseApi } from "./mouse.function";
 import { SakuliRegion } from "./__mocks__/sakuli-region.class";
-import { Mouse } from "@nut-tree/nut-js/dist/lib/mouse.class";
 import { MouseButton } from "../button.class";
 import { mockPartial } from "sneer";
 import { LegacyProjectProperties } from "../../../loader/legacy-project-properties.class";

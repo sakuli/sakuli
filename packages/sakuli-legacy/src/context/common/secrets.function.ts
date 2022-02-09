@@ -34,8 +34,8 @@ export async function decrypt(
   encryptedInput: string
 ): Promise<string> {
   try {
-    return secret.decrypt(encryptedInput, key, Algorithm.AES128CBC);
-  } catch (e) {
+    return await secret.decrypt(encryptedInput, key, Algorithm.AES128CBC);
+  } catch (e: any) {
     throw new EncryptionError(e.message);
   }
 }
@@ -52,7 +52,7 @@ export async function withEncryption<T>(
       Algorithm.AES128CBC
     );
     return action(decrypted);
-  } catch (e) {
+  } catch (e: any) {
     throw new EncryptionError(e.message);
   }
 }

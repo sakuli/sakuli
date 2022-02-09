@@ -1,9 +1,4 @@
-import {
-  Project,
-  TestExecutionContext,
-  TestExecutionLifecycleHooks,
-  TestFile,
-} from "@sakuli/core";
+import { Project, TestExecutionContext, TestExecutionLifecycleHooks, TestFile, } from "@sakuli/core";
 import { Plugin, rollup } from "rollup";
 import rollupTsPlugin from "rollup-plugin-typescript2";
 import { extname, isAbsolute, join } from "path";
@@ -66,7 +61,7 @@ export class RollupLifecycleHooks implements TestExecutionLifecycleHooks {
       });
       const [rollupOutput] = output;
       return Promise.resolve(rollupOutput.code);
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === "PARSE_ERROR") {
         throw new Error(
           `Syntax error in file ${e.loc.file} on line ${e.loc.line}, column ${e.loc.column}.\n${e.frame}`

@@ -33,14 +33,14 @@ export function migrationCommandProvider(): CommandModule {
 
               console.log(`Writing output to ${newFile}`);
               writeFileSync(newFile, v2Code);
-            } catch (e) {
+            } catch (e: any) {
               console.error(
                 `Failed to load file ${file}. Reason: ${e.message}`
               );
             }
           });
         console.log("Migration done");
-      } catch (e) {
+      } catch (e: any) {
         console.error(
           `Failed to load project from ${path}. Reason: ${e.message}`
         );

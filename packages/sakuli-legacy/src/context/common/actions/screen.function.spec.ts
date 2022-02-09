@@ -30,11 +30,13 @@ describe("ScreenApi", () => {
     const TestRegion = createRegionClass(ctx, project);
     const testRegion = new TestRegion(0, 0, 100, 100);
     nutjs.screen.find = jest.fn(() => Promise.resolve(expectedRegion));
+    (nutjs.imageResource as jest.Mock) = jest.fn((path) => Promise.resolve(path))
 
     // WHEN
     await ScreenApi.find(testFilename, testPath, testConfidence, testRegion);
 
     // THEN
+    expect(nutjs.imageResource).toHaveBeenCalledWith(testFilename);
     expect(nutjs.screen.find).toBeCalledTimes(1);
     expect(nutjs.screen.find).toBeCalledWith(testFilename, {
       confidence: testConfidence,
@@ -46,7 +48,9 @@ describe("ScreenApi", () => {
     // GIVEN
     const TestRegion = createRegionClass(ctx, project);
     const testRegion = new TestRegion(0, 0, 100, 100);
+    const defaultInterval = 500;
     nutjs.screen.waitFor = jest.fn(() => Promise.resolve(expectedRegion));
+    (nutjs.imageResource as jest.Mock) = jest.fn((path) => Promise.resolve(path));
 
     // WHEN
     await ScreenApi.waitForImage(
@@ -58,8 +62,9 @@ describe("ScreenApi", () => {
     );
 
     // THEN
+    expect(nutjs.imageResource).toHaveBeenCalledWith(testFilename);
     expect(nutjs.screen.waitFor).toBeCalledTimes(1);
-    expect(nutjs.screen.waitFor).toBeCalledWith(testFilename, testTimeout, {
+    expect(nutjs.screen.waitFor).toBeCalledWith(testFilename, testTimeout, defaultInterval, {
       confidence: testConfidence,
       searchRegion: expectedRegion,
     });

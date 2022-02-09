@@ -15,9 +15,9 @@ jobs:
         node: [12, 14, 16]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.4.0
       - name: Setup node ${{ matrix.node }}
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v2.5.1
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
@@ -25,7 +25,7 @@ jobs:
       - name: run unit tests
         uses: GabrielBB/xvfb-action@v1.6
         with:
-          run: npm test -- --ci --bail
+          run: npm test -- --ci --bail --forceExit
 
   integration-e2e-test:
     needs: [unit-test]
@@ -34,9 +34,9 @@ jobs:
         node: [12, 14, 16]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.4.0
       - name: Setup node ${{ matrix.node }}
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v2.5.1
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies [Linux]
@@ -58,7 +58,7 @@ jobs:
           LOG_MODE: "ci"
       - name: save error screenshots on failure
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2.3.1
         with:
           name: error-screenshots
           path: |
@@ -70,12 +70,12 @@ jobs:
     needs: [integration-e2e-test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.4.0
         with:
           fetch-depth: "0"
       - run: git fetch origin +refs/tags/*:refs/tags/*
       - name: Setup node
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v2.5.1
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/

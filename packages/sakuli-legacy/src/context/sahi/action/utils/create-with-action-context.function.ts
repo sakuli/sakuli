@@ -21,7 +21,7 @@ export function createWithActionContext(ctx: TestExecutionContext) {
         ctx.logger.trace(
           `Finish action ${name} successfully${createActionDurationString()}`
         );
-      } catch (error) {
+      } catch (error: any) {
         ctx.logger.trace(
           `Finish action ${name} with errors${createActionDurationString()}`,
           error.stack

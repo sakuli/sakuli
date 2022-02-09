@@ -60,7 +60,7 @@ function mapSahiToAsync(
             mapSahiToAsync(n, changeLog, node)
           ) as any[];
         }
-      } catch (e) {
+      } catch (e: any) {
         console.warn(e.message);
         console.warn(prop, inspect(node, true, null, true));
       }

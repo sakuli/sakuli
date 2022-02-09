@@ -11,7 +11,7 @@ export function runAsAction<
     let res: any;
     try {
       res = await fn(...args);
-    } catch (e) {
+    } catch (e: any) {
       throw Error(`Error in action: ${name} \n${e.message || e}`);
     } finally {
       const log = [`Finish action ${name}`];
