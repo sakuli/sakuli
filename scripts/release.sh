@@ -26,8 +26,6 @@ npm i
 
 printf "\n%s\n"  "Change Version in package.json"
 npx lerna version --no-git-tag-version --no-push -y --exact ${RELEASE_VERSION}
-printf "\n%s\n"  "Update @sakuli/plugin-validator"
-npx lerna add @sakuli/plugin-validator@${RELEASE_VERSION} -E --scope=@sakuli/cli --no-bootstrap
 
 printf "\n%s\n" "Run npm run rebuild"
 npm run rebuild

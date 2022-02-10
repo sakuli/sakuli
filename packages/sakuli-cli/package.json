@@ -1,6 +1,6 @@
 {
   "name": "@sakuli/cli",
-  "version": "2.5.1",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist",
@@ -30,9 +30,9 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@sakuli/commons": "2.5.1",
-    "@sakuli/core": "2.5.1",
-    "@sakuli/legacy": "2.5.1",
+    "@sakuli/commons": "3.0.0",
+    "@sakuli/core": "3.0.0",
+    "@sakuli/legacy": "3.0.0",
     "ansi-escapes": "5.0.0",
     "chalk": "4.1.2",
     "date-fns": "2.28.0",
