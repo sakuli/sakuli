@@ -26,7 +26,7 @@
     "Cliff Le Van <cliff.le.van@consol.de>"
   ],
   "engines": {
-    "node": "14 || 16 || 18"
+    "node": "12 || 14 || 16"
   },
   "license": "Apache-2.0",
   "dependencies": {
