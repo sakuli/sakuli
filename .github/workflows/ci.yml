@@ -51,7 +51,7 @@ jobs:
   unit-test:
     strategy:
       matrix:
-        node: [12, 14] # Node 16 unit-tests are covered in 'sonar' job
+        node: [14, 18] # Node 16 unit-tests are covered in 'sonar' job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.4.0
@@ -72,7 +72,7 @@ jobs:
     needs: [sonar, unit-test]
     strategy:
       matrix:
-        node: [12, 14, 16]
+        node: [14, 16, 18]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.4.0
