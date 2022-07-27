@@ -13,9 +13,9 @@ jobs:
         node: [12, 14, 16]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.4.2
       - name: Setup node ${{ matrix.node }}
-        uses: actions/setup-node@v2.5.1
+        uses: actions/setup-node@v3.4.1
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
@@ -34,9 +34,9 @@ jobs:
         node: [12, 14, 16]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.4.2
       - name: Setup node ${{ matrix.node }}
-        uses: actions/setup-node@v2.5.1
+        uses: actions/setup-node@v3.4.1
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies [Linux]
@@ -58,7 +58,7 @@ jobs:
           LOG_MODE: "ci"
       - name: save error screenshots on failure
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: error-screenshots
           path: |
@@ -70,12 +70,12 @@ jobs:
     needs: [integration-e2e-test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.4.2
         with:
           fetch-depth: "0"
       - run: git fetch origin +refs/tags/*:refs/tags/*
       - name: Setup node
-        uses: actions/setup-node@v2.5.1
+        uses: actions/setup-node@v3.4.1
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
