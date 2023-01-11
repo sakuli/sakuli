@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@sakuli/commons": "3.0.0",
-    "class-validator": "0.13.2",
+    "class-validator": "0.14.0",
     "common-tags": "1.8.2",
     "date-fns": "2.28.0",
     "execa": "5.1.1",
