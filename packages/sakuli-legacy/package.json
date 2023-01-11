@@ -33,7 +33,7 @@
     "@sakuli/commons": "3.0.0",
     "@sakuli/core": "3.0.0",
     "@sakuli/rollup-hooks": "3.0.0",
-    "class-validator": "0.13.2",
+    "class-validator": "0.14.0",
     "common-tags": "1.8.2",
     "escodegen": "2.0.0",
     "esprima": "4.0.1",
